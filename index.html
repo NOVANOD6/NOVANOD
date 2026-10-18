@@ -2,21 +2,142 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Mon Projet en Construction</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOVANOD™ - Welcoming Soon</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Times New Roman', Times, serif;
+            background-color: #fdf6c6; /* Fond jaune exact */
+            color: #b04030; /* Couleur rouge/marron exacte */
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f4f4f9;
+            min-height: 100vh;
+            text-align: center;
+            padding: 20px;
         }
-        h1 { color: #333; }
+        .container {
+            max-width: 450px;
+            width: 100%;
+        }
+        .welcome-text {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        h1 {
+            font-size: 2.2rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            display: inline-block;
+            position: relative;
+        }
+        .tm {
+            font-size: 0.8rem;
+            vertical-align: super;
+            margin-left: 2px;
+        }
+        .image-container {
+            border: 1px solid #b04030;
+            padding: 40px;
+            margin: 0 auto 25px auto;
+            width: 280px;
+            height: 280px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        /* Illustration du personnage au centre avec effet d'ondes */
+        .circle-main {
+            width: 70px;
+            height: 70px;
+            background-color: #d94a38;
+            border-radius: 50%;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .face {
+            color: #fdf6c6;
+            font-family: monospace;
+            font-size: 1.1rem;
+            font-weight: bold;
+            letter-spacing: -2px;
+        }
+        .wave {
+            position: absolute;
+            border: 1.5px solid #d94a38;
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: pulse 2.5s infinite ease-out;
+        }
+        .wave1 { width: 100px; height: 100px; animation-delay: 0s; }
+        .wave2 { width: 130px; height: 130px; animation-delay: 0.8s; }
+        .wave3 { width: 160px; height: 160px; animation-delay: 1.6s; }
+
+        @keyframes pulse {
+            0% { transform: scale(0.8); opacity: 0.8; }
+            50% { opacity: 0.4; }
+            100% { transform: scale(1.2); opacity: 0; }
+        }
+
+        .description {
+            font-size: 1.05rem;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+        .description p {
+            margin-bottom: 12px;
+        }
+
+        /* Badge d'attente stylisé */
+        .status-badge {
+            background-color: #4a151b;
+            color: #fdf6c6;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            display: inline-block;
+            letter-spacing: 1px;
+            font-family: sans-serif;
+            text-transform: uppercase;
+        }
     </style>
 </head>
 <body>
-    <h1>Site en cours de développement... 🚀</h1>
+    <div class="container">
+        <div class="welcome-text">WELCOME TO</div>
+        <h1>NOVANOD<span class="tm">™</span></h1>
+        
+        <div class="image-container">
+            <div class="wave wave3"></div>
+            <div class="wave wave2"></div>
+            <div class="wave wave1"></div>
+            <div class="circle-main">
+                <div class="face">._.</div>
+            </div>
+        </div>
+        
+        <div class="description">
+            <p>Enter the space of NOD, a utopian world where you exist as you are.</p>
+            <p>Adopt his pace, take a breath, catch his rhythm, and make yourself at home.</p>
+            <p>In NOD's world, there's always a place for you.</p>
+        </div>
+        
+        <div class="status-badge">
+            Site en cours de création... 🚀
+        </div>
+    </div>
 </body>
 </html>
