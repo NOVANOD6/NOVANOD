@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NOVANOD - Welcome</title>
+  <style>
+    /* Reset & Styles de base */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body, html {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #FAF4CE; /* Fond crème assorti à la vidéo */
+    }
+
+    /* --- ARRIÈRE-PLAN VIDÉO NET & ADAPTATIF --- */
+    .video-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .video-background video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain; /* Conserve le format portrait de la vidéo de façon optimale */
+      object-position: center;
+      position: absolute;
+      top: 0;
+      left: 0;
+      /* Aucun filtre de flou appliqué */
+    }
+
+    /* --- BOUTONS PRINCIPAUX (Style d'origine NOVANOD) --- */
+    .main-action-container {
+      position: absolute;
+      bottom: 8%;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 5;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      width: 90%;
+      max-width: 320px;
+    }
+
+    .btn-novanod {
+      background: #3B1C28; /* Couleur bordeaux d'origine */
+      color: #FFFFFF;
+      border: 2px solid #FFFFFF;
+      border-radius: 20px;
+      padding: 14px 20px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+      outline: none;
+    }
+
+    .btn-novanod:hover {
+      background: #522738;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    }
+
+    .btn-novanod:active {
+      transform: translateY(0);
+    }
+
+    .btn-novanod-secondary {
+      background: #2D141E;
+    }
+
+    /* --- OVERLAY DU FORMULAIRE (MODALE) --- */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 10;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .auth-card {
+      background: rgba(45, 20, 30, 0.92); /* Teinte bordeaux sombre translucide */
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 24px;
+      padding: 32px 24px;
+      width: 100%;
+      max-width: 380px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      color: #ffffff;
+      position: relative;
+      animation: slideUp 0.3s ease;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 16px;
+      right: 20px;
+      background: none;
+      border: none;
+      color: #ffffff;
+      font-size: 1.5rem;
+      cursor: pointer;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+
+    .close-btn:hover {
+      opacity: 1;
+    }
+
+    /* Onglets de la modale */
+    .tab-buttons {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 24px;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.15);
+      padding-bottom: 8px;
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      padding-bottom: 6px;
+      position: relative;
+    }
+
+    .tab-btn.active {
+      color: #ffffff;
+    }
+
+    .tab-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: #E8917C; /* Couleur d'accent rose/pêche */
+      border-radius: 2px;
+    }
+
+    .form-container {
+      display: none;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .form-container.active {
+      display: flex;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .input-group label {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .input-group input {
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      font-size: 0.95rem;
+      outline: none;
+    }
+
+    .input-group input:focus {
+      border-color: #E8917C;
+      background: rgba(255, 255, 255, 0.18);
+    }
+
+    .submit-btn {
+      margin-top: 8px;
+      padding: 12px;
+      border: none;
+      border-radius: 14px;
+      background: #E8917C;
+      color: #2D141E;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .submit-btn:hover {
+      background: #f1a592;
+    }
+
+    .toast-message {
+      display: none;
+      position: fixed;
+      bottom: 25px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #3B1C28;
+      border: 1px solid #E8917C;
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      z-index: 20;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* Adaptations responsives pour bureau et téléphones */
+    @media (min-aspect-ratio: 9/16) {
+      .video-background video {
+        object-fit: contain;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Vidéo d'arrière-plan haute définition non floutée -->
+  <div class="video-background">
+    <video autoplay loop muted playsinline>
+      <source src="a.mp4" type="video/mp4">
+      Votre navigateur ne prend pas en charge la lecture de vidéo.
+    </video>
+  </div>
+
+  <!-- Boutons d'interaction style NOVANOD -->
+  <div class="main-action-container">
+    <button class="btn-novanod" onclick="openAuthModal('register')">S'inscrire</button>
+    <button class="btn-novanod btn-novanod-secondary" onclick="openAuthModal('login')">Se connecter</button>
+  </div>
+
+  <!-- Fenêtre Pop-up d'Authentification -->
+  <div id="authModal" class="modal-overlay" onclick="handleOutsideClick(event)">
+    <div class="auth-card">
+      <button class="close-btn" onclick="closeAuthModal()">&times;</button>
+
+      <div class="tab-buttons">
+        <button type="button" class="tab-btn active" id="loginTabBtn" onclick="switchTab('login')">Connexion</button>
+        <button type="button" class="tab-btn" id="registerTabBtn" onclick="switchTab('register')">Inscription</button>
+      </div>
+
+      <!-- Formulaire de Connexion -->
+      <form id="loginForm" class="form-container active" onsubmit="handleSubmit(event, 'Connexion réussie !')">
+        <div class="input-group">
+          <label for="login-email">Adresse e-mail</label>
+          <input type="email" id="login-email" placeholder="votre@email.com" required>
+        </div>
+
+        <div class="input-group">
+          <label for="login-password">Mot de passe</label>
+          <input type="password" id="login-password" placeholder="••••••••" required>
+        </div>
+
+        <button type="submit" class="submit-btn">Se connecter</button>
+      </form>
+
+      <!-- Formulaire d'Inscription -->
+      <form id="registerForm" class="form-container" onsubmit="handleSubmit(event, 'Inscription réussie !')">
+        <div class="input-group">
+          <label for="reg-name">Nom complet</label>
+          <input type="text" id="reg-name" placeholder="Jean Dupont" required>
+        </div>
+
+        <div class="input-group">
+          <label for="reg-email">Adresse e-mail</label>
+          <input type="email" id="reg-email" placeholder="votre@email.com" required>
+        </div>
+
+        <div class="input-group">
+          <label for="reg-password">Créer un mot de passe</label>
+          <input type="password" id="reg-password" placeholder="••••••••" required>
+        </div>
+
+        <button type="submit" class="submit-btn">Créer mon compte</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast" class="toast-message"></div>
+
+  <script>
+    function openAuthModal(tab) {
+      switchTab(tab);
+      document.getElementById('authModal').classList.add('active');
+    }
+
+    function closeAuthModal() {
+      document.getElementById('authModal').classList.remove('active');
+    }
+
+    function handleOutsideClick(e) {
+      if (e.target.id === 'authModal') {
+        closeAuthModal();
+      }
+    }
+
+    function switchTab(tab) {
+      const loginForm = document.getElementById('loginForm');
+      const registerForm = document.getElementById('registerForm');
+      const loginTabBtn = document.getElementById('loginTabBtn');
+      const registerTabBtn = document.getElementById('registerTabBtn');
+
+      if (tab === 'login') {
+        loginForm.classList.add('active');
+        registerForm.classList.remove('active');
+        loginTabBtn.classList.add('active');
+        registerTabBtn.classList.remove('active');
+      } else {
+        registerForm.classList.add('active');
+        loginForm.classList.remove('active');
+        registerTabBtn.classList.add('active');
+        loginTabBtn.classList.remove('active');
+      }
+    }
+
+    function handleSubmit(event, message) {
+      event.preventDefault();
+      closeAuthModal();
+      showToast(message);
+    }
+
+    function showToast(text) {
+      const toast = document.getElementById('toast');
+      toast.textContent = text;
+      toast.style.display = 'block';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 3000);
+    }
+  </script>
+
+</body>
+</html>
