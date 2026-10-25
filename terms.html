@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NOVANOD™ - Conditions d'utilisation</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* --- VARIABLES ET COULEURS IDENTIQUES AU SITE PRINCIPAL --- */
+    :root {
+      --red-primary: #E64A38;
+      --dark-brown: #3B1420;
+      --text-red: #D94432;
+      --cream-bg: #FFFEE0;
+      --font-heading: 'Fredoka', 'Plus Jakarta Sans', sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: #000000;
+      color: var(--dark-brown);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px 15px;
+      position: relative;
+    }
+
+    /* Video background background element */
+    .bg-video {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      z-index: -1;
+    }
+
+    /* Container de la carte légale */
+    .legal-container {
+      width: 100%;
+      max-width: 600px;
+      background-color: rgba(255, 254, 224, 0.95);
+      border: 3px solid var(--dark-brown);
+      border-radius: 20px;
+      padding: 30px 24px;
+      box-shadow: 0px 8px 0px var(--dark-brown);
+      z-index: 1;
+      margin: auto 0;
+    }
+
+    .brand-title {
+      font-family: var(--font-heading);
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-red);
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 5px;
+    }
+
+    .doc-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--dark-brown);
+      text-align: center;
+      text-transform: uppercase;
+      margin-bottom: 25px;
+      border-bottom: 2px dashed var(--red-primary);
+      padding-bottom: 12px;
+    }
+
+    .last-updated {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-red);
+      text-align: center;
+      margin-top: -18px;
+      margin-bottom: 20px;
+    }
+
+    /* Section content styling */
+    .legal-section {
+      margin-bottom: 20px;
+    }
+
+    .legal-section h2 {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-red);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .legal-section h2::before {
+      content: '✦';
+      color: var(--red-primary);
+      font-size: 12px;
+    }
+
+    .legal-section p, .legal-section ul {
+      font-size: 12.5px;
+      line-height: 1.6;
+      font-weight: 600;
+      color: var(--dark-brown);
+    }
+
+    .legal-section ul {
+      list-style-type: disc;
+      padding-left: 20px;
+      margin-top: 6px;
+    }
+
+    .legal-section li {
+      margin-bottom: 4px;
+    }
+
+    /* Bouton d'action retro 3D */
+    .btn-3d {
+      width: 100%;
+      height: 48px;
+      border-radius: 14px;
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      margin-top: 25px;
+      text-decoration: none;
+      transition: transform 0.08s ease-out, box-shadow 0.08s ease-out;
+      border: 2px solid var(--dark-brown);
+      background-color: var(--red-primary);
+      color: #FFFFFF;
+      box-shadow: 0px 4px 0px var(--dark-brown);
+    }
+
+    .btn-3d:active {
+      transform: translateY(3px);
+      box-shadow: 0px 1px 0px var(--dark-brown);
+    }
+
+    .footer-copy {
+      font-size: 10px;
+      color: rgba(217, 68, 50, 0.9);
+      margin-top: 20px;
+      text-align: center;
+      letter-spacing: 0.5px;
+      font-weight: 700;
+      text-shadow: 0px 1px 1px rgba(255, 255, 255, 0.6);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- VIDÉO ARRIÈRE-PLAN PLEIN ÉCRAN -->
+  <video class="bg-video" autoplay loop muted playsinline preload="auto">
+    <source src="a.mp4" type="video/mp4">
+  </video>
+
+  <div class="legal-container">
+    <div class="brand-title">WELCOME TO NOVANOD</div>
+    <div class="doc-title">Conditions Générales d'Utilisation</div>
+    <div class="last-updated">Dernière mise à jour : 25 Octobre 2026</div>
+
+    <div class="legal-section">
+      <h2>1. Objet & Acceptation</h2>
+      <p>Bienvenue dans l'univers NOVANOD. En créant un compte (en tant que <strong>GUEST</strong> ou <strong>BUYER</strong>) ou en accédant à nos services, vous acceptez sans réserve les présentes Conditions Générales d'Utilisation. Si vous n'acceptez pas ces termes, vous êtes invité à ne pas utiliser nos services.</p>
+    </div>
+
+    <div class="legal-section">
+      <h2>2. Typologies de Comptes & Accès</h2>
+      <p>NOVANOD propose deux types d'accès distincts :</p>
+      <ul>
+        <li><strong>Compte GUEST (Visiteur) :</strong> Permet d'explorer l'espace de manière anonyme ou via authentification sociale (Google, TikTok, Facebook). Les données de session peuvent être éphémères.</li>
+        <li><strong>Compte BUYER (Acheteur) :</strong> Compte complet nécessitant la vérification préalable d'une adresse e-mail valide par code OTP à 6 chiffres et d'un numéro de téléphone. Il donne accès aux fonctions d'achat et au suivi.</li>
+      </ul>
+    </div>
+
+    <div class="legal-section">
+      <h2>3. Authentification & Sécurité</h2>
+      <p>L'utilisateur est seul responsable du maintien de la confidentialité de ses identifiants de connexion. Toute action effectuée depuis votre compte est réputée avoir été réalisée par vous-même. En cas de suspicion de compromission, vous devez immédiatement procéder à la réinitialisation de votre mot de passe via le code OTP par e-mail.</p>
+    </div>
+
+    <div class="legal-section">
+      <h2>4. Règles de Conduite</h2>
+      <p>Dans l'espace de NOD, les utilisateurs s'engagent à :</p>
+      <ul>
+        <li>Ne pas tenter de perturber le fonctionnement technique de la plateforme.</li>
+        <li>Usurper l'identité d'un tiers ou fournir des informations frauduleuses.</li>
+        <li>Respecter la tranquillité et les droits des autres membres de la communauté.</li>
+      </ul>
+    </div>
+
+    <div class="legal-section">
+      <h2>5. Propriété Intellectuelle</h2>
+      <p>L'ensemble des éléments visuels, animations, graphismes, logos et concepts propres à NOVANOD™ sont la propriété exclusive de leur créateur. Toute reproduction ou utilisation non autorisée est stricte interdite.</p>
+    </div>
+
+    <div class="legal-section">
+      <h2>6. Modification des Conditions</h2>
+      <p>NOVANOD se réserve le droit de réviser à tout moment les présentes conditions. La version mise à jour est immédiatement applicable dès sa publication en ligne.</p>
+    </div>
+
+    <button class="btn-3d" onclick="window.close(); if(!window.closed){window.location.href='index.html';}">Fermer / Retour</button>
+  </div>
+
+  <div class="footer-copy">©2026 NOVANOD™, all rights reserved</div>
+
+</body>
+</html>
