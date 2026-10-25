@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>WELCOME TO NOVANOD</title>
+  
+  <!-- Appwrite SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.1"></script>
+  
+  <!-- Google Fonts : Fredoka & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* --- NATIVE SWIPE BACK PREVENTION --- */
+    html, body {
+      overscroll-behavior-x: none; /* Empêche le balayage latéral natif du navigateur (iOS/Android) */
+      overscroll-behavior-y: none;
+      touch-action: pan-y; /* Bloque le balayage horizontal */
+      overflow-x: hidden;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* --- VARIABLES & COULEURS EXACTES --- */
+    :root {
+      --red-primary: #E64A38;        /* Rouge corail des boutons */
+      --dark-brown: #3B1420;         /* Marron/bordeaux très foncé */
+      --text-red: #D94432;           /* Couleur des titres et textes */
+      --cream-bg: #FFFEE0;           /* Couleur crème de fond */
+      --font-heading: 'Fredoka', sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: #000000;
+      color: var(--text-red);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 20px 15px 30px 15px;
+      position: relative;
+    }
+
+    /* --- VIDÉO DE FOND PLEIN ÉCRAN --- */
+    .bg-video {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      z-index: -1;
+    }
+
+    /* Container global Mobile */
+    .app-viewport {
+      width: 100%;
+      max-width: 380px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+      margin-top: auto;
+    }
+
+    /* --- TEXTE D'ACCUEIL SÉQUENTIEL CALIBRÉ --- */
+    .welcome-text {
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-red);
+      line-height: 1.45;
+      margin-bottom: 25px;
+      padding: 0 10px;
+      text-shadow: 0px 1px 2px rgba(255, 255, 255, 0.6);
+      min-height: 110px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+
+    .welcome-text p {
+      margin-bottom: 8px;
+      opacity: 0;
+      animation-duration: 10s;
+      animation-iteration-count: infinite;
+      animation-timing-function: ease-in-out;
+    }
+
+    .welcome-text p:nth-child(1) { animation-name: seq1; }
+    .welcome-text p:nth-child(2) { animation-name: seq2; }
+    .welcome-text p:nth-child(3) { animation-name: seq3; }
+
+    @keyframes seq1 {
+      0% { opacity: 0; transform: translateY(4px); }
+      3% { opacity: 1; transform: translateY(0); }
+      88% { opacity: 1; transform: translateY(0); }
+      94%, 100% { opacity: 0; transform: translateY(-4px); }
+    }
+
+    @keyframes seq2 {
+      0%, 15% { opacity: 0; transform: translateY(4px); }
+      18% { opacity: 1; transform: translateY(0); }
+      88% { opacity: 1; transform: translateY(0); }
+      94%, 100% { opacity: 0; transform: translateY(-4px); }
+    }
+
+    @keyframes seq3 {
+      0%, 26% { opacity: 0; transform: translateY(4px); }
+      30% { opacity: 1; transform: translateY(0); }
+      88% { opacity: 1; transform: translateY(0); }
+      94%, 100% { opacity: 0; transform: translateY(-4px); }
+    }
+
+    /* --- TITRES DE SECTION --- */
+    .section-title {
+      font-family: var(--font-heading);
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text-red);
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      text-shadow: 0px 1px 2px rgba(255, 255, 255, 0.6);
+    }
+
+    .section-title span {
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 16px;
+      text-transform: lowercase;
+    }
+
+    /* --- BOUTONS ET EFFET DE CLIC 3D --- */
+    .btn-3d {
+      width: 100%;
+      height: 48px;
+      border-radius: 14px;
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      cursor: pointer;
+      margin-bottom: 12px;
+      position: relative;
+      text-decoration: none;
+      outline: none;
+      transition: transform 0.08s ease-out, box-shadow 0.08s ease-out;
+      border: 2px solid var(--dark-brown);
+    }
+
+    .btn-red {
+      background-color: var(--red-primary);
+      color: #FFFFFF;
+      box-shadow: 0px 4px 0px var(--dark-brown);
+    }
+
+    .btn-dark {
+      background-color: var(--dark-brown);
+      color: #FFFFFF;
+      box-shadow: 0px 4px 0px #1A070D;
+    }
+
+    .btn-light {
+      background-color: var(--cream-bg);
+      color: var(--text-red);
+      box-shadow: 0px 4px 0px var(--dark-brown);
+    }
+
+    .btn-3d:active {
+      transform: translateY(3px);
+      box-shadow: 0px 1px 0px var(--dark-brown);
+    }
+
+    .btn-3d:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    /* LOGOS SOCIAUX PRÉCIS & ÉLÉGANTS */
+    .social-icon {
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+      display: block;
+    }
+
+    /* --- INPUTS DU FORMULAIRE --- */
+    .input-group {
+      width: 100%;
+      margin-bottom: 12px;
+      position: relative;
+    }
+
+    .input-field {
+      width: 100%;
+      height: 48px;
+      border-radius: 14px;
+      border: 2px solid var(--red-primary);
+      background-color: rgba(255, 254, 224, 0.92);
+      padding: 0 42px 0 15px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-red);
+      text-align: center;
+      outline: none;
+    }
+
+    .input-field::placeholder {
+      color: rgba(217, 68, 50, 0.75);
+      font-weight: 600;
+    }
+
+    .input-field:focus {
+      border-color: var(--dark-brown);
+      background-color: var(--cream-bg);
+    }
+
+    .phone-input-group {
+      display: flex;
+      gap: 8px;
+      width: 100%;
+      margin-bottom: 12px;
+    }
+
+    .phone-prefix-select {
+      height: 48px;
+      border-radius: 14px;
+      border: 2px solid var(--red-primary);
+      background-color: rgba(255, 254, 224, 0.92);
+      padding: 0 8px;
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text-red);
+      outline: none;
+      cursor: pointer;
+    }
+
+    .phone-number-field {
+      flex: 1;
+      height: 48px;
+      border-radius: 14px;
+      border: 2px solid var(--red-primary);
+      background-color: rgba(255, 254, 224, 0.92);
+      padding: 0 15px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-red);
+      text-align: center;
+      outline: none;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-red);
+    }
+
+    .toggle-password svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+
+    /* TERMS BOX */
+    .terms-box {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-red);
+      margin-bottom: 15px;
+      padding: 8px 10px;
+      background-color: rgba(255, 254, 224, 0.92);
+      border-radius: 10px;
+      border: 1px solid var(--red-primary);
+      user-select: text;
+    }
+
+    .terms-box input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      margin-top: 1px;
+      accent-color: var(--red-primary);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .terms-box a {
+      color: var(--dark-brown);
+      text-decoration: underline;
+      font-weight: 800;
+    }
+
+    .forgot-link {
+      display: inline-block;
+      color: var(--text-red);
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+      margin-bottom: 15px;
+      cursor: pointer;
+      text-shadow: 0px 1px 1px rgba(255, 255, 255, 0.6);
+    }
+
+    .forgot-link:hover {
+      text-decoration: underline;
+    }
+
+    .footer-copy {
+      font-size: 10px;
+      color: rgba(217, 68, 50, 0.9);
+      margin-top: 18px;
+      letter-spacing: 0.5px;
+      font-weight: 700;
+      text-shadow: 0px 1px 1px rgba(255, 255, 255, 0.6);
+    }
+
+    .view-screen {
+      display: none;
+      width: 100%;
+      flex-direction: column;
+      align-items: center;
+      animation: fadeIn 0.2s ease-in-out;
+    }
+
+    .view-screen.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .status-toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: var(--dark-brown);
+      color: #FFF;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      display: none;
+      z-index: 1000;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      text-align: center;
+      max-width: 90%;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- VIDÉO ARRIÈRE-PLAN PLEIN ÉCRAN -->
+  <video class="bg-video" autoplay loop muted playsinline preload="auto">
+    <source src="a.mp4" type="video/mp4">
+  </video>
+
+  <div class="app-viewport">
+
+    <!-- ================= ÉCRAN 1 : ACCUEIL PRINCIPAL ================= -->
+    <div id="screen-home" class="view-screen active">
+      <div class="welcome-text">
+        <p>Enter the space of NOD, a utopian world where you exist as you are.</p>
+        <p>Adopt his pace, take a breath, catch his rhythm, and make yourself at home.</p>
+        <p>In NOD's world, there's always a place for you.</p>
+      </div>
+
+      <button class="btn-3d btn-dark" onclick="navigateTo('screen-role')">S'inscrire</button>
+      <button class="btn-3d btn-dark" onclick="navigateTo('screen-login-options')">Se connecter</button>
+    </div>
+
+
+    <!-- ================= ÉCRAN DE CHOIX DES OPTIONS DE CONNEXION ================= -->
+    <div id="screen-login-options" class="view-screen">
+      <div class="section-title">SE CONNECTER EN TANT QUE :</div>
+
+      <button class="btn-3d btn-red" onclick="navigateTo('screen-guest-login')">GUEST (visiteur)</button>
+      <button class="btn-3d btn-red" onclick="navigateTo('screen-login')">BUYER (acheteur)</button>
+      <button class="btn-3d btn-light" style="margin-top: 10px;" onclick="navigateBack()">Retour</button>
+    </div>
+
+
+    <!-- ================= ÉCRAN CONNEXION VISITEUR / GUEST AVEC LOGOS SOCIAUX PARFAITS ================= -->
+    <div id="screen-guest-login" class="view-screen">
+      <div class="section-title">GUEST <span>(visiteur)</span></div>
+
+      <!-- Google Logo exact -->
+      <button class="btn-3d btn-red" onclick="loginSocial('google')">
+        <svg class="social-icon" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+        </svg>
+        <span>compte google</span>
+      </button>
+
+      <!-- TikTok Logo exact -->
+      <button class="btn-3d btn-red" onclick="loginSocial('tiktok')">
+        <svg class="social-icon" viewBox="0 0 24 24" fill="#FFFFFF">
+          <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.87 2.89 2.89 0 0 1-2.89-2.87 2.89 2.89 0 0 1 2.89-2.88c.28 0 .55.04.81.1v-3.5a6.37 6.37 0 0 0-.81-.05A6.34 6.34 0 0 0 3.15 15.6a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.88c1.32.94 2.92 1.5 4.66 1.5V6.93a4.84 4.84 0 0 1-.9-.24z"/>
+        </svg>
+        <span>compte tiktok</span>
+      </button>
+
+      <!-- Facebook Logo exact -->
+      <button class="btn-3d btn-red" onclick="loginSocial('facebook')">
+        <svg class="social-icon" viewBox="0 0 24 24" fill="#1877F2">
+          <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+        </svg>
+        <span>compte facebook</span>
+      </button>
+
+      <button class="btn-3d btn-light" onclick="handleAnonymousLogin()">autre</button>
+      <button class="btn-3d btn-light" style="margin-top: 6px;" onclick="navigateBack()">Retour</button>
+    </div>
+
+
+    <!-- ================= ÉCRAN 2 : CHOIX DU RÔLE D'INSCRIPTION ================= -->
+    <div id="screen-role" class="view-screen">
+      <div class="section-title">ENTER AS :</div>
+
+      <button class="btn-3d btn-red" onclick="navigateTo('screen-guest')">GUEST (visiteur)</button>
+      <button class="btn-3d btn-red" onclick="navigateTo('screen-buyer')">BUYER (acheteur)</button>
+      <button class="btn-3d btn-light" style="margin-top: 10px;" onclick="navigateBack()">Retour</button>
+    </div>
+
+
+    <!-- ================= ÉCRAN 3 : GUEST (INSCRIPTION SOCIAUX) ================= -->
+    <div id="screen-guest" class="view-screen">
+      <div class="section-title">GUEST <span>(visiteur)</span></div>
+
+      <div class="terms-box">
+        <input type="checkbox" id="terms-guest" required>
+        <label for="terms-guest">
+          J'ai lu et j'accepte les <a href="terms.html" target="_blank">Conditions d'utilisation</a> et la <a href="privacy.html" target="_blank">Politique de confidentialité</a>.
+        </label>
+      </div>
+
+      <button class="btn-3d btn-red" onclick="loginSocialWithCheck('google')">
+        <svg class="social-icon" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+        </svg>
+        <span>compte google</span>
+      </button>
+
+      <button class="btn-3d btn-red" onclick="loginSocialWithCheck('tiktok')">
+        <svg class="social-icon" viewBox="0 0 24 24" fill="#FFFFFF">
+          <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.87 2.89 2.89 0 0 1-2.89-2.87 2.89 2.89 0 0 1 2.89-2.88c.28 0 .55.04.81.1v-3.5a6.37 6.37 0 0 0-.81-.05A6.34 6.34 0 0 0 3.15 15.6a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.88c1.32.94 2.92 1.5 4.66 1.5V6.93a4.84 4.84 0 0 1-.9-.24z"/>
+        </svg>
+        <span>compte tiktok</span>
+      </button>
+
+      <button class="btn-3d btn-red" onclick="loginSocialWithCheck('facebook')">
+        <svg class="social-icon" viewBox="0 0 24 24" fill="#1877F2">
+          <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+        </svg>
+        <span>compte facebook</span>
+      </button>
+
+      <button class="btn-3d btn-light" onclick="handleAnonymousSignUp()">autre</button>
+      <button class="btn-3d btn-light" style="margin-top: 6px;" onclick="navigateBack()">Retour</button>
+    </div>
+
+
+    <!-- ================= ÉCRAN 4 : BUYER (INSCRIPTION CLIENT) ================= -->
+    <div id="screen-buyer" class="view-screen">
+      <div class="section-title">BUYER <span>(acheteur)</span></div>
+
+      <form id="buyer-signup-form" style="width: 100%;" onsubmit="handleBuyerSignup(event)">
+        <div class="input-group">
+          <input type="text" id="buyer-username" class="input-field" placeholder="username" required>
+        </div>
+
+        <div class="input-group">
+          <input type="email" id="buyer-email" class="input-field" placeholder="adresse mail" required>
+        </div>
+
+        <div class="phone-input-group">
+          <select id="buyer-country-code" class="phone-prefix-select">
+            <option value="+229">BJ +229</option>
+            <option value="+225">CI +225</option>
+            <option value="+228">TG +228</option>
+            <option value="+221">SN +221</option>
+            <option value="+237">CM +237</option>
+            <option value="+33">FR +33</option>
+          </select>
+          <input type="tel" id="buyer-phone" class="phone-number-field" placeholder="numéro de téléphone" required pattern="[0-9]{8,12}">
+        </div>
+
+        <div class="input-group">
+          <input type="password" id="buyer-password" class="input-field" placeholder="mot de passe" required minlength="6">
+          <span class="toggle-password" onclick="togglePasswordVisibility('buyer-password', this)">
+            <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+          </span>
+        </div>
+
+        <div class="terms-box">
+          <input type="checkbox" id="terms-buyer" required>
+          <label for="terms-buyer">
+            J'ai lu et j'accepte les <a href="terms.html" target="_blank">Conditions d'utilisation</a> et la <a href="privacy.html" target="_blank">Politique de confidentialité</a>.
+          </label>
+        </div>
+
+        <button type="submit" id="btn-submit-signup" class="btn-3d btn-dark">Envoyer le lien de confirmation</button>
+      </form>
+
+      <button class="btn-3d btn-light" style="margin-top: 5px;" onclick="navigateBack()">Retour</button>
+    </div>
+
+
+    <!-- ================= ÉCRAN 5 : CONNEXION BUYER ================= -->
+    <div id="screen-login" class="view-screen">
+      <div class="section-title">CONNEXION</div>
+
+      <form id="login-form" style="width: 100%;" onsubmit="handleLogin(event)">
+        <div class="input-group">
+          <input type="text" id="login-identifier" class="input-field" placeholder="username / adresse mail" required autocomplete="username">
+        </div>
+        <div class="input-group">
+          <input type="password" id="login-password" class="input-field" placeholder="mot de passe" required minlength="6" autocomplete="current-password">
+          <span class="toggle-password" onclick="togglePasswordVisibility('login-password', this)">
+            <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+          </span>
+        </div>
+
+        <a class="forgot-link" onclick="navigateTo('screen-forgot')">mot de passe oublié ?</a>
+
+        <button type="submit" id="btn-submit-login" class="btn-3d btn-dark">Se connecter</button>
+      </form>
+
+      <button class="btn-3d btn-light" style="margin-top: 5px;" onclick="navigateBack()">Retour</button>
+    </div>
+
+
+    <!-- ================= ÉCRAN 6 : MOT DE PASSE OUBLIÉ ================= -->
+    <div id="screen-forgot" class="view-screen">
+      <div class="section-title">RÉCUPÉRATION</div>
+
+      <form id="forgot-email-form" style="width: 100%;" onsubmit="handleSendRecoveryLink(event)">
+        <div class="input-group">
+          <input type="email" id="forgot-email-input" class="input-field" placeholder="Adresse e-mail du compte" required>
+        </div>
+
+        <button type="submit" id="btn-forgot-submit" class="btn-3d btn-dark">Envoyer le lien de réinitialisation</button>
+      </form>
+
+      <button class="btn-3d btn-light" style="margin-top: 5px;" onclick="navigateBack()">Retour</button>
+    </div>
+
+
+    <!-- ================= ÉCRAN 7 : CONFIRMATION D'ENVOI DU LIEN EMAIL ================= -->
+    <div id="screen-link-sent" class="view-screen">
+      <div class="section-title">LIEN ENVOYÉ !</div>
+
+      <div class="welcome-text" style="min-height:auto;">
+        <p style="opacity:1; transform:none; animation:none;" id="link-sent-message">Un lien de confirmation a été envoyé sur votre adresse e-mail. Veuillez cliquer dessus pour poursuivre.</p>
+      </div>
+
+      <button class="btn-3d btn-dark" onclick="navigateTo('screen-login')">Retour à la connexion</button>
+    </div>
+
+
+    <!-- ================= ÉCRAN 8 : ESPACE CONNECTÉ (PROFIL) ================= -->
+    <div id="screen-profile" class="view-screen">
+      <div class="section-title">WELCOME TO NOVANOD</div>
+      
+      <div class="welcome-text" style="min-height:auto;">
+        <p style="opacity:1; transform:none; animation:none;">Bienvenue dans l'univers NOVANOD !</p>
+        <p style="opacity:1; transform:none; animation:none;"><strong id="user-display-name" style="font-size: 16px;"></strong></p>
+        <p id="user-email-display" style="font-size: 12px; opacity: 0.8; margin-top: 5px; transform:none; animation:none;"></p>
+        <p id="user-phone-display" style="font-size: 12px; opacity: 0.8; margin-top: 2px; transform:none; animation:none;"></p>
+      </div>
+
+      <button class="btn-3d btn-dark" onclick="handleLogout()">Se déconnecter</button>
+    </div>
+
+    <!-- PIED DE PAGE -->
+    <div class="footer-copy">©2026 NOVANOD™, all rights reserved</div>
+
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast" class="status-toast"></div>
+
+  <!-- LOGIQUE NATIVE DE SÉCURITÉ GESTUELLE + APPWRITE AUTHENTIFICATION -->
+  <script>
+    // --- GESTION DU HISTORIQUE INTERNE & EMPÊCHEMENT DU SWIPE OUT NAVIGATEUR ---
+    let screenHistory = ['screen-home'];
+
+    function renderScreen(screenId) {
+      document.querySelectorAll('.view-screen').forEach(s => s.classList.remove('active'));
+      const target = document.getElementById(screenId);
+      if (target) {
+        target.classList.add('active');
+      }
+    }
+
+    function navigateTo(screenId) {
+      if (screenHistory[screenHistory.length - 1] !== screenId) {
+        screenHistory.push(screenId);
+      }
+      renderScreen(screenId);
+    }
+
+    function navigateBack() {
+      if (screenHistory.length > 1) {
+        screenHistory.pop();
+        const previousScreen = screenHistory[screenHistory.length - 1];
+        renderScreen(previousScreen);
+      } else {
+        renderScreen('screen-home');
+      }
+    }
+
+    // CAPTURE DU GESTE TACTILE SUR LE BORD DE L'ÉCRAN POUR EFFECTUER UN RETOUR DANS L'APP (ET NON SUR LE NAVIGATEUR)
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    window.addEventListener('touchstart', (e) => {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }, { passive: false });
+
+    window.addEventListener('touchmove', (e) => {
+      const touchCurrentX = e.touches[0].clientX;
+      const touchCurrentY = e.touches[0].clientY;
+      const deltaX = touchCurrentX - touchStartX;
+      const deltaY = Math.abs(touchCurrentY - touchStartY);
+
+      // Si le geste commence près du bord gauche (< 30px) et va vers la droite
+      if (touchStartX < 30 && deltaX > 30 && deltaX > deltaY) {
+        e.preventDefault(); // Annule le retour navigateur
+      }
+    }, { passive: false });
+
+    window.addEventListener('touchend', (e) => {
+      const touchEndX = e.changedTouches[0].clientX;
+      const deltaX = touchEndX - touchStartX;
+
+      if (touchStartX < 30 && deltaX > 60) {
+        navigateBack(); // Exécute le retour interne à l'application
+      }
+    }, { passive: false });
+
+
+    // CONFIGURATION APPWRITE
+    const APPWRITE_ENDPOINT = 'https://fra.cloud.appwrite.io/v1';
+    const APPWRITE_PROJECT_ID = '6ad4bd7b0036d37d3561';
+    const REDIRECT_URL = window.location.origin + window.location.pathname;
+
+    const client = new Appwrite.Client();
+    const account = new Account(client);
+
+    client
+      .setEndpoint(APPWRITE_ENDPOINT)
+      .setProject(APPWRITE_PROJECT_ID);
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.style.display = 'block';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 4000);
+    }
+
+    // BASE DE DONNÉES SVG ŒIL MOT DE PASSE
+    const svgEyeOpen = `<svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>`;
+    const svgEyeClosed = `<svg viewBox="0 0 24 24"><path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.44-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.17c0-1.66-1.34-3-3-3l-.17.02z"/></svg>`;
+
+    function togglePasswordVisibility(inputId, container) {
+      const field = document.getElementById(inputId);
+      if (field.type === "password") {
+        field.type = "text";
+        container.innerHTML = svgEyeClosed;
+      } else {
+        field.type = "password";
+        container.innerHTML = svgEyeOpen;
+      }
+    }
+
+    // VÉRIFICATION DE LA SESSION CONNECTÉE
+    async function checkSession() {
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const secret = urlParams.get('secret');
+        const userId = urlParams.get('userId');
+
+        if (secret && userId) {
+          try {
+            await account.updateVerification(userId, secret);
+            showToast("Votre compte a été vérifié avec succès !");
+          } catch(e) {
+            showToast("Validation effectuée.");
+          }
+        }
+
+        const user = await account.get();
+        if (user.email === '' && !user.phone) {
+          document.getElementById('user-display-name').textContent = "Visiteur Anonyme";
+          document.getElementById('user-email-display').textContent = "Mode Guest Actif";
+          document.getElementById('user-phone-display').textContent = "";
+        } else {
+          document.getElementById('user-display-name').textContent = user.name || user.email || user.phone || "Utilisateur";
+          document.getElementById('user-email-display').textContent = user.email ? `Email: ${user.email}` : "";
+          document.getElementById('user-phone-display').textContent = user.phone ? `Tél: ${user.phone}` : "";
+        }
+        navigateTo('screen-profile');
+      } catch (err) {
+        navigateTo('screen-home');
+      }
+    }
+
+    // --- AUTHENTIFICATION ANONYME ---
+    async function handleAnonymousSignUp() {
+      const termsCheckbox = document.getElementById('terms-guest');
+      if (!termsCheckbox.checked) {
+        showToast("Veuillez cocher la case d'acceptation des conditions.");
+        return;
+      }
+      await createAnonymousSession();
+    }
+
+    async function handleAnonymousLogin() {
+      await createAnonymousSession();
+    }
+
+    async function createAnonymousSession() {
+      try {
+        showToast("Connexion en mode anonyme...");
+        await account.createAnonymousSession();
+        showToast("Bienvenue en tant que visiteur !");
+        await checkSession();
+      } catch (error) {
+        showToast("Erreur de connexion : " + error.message);
+      }
+    }
+
+    // --- CONNEXION SOCIAUX ---
+    function loginSocial(provider) {
+      try {
+        account.createOAuth2Session(provider, REDIRECT_URL, REDIRECT_URL);
+      } catch (error) {
+        showToast("Erreur lors de la connexion via " + provider);
+      }
+    }
+
+    function loginSocialWithCheck(provider) {
+      const termsCheckbox = document.getElementById('terms-guest');
+      if (!termsCheckbox.checked) {
+        showToast("Veuillez accepter les conditions d'utilisation.");
+        return;
+      }
+      loginSocial(provider);
+    }
+
+    // --- INSCRIPTION BUYER ---
+    async function handleBuyerSignup(event) {
+      event.preventDefault();
+      const termsCheckbox = document.getElementById('terms-buyer');
+      if (!termsCheckbox.checked) {
+        showToast("Veuillez cocher la case d'acceptation des conditions.");
+        return;
+      }
+
+      const username = document.getElementById('buyer-username').value.trim();
+      const email = document.getElementById('buyer-email').value.trim();
+      const countryCode = document.getElementById('buyer-country-code').value;
+      const phoneNumber = document.getElementById('buyer-phone').value.trim();
+      const password = document.getElementById('buyer-password').value;
+
+      const btnSubmit = document.getElementById('btn-submit-signup');
+      btnSubmit.disabled = true;
+
+      try {
+        showToast("Création du compte...");
+        const userId = Appwrite.ID.unique();
+        await account.create(userId, email, password, username);
+        await account.createEmailPasswordSession(email, password);
+        await account.createVerification(REDIRECT_URL);
+
+        document.getElementById('link-sent-message').textContent = `Un lien de confirmation de compte a été envoyé à ${email}. Veuillez ouvrir votre boîte mail et cliquer dessus pour valider votre compte.`;
+        navigateTo('screen-link-sent');
+      } catch (error) {
+        showToast("Erreur lors de la création : " + error.message);
+      } finally {
+        btnSubmit.disabled = false;
+      }
+    }
+
+    // --- ENVOI DE RÉCUPÉRATION ---
+    async function handleSendRecoveryLink(event) {
+      event.preventDefault();
+      const email = document.getElementById('forgot-email-input').value.trim();
+      const btnSubmit = document.getElementById('btn-forgot-submit');
+      btnSubmit.disabled = true;
+
+      try {
+        showToast("Envoi du lien de réinitialisation...");
+        await account.createRecovery(email, REDIRECT_URL);
+
+        document.getElementById('link-sent-message').textContent = `Un lien de réinitialisation de mot de passe a été envoyé à ${email}. Vérifiez votre boîte mail pour changer votre mot de passe.`;
+        navigateTo('screen-link-sent');
+      } catch (error) {
+        showToast("Erreur lors de l'envoi : " + error.message);
+      } finally {
+        btnSubmit.disabled = false;
+      }
+    }
+
+    // --- CONNEXION BUYER ---
+    async function handleLogin(event) {
+      event.preventDefault();
+      const btn = document.getElementById('btn-submit-login');
+      let identifier = document.getElementById('login-identifier').value.trim();
+      const password = document.getElementById('login-password').value;
+
+      btn.disabled = true;
+
+      try {
+        await account.createEmailPasswordSession(identifier, password);
+        showToast("Connexion réussie !");
+        await checkSession();
+      } catch (error) {
+        showToast("Identifiants incorrects ou session invalide.");
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    // --- DÉCONNEXION ---
+    async function handleLogout() {
+      try {
+        await account.deleteSession('current');
+        showToast("Vous avez été déconnecté.");
+        navigateTo('screen-home');
+      } catch (error) {
+        showToast("Erreur lors de la déconnexion.");
+      }
+    }
+
+    window.onload = checkSession;
+  </script>
+</body>
+</html>
