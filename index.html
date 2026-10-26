@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>WELCOME TO NOVANOD</title>
+  
+  <!-- Appwrite SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.1"></script>
+  
+  <!-- Google Fonts : Fredoka & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* --- PREVENT OVERFLOW WITHOUT BLOCKING REFRESH --- */
+    html {
+      height: 100%;
+    }
+
+    body {
+      touch-action: auto;
+      overflow-x: hidden;
+      overflow-y: auto;
+      width: 100%;
+      min-height: 100vh;
+      background-color: #000000;
+      color: var(--text-red);
+      font-family: var(--font-body);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 15px 15px 20px 15px;
+      position: relative;
+    }
+
+    /* --- VARIABLES NOVANOD --- */
+    :root {
+      --red-primary: #E64A38;        /* Rouge corail boutons */
+      --dark-brown: #3B1420;         /* Bordeaux très foncé */
+      --text-red: #D94432;           /* Rouge des titres et textes */
+      --cream-bg: #FFFEE0;           /* Crème de fond */
+      --font-heading: 'Fredoka', sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* --- VIDÉO DE FOND PLEIN ÉCRAN --- */
+    .bg-video {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      z-index: -1;
+    }
+
+    /* Container global Mobile */
+    .app-viewport {
+      width: 100%;
+      max-width: 380px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+      margin-top: auto;
+    }
+
+    /* --- TEXTE D'ACCUEIL SÉQUENTIEL CALIBRÉ --- */
+    .welcome-text {
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-red);
+      line-height: 1.45;
+      margin-bottom: 20px;
+      padding: 0 10px;
+      text-shadow: 0px 1px 2px rgba(255, 255, 255, 0.6);
+      min-height: 105px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+
+    .welcome-text p {
+      margin-bottom: 8px;
+      opacity: 0;
+      animation-duration: 10s;
+      animation-iteration-count: infinite;
+      animation-timing-function: ease-in-out;
+    }
+
+    .welcome-text p:nth-child(1) { animation-name: seq1; }
+    .welcome-text p:nth-child(2) { animation-name: seq2; }
+    .welcome-text p:nth-child(3) { animation-name: seq3; }
+
+    @keyframes seq1 {
+      0% { opacity: 0; transform: translateY(4px); }
+      3% { opacity: 1; transform: translateY(0); }
+      88% { opacity: 1; transform: translateY(0); }
+      94%, 100% { opacity: 0; transform: translateY(-4px); }
+    }
+
+    @keyframes seq2 {
+      0%, 15% { opacity: 0; transform: translateY(4px); }
+      18% { opacity: 1; transform: translateY(0); }
+      88% { opacity: 1; transform: translateY(0); }
+      94%, 100% { opacity: 0; transform: translateY(-4px); }
+    }
+
+    @keyframes seq3 {
+      0%, 26% { opacity: 0; transform: translateY(4px); }
+      30% { opacity: 1; transform: translateY(0); }
+      88% { opacity: 1; transform: translateY(0); }
+      94%, 100% { opacity: 0; transform: translateY(-4px); }
+    }
+
+    /* --- TITRES DE SECTION --- */
+    .section-title {
+      font-family: var(--font-body);
+      font-size: 21px;
+      font-weight: 800;
+      color: var(--text-red);
+      margin-bottom: 22px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      text-shadow: 0px 1px 2px rgba(255, 255, 255, 0.6);
+    }
+
+    .section-title span {
+      font-family: var(--font-body);
+      font-weight: 700;
+      font-size: 19px;
+      text-transform: lowercase;
+    }
+
+    /* --- BOUTONS 3D --- */
+    .btn-3d {
+      width: 100%;
+      height: 48px;
+      border-radius: 14px;
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      margin-bottom: 12px;
+      position: relative;
+      text-decoration: none;
+      outline: none;
+      transition: transform 0.08s ease-out, box-shadow 0.08s ease-out;
+      border: 2px solid var(--dark-brown);
+    }
+
+    .btn-red {
+      background-color: var(--red-primary);
+      color: #FFFFFF;
+      box-shadow: 0px 4px 0px var(--dark-brown);
+    }
+
+    .btn-dark {
+      background-color: var(--dark-brown);
+      color: #FFFFFF;
+      box-shadow: 0px 4px 0px #1A070D;
+    }
+
+    .btn-light {
+      background-color: var(--cream-bg);
+      color: var(--text-red);
+      box-shadow: 0px 4px 0px var(--dark-brown);
+    }
+
+    .btn-3d:active {
+      transform: translateY(3px);
+      box-shadow: 0px 1px 0px var(--dark-brown);
+    }
+
+    .btn-3d:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    /* --- INPUTS --- */
+    .input-group {
+      width: 100%;
+      margin-bottom: 12px;
+      position: relative;
+    }
+
+    .input-field {
+      width: 100%;
+      height: 48px;
+      border-radius: 14px;
+      border: 2px solid var(--red-primary);
+      background-color: rgba(255, 254, 224, 0.92);
+      padding: 0 42px 0 15px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-red);
+      text-align: center;
+      outline: none;
+    }
+
+    .input-field::placeholder {
+      color: rgba(217, 68, 50, 0.75);
+      font-weight: 600;
+    }
+
+    .input-field:focus {
+      border-color: var(--dark-brown);
+      background-color: var(--cream-bg);
+    }
+
+    .phone-input-group {
+      display: flex;
+      gap: 8px;
+      width: 100%;
+      margin-bottom: 12px;
+    }
+
+    .phone-prefix-select {
+      height: 48px;
+      border-radius: 14px;
+      border: 2px solid var(--red-primary);
+      background-color: rgba(255, 254, 224, 0.92);
+      padding: 0 8px;
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text-red);
+      outline: none;
+      cursor: pointer;
+    }
+
+    .phone-number-field {
+      flex: 1;
+      height: 48px;
+      border-radius: 14px;
+      border: 2px solid var(--red-primary);
+      background-color: rgba(255, 254, 224, 0.92);
+      padding: 0 15px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-red);
+      text-align: center;
+      outline: none;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-red);
+    }
+
+    .toggle-password svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+
+    /* TERMS BOX */
+    .terms-box {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-red);
+      margin-bottom: 15px;
+      padding: 8px 10px;
+      background-color: rgba(255, 254, 224, 0.92);
+      border-radius: 10px;
+      border: 1px solid var(--red-primary);
+      user-select: text;
+    }
+
+    .terms-box input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      margin-top: 1px;
+      accent-color: var(--red-primary);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .terms-box a {
+      color: var(--dark-brown);
+      text-decoration: underline;
+      font-weight: 800;
+    }
+
+    .forgot-link {
+      display: inline-block;
+      color: var(--text-red);
+      font-size: 13px;
+      font-weight: 800;
+      text-decoration: none;
+      margin-top: 4px;
+      margin-bottom: 18px;
+      cursor: pointer;
+      text-shadow: 0px 1px 1px rgba(255, 255, 255, 0.6);
+    }
+
+    .forgot-link:hover {
+      text-decoration: underline;
+    }
+
+    .footer-copy {
+      font-size: 9.5px;
+      color: rgba(217, 68, 50, 0.65);
+      margin-top: 22px;
+      margin-bottom: 4px;
+      letter-spacing: 0.2px;
+      font-weight: 600;
+      text-align: center;
+      text-shadow: 0px 0.5px 1px rgba(255, 255, 255, 0.5);
+    }
+
+    .view-screen {
+      display: none;
+      width: 100%;
+      flex-direction: column;
+      align-items: center;
+      animation: fadeIn 0.2s ease-in-out;
+    }
+
+    .view-screen.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .status-toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: var(--dark-brown);
+      color: #FFF;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      display: none;
+      z-index: 1000;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      text-align: center;
+      max-width: 90%;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- VIDÉO ARRIÈRE-PLAN PLEIN ÉCRAN -->
+  <video class="bg-video" autoplay loop muted playsinline preload="auto">
+    <source src="a.mp4" type="video/mp4">
+  </video>
+
+  <div class="app-viewport">
+
+    <!-- ================= ÉCRAN 1 : ACCUEIL PRINCIPAL ================= -->
+    <div id="screen-home" class="view-screen active">
+      <div class="welcome-text">
+        <p>Enter the space of NOD, a utopian world where you exist as you are.</p>
+        <p>Adopt his pace, take a breath, catch his rhythm, and make yourself at home.</p>
+        <p>In NOD's world, there's always a place for you.</p>
+      </div>
+
+      <button class="btn-3d btn-dark" onclick="navigateTo('screen-role')">S'inscrire</button>
+      <button class="btn-3d btn-dark" onclick="navigateTo('screen-login-options')">Se connecter</button>
+    </div>
+
+
+    <!-- ================= ÉCRAN DE CHOIX DES OPTIONS DE CONNEXION ================= -->
+    <div id="screen-login-options" class="view-screen">
+      <div class="section-title">SE CONNECTER EN TANT QUE :</div>
+
+      <button class="btn-3d btn-red" onclick="navigateTo('screen-guest-login')">GUEST (visiteur)</button>
+      <button class="btn-3d btn-red" onclick="navigateTo('screen-login')">BUYER (acheteur)</button>
+      <button class="btn-3d btn-light" style="margin-top: 10px;" onclick="navigateBack()">Retour</button>
+    </div>
+
+
+    <!-- ================= ÉCRAN CONNEXION VISITEUR / GUEST ================= -->
+    <div id="screen-guest-login" class="view-screen">
+      <div class="section-title">GUEST <span>(visiteur)</span></div>
+
+      <button class="btn-3d btn-red" onclick="loginSocial('google')">compte google</button>
+      <button class="btn-3d btn-red" onclick="loginSocial('tiktok')">compte tiktok</button>
+      <button class="btn-3d btn-red" onclick="loginSocial('facebook')">compte facebook</button>
+
+      <button class="btn-3d btn-light" style="margin-top: 6px;" onclick="navigateBack()">Retour</button>
+    </div>
+
+
+    <!-- ================= ÉCRAN 2 : CHOIX DU RÔLE D'INSCRIPTION ================= -->
+    <div id="screen-role" class="view-screen">
+      <div class="section-title">ENTER AS :</div>
+
+      <button class="btn-3d btn-red" onclick="navigateTo('screen-guest')">GUEST (visiteur)</button>
+      <button class="btn-3d btn-red" onclick="navigateTo('screen-buyer')">BUYER (acheteur)</button>
+      <button class="btn-3d btn-light" style="margin-top: 10px;" onclick="navigateBack()">Retour</button>
+    </div>
+
+
+    <!-- ================= ÉCRAN 3 : GUEST (INSCRIPTION) ================= -->
+    <div id="screen-guest" class="view-screen">
+      <div class="section-title">GUEST <span>(visiteur)</span></div>
+
+      <div class="terms-box">
+        <input type="checkbox" id="terms-guest" required>
+        <label for="terms-guest">
+          J'ai lu et j'accepte les <a href="terms.html" target="_blank">Conditions d'utilisation</a> et la <a href="privacy.html" target="_blank">Politique de confidentialité</a>.
+        </label>
+      </div>
+
+      <button class="btn-3d btn-red" onclick="loginSocialWithCheck('google')">compte google</button>
+      <button class="btn-3d btn-red" onclick="loginSocialWithCheck('tiktok')">compte tiktok</button>
+      <button class="btn-3d btn-red" onclick="loginSocialWithCheck('facebook')">compte facebook</button>
+
+      <button class="btn-3d btn-light" style="margin-top: 6px;" onclick="navigateBack()">Retour</button>
+    </div>
+
+
+    <!-- ================= ÉCRAN 4 : BUYER (INSCRIPTION CLIENT) ================= -->
+    <div id="screen-buyer" class="view-screen">
+      <div class="section-title">BUYER <span>(acheteur)</span></div>
+
+      <form id="buyer-signup-form" style="width: 100%;" onsubmit="handleBuyerSignup(event)">
+        <div class="input-group">
+          <input type="text" id="buyer-username" class="input-field" placeholder="username" required>
+        </div>
+
+        <div class="input-group">
+          <input type="email" id="buyer-email" class="input-field" placeholder="adresse mail" required>
+        </div>
+
+        <div class="phone-input-group">
+          <select id="buyer-country-code" class="phone-prefix-select">
+            <option value="+229">BJ +229</option>
+            <option value="+225">CI +225</option>
+            <option value="+228">TG +228</option>
+            <option value="+221">SN +221</option>
+            <option value="+237">CM +237</option>
+            <option value="+33">FR +33</option>
+          </select>
+          <input type="tel" id="buyer-phone" class="phone-number-field" placeholder="numéro de téléphone" required pattern="[0-9]{8,12}">
+        </div>
+
+        <div class="input-group">
+          <input type="password" id="buyer-password" class="input-field" placeholder="mot de passe (lettres, chiffres, symboles)" required minlength="6">
+          <span class="toggle-password" onclick="togglePasswordVisibility('buyer-password', this)">
+            <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+          </span>
+        </div>
+
+        <div class="terms-box">
+          <input type="checkbox" id="terms-buyer" required>
+          <label for="terms-buyer">
+            J'ai lu et j'accepte les <a href="terms.html" target="_blank">Conditions d'utilisation</a> et la <a href="privacy.html" target="_blank">Politique de confidentialité</a>.
+          </label>
+        </div>
+
+        <button type="submit" id="btn-submit-signup" class="btn-3d btn-dark">S'inscrire</button>
+      </form>
+
+      <button class="btn-3d btn-light" style="margin-top: 5px;" onclick="navigateBack()">Retour</button>
+    </div>
+
+
+    <!-- ================= ÉCRAN 5 : CONNEXION BUYER ================= -->
+    <div id="screen-login" class="view-screen">
+      <div class="section-title">CONNEXION</div>
+
+      <form id="login-form" style="width: 100%;" onsubmit="handleLogin(event)">
+        <div class="input-group">
+          <input type="text" id="login-identifier" class="input-field" placeholder="username / adresse mail" required autocomplete="username">
+        </div>
+        <div class="input-group">
+          <input type="password" id="login-password" class="input-field" placeholder="mot de passe" required minlength="6" autocomplete="current-password">
+          <span class="toggle-password" onclick="togglePasswordVisibility('login-password', this)">
+            <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+          </span>
+        </div>
+
+        <a class="forgot-link" onclick="navigateTo('screen-forgot')">mot de passe oublié ?</a>
+
+        <button type="submit" id="btn-submit-login" class="btn-3d btn-dark">Se connecter</button>
+      </form>
+
+      <button class="btn-3d btn-light" style="margin-top: 5px;" onclick="navigateBack()">Retour</button>
+    </div>
+
+
+    <!-- ================= ÉCRAN 6 : MOT DE PASSE OUBLIÉ (DEMANDE DU LIEN E-MAIL) ================= -->
+    <div id="screen-forgot" class="view-screen">
+      <div class="section-title">RÉCUPÉRATION</div>
+
+      <form id="forgot-email-form" style="width: 100%;" onsubmit="handleSendRecoveryEmail(event)">
+        <p style="font-size: 12px; margin-bottom: 15px; text-shadow: 0px 1px 1px rgba(255, 255, 255, 0.6);">
+          Entrez votre adresse e-mail pour recevoir un lien de réinitialisation de mot de passe.
+        </p>
+
+        <div class="input-group">
+          <input type="email" id="forgot-email-input" class="input-field" placeholder="Adresse e-mail du compte" required>
+        </div>
+
+        <button type="submit" id="btn-forgot-submit" class="btn-3d btn-dark">Envoyer le lien E-mail</button>
+      </form>
+
+      <button class="btn-3d btn-light" style="margin-top: 5px;" onclick="navigateBack()">Retour</button>
+    </div>
+
+
+    <!-- ================= ÉCRAN : SAISIE DU NOUVEAU MOT DE PASSE ================= -->
+    <div id="screen-reset-password" class="view-screen">
+      <div class="section-title">NOUVEAU MOT DE PASSE</div>
+
+      <form id="reset-password-form" style="width: 100%;" onsubmit="handleResetPasswordSubmit(event)">
+        <p style="font-size: 12px; margin-bottom: 15px; text-shadow: 0px 1px 1px rgba(255, 255, 255, 0.6);">
+          Veuillez saisir votre nouveau mot de passe pour finaliser la réinitialisation.
+        </p>
+
+        <div class="input-group">
+          <input type="password" id="reset-new-password" class="input-field" placeholder="Nouveau mot de passe (min 6 char.)" required minlength="6">
+          <span class="toggle-password" onclick="togglePasswordVisibility('reset-new-password', this)">
+            <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+          </span>
+        </div>
+
+        <button type="submit" id="btn-reset-submit" class="btn-3d btn-red">Changer le mot de passe</button>
+      </form>
+    </div>
+
+
+    <!-- ================= ÉCRAN 7 : CONFIRMATION D'ENVOI DE LIEN ================= -->
+    <div id="screen-link-sent" class="view-screen">
+      <div class="section-title">LIEN ENVOYÉ !</div>
+
+      <div class="welcome-text" style="min-height:auto;">
+        <p style="opacity:1; transform:none; animation:none;" id="link-sent-message">Un lien a été envoyé sur votre adresse e-mail. Veuillez cliquer dessus pour poursuivre.</p>
+      </div>
+
+      <button class="btn-3d btn-dark" onclick="navigateTo('screen-login')">Retour à la connexion</button>
+    </div>
+
+
+    <!-- ================= ÉCRAN 8 : FÉLICITATIONS ET VALIDATION DU COMPTE ================= -->
+    <div id="screen-welcome-success" class="view-screen">
+      <div class="section-title">FÉLICITATIONS !</div>
+
+      <div class="welcome-text" style="min-height:auto; margin-bottom: 25px;">
+        <p style="opacity:1; transform:none; animation:none; font-size: 15px; color: var(--text-red); font-weight:800;">
+          Bienvenue à NOVANOD !
+        </p>
+        <p style="opacity:1; transform:none; animation:none; font-size: 13px; margin-top: 10px;">
+          Nous vous remercions chaleureusement pour votre inscription. Votre compte a été vérifié avec succès.
+        </p>
+      </div>
+
+      <button class="btn-3d btn-red" onclick="handleSuccessAccountAccess()">Valider et Accéder au Compte</button>
+    </div>
+
+
+    <!-- ================= ÉCRAN 9 : ESPACE CONNECTÉ (PROFIL) ================= -->
+    <div id="screen-profile" class="view-screen">
+      <div class="section-title">WELCOME TO NOVANOD</div>
+      
+      <div class="welcome-text" style="min-height:auto;">
+        <p style="opacity:1; transform:none; animation:none;">Bienvenue dans l'univers NOVANOD !</p>
+        <p style="opacity:1; transform:none; animation:none;"><strong id="user-display-name" style="font-size: 16px;"></strong></p>
+        <p id="user-email-display" style="font-size: 12px; opacity: 0.8; margin-top: 5px; transform:none; animation:none;"></p>
+        <p id="user-phone-display" style="font-size: 12px; opacity: 0.8; margin-top: 2px; transform:none; animation:none;"></p>
+      </div>
+
+      <button class="btn-3d btn-dark" onclick="handleLogout()">Se déconnecter</button>
+    </div>
+
+    <!-- PIED DE PAGE -->
+    <div class="footer-copy">©2026 NOVANOD™, all rights reserved</div>
+
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast" class="status-toast"></div>
+
+  <script>
+    // --- 1. INITIALISATION APPWRITE ---
+    const APPWRITE_ENDPOINT = 'https://fra.cloud.appwrite.io/v1';
+    const APPWRITE_PROJECT_ID = '6ad4bd7b0036d37d3561';
+    const REDIRECT_URL = window.location.origin + window.location.pathname;
+
+    let client = null;
+    let account = null;
+
+    try {
+      client = new Appwrite.Client();
+      client
+        .setEndpoint(APPWRITE_ENDPOINT)
+        .setProject(APPWRITE_PROJECT_ID);
+      account = new Appwrite.Account(client);
+    } catch (err) {
+      console.error("Erreur d'initialisation Appwrite:", err);
+    }
+
+    // Variables globales Récupération de mot de passe
+    let resetUserId = null;
+    let resetSecret = null;
+
+    // --- 2. GESTION NAVIGATION, HISTORIQUE ET RETOUR NATIF ---
+    let screenHistory = ['screen-home'];
+
+    function renderScreen(screenId) {
+      document.querySelectorAll('.view-screen').forEach(s => s.classList.remove('active'));
+      const target = document.getElementById(screenId);
+      if (target) {
+        target.classList.add('active');
+      }
+    }
+
+    function navigateTo(screenId, pushToState = true) {
+      if (screenHistory[screenHistory.length - 1] !== screenId) {
+        screenHistory.push(screenId);
+        if (pushToState) {
+          history.pushState({ screenId: screenId }, '', '#' + screenId);
+        }
+      }
+      renderScreen(screenId);
+    }
+
+    function navigateBack() {
+      if (screenHistory.length > 1) {
+        screenHistory.pop();
+        const previousScreen = screenHistory[screenHistory.length - 1];
+        renderScreen(previousScreen);
+      } else {
+        renderScreen('screen-home');
+      }
+    }
+
+    // Synchronisation bouton Retour du Navigateur / Mobile
+    window.addEventListener('popstate', (e) => {
+      if (screenHistory.length > 1) {
+        screenHistory.pop();
+        const previousScreen = screenHistory[screenHistory.length - 1];
+        renderScreen(previousScreen);
+      } else {
+        renderScreen('screen-home');
+      }
+    });
+
+    // --- 3. UTILITAIRES ---
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      if (!toast) return;
+      toast.textContent = message;
+      toast.style.display = 'block';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 4000);
+    }
+
+    const svgEyeOpen = `<svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>`;
+    const svgEyeClosed = `<svg viewBox="0 0 24 24"><path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.44-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.17c0-1.66-1.34-3-3-3l-.17.02z"/></svg>`;
+
+    function togglePasswordVisibility(inputId, container) {
+      const field = document.getElementById(inputId);
+      if (!field) return;
+      if (field.type === "password") {
+        field.type = "text";
+        container.innerHTML = svgEyeClosed;
+      } else {
+        field.type = "password";
+        container.innerHTML = svgEyeOpen;
+      }
+    }
+
+    // --- 4. VÉRIFICATION DE LA SESSION ET REDIRECTIONS ---
+    async function checkSession() {
+      if (!account) return;
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const secret = urlParams.get('secret');
+        const userId = urlParams.get('userId');
+        const expire = urlParams.get('expire');
+        const action = urlParams.get('action');
+
+        // CAS A : VÉRIFICATION D'INSCRIPTION PAR E-MAIL
+        if (secret && userId && action === 'verify') {
+          try {
+            await account.updateVerification(userId, secret);
+          } catch(e) {
+            console.log("Compte déjà vérifié ou session active.");
+          }
+          navigateTo('screen-welcome-success');
+          return;
+        }
+
+        // CAS B : RÉINITIALISATION DU MOT DE PASSE (Mot de passe oublié)
+        if (secret && userId && expire && action !== 'verify') {
+          resetUserId = userId;
+          resetSecret = secret;
+          navigateTo('screen-reset-password');
+          showToast("Saisissez votre nouveau mot de passe.");
+          return;
+        }
+
+        // CAS C : SESSIONS ACTIVES (Vérification si e-mail confirmé)
+        const user = await account.get();
+        if (user.email && !user.emailVerification) {
+          // Si le compte existe mais l'email n'est pas vérifié, on détruit la session temporaire
+          await account.deleteSession('current');
+          navigateTo('screen-home');
+          return;
+        }
+        displayUserData(user);
+        navigateTo('screen-profile');
+      } catch (err) {
+        navigateTo('screen-home');
+      }
+    }
+
+    function displayUserData(user) {
+      if (user.email === '' && !user.phone) {
+        document.getElementById('user-display-name').textContent = "Visiteur Anonyme";
+        document.getElementById('user-email-display').textContent = "Mode Guest Actif";
+        document.getElementById('user-phone-display').textContent = "";
+      } else {
+        document.getElementById('user-display-name').textContent = user.name || user.email || user.phone || "Utilisateur";
+        document.getElementById('user-email-display').textContent = user.email ? `Email: ${user.email}` : "";
+        document.getElementById('user-phone-display').textContent = user.phone ? `Tél: ${user.phone}` : "";
+      }
+    }
+
+    async function handleSuccessAccountAccess() {
+      try {
+        const user = await account.get();
+        displayUserData(user);
+        navigateTo('screen-profile');
+      } catch (err) {
+        navigateTo('screen-login');
+      }
+    }
+
+    // --- 5. AUTHENTIFICATIONS GUEST & SOCIAUX ---
+    function loginSocial(provider) {
+      if (!account) return;
+      try {
+        account.createOAuth2Session(provider, REDIRECT_URL, REDIRECT_URL);
+      } catch (error) {
+        showToast("Erreur lors de la connexion via " + provider);
+      }
+    }
+
+    function loginSocialWithCheck(provider) {
+      const termsCheckbox = document.getElementById('terms-guest');
+      if (termsCheckbox && !termsCheckbox.checked) {
+        showToast("Veuillez accepter les conditions d'utilisation.");
+        return;
+      }
+      loginSocial(provider);
+    }
+
+    // --- 6. INSCRIPTION BUYER ---
+    async function handleBuyerSignup(event) {
+      event.preventDefault();
+      if (!account) return;
+
+      const termsCheckbox = document.getElementById('terms-buyer');
+      if (termsCheckbox && !termsCheckbox.checked) {
+        showToast("Veuillez cocher la case d'acceptation des conditions.");
+        return;
+      }
+
+      const username = document.getElementById('buyer-username').value.trim();
+      const email = document.getElementById('buyer-email').value.trim();
+      const password = document.getElementById('buyer-password').value;
+
+      const btnSubmit = document.getElementById('btn-submit-signup');
+      if (btnSubmit) btnSubmit.disabled = true;
+
+      try {
+        showToast("Création du compte et envoi du lien...");
+        
+        await account.create(Appwrite.ID.unique(), email, password, username);
+        await account.createEmailPasswordSession(email, password);
+        
+        // Ajout du paramètre action=verify pour cibler précisément l'écran Félicitations
+        const verificationUrl = REDIRECT_URL + (REDIRECT_URL.includes('?') ? '&' : '?') + 'action=verify';
+        await account.createVerification(verificationUrl);
+
+        // On ferme la session automatiquement après envoi du lien pour imposer la vérification
+        await account.deleteSession('current');
+
+        document.getElementById('link-sent-message').textContent = `Un lien de confirmation a été envoyé à l'adresse ${email}. Veuillez cliquer sur ce lien dans votre boîte mail pour valider votre compte.`;
+        
+        navigateTo('screen-link-sent');
+      } catch (error) {
+        showToast("Erreur d'inscription : " + error.message);
+      } finally {
+        if (btnSubmit) btnSubmit.disabled = false;
+      }
+    }
+
+    // --- 7. DEMANDE DE RÉINITIALISATION DE MOT DE PASSE ---
+    async function handleSendRecoveryEmail(event) {
+      event.preventDefault();
+      if (!account) return;
+
+      const email = document.getElementById('forgot-email-input').value.trim();
+
+      const btnSubmit = document.getElementById('btn-forgot-submit');
+      if (btnSubmit) btnSubmit.disabled = true;
+
+      try {
+        showToast("Envoi du lien de réinitialisation...");
+        await account.createRecovery(email, REDIRECT_URL);
+
+        document.getElementById('link-sent-message').textContent = `Un lien de réinitialisation a été envoyé à ${email}. Veuillez vérifier votre boîte de réception pour définir votre nouveau mot de passe.`;
+        
+        navigateTo('screen-link-sent');
+      } catch (error) {
+        showToast("Erreur d'envoi : " + error.message);
+      } finally {
+        if (btnSubmit) btnSubmit.disabled = false;
+      }
+    }
+
+    // --- 8. SOUMISSION DU NOUVEAU MOT DE PASSE ---
+    async function handleResetPasswordSubmit(event) {
+      event.preventDefault();
+      if (!account || !resetUserId || !resetSecret) {
+        showToast("Session de réinitialisation invalide ou expirée.");
+        return;
+      }
+
+      const newPassword = document.getElementById('reset-new-password').value;
+      const btnSubmit = document.getElementById('btn-reset-submit');
+
+      if (newPassword.length < 6) {
+        showToast("Le mot de passe doit comporter au moins 6 caractères.");
+        return;
+      }
+
+      if (btnSubmit) btnSubmit.disabled = true;
+
+      try {
+        showToast("Mise à jour du mot de passe...");
+        await account.updateRecovery(resetUserId, resetSecret, newPassword);
+        
+        showToast("Mot de passe mis à jour avec succès ! Veuillez vous connecter.");
+        navigateTo('screen-login');
+      } catch (error) {
+        showToast("Erreur de mise à jour : " + error.message);
+      } finally {
+        if (btnSubmit) btnSubmit.disabled = false;
+      }
+    }
+
+    // --- 9. CONNEXION & DÉCONNEXION ---
+    async function handleLogin(event) {
+      event.preventDefault();
+      if (!account) return;
+
+      const btn = document.getElementById('btn-submit-login');
+      let identifier = document.getElementById('login-identifier').value.trim();
+      const password = document.getElementById('login-password').value;
+
+      if (btn) btn.disabled = true;
+
+      try {
+        // 1. Création de la session
+        await account.createEmailPasswordSession(identifier, password);
+        
+        // 2. Vérification du statut d'e-mail
+        const user = await account.get();
+        if (user.email && !user.emailVerification) {
+          // Si l'e-mail n'est pas vérifié, on ferme la session et on affiche une alerte
+          await account.deleteSession('current');
+          showToast("Veuillez d'abord vérifier votre e-mail via le lien reçu dans votre boîte de réception.");
+          return;
+        }
+
+        showToast("Connexion réussie !");
+        await checkSession();
+      } catch (error) {
+        showToast("Identifiants incorrects ou session invalide.");
+      } finally {
+        if (btn) btn.disabled = false;
+      }
+    }
+
+    async function handleLogout() {
+      if (!account) return;
+      try {
+        await account.deleteSession('current');
+        showToast("Vous avez été déconnecté.");
+        navigateTo('screen-home');
+      } catch (error) {
+        showToast("Erreur lors de la déconnexion.");
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      checkSession();
+    });
+  </script>
+</body>
+</html>
