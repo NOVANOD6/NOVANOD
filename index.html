@@ -124,12 +124,25 @@
       z-index: 0; /* Visible au-dessus du fond html crème, mais derrière l'interface */
     }
 
+    /* Bandes invisibles qui masquent le pixel de jonction résiduel (propre à la
+       compression de la vidéo) en le recouvrant d'un trait de couleur identique,
+       positionné dynamiquement en JS (voir updateSeamCover). Masquées par défaut :
+       elles n'existent qu'en mode paysage, là où le letterboxing est utilisé. */
+    .seam-cover {
+      display: none;
+      position: fixed;
+      background-color: var(--cream-bg-landscape);
+      z-index: 1;
+      pointer-events: none;
+    }
+
     /* Affichage intégral sans rognage en mode paysage avec fond crème exact */
     @media screen and (orientation: landscape) {
       .bg-video {
         object-fit: contain;
         background-color: var(--cream-bg-landscape);
       }
+      .seam-cover { display: block; }
       /* Téléphone horizontal (petite hauteur) */
       .top-brand-logo-container {
         top: 4px;
@@ -677,6 +690,12 @@
   <!-- Canvas invisible utilisé uniquement pour lire la couleur réelle de la vidéo (voir syncVideoBackgroundColor) -->
   <canvas id="bg-color-sampler" width="1" height="1" style="position:fixed; width:1px; height:1px; opacity:0; pointer-events:none;"></canvas>
 
+  <!-- Bandes de masquage de la jonction vidéo/fond, positionnées dynamiquement en JS (voir updateSeamCover) -->
+  <div id="seam-cover-left" class="seam-cover"></div>
+  <div id="seam-cover-right" class="seam-cover"></div>
+  <div id="seam-cover-top" class="seam-cover"></div>
+  <div id="seam-cover-bottom" class="seam-cover"></div>
+
   <div class="app-viewport">
 
     <!-- ================= ÉCRAN 1 : ACCUEIL PRINCIPAL ================= -->
@@ -1085,7 +1104,7 @@
         if (bgVideo) {
           bgVideo.load();
           bgVideo.play().catch(() => {});
-          setTimeout(syncVideoBackgroundColor, 250);
+          setTimeout(() => { syncVideoBackgroundColor(); updateSeamCover(); }, 250);
         }
       }, 200);
     });
@@ -1121,6 +1140,66 @@
       bgVideo.addEventListener('playing', syncVideoBackgroundColor);
       if (bgVideo.readyState >= 2) syncVideoBackgroundColor();
     }
+
+    // ------------------------------------------------------------------
+    // MASQUAGE DE LA JONCTION (anti-ligne, étape 2) :
+    // En mode paysage (object-fit: contain), la vidéo est centrée avec des
+    // bandes de couleur sur les côtés (pilier) ou en haut/bas (lettrage),
+    // selon que l'écran est plus large ou plus étroit que la vidéo. On calcule
+    // ici la position exacte de cette frontière, puis on y pose une fine bande
+    // (même couleur, via la variable déjà synchronisée) qui recouvre le pixel
+    // de transition résiduel propre à la compression de la vidéo.
+    // ------------------------------------------------------------------
+    const SEAM_STRIP_WIDTH = 6; // px — large tolérance de sécurité, invisible car même couleur
+    function updateSeamCover() {
+      const left = document.getElementById('seam-cover-left');
+      const right = document.getElementById('seam-cover-right');
+      const top = document.getElementById('seam-cover-top');
+      const bottom = document.getElementById('seam-cover-bottom');
+      if (!left || !right || !top || !bottom) return;
+
+      const isLandscape = window.matchMedia('(orientation: landscape)').matches;
+      [left, right, top, bottom].forEach(el => el.style.display = 'none');
+      if (!isLandscape || !bgVideo || !bgVideo.videoWidth || !bgVideo.videoHeight) return;
+
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const videoAspect = bgVideo.videoWidth / bgVideo.videoHeight;
+      const boxAspect = vw / vh;
+      const half = SEAM_STRIP_WIDTH / 2;
+
+      if (boxAspect > videoAspect) {
+        // Écran plus large que la vidéo : bandes verticales à gauche/droite (effet "pilier")
+        const contentWidth = vh * videoAspect;
+        const gap = (vw - contentWidth) / 2;
+        left.style.display = 'block';
+        left.style.top = '0px'; left.style.height = vh + 'px'; left.style.width = SEAM_STRIP_WIDTH + 'px';
+        left.style.left = (gap - half) + 'px';
+        right.style.display = 'block';
+        right.style.top = '0px'; right.style.height = vh + 'px'; right.style.width = SEAM_STRIP_WIDTH + 'px';
+        right.style.left = (vw - gap - half) + 'px';
+      } else {
+        // Écran plus étroit/haut que la vidéo : bandes horizontales en haut/bas ("lettrage")
+        const contentHeight = vw / videoAspect;
+        const gap = (vh - contentHeight) / 2;
+        top.style.display = 'block';
+        top.style.left = '0px'; top.style.width = vw + 'px'; top.style.height = SEAM_STRIP_WIDTH + 'px';
+        top.style.top = (gap - half) + 'px';
+        bottom.style.display = 'block';
+        bottom.style.left = '0px'; bottom.style.width = vw + 'px'; bottom.style.height = SEAM_STRIP_WIDTH + 'px';
+        bottom.style.top = (vh - gap - half) + 'px';
+      }
+    }
+    if (bgVideo) {
+      bgVideo.addEventListener('loadeddata', updateSeamCover);
+      bgVideo.addEventListener('playing', updateSeamCover);
+      if (bgVideo.readyState >= 2) updateSeamCover();
+    }
+    let seamResizeTimeout = null;
+    window.addEventListener('resize', () => {
+      clearTimeout(seamResizeTimeout);
+      seamResizeTimeout = setTimeout(updateSeamCover, 150);
+    });
 
     const APPWRITE_ENDPOINT = 'https://fra.cloud.appwrite.io/v1';
     const APPWRITE_PROJECT_ID = '6ad4bd7b0036d37d3561';
