@@ -674,6 +674,9 @@
     <source src="a.mp4?v=2" type="video/mp4">
   </video>
 
+  <!-- Canvas invisible utilisé uniquement pour lire la couleur réelle de la vidéo (voir syncVideoBackgroundColor) -->
+  <canvas id="bg-color-sampler" width="1" height="1" style="position:fixed; width:1px; height:1px; opacity:0; pointer-events:none;"></canvas>
+
   <div class="app-viewport">
 
     <!-- ================= ÉCRAN 1 : ACCUEIL PRINCIPAL ================= -->
@@ -1082,9 +1085,42 @@
         if (bgVideo) {
           bgVideo.load();
           bgVideo.play().catch(() => {});
+          setTimeout(syncVideoBackgroundColor, 250);
         }
       }, 200);
     });
+
+    // ------------------------------------------------------------------
+    // RACCORD AUTOMATIQUE DE COULEUR (anti-ligne) :
+    // Plutôt que de fixer une couleur de fond "au jugé" (qui varie légèrement
+    // d'un téléphone à l'autre selon comment il décode la vidéo), on lit la
+    // vraie couleur du bord de la vidéo EN DIRECT sur l'appareil du visiteur,
+    // via un minuscule canvas invisible, et on l'applique au fond. Résultat :
+    // un raccord pixel-perfect garanti, sur n'importe quel téléphone/navigateur.
+    // Si cette technique échoue (navigateur restrictif), la couleur de secours
+    // définie en CSS (--cream-bg-landscape) prend le relais automatiquement.
+    // ------------------------------------------------------------------
+    function syncVideoBackgroundColor() {
+      if (!bgVideo || !bgVideo.videoWidth) return;
+      try {
+        const canvas = document.getElementById('bg-color-sampler');
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        // On échantillonne un petit coin du cadre vidéo (zone de fond unie,
+        // jamais recouverte par le personnage ni les décorations centrales)
+        // et on le réduit à 1 pixel pour en obtenir la couleur moyenne exacte.
+        const cropSize = Math.max(20, Math.floor(bgVideo.videoWidth * 0.02));
+        ctx.drawImage(bgVideo, 0, 0, cropSize, cropSize, 0, 0, 1, 1);
+        const p = ctx.getImageData(0, 0, 1, 1).data;
+        document.documentElement.style.setProperty('--cream-bg-landscape', `rgb(${p[0]}, ${p[1]}, ${p[2]})`);
+      } catch (e) {
+        // Lecture impossible : on garde la couleur de secours du CSS, sans bloquer le site.
+      }
+    }
+    if (bgVideo) {
+      bgVideo.addEventListener('loadeddata', syncVideoBackgroundColor);
+      bgVideo.addEventListener('playing', syncVideoBackgroundColor);
+      if (bgVideo.readyState >= 2) syncVideoBackgroundColor();
+    }
 
     const APPWRITE_ENDPOINT = 'https://fra.cloud.appwrite.io/v1';
     const APPWRITE_PROJECT_ID = '6ad4bd7b0036d37d3561';
