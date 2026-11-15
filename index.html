@@ -536,6 +536,141 @@
     }
 
     /* ==========================================================================
+       WIDGET DE CHAT nova.ai
+       ========================================================================== */
+    .nova-fab {
+      position: fixed;
+      bottom: 18px;
+      right: 18px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background-color: var(--red-primary);
+      border: 2.5px solid var(--dark-brown);
+      box-shadow: 0px 4px 0px var(--dark-brown);
+      display: none; /* nova.ai n'est visible qu'une fois connecté, voir setNovaWidgetVisible() */
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 40;
+      font-family: var(--font-heading);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1.1;
+      text-align: center;
+      transition: transform 0.1s ease;
+    }
+    .nova-fab.visible { display: flex; }
+    .nova-fab:active { transform: translateY(2px); }
+
+    .nova-chat-panel {
+      position: fixed;
+      right: 16px;
+      bottom: 86px;
+      width: min(340px, calc(100vw - 32px));
+      height: min(480px, calc(100vh - 140px));
+      background-color: var(--cream-bg);
+      border: 2.5px solid var(--dark-brown);
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 41;
+    }
+    .nova-chat-panel.open { display: flex; }
+
+    .nova-chat-header {
+      background-color: var(--red-primary);
+      color: #fff;
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 15px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nova-chat-close {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 18px;
+      font-weight: 800;
+      cursor: pointer;
+      line-height: 1;
+      padding: 4px;
+    }
+
+    .nova-chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .nova-msg {
+      max-width: 85%;
+      padding: 8px 12px;
+      border-radius: 14px;
+      font-family: var(--font-body);
+      font-size: 12.5px;
+      font-weight: 600;
+      line-height: 1.4;
+      word-wrap: break-word;
+    }
+    .nova-msg.user {
+      align-self: flex-end;
+      background-color: var(--red-primary);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+    .nova-msg.bot {
+      align-self: flex-start;
+      background-color: rgba(255,255,255,0.75);
+      color: var(--text-red);
+      border: 1.5px solid var(--red-primary);
+      border-bottom-left-radius: 4px;
+    }
+    .nova-msg.bot.loading { opacity: 0.7; font-style: italic; }
+
+    .nova-chat-input-row {
+      display: flex;
+      gap: 6px;
+      padding: 10px;
+      border-top: 2px solid var(--red-primary);
+      background-color: rgba(255, 251, 208, 0.6);
+    }
+    .nova-chat-input {
+      flex: 1;
+      height: 38px;
+      border-radius: 12px;
+      border: 2px solid var(--red-primary);
+      background-color: #fff;
+      padding: 0 12px;
+      font-family: var(--font-body);
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-red);
+      outline: none;
+    }
+    .nova-chat-send {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      border: 2px solid var(--dark-brown);
+      background-color: var(--red-primary);
+      color: #fff;
+      font-weight: 800;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .nova-chat-send:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    /* ==========================================================================
        AJUSTEMENTS ULTRA-COMPACTS POUR MOBILE PAYSAGE (< 500PX)
        ========================================================================== */
     @media screen and (orientation: landscape) and (max-height: 500px) {
@@ -1094,6 +1229,22 @@
   <!-- TOAST NOTIFICATION -->
   <div id="toast" class="status-toast"></div>
 
+  <!-- ================= WIDGET DE CHAT nova.ai ================= -->
+  <button id="nova-fab" class="nova-fab" aria-label="Ouvrir l'assistant nova.ai">nova<br>.ai</button>
+  <div id="nova-chat-panel" class="nova-chat-panel">
+    <div class="nova-chat-header">
+      <span>nova.ai</span>
+      <button class="nova-chat-close" id="nova-chat-close" aria-label="Fermer">×</button>
+    </div>
+    <div id="nova-chat-messages" class="nova-chat-messages">
+      <div class="nova-msg bot">Bonjour ! Je suis nova.ai 👋 Pose-moi une question sur NOVANOD, je suis là pour t'aider.</div>
+    </div>
+    <div class="nova-chat-input-row">
+      <input type="text" id="nova-chat-input" class="nova-chat-input" placeholder="Écris ton message..." maxlength="500">
+      <button id="nova-chat-send" class="nova-chat-send" aria-label="Envoyer">➤</button>
+    </div>
+  </div>
+
   <!-- Appwrite SDK : chargé ici (fin de page) pour ne plus bloquer l'affichage initial -->
   <script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.1"></script>
 
@@ -1212,6 +1363,11 @@
 
     let client = null;
     let account = null;
+    let functions = null;
+
+    // ⚠️ À REMPLIR : colle ici le Function ID de ta fonction Appwrite nova-ai
+    // (Appwrite Console → Functions → ta fonction → "Function ID" en haut de page).
+    const NOVA_FUNCTION_ID = 'COLLE_ICI_LE_FUNCTION_ID';
 
     try {
       client = new Appwrite.Client();
@@ -1219,6 +1375,7 @@
         .setEndpoint(APPWRITE_ENDPOINT)
         .setProject(APPWRITE_PROJECT_ID);
       account = new Appwrite.Account(client);
+      functions = new Appwrite.Functions(client);
     } catch (err) {
       console.error("Erreur d'initialisation Appwrite:", err);
     }
@@ -1244,6 +1401,13 @@
       const target = document.getElementById(screenId);
       if (target) {
         target.classList.add('active');
+      }
+      // Le petit logo rond fait double emploi avec le "WELCOME TO NOVANOD"
+      // déjà intégré à la vidéo de fond sur l'accueil (et peut le chevaucher
+      // selon l'écran) : on ne l'affiche donc que sur les AUTRES écrans.
+      const logoContainer = document.querySelector('.top-brand-logo-container');
+      if (logoContainer) {
+        logoContainer.style.display = (screenId === 'screen-home') ? 'none' : 'flex';
       }
     }
 
@@ -1337,6 +1501,15 @@
       }
     }
 
+    // nova.ai n'est proposé qu'aux visiteurs connectés (compte buyer vérifié).
+    function setNovaWidgetVisible(visible) {
+      const fab = document.getElementById('nova-fab');
+      const panel = document.getElementById('nova-chat-panel');
+      if (!fab) return;
+      fab.classList.toggle('visible', !!visible);
+      if (!visible && panel) panel.classList.remove('open');
+    }
+
     async function checkSession() {
       if (!account) return;
       try {
@@ -1365,12 +1538,15 @@
         const user = await account.get();
         if (user.email && !user.emailVerification) {
           await account.deleteSession('current');
+          setNovaWidgetVisible(false);
           navigateTo(getInitialScreen());
           return;
         }
         displayUserData(user);
+        setNovaWidgetVisible(true);
         navigateTo('screen-profile');
       } catch (err) {
+        setNovaWidgetVisible(false);
         navigateTo(getInitialScreen());
       }
     }
@@ -1543,6 +1719,7 @@
       if (!account) return;
       try {
         await account.deleteSession('current');
+        setNovaWidgetVisible(false);
         showToast("Vous avez été déconnecté.");
         navigateTo('screen-home');
       } catch (error) {
@@ -1552,6 +1729,69 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       checkSession();
+    });
+
+    // ------------------------------------------------------------------
+    // WIDGET DE CHAT nova.ai
+    // ------------------------------------------------------------------
+    const novaFab = document.getElementById('nova-fab');
+    const novaPanel = document.getElementById('nova-chat-panel');
+    const novaMessages = document.getElementById('nova-chat-messages');
+    const novaInput = document.getElementById('nova-chat-input');
+    const novaSendBtn = document.getElementById('nova-chat-send');
+    const novaCloseBtn = document.getElementById('nova-chat-close');
+
+    function novaAddMessage(text, who) {
+      const div = document.createElement('div');
+      div.className = 'nova-msg ' + who;
+      div.textContent = text;
+      novaMessages.appendChild(div);
+      novaMessages.scrollTop = novaMessages.scrollHeight;
+      return div;
+    }
+
+    novaFab.addEventListener('click', () => {
+      novaPanel.classList.toggle('open');
+      if (novaPanel.classList.contains('open')) novaInput.focus();
+    });
+    novaCloseBtn.addEventListener('click', () => novaPanel.classList.remove('open'));
+
+    async function novaSendMessage() {
+      const message = novaInput.value.trim();
+      if (!message) return;
+      if (NOVA_FUNCTION_ID === 'COLLE_ICI_LE_FUNCTION_ID') {
+        novaAddMessage("nova.ai n'est pas encore configuré (Function ID manquant).", 'bot');
+        return;
+      }
+      novaAddMessage(message, 'user');
+      novaInput.value = '';
+      novaSendBtn.disabled = true;
+      const loadingBubble = novaAddMessage('nova.ai réfléchit...', 'bot loading');
+
+      try {
+        const execution = await functions.createExecution(
+          NOVA_FUNCTION_ID,
+          JSON.stringify({ action: 'chat', message }),
+          false
+        );
+        const data = JSON.parse(execution.responseBody || '{}');
+        loadingBubble.remove();
+        if (data.reply) {
+          novaAddMessage(data.reply, 'bot');
+        } else {
+          novaAddMessage(data.error || "Désolé, je n'ai pas pu répondre. Réessaie dans un instant.", 'bot');
+        }
+      } catch (e) {
+        loadingBubble.remove();
+        novaAddMessage("Désolé, je n'ai pas pu répondre. Réessaie dans un instant.", 'bot');
+      } finally {
+        novaSendBtn.disabled = false;
+      }
+    }
+
+    novaSendBtn.addEventListener('click', novaSendMessage);
+    novaInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') novaSendMessage();
     });
   </script>
 </body>
