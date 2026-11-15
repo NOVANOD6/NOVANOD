@@ -536,139 +536,195 @@
     }
 
     /* ==========================================================================
-       WIDGET DE CHAT nova.ai
+       WIDGET DE CHAT nova.ai — bulle et fenêtre flottantes, déplaçables au doigt
        ========================================================================== */
     .nova-fab {
       position: fixed;
       bottom: 18px;
       right: 18px;
-      width: 56px;
-      height: 56px;
+      width: 60px;
+      height: 60px;
       border-radius: 50%;
-      background-color: var(--red-primary);
+      background: radial-gradient(circle at 32% 28%, #ff7a63, var(--red-primary) 65%);
       border: 2.5px solid var(--dark-brown);
-      box-shadow: 0px 4px 0px var(--dark-brown);
+      box-shadow: 0 6px 0px var(--dark-brown), 0 10px 18px rgba(0,0,0,0.3);
       display: none; /* nova.ai n'est visible qu'une fois connecté, voir setNovaWidgetVisible() */
       align-items: center;
       justify-content: center;
-      cursor: pointer;
+      cursor: grab;
       z-index: 40;
-      font-family: var(--font-heading);
-      color: #fff;
-      font-size: 11px;
-      font-weight: 700;
-      line-height: 1.1;
-      text-align: center;
-      transition: transform 0.1s ease;
+      padding: 7px;
+      touch-action: none;
+      transition: box-shadow 0.15s ease;
+      user-select: none;
     }
     .nova-fab.visible { display: flex; }
-    .nova-fab:active { transform: translateY(2px); }
+    .nova-fab.dragging { cursor: grabbing; box-shadow: 0 2px 0px var(--dark-brown), 0 4px 10px rgba(0,0,0,0.3); }
+    .nova-fab-icon { width: 100%; height: 100%; object-fit: contain; border-radius: 50%; pointer-events: none; }
+    .nova-fab-pulse {
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      border: 2px solid var(--red-primary);
+      opacity: 0;
+      animation: nova-pulse 2.6s ease-out infinite;
+      pointer-events: none;
+    }
+    @keyframes nova-pulse {
+      0% { transform: scale(0.85); opacity: 0.55; }
+      100% { transform: scale(1.35); opacity: 0; }
+    }
 
     .nova-chat-panel {
       position: fixed;
       right: 16px;
-      bottom: 86px;
-      width: min(340px, calc(100vw - 32px));
-      height: min(480px, calc(100vh - 140px));
+      bottom: 90px;
+      width: min(336px, calc(100vw - 24px));
+      height: min(490px, calc(100vh - 120px));
       background-color: var(--cream-bg);
       border: 2.5px solid var(--dark-brown);
-      border-radius: 18px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
-      display: none;
+      border-radius: 20px;
+      box-shadow: 0 16px 40px rgba(59, 20, 32, 0.35);
+      display: flex;
       flex-direction: column;
       overflow: hidden;
       z-index: 41;
+      opacity: 0;
+      transform: scale(0.9) translateY(14px);
+      pointer-events: none;
+      transition: opacity 0.18s ease, transform 0.18s ease;
     }
-    .nova-chat-panel.open { display: flex; }
+    .nova-chat-panel.open { opacity: 1; transform: scale(1) translateY(0); pointer-events: auto; }
 
     .nova-chat-header {
-      background-color: var(--red-primary);
+      background: linear-gradient(135deg, #ff7a63, var(--red-primary) 70%);
       color: #fff;
-      font-family: var(--font-heading);
-      font-weight: 700;
-      font-size: 15px;
-      padding: 12px 14px;
+      padding: 10px 8px 10px 14px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      gap: 9px;
+      cursor: grab;
+      touch-action: none;
+      user-select: none;
+      flex-shrink: 0;
     }
+    .nova-chat-header.dragging { cursor: grabbing; }
+    .nova-chat-header-icon { width: 26px; height: 26px; border-radius: 50%; object-fit: contain; background: rgba(255,255,255,0.18); padding: 3px; flex-shrink: 0; }
+    .nova-chat-header-text { flex: 1; min-width: 0; }
+    .nova-chat-header-text .name { font-family: var(--font-heading); font-weight: 700; font-size: 14.5px; line-height: 1.15; }
+    .nova-chat-header-text .status { font-size: 10px; font-weight: 700; opacity: 0.85; display: flex; align-items: center; gap: 4px; }
+    .nova-chat-header-text .status::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #4CE086; display: inline-block; }
+    .nova-chat-drag-hint { width: 28px; height: 4px; border-radius: 3px; background: rgba(255,255,255,0.45); margin: 0 2px; flex-shrink: 0; }
     .nova-chat-close {
-      background: none;
+      background: rgba(255,255,255,0.18);
       border: none;
       color: #fff;
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 800;
       cursor: pointer;
       line-height: 1;
-      padding: 4px;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .nova-chat-messages {
       flex: 1;
       overflow-y: auto;
-      padding: 12px;
+      padding: 14px 12px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 10px;
+      background:
+        radial-gradient(circle at 15% 0%, rgba(230,74,56,0.06), transparent 55%),
+        var(--cream-bg);
     }
+    .nova-msg-row { display: flex; align-items: flex-end; gap: 6px; max-width: 88%; }
+    .nova-msg-row.user { align-self: flex-end; flex-direction: row-reverse; }
+    .nova-msg-row.bot { align-self: flex-start; }
+    .nova-msg-avatar { width: 20px; height: 20px; border-radius: 50%; object-fit: contain; background: var(--red-primary); padding: 2px; flex-shrink: 0; margin-bottom: 2px; }
 
     .nova-msg {
-      max-width: 85%;
-      padding: 8px 12px;
-      border-radius: 14px;
+      padding: 9px 13px;
+      border-radius: 16px;
       font-family: var(--font-body);
       font-size: 12.5px;
       font-weight: 600;
-      line-height: 1.4;
+      line-height: 1.45;
       word-wrap: break-word;
+      box-shadow: 0 1px 2px rgba(59,20,32,0.08);
     }
-    .nova-msg.user {
-      align-self: flex-end;
-      background-color: var(--red-primary);
+    .nova-msg-row.user .nova-msg {
+      background: linear-gradient(135deg, #ff7a63, var(--red-primary));
       color: #fff;
-      border-bottom-right-radius: 4px;
+      border-bottom-right-radius: 5px;
     }
-    .nova-msg.bot {
-      align-self: flex-start;
-      background-color: rgba(255,255,255,0.75);
+    .nova-msg-row.bot .nova-msg {
+      background-color: #fff;
       color: var(--text-red);
-      border: 1.5px solid var(--red-primary);
-      border-bottom-left-radius: 4px;
+      border: 1.5px solid rgba(230,74,56,0.35);
+      border-bottom-left-radius: 5px;
     }
-    .nova-msg.bot.loading { opacity: 0.7; font-style: italic; }
+
+    .nova-typing-dots { display: flex; gap: 4px; padding: 4px 2px; }
+    .nova-typing-dots span {
+      width: 6px; height: 6px; border-radius: 50%;
+      background-color: var(--red-primary);
+      opacity: 0.5;
+      animation: nova-typing-bounce 1.1s ease-in-out infinite;
+    }
+    .nova-typing-dots span:nth-child(2) { animation-delay: 0.15s; }
+    .nova-typing-dots span:nth-child(3) { animation-delay: 0.3s; }
+    @keyframes nova-typing-bounce {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+      30% { transform: translateY(-4px); opacity: 1; }
+    }
 
     .nova-chat-input-row {
       display: flex;
-      gap: 6px;
+      align-items: center;
+      gap: 7px;
       padding: 10px;
-      border-top: 2px solid var(--red-primary);
-      background-color: rgba(255, 251, 208, 0.6);
+      border-top: 1.5px solid rgba(230,74,56,0.25);
+      background-color: rgba(255, 255, 255, 0.5);
+      flex-shrink: 0;
     }
     .nova-chat-input {
       flex: 1;
-      height: 38px;
-      border-radius: 12px;
-      border: 2px solid var(--red-primary);
+      height: 40px;
+      border-radius: 20px;
+      border: 2px solid rgba(230,74,56,0.35);
       background-color: #fff;
-      padding: 0 12px;
+      padding: 0 16px;
       font-family: var(--font-body);
       font-size: 12.5px;
       font-weight: 600;
       color: var(--text-red);
       outline: none;
     }
+    .nova-chat-input:focus { border-color: var(--red-primary); }
     .nova-chat-send {
-      width: 38px;
-      height: 38px;
-      border-radius: 12px;
-      border: 2px solid var(--dark-brown);
-      background-color: var(--red-primary);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background: linear-gradient(135deg, #ff7a63, var(--red-primary));
       color: #fff;
-      font-weight: 800;
+      font-size: 15px;
       cursor: pointer;
       flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 6px rgba(230,74,56,0.5);
+      transition: transform 0.1s ease;
     }
-    .nova-chat-send:disabled { opacity: 0.6; cursor: not-allowed; }
+    .nova-chat-send:active { transform: scale(0.92); }
+    .nova-chat-send:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
 
     /* ==========================================================================
        AJUSTEMENTS ULTRA-COMPACTS POUR MOBILE PAYSAGE (< 500PX)
@@ -1229,15 +1285,26 @@
   <!-- TOAST NOTIFICATION -->
   <div id="toast" class="status-toast"></div>
 
-  <!-- ================= WIDGET DE CHAT nova.ai ================= -->
-  <button id="nova-fab" class="nova-fab" aria-label="Ouvrir l'assistant nova.ai">nova<br>.ai</button>
+  <!-- ================= WIDGET DE CHAT nova.ai — flottant, déplaçable au doigt ================= -->
+  <button id="nova-fab" class="nova-fab" aria-label="Ouvrir l'assistant nova.ai">
+    <span class="nova-fab-pulse"></span>
+    <img src="AI.png" alt="nova.ai" class="nova-fab-icon">
+  </button>
   <div id="nova-chat-panel" class="nova-chat-panel">
-    <div class="nova-chat-header">
-      <span>nova.ai</span>
+    <div class="nova-chat-header" id="nova-chat-drag-handle">
+      <img src="AI.png" alt="" class="nova-chat-header-icon">
+      <div class="nova-chat-header-text">
+        <div class="name">nova.ai</div>
+        <div class="status">en ligne</div>
+      </div>
+      <span class="nova-chat-drag-hint" aria-hidden="true"></span>
       <button class="nova-chat-close" id="nova-chat-close" aria-label="Fermer">×</button>
     </div>
     <div id="nova-chat-messages" class="nova-chat-messages">
-      <div class="nova-msg bot">Bonjour ! Je suis nova.ai 👋 Pose-moi une question sur NOVANOD, je suis là pour t'aider.</div>
+      <div class="nova-msg-row bot">
+        <img src="AI.png" alt="" class="nova-msg-avatar">
+        <div class="nova-msg">Bonjour ! Je suis nova.ai 👋 Pose-moi une question sur NOVANOD, je suis là pour t'aider.</div>
+      </div>
     </div>
     <div class="nova-chat-input-row">
       <input type="text" id="nova-chat-input" class="nova-chat-input" placeholder="Écris ton message..." maxlength="500">
@@ -1732,7 +1799,7 @@
     });
 
     // ------------------------------------------------------------------
-    // WIDGET DE CHAT nova.ai
+    // WIDGET DE CHAT nova.ai — bulle + fenêtre flottantes, déplaçables au doigt
     // ------------------------------------------------------------------
     const novaFab = document.getElementById('nova-fab');
     const novaPanel = document.getElementById('nova-chat-panel');
@@ -1740,20 +1807,114 @@
     const novaInput = document.getElementById('nova-chat-input');
     const novaSendBtn = document.getElementById('nova-chat-send');
     const novaCloseBtn = document.getElementById('nova-chat-close');
+    const novaDragHandle = document.getElementById('nova-chat-drag-handle');
 
     function novaAddMessage(text, who) {
-      const div = document.createElement('div');
-      div.className = 'nova-msg ' + who;
-      div.textContent = text;
-      novaMessages.appendChild(div);
+      const row = document.createElement('div');
+      row.className = 'nova-msg-row ' + who;
+      if (who === 'bot') {
+        const avatar = document.createElement('img');
+        avatar.src = 'AI.png';
+        avatar.alt = '';
+        avatar.className = 'nova-msg-avatar';
+        row.appendChild(avatar);
+      }
+      const bubble = document.createElement('div');
+      bubble.className = 'nova-msg';
+      bubble.textContent = text;
+      row.appendChild(bubble);
+      novaMessages.appendChild(row);
       novaMessages.scrollTop = novaMessages.scrollHeight;
-      return div;
+      return row;
     }
 
-    novaFab.addEventListener('click', () => {
-      novaPanel.classList.toggle('open');
-      if (novaPanel.classList.contains('open')) novaInput.focus();
-    });
+    function novaAddTypingIndicator() {
+      const row = document.createElement('div');
+      row.className = 'nova-msg-row bot';
+      row.innerHTML =
+        '<img src="AI.png" alt="" class="nova-msg-avatar">' +
+        '<div class="nova-msg"><div class="nova-typing-dots"><span></span><span></span><span></span></div></div>';
+      novaMessages.appendChild(row);
+      novaMessages.scrollTop = novaMessages.scrollHeight;
+      return row;
+    }
+
+    // ----- Glisser-déposer générique (souris + doigt), via Pointer Events -----
+    // dragTarget : élément dont on change la position (left/top en px, fixed)
+    // handle : élément sur lequel on peut poser le doigt pour démarrer le glissement
+    // onTap : appelé si le pointeur est relâché sans avoir vraiment bougé (= un simple tap/clic)
+    function makeDraggable(handle, dragTarget, onTap) {
+      let startX = 0, startY = 0, originLeft = 0, originTop = 0, dragging = false, moved = false;
+      const DRAG_THRESHOLD = 6;
+
+      handle.addEventListener('pointerdown', (e) => {
+        if (e.button !== undefined && e.button !== 0) return;
+        const nestedBtn = e.target.closest('button');
+        if (nestedBtn && nestedBtn !== handle) return; // laisse les boutons (ex: fermer) réagir normalement
+        const rect = dragTarget.getBoundingClientRect();
+        // On bascule sur un positionnement left/top explicite (plus de right/bottom)
+        // dès le premier contact, pour pouvoir suivre le doigt librement.
+        dragTarget.style.left = rect.left + 'px';
+        dragTarget.style.top = rect.top + 'px';
+        dragTarget.style.right = 'auto';
+        dragTarget.style.bottom = 'auto';
+        originLeft = rect.left;
+        originTop = rect.top;
+        startX = e.clientX;
+        startY = e.clientY;
+        dragging = true;
+        moved = false;
+        handle.setPointerCapture(e.pointerId);
+        handle.classList.add('dragging');
+      });
+
+      handle.addEventListener('pointermove', (e) => {
+        if (!dragging) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        if (Math.abs(dx) > DRAG_THRESHOLD || Math.abs(dy) > DRAG_THRESHOLD) moved = true;
+        if (!moved) return;
+        const w = dragTarget.offsetWidth, h = dragTarget.offsetHeight;
+        let newLeft = originLeft + dx;
+        let newTop = originTop + dy;
+        newLeft = Math.max(4, Math.min(window.innerWidth - w - 4, newLeft));
+        newTop = Math.max(4, Math.min(window.innerHeight - h - 4, newTop));
+        dragTarget.style.left = newLeft + 'px';
+        dragTarget.style.top = newTop + 'px';
+      });
+
+      function endDrag(e) {
+        if (!dragging) return;
+        dragging = false;
+        handle.classList.remove('dragging');
+        try { handle.releasePointerCapture(e.pointerId); } catch (err) {}
+        if (!moved && typeof onTap === 'function') onTap();
+      }
+      handle.addEventListener('pointerup', endDrag);
+      handle.addEventListener('pointercancel', endDrag);
+    }
+
+    function novaOpenPanel() {
+      // La fenêtre s'ouvre juste à côté de l'endroit où la bulle se trouve actuellement.
+      const fabRect = novaFab.getBoundingClientRect();
+      const pw = Math.min(336, window.innerWidth - 24);
+      const ph = Math.min(490, window.innerHeight - 120);
+      let left = fabRect.right - pw;
+      let top = fabRect.top - ph - 10;
+      if (top < 8) top = fabRect.bottom + 10; // pas assez de place au-dessus : on ouvre en dessous
+      left = Math.max(4, Math.min(window.innerWidth - pw - 4, left));
+      top = Math.max(4, Math.min(window.innerHeight - ph - 4, top));
+      novaPanel.style.left = left + 'px';
+      novaPanel.style.top = top + 'px';
+      novaPanel.style.right = 'auto';
+      novaPanel.style.bottom = 'auto';
+      novaPanel.classList.add('open');
+      novaInput.focus();
+    }
+
+    makeDraggable(novaFab, novaFab, novaOpenPanel);
+    makeDraggable(novaDragHandle, novaPanel, null);
+
     novaCloseBtn.addEventListener('click', () => novaPanel.classList.remove('open'));
 
     async function novaSendMessage() {
@@ -1766,7 +1927,7 @@
       novaAddMessage(message, 'user');
       novaInput.value = '';
       novaSendBtn.disabled = true;
-      const loadingBubble = novaAddMessage('nova.ai réfléchit...', 'bot loading');
+      const loadingRow = novaAddTypingIndicator();
 
       try {
         const execution = await functions.createExecution(
@@ -1775,14 +1936,14 @@
           false
         );
         const data = JSON.parse(execution.responseBody || '{}');
-        loadingBubble.remove();
+        loadingRow.remove();
         if (data.reply) {
           novaAddMessage(data.reply, 'bot');
         } else {
           novaAddMessage(data.error || "Désolé, je n'ai pas pu répondre. Réessaie dans un instant.", 'bot');
         }
       } catch (e) {
-        loadingBubble.remove();
+        loadingRow.remove();
         novaAddMessage("Désolé, je n'ai pas pu répondre. Réessaie dans un instant.", 'bot');
       } finally {
         novaSendBtn.disabled = false;
