@@ -3,283 +3,423 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NOVANOD — Espace administrateur</title>
+  <title>NOVANOD — Dashboard Administrateur</title>
   <meta name="robots" content="noindex, nofollow">
 
-  <link rel="icon" type="image/png" href="logo.png?v=5">
-
+  <link rel="icon" type="image/png" href="logo.png?v=6">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
     :root {
       --red-primary: #E64A38;
+      --red-hover: #f25a48;
       --dark-brown: #3B1420;
+      --dark-brown-shadow: #1c080e;
       --text-red: #D94432;
       --cream-bg: #FFFBD0;
+      --card-bg: rgba(255, 255, 255, 0.85);
       --font-heading: 'Fredoka', sans-serif;
       --font-body: 'Plus Jakarta Sans', sans-serif;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    html, body { width: 100%; min-height: 100%; background-color: var(--cream-bg); font-family: var(--font-body); }
-    body { display: flex; justify-content: center; padding: 24px 16px 60px; }
 
-    .admin-viewport { width: 100%; max-width: 480px; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: radial-gradient(circle at top right, #fff5a8, var(--cream-bg) 60%, #ffe9ad);
+      color: var(--dark-brown);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+
+    .admin-wrapper {
+      width: 100%;
+      max-width: 540px;
+      animation: fadeUp 0.35s ease-out;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .header-brand {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .brand-logo {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      margin-bottom: 10px;
+      object-fit: cover;
+    }
 
     .admin-title {
       font-family: var(--font-heading);
       color: var(--text-red);
-      font-size: 22px;
-      font-weight: 700;
-      text-align: center;
-      margin-bottom: 4px;
-    }
-    .admin-subtitle {
-      text-align: center;
-      color: var(--text-red);
-      font-size: 12.5px;
-      font-weight: 700;
-      opacity: 0.85;
-      margin-bottom: 24px;
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
     }
 
-    .card {
-      background-color: rgba(255,255,255,0.55);
-      border: 2px solid var(--red-primary);
-      border-radius: 16px;
-      padding: 18px;
-      margin-bottom: 16px;
+    .admin-badge {
+      background-color: var(--dark-brown);
+      color: #FFFBD0;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 20px;
+      letter-spacing: 0.8px;
+      margin-top: 4px;
+    }
+
+    .glass-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 2.5px solid var(--dark-brown);
+      border-radius: 22px;
+      padding: 24px;
+      margin-bottom: 18px;
+      box-shadow: 0 6px 0 var(--dark-brown), 0 14px 30px rgba(59, 20, 32, 0.12);
+    }
+
+    .auth-tabs {
+      display: flex;
+      background-color: rgba(59, 20, 32, 0.08);
+      padding: 4px;
+      border-radius: 14px;
+      margin-bottom: 20px;
+    }
+
+    .auth-tab {
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 10px 0;
+      font-family: var(--font-body);
+      font-weight: 800;
+      font-size: 13.5px;
+      color: var(--dark-brown);
+      border-radius: 11px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      opacity: 0.65;
+    }
+
+    .auth-tab.active {
+      background-color: var(--red-primary);
+      color: #fff;
+      opacity: 1;
+      box-shadow: 0 2px 6px rgba(230, 74, 56, 0.35);
+    }
+
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--dark-brown);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
     }
 
     .input-field, textarea.input-field {
       width: 100%;
-      border-radius: 12px;
-      border: 2px solid var(--red-primary);
-      background-color: rgba(255, 251, 208, 0.95);
-      padding: 10px 12px;
+      border-radius: 14px;
+      border: 2px solid var(--dark-brown);
+      background-color: #FFFFFF;
+      padding: 12px 14px;
       font-family: var(--font-body);
-      font-size: 13.5px;
+      font-size: 14px;
       font-weight: 600;
-      color: var(--text-red);
+      color: var(--dark-brown);
       outline: none;
-      margin-bottom: 10px;
+      margin-bottom: 14px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .input-field:focus, textarea.input-field:focus {
+      border-color: var(--red-primary);
+      box-shadow: 0 0 0 3px rgba(230, 74, 56, 0.2);
+    }
+
+    textarea.input-field {
+      min-height: 180px;
+      line-height: 1.55;
       resize: vertical;
     }
-    .input-field { height: 42px; }
-    textarea.input-field { min-height: 160px; line-height: 1.5; text-align: left; }
-    .input-field::placeholder { color: rgba(217, 68, 50, 0.7); }
 
     .btn-3d {
       width: 100%;
-      height: 44px;
+      height: 48px;
       border-radius: 14px;
       font-family: var(--font-body);
-      font-size: 13.5px;
+      font-size: 14px;
       font-weight: 800;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
       cursor: pointer;
-      margin-bottom: 8px;
-      border: 2px solid var(--dark-brown);
+      margin-bottom: 10px;
+      border: 2.5px solid var(--dark-brown);
       background-color: var(--red-primary);
       color: #fff;
-      box-shadow: 0px 3px 0px var(--dark-brown);
-      transition: transform 0.08s ease, box-shadow 0.08s ease;
+      box-shadow: 0 4px 0 var(--dark-brown);
+      transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.15s;
     }
-    .btn-3d:active:not(:disabled) { transform: translateY(3px); box-shadow: none; }
-    .btn-3d:disabled { opacity: 0.6; cursor: not-allowed; }
-    .btn-3d.btn-secondary { background-color: var(--cream-bg); color: var(--text-red); }
 
-    .file-drop {
+    .btn-3d:hover:not(:disabled) {
+      background-color: var(--red-hover);
+    }
+
+    .btn-3d:active:not(:disabled) {
+      transform: translateY(4px);
+      box-shadow: 0 0 0 var(--dark-brown);
+    }
+
+    .btn-3d:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-3d.btn-dark {
+      background-color: var(--dark-brown);
+      box-shadow: 0 4px 0 var(--dark-brown-shadow);
+    }
+
+    .btn-3d.btn-secondary {
+      background-color: var(--cream-bg);
+      color: var(--dark-brown);
+    }
+
+    .id-copy-box {
+      background: #FFFBD0;
       border: 2px dashed var(--red-primary);
       border-radius: 14px;
       padding: 14px;
       text-align: center;
-      font-size: 12.5px;
-      font-weight: 700;
-      color: var(--text-red);
-      margin-bottom: 10px;
+      font-family: monospace;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--dark-brown);
+      word-break: break-all;
+      margin: 12px 0;
+      user-select: all;
       cursor: pointer;
     }
+
+    .file-drop {
+      border: 2px dashed var(--red-primary);
+      background-color: rgba(230, 74, 56, 0.05);
+      border-radius: 14px;
+      padding: 18px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-red);
+      margin-bottom: 14px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .file-drop:hover {
+      background-color: rgba(230, 74, 56, 0.12);
+    }
+
     .file-drop input { display: none; }
 
     .status-msg {
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 700;
       text-align: center;
-      margin-bottom: 10px;
-      min-height: 16px;
+      margin-bottom: 12px;
+      padding: 8px 12px;
+      border-radius: 10px;
+      display: none;
     }
-    .status-msg.error { color: #B00020; }
-    .status-msg.success { color: #1A7A3D; }
+
+    .status-msg:not(:empty) { display: block; }
+    .status-msg.error { background: #ffe5e8; color: #B00020; border: 1px solid #ffb3bc; }
+    .status-msg.success { background: #e2f7ea; color: #1A7A3D; border: 1px solid #a3e4bc; }
+    .status-msg.info { background: #fff4d4; color: #8a5a00; border: 1px solid #ffe08a; }
 
     .hint {
-      font-size: 11px;
-      color: var(--text-red);
-      opacity: 0.75;
-      margin-bottom: 10px;
-      line-height: 1.4;
+      font-size: 12px;
+      color: var(--dark-brown);
+      opacity: 0.78;
+      margin-bottom: 14px;
+      line-height: 1.5;
     }
 
     .hidden { display: none !important; }
 
-    .top-bar {
+    .dashboard-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 16px;
-    }
-    .logout-link {
-      font-size: 12px;
-      font-weight: 800;
-      color: var(--text-red);
-      text-decoration: underline;
-      cursor: pointer;
-      background: none;
-      border: none;
+      background: var(--dark-brown);
+      color: #FFFBD0;
+      padding: 14px 18px;
+      border-radius: 18px;
+      margin-bottom: 18px;
     }
 
-    .auth-tabs {
+    .user-badge {
       display: flex;
-      gap: 6px;
-      margin-bottom: 14px;
-      border-bottom: 2px solid var(--red-primary);
-    }
-    .auth-tab {
-      flex: 1;
-      background: none;
-      border: none;
-      padding: 8px 0;
-      font-family: var(--font-body);
-      font-weight: 800;
+      align-items: center;
+      gap: 10px;
       font-size: 13px;
-      color: var(--text-red);
-      opacity: 0.55;
-      cursor: pointer;
-      border-bottom: 3px solid transparent;
-      margin-bottom: -2px;
+      font-weight: 700;
     }
-    .auth-tab.active {
-      opacity: 1;
-      border-bottom-color: var(--red-primary);
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      background-color: #4CE086;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #4CE086;
+    }
+
+    .logout-btn {
+      background: var(--red-primary);
+      color: #fff;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
 
-  <div class="admin-viewport">
-    <div class="admin-title">NOVANOD</div>
-    <div class="admin-subtitle">ESPACE ADMINISTRATEUR</div>
+  <div class="admin-wrapper">
+    <div class="header-brand">
+      <img src="logo.png?v=6" alt="NOVANOD" class="brand-logo">
+      <div class="admin-title">NOVANOD</div>
+      <div class="admin-badge">CONSOLE ADMINISTRATEUR</div>
+    </div>
 
-    <!-- ===================== ONGLETS CONNEXION / INSCRIPTION ===================== -->
-    <div id="screen-login" class="card">
+    <!-- ÉCRAN AUTHENTIFICATION -->
+    <div id="screen-login" class="glass-card">
       <div class="auth-tabs">
         <button id="tab-login" class="auth-tab active">Connexion</button>
-        <button id="tab-signup" class="auth-tab">Inscription</button>
+        <button id="tab-signup" class="auth-tab">Créer un accès</button>
       </div>
 
       <div id="login-status" class="status-msg"></div>
 
-      <!-- ----- Connexion ----- -->
       <div id="pane-login">
-        <input type="email" id="admin-email" class="input-field" placeholder="E-mail administrateur" autocomplete="username">
-        <input type="password" id="admin-password" class="input-field" placeholder="Mot de passe" autocomplete="current-password">
-        <button id="btn-login" class="btn-3d">Se connecter</button>
-        <button id="btn-login-fingerprint" class="btn-3d btn-secondary hidden">👆 Se connecter avec empreinte digitale</button>
+        <label class="form-label">Adresse E-mail</label>
+        <input type="email" id="admin-email" class="input-field" placeholder="admin@novanod.com" autocomplete="username">
+        
+        <label class="form-label">Mot de passe</label>
+        <input type="password" id="admin-password" class="input-field" placeholder="••••••••" autocomplete="current-password">
+        
+        <button id="btn-login" class="btn-3d">Se connecter au Dashboard</button>
+        <button id="btn-login-fingerprint" class="btn-3d btn-secondary hidden">👆 Connexion Biométrique</button>
       </div>
 
-      <!-- ----- Inscription ----- -->
       <div id="pane-signup" class="hidden">
         <div class="hint">
-          Crée ton compte avec e-mail + mot de passe. Une fois créé, envoie
-          l'identifiant affiché à l'administrateur principal pour qu'il
-          t'autorise — ensuite tu pourras te connecter et activer l'empreinte digitale.
+          Crée ton compte administrateur. Une fois créé, copie ton identifiant unique et transmet-le à l'administrateur principal pour validation.
         </div>
-        <input type="email" id="signup-email" class="input-field" placeholder="E-mail" autocomplete="username">
-        <input type="password" id="signup-password" class="input-field" placeholder="Mot de passe (min. 8 car.)" autocomplete="new-password" minlength="8">
-        <input type="password" id="signup-password-confirm" class="input-field" placeholder="Confirmer le mot de passe" autocomplete="new-password" minlength="8">
-        <button id="btn-signup" class="btn-3d">Créer le compte</button>
+        <label class="form-label">Adresse E-mail</label>
+        <input type="email" id="signup-email" class="input-field" placeholder="nouvel.admin@novanod.com" autocomplete="username">
+        
+        <label class="form-label">Mot de passe (8 caractères min.)</label>
+        <input type="password" id="signup-password" class="input-field" placeholder="••••••••" autocomplete="new-password" minlength="8">
+        
+        <label class="form-label">Confirmer le mot de passe</label>
+        <input type="password" id="signup-password-confirm" class="input-field" placeholder="••••••••" autocomplete="new-password" minlength="8">
+        
+        <button id="btn-signup" class="btn-3d">Générer mon compte Admin</button>
       </div>
     </div>
 
-    <!-- ===================== ÉCRAN "COMPTE CRÉÉ, EN ATTENTE D'AUTORISATION" ===================== -->
-    <div id="screen-pending" class="card hidden">
-      <div class="hint" style="margin-bottom:12px;">
-        ✅ Compte créé ! Il doit maintenant être autorisé avant de pouvoir
-        accéder à l'espace admin. Envoie cet identifiant à l'administrateur
-        principal :
+    <!-- ÉCRAN VALIDATION ID -->
+    <div id="screen-pending" class="glass-card hidden">
+      <h3 style="margin-bottom:10px; color:var(--text-red);">✅ Compte créé avec succès !</h3>
+      <div class="hint">
+        Pour activer ton accès, l'administrateur principal doit ajouter cet identifiant dans la liste <strong>ADMIN_USER_IDS</strong> :
       </div>
-      <div id="pending-user-id" class="input-field" style="user-select: text; text-align:center; word-break: break-all; cursor: text;"></div>
-      <div class="hint" style="margin-top:10px;">
-        Il doit l'ajouter à <code>ADMIN_USER_IDS</code> dans la fonction Appwrite.
-        Une fois fait, reviens ici et connecte-toi.
-      </div>
-      <button id="btn-pending-ok" class="btn-3d" style="margin-top:10px;">J'ai noté, revenir à la connexion</button>
+      <div id="pending-user-id" class="id-copy-box" title="Cliquer pour copier"></div>
+      <button id="btn-copy-id" class="btn-3d btn-secondary" style="margin-bottom: 12px;">📋 Copier l'identifiant</button>
+      <button id="btn-pending-ok" class="btn-3d">Aller à la connexion</button>
     </div>
 
-    <!-- ===================== ÉCRAN ADMIN (après connexion vérifiée) ===================== -->
+    <!-- DASHBOARD ADMINISTRATEUR -->
     <div id="screen-admin" class="hidden">
-      <div class="top-bar">
-        <span style="font-size:12px; font-weight:800; color:var(--text-red);" id="admin-welcome"></span>
-        <button class="logout-link" id="btn-logout">Déconnexion</button>
+      <div class="dashboard-header">
+        <div class="user-badge">
+          <span class="status-dot"></span>
+          <span id="admin-welcome">Admin connecté</span>
+        </div>
+        <button class="logout-btn" id="btn-logout">Déconnexion</button>
       </div>
 
-      <div class="card">
+      <div class="glass-card">
+        <h3 style="margin-bottom:8px; font-family:var(--font-heading); color:var(--text-red);">Base de connaissances nova.ai</h3>
         <div class="hint">
-          Colle ici tout ce que nova.ai doit savoir pour répondre aux clients
-          (produits, tailles, prix, livraison, retours, contact, horaires...).
-          N'écris jamais d'information confidentielle ici : tout ce texte est
-          lu par l'IA pour construire ses réponses.
+          Renseigne ici les tarifs, tailles, délais de livraison ou politiques de retour. L'assistant IA utilisera ces informations pour répondre aux clients.
         </div>
-        <textarea id="knowledge-text" class="input-field" placeholder="Écris ou colle ici les informations à donner aux clients via nova.ai..."></textarea>
+        
+        <textarea id="knowledge-text" class="input-field" placeholder="Saisis ou colle les informations de la boutique NOVANOD..."></textarea>
 
         <div class="file-drop" id="file-drop-zone">
-          📄 Ajouter un fichier (.txt, .pdf, .docx)
-          <input type="file" id="file-input" accept=".txt,.pdf,.docx,image/*">
-        </div>
-        <div class="hint" id="file-hint">
-          Le texte extrait du fichier est ajouté automatiquement ci-dessus — relis et corrige si besoin avant d'enregistrer.
-          Pour une image, aucun texte n'est lu automatiquement (pas encore) : ajoute toi-même une description dans le champ ci-dessus.
+          📄 Importer un document (.txt, .pdf, .docx)
+          <input type="file" id="file-input" accept=".txt,.pdf,.docx">
         </div>
 
         <div id="save-status" class="status-msg"></div>
-        <button id="btn-save" class="btn-3d">Enregistrer la base de connaissances</button>
+        <button id="btn-save" class="btn-3d">💾 Enregistrer et Synchroniser</button>
       </div>
 
-      <div class="card">
-        <div class="hint">Active la connexion par empreinte digitale sur cet appareil, pour ne plus avoir à retaper le mot de passe la prochaine fois.</div>
+      <div class="glass-card">
+        <h3 style="margin-bottom:8px; font-family:var(--font-heading); color:var(--dark-brown);">Sécurité Biométrique</h3>
+        <div class="hint">Active l'authentification par empreinte digitale ou FaceID sur cet appareil pour un accès instantané.</div>
         <div id="fingerprint-status" class="status-msg"></div>
-        <button id="btn-register-fingerprint" class="btn-3d btn-secondary hidden">👆 Activer l'empreinte digitale sur cet appareil</button>
+        <button id="btn-register-fingerprint" class="btn-3d btn-dark hidden">👆 Activer l'empreinte digitale</button>
       </div>
     </div>
   </div>
 
-  <!-- SDK Appwrite -->
   <script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.1"></script>
-  <!-- pdf.js : extraction de texte depuis les PDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-  <!-- mammoth.js : extraction de texte depuis les .docx -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 
   <script type="module">
     import { startRegistration, startAuthentication } from 'https://cdn.jsdelivr.net/npm/@simplewebauthn/browser@9/+esm';
 
-    // ===================== CONFIGURATION (mêmes valeurs que index.html) =====================
     const APPWRITE_ENDPOINT = 'https://fra.cloud.appwrite.io/v1';
     const APPWRITE_PROJECT_ID = '6ad4bd7b0036d37d3561';
-
-    // ⚠️ À REMPLIR : colle ici le Function ID de ta fonction Appwrite nova-ai
-    // (Appwrite Console → Functions → ta fonction → "Function ID" en haut de page).
     const NOVA_FUNCTION_ID = 'COLLE_ICI_LE_FUNCTION_ID';
 
-    // ⚠️ À REMPLIR : les 2 User ID admin (Appwrite Console → Auth → Users).
-    // ATTENTION : cette liste ne sert qu'à afficher/masquer l'interface — la
-    // vraie protection est dans la fonction Appwrite elle-même, qui vérifie
-    // à nouveau ces mêmes ID côté serveur avant d'accepter la moindre écriture.
-    const ADMIN_USER_IDS = ['COLLE_ICI_USER_ID_1', 'COLLE_ICI_USER_ID_2'];
+    const ADMIN_USER_IDS = [
+      'COLLE_ICI_USER_ID_1',
+      'COLLE_ICI_USER_ID_2'
+    ];
 
     if (typeof pdfjsLib !== 'undefined') {
       pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
@@ -295,7 +435,11 @@
     const loginStatus = document.getElementById('login-status');
     const saveStatus = document.getElementById('save-status');
 
-    // ----- Bascule Connexion / Inscription -----
+    function setStatus(el, msg, type = 'info') {
+      el.textContent = msg || '';
+      el.className = 'status-msg' + (msg ? ' ' + type : '');
+    }
+
     const tabLogin = document.getElementById('tab-login');
     const tabSignup = document.getElementById('tab-signup');
     const paneLogin = document.getElementById('pane-login');
@@ -306,14 +450,15 @@
       tabSignup.classList.remove('active');
       paneLogin.classList.remove('hidden');
       paneSignup.classList.add('hidden');
-      setStatus(loginStatus, '', '');
+      setStatus(loginStatus, '');
     });
+
     tabSignup.addEventListener('click', () => {
       tabSignup.classList.add('active');
       tabLogin.classList.remove('active');
       paneSignup.classList.remove('hidden');
       paneLogin.classList.add('hidden');
-      setStatus(loginStatus, '', '');
+      setStatus(loginStatus, '');
     });
 
     document.getElementById('btn-signup').addEventListener('click', async () => {
@@ -321,32 +466,34 @@
       const password = document.getElementById('signup-password').value;
       const passwordConfirm = document.getElementById('signup-password-confirm').value;
 
-      if (!email || !password) {
-        setStatus(loginStatus, 'Renseigne e-mail et mot de passe.', 'error');
-        return;
-      }
-      if (password.length < 8) {
-        setStatus(loginStatus, 'Le mot de passe doit comporter au moins 8 caractères.', 'error');
+      if (!email || password.length < 8) {
+        setStatus(loginStatus, "Renseigne un e-mail valide et un mot de passe de 8 caractères minimum.", "error");
         return;
       }
       if (password !== passwordConfirm) {
-        setStatus(loginStatus, 'Les deux mots de passe ne correspondent pas.', 'error');
+        setStatus(loginStatus, "Les mots de passe ne correspondent pas.", "error");
         return;
       }
 
-      setStatus(loginStatus, 'Création du compte...', '');
+      setStatus(loginStatus, "Création du compte en cours...", "info");
       try {
-        const newUser = await account.create(Appwrite.ID.unique(), email, password);
-        await account.createEmailPasswordSession(email, password);
-        // Le compte existe mais n'est pas encore autorisé (ADMIN_USER_IDS) :
-        // on ne le laisse pas connecté, on affiche juste son identifiant à transmettre.
         await account.deleteSession('current').catch(() => {});
+        const newUser = await account.create(Appwrite.ID.unique(), email, password);
         document.getElementById('pending-user-id').textContent = newUser.$id;
         screenLogin.classList.add('hidden');
         screenPending.classList.remove('hidden');
       } catch (e) {
-        setStatus(loginStatus, "Échec de la création du compte : " + (e.message || e), 'error');
+        setStatus(loginStatus, "Erreur : " + (e.message || e), "error");
       }
+    });
+
+    document.getElementById('btn-copy-id').addEventListener('click', () => {
+      const idText = document.getElementById('pending-user-id').textContent;
+      navigator.clipboard.writeText(idText);
+      document.getElementById('btn-copy-id').textContent = "✅ Identifiant copié !";
+      setTimeout(() => {
+        document.getElementById('btn-copy-id').textContent = "📋 Copier l'identifiant";
+      }, 2500);
     });
 
     document.getElementById('btn-pending-ok').addEventListener('click', () => {
@@ -355,40 +502,34 @@
       tabLogin.click();
     });
 
-    function setStatus(el, message, type) {
-      el.textContent = message || '';
-      el.className = 'status-msg' + (type ? ' ' + type : '');
-    }
-
     async function checkAdminSession() {
       try {
         const user = await account.get();
         if (ADMIN_USER_IDS.includes(user.$id)) {
-          document.getElementById('admin-welcome').textContent = 'Connecté : ' + (user.name || user.email);
+          document.getElementById('admin-welcome').textContent = user.name || user.email;
           screenLogin.classList.add('hidden');
           screenAdmin.classList.remove('hidden');
         } else {
-          setStatus(loginStatus, "Ce compte n'est pas autorisé à accéder à l'espace admin.", 'error');
+          setStatus(loginStatus, `Accès refusé. Ton ID (${user.$id}) n'est pas encore autorisé dans ADMIN_USER_IDS.`, "error");
           await account.deleteSession('current').catch(() => {});
         }
-      } catch (e) {
-        // Pas de session active : on reste sur l'écran de connexion, c'est normal.
-      }
+      } catch (e) {}
     }
 
     document.getElementById('btn-login').addEventListener('click', async () => {
       const email = document.getElementById('admin-email').value.trim();
       const password = document.getElementById('admin-password').value;
       if (!email || !password) {
-        setStatus(loginStatus, 'Renseigne e-mail et mot de passe.', 'error');
+        setStatus(loginStatus, "Veuillez saisir votre e-mail et mot de passe.", "error");
         return;
       }
-      setStatus(loginStatus, 'Connexion...', '');
+      setStatus(loginStatus, "Vérification des accès...", "info");
       try {
+        await account.deleteSession('current').catch(() => {});
         await account.createEmailPasswordSession(email, password);
         await checkAdminSession();
       } catch (e) {
-        setStatus(loginStatus, 'E-mail ou mot de passe incorrect.', 'error');
+        setStatus(loginStatus, "Identifiants incorrects ou compte inexistant.", "error");
       }
     });
 
@@ -396,147 +537,105 @@
       try { await account.deleteSession('current'); } catch (e) {}
       screenAdmin.classList.add('hidden');
       screenLogin.classList.remove('hidden');
-      setStatus(loginStatus, '', '');
+      setStatus(loginStatus, '');
     });
 
-    // ===================== IMPORT DE FICHIERS =====================
     const fileInput = document.getElementById('file-input');
     const fileDropZone = document.getElementById('file-drop-zone');
     const knowledgeText = document.getElementById('knowledge-text');
-
     fileDropZone.addEventListener('click', () => fileInput.click());
 
     fileInput.addEventListener('change', async () => {
       const file = fileInput.files[0];
       if (!file) return;
-      setStatus(saveStatus, 'Lecture du fichier "' + file.name + '"...', '');
+      setStatus(saveStatus, `Lecture de ${file.name}...`, "info");
       try {
         let extracted = '';
-        if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
+        if (file.name.endsWith('.txt')) {
           extracted = await file.text();
         } else if (file.name.endsWith('.pdf')) {
-          extracted = await extractPdfText(file);
+          const buffer = await file.arrayBuffer();
+          const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
+          for (let i = 1; i <= pdf.numPages; i++) {
+            const page = await pdf.getPage(i);
+            const content = await page.getTextContent();
+            extracted += content.items.map(it => it.str).join(' ') + '\n';
+          }
         } else if (file.name.endsWith('.docx')) {
-          extracted = await extractDocxText(file);
-        } else if (file.type.startsWith('image/')) {
-          setStatus(saveStatus, "Image ajoutée en pièce jointe, mais son contenu n'est pas lu automatiquement — ajoute une description toi-même.", '');
-          fileInput.value = '';
-          return;
-        } else {
-          setStatus(saveStatus, "Format non pris en charge pour l'instant (.txt, .pdf, .docx uniquement).", 'error');
-          fileInput.value = '';
-          return;
+          const buffer = await file.arrayBuffer();
+          const result = await mammoth.extractRawText({ arrayBuffer: buffer });
+          extracted = result.value;
         }
         knowledgeText.value += (knowledgeText.value ? '\n\n' : '') + `--- ${file.name} ---\n` + extracted.trim();
-        setStatus(saveStatus, 'Texte de "' + file.name + '" ajouté ci-dessus.', 'success');
+        setStatus(saveStatus, "Document extrait et ajouté avec succès.", "success");
       } catch (e) {
-        setStatus(saveStatus, "Échec de la lecture du fichier : " + e.message, 'error');
+        setStatus(saveStatus, "Impossible de lire ce fichier.", "error");
       }
       fileInput.value = '';
     });
 
-    async function extractPdfText(file) {
-      const buffer = await file.arrayBuffer();
-      const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
-      let text = '';
-      for (let i = 1; i <= pdf.numPages; i++) {
-        const page = await pdf.getPage(i);
-        const content = await page.getTextContent();
-        text += content.items.map(it => it.str).join(' ') + '\n';
-      }
-      return text;
-    }
-
-    async function extractDocxText(file) {
-      const buffer = await file.arrayBuffer();
-      const result = await mammoth.extractRawText({ arrayBuffer: buffer });
-      return result.value;
-    }
-
-    // ===================== ENREGISTREMENT (via la fonction Appwrite) =====================
     document.getElementById('btn-save').addEventListener('click', async () => {
       const content = knowledgeText.value.trim();
       if (!content) {
-        setStatus(saveStatus, 'Rien à enregistrer pour le moment.', 'error');
+        setStatus(saveStatus, "Le champ de connaissances est vide.", "error");
         return;
       }
       if (NOVA_FUNCTION_ID === 'COLLE_ICI_LE_FUNCTION_ID') {
-        setStatus(saveStatus, "Configuration manquante : ajoute le Function ID dans le code (NOVA_FUNCTION_ID).", 'error');
+        setStatus(saveStatus, "Veuillez configurer NOVA_FUNCTION_ID dans le code.", "error");
         return;
       }
-      const btn = document.getElementById('btn-save');
-      btn.disabled = true;
-      setStatus(saveStatus, "nova.ai relit et condense les informations (Gemini)...", '');
+      setStatus(saveStatus, "Synchronisation avec nova.ai...", "info");
       try {
-        const execution = await functions.createExecution(
-          NOVA_FUNCTION_ID,
-          JSON.stringify({ action: 'update_knowledge', content }),
-          false
-        );
+        const execution = await functions.createExecution(NOVA_FUNCTION_ID, JSON.stringify({ action: 'update_knowledge', content }), false);
         const data = JSON.parse(execution.responseBody || '{}');
-        if (data.error) {
-          setStatus(saveStatus, data.error, 'error');
-        } else {
-          setStatus(saveStatus, 'Base de connaissances mise à jour avec succès !', 'success');
-        }
+        if (data.error) throw new Error(data.error);
+        setStatus(saveStatus, "Base de connaissances enregistrée avec succès !", "success");
       } catch (e) {
-        setStatus(saveStatus, "Échec de l'enregistrement : " + e.message, 'error');
-      } finally {
-        btn.disabled = false;
+        setStatus(saveStatus, "Erreur : " + e.message, "error");
       }
     });
-
-    // ===================== EMPREINTE DIGITALE (WebAuthn) =====================
-    async function callNovaFunction(payload) {
-      if (NOVA_FUNCTION_ID === 'COLLE_ICI_LE_FUNCTION_ID') {
-        return { error: 'Configuration manquante : ajoute le Function ID dans le code (NOVA_FUNCTION_ID).' };
-      }
-      const execution = await functions.createExecution(NOVA_FUNCTION_ID, JSON.stringify(payload), false);
-      return JSON.parse(execution.responseBody || '{}');
-    }
 
     const fingerprintStatus = document.getElementById('fingerprint-status');
     const btnRegisterFingerprint = document.getElementById('btn-register-fingerprint');
     const btnLoginFingerprint = document.getElementById('btn-login-fingerprint');
 
-    // On ne propose les boutons empreinte que si l'appareil/navigateur les supporte.
     if (window.PublicKeyCredential) {
       btnRegisterFingerprint.classList.remove('hidden');
       btnLoginFingerprint.classList.remove('hidden');
     }
 
+    async function callNovaFunction(payload) {
+      if (NOVA_FUNCTION_ID === 'COLLE_ICI_LE_FUNCTION_ID') return { error: 'NOVA_FUNCTION_ID non configuré.' };
+      const execution = await functions.createExecution(NOVA_FUNCTION_ID, JSON.stringify(payload), false);
+      return JSON.parse(execution.responseBody || '{}');
+    }
+
     btnRegisterFingerprint.addEventListener('click', async () => {
-      setStatus(fingerprintStatus, 'Préparation...', '');
-      btnRegisterFingerprint.disabled = true;
+      setStatus(fingerprintStatus, "Initialisation biométrique...", "info");
       try {
         const options = await callNovaFunction({ action: 'webauthn_register_options' });
-        if (options.error) { setStatus(fingerprintStatus, options.error, 'error'); return; }
+        if (options.error) throw new Error(options.error);
         const credential = await startRegistration(options);
         const result = await callNovaFunction({ action: 'webauthn_register_verify', credential });
-        if (result.error) { setStatus(fingerprintStatus, result.error, 'error'); }
-        else { setStatus(fingerprintStatus, 'Empreinte digitale activée sur cet appareil !', 'success'); }
+        if (result.error) throw new Error(result.error);
+        setStatus(fingerprintStatus, "Empreinte digitale activée !", "success");
       } catch (e) {
-        setStatus(fingerprintStatus, "Échec de l'activation : " + (e.message || e), 'error');
-      } finally {
-        btnRegisterFingerprint.disabled = false;
+        setStatus(fingerprintStatus, e.message, "error");
       }
     });
 
     btnLoginFingerprint.addEventListener('click', async () => {
-      setStatus(loginStatus, 'Préparation...', '');
-      btnLoginFingerprint.disabled = true;
+      setStatus(loginStatus, "Lecture biométrique...", "info");
       try {
         const options = await callNovaFunction({ action: 'webauthn_login_options' });
-        if (options.error) { setStatus(loginStatus, options.error, 'error'); return; }
+        if (options.error) throw new Error(options.error);
         const credential = await startAuthentication(options);
         const result = await callNovaFunction({ action: 'webauthn_login_verify', credential });
-        if (result.error) { setStatus(loginStatus, result.error, 'error'); return; }
+        if (result.error) throw new Error(result.error);
         await account.createSession(result.userId, result.secret);
         await checkAdminSession();
       } catch (e) {
-        setStatus(loginStatus, "Échec de la connexion par empreinte : " + (e.message || e), 'error');
-      } finally {
-        btnLoginFingerprint.disabled = false;
+        setStatus(loginStatus, e.message, "error");
       }
     });
 
