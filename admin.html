@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NOVANOD — Dashboard Administrateur</title>
+  <title>NOVANOD — Console Administrateur</title>
   <meta name="robots" content="noindex, nofollow">
 
+  <!-- Favicon officiel -->
   <link rel="icon" type="image/png" href="logo.png?v=6">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,12 +15,13 @@
   <style>
     :root {
       --red-primary: #E64A38;
-      --red-hover: #f25a48;
+      --red-hover: #D03D2B;
       --dark-brown: #3B1420;
       --dark-brown-shadow: #1c080e;
       --text-red: #D94432;
       --cream-bg: #FFFBD0;
-      --card-bg: rgba(255, 255, 255, 0.85);
+      --cream-card: #FFFFE8;
+      --card-bg: rgba(255, 255, 255, 0.94);
       --font-heading: 'Fredoka', sans-serif;
       --font-body: 'Plus Jakarta Sans', sans-serif;
     }
@@ -32,50 +34,52 @@
     }
 
     body {
-      background: radial-gradient(circle at top right, #fff5a8, var(--cream-bg) 60%, #ffe9ad);
+      background: radial-gradient(circle at 50% 0%, #fff7cc, var(--cream-bg) 70%, #f7e6a1);
       color: var(--dark-brown);
       font-family: var(--font-body);
       min-height: 100vh;
+      min-height: 100dvh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 24px 16px;
+      padding: 20px 14px;
     }
 
     .admin-wrapper {
       width: 100%;
-      max-width: 540px;
-      animation: fadeUp 0.35s ease-out;
+      max-width: 520px;
+      animation: fadeUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(14px); }
-      to { opacity: 1; transform: translateY(0); }
+      from { opacity: 0; transform: translateY(16px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
     .header-brand {
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
       text-align: center;
     }
 
     .brand-logo {
-      width: 68px;
-      height: 68px;
+      width: 64px;
+      height: 64px;
       border-radius: 50%;
       border: none;
       background: transparent;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       object-fit: cover;
+      box-shadow: 0 4px 12px rgba(59, 20, 32, 0.15);
     }
 
     .admin-title {
       font-family: var(--font-heading);
       color: var(--text-red);
-      font-size: 26px;
+      font-size: 24px;
       font-weight: 800;
       letter-spacing: 0.5px;
     }
@@ -83,31 +87,33 @@
     .admin-badge {
       background-color: var(--dark-brown);
       color: #FFFBD0;
-      font-size: 11px;
+      font-size: 10.5px;
       font-weight: 800;
       padding: 4px 12px;
       border-radius: 20px;
-      letter-spacing: 0.8px;
+      letter-spacing: 1px;
       margin-top: 4px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.15);
     }
 
     .glass-card {
       background: var(--card-bg);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border: 2.5px solid var(--dark-brown);
-      border-radius: 22px;
-      padding: 24px;
-      margin-bottom: 18px;
-      box-shadow: 0 6px 0 var(--dark-brown), 0 14px 30px rgba(59, 20, 32, 0.12);
+      border-radius: 24px;
+      padding: 24px 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 6px 0 var(--dark-brown), 0 16px 32px rgba(59, 20, 32, 0.15);
     }
 
     .auth-tabs {
       display: flex;
-      background-color: rgba(59, 20, 32, 0.08);
+      background-color: rgba(59, 20, 32, 0.06);
       padding: 4px;
       border-radius: 14px;
       margin-bottom: 20px;
+      border: 1.5px solid rgba(59, 20, 32, 0.1);
     }
 
     .auth-tab {
@@ -117,29 +123,29 @@
       padding: 10px 0;
       font-family: var(--font-body);
       font-weight: 800;
-      font-size: 13.5px;
+      font-size: 13px;
       color: var(--dark-brown);
-      border-radius: 11px;
+      border-radius: 10px;
       cursor: pointer;
       transition: all 0.2s ease;
-      opacity: 0.65;
+      opacity: 0.6;
     }
 
     .auth-tab.active {
       background-color: var(--red-primary);
       color: #fff;
       opacity: 1;
-      box-shadow: 0 2px 6px rgba(230, 74, 56, 0.35);
+      box-shadow: 0 2px 8px rgba(230, 74, 56, 0.4);
     }
 
     .form-label {
       display: block;
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 800;
       color: var(--dark-brown);
       margin-bottom: 6px;
       text-transform: uppercase;
-      letter-spacing: 0.4px;
+      letter-spacing: 0.5px;
     }
 
     .input-field, textarea.input-field {
@@ -149,21 +155,22 @@
       background-color: #FFFFFF;
       padding: 12px 14px;
       font-family: var(--font-body);
-      font-size: 14px;
+      font-size: 13.5px;
       font-weight: 600;
       color: var(--dark-brown);
       outline: none;
       margin-bottom: 14px;
-      transition: border-color 0.2s, box-shadow 0.2s;
+      transition: all 0.2s ease;
     }
 
     .input-field:focus, textarea.input-field:focus {
       border-color: var(--red-primary);
-      box-shadow: 0 0 0 3px rgba(230, 74, 56, 0.2);
+      box-shadow: 0 0 0 3.5px rgba(230, 74, 56, 0.2);
+      background-color: #FFF;
     }
 
     textarea.input-field {
-      min-height: 180px;
+      min-height: 160px;
       line-height: 1.55;
       resize: vertical;
     }
@@ -173,7 +180,7 @@
       height: 48px;
       border-radius: 14px;
       font-family: var(--font-body);
-      font-size: 14px;
+      font-size: 13.5px;
       font-weight: 800;
       display: flex;
       align-items: center;
@@ -219,54 +226,65 @@
       padding: 14px;
       text-align: center;
       font-family: monospace;
-      font-size: 14px;
+      font-size: 13.5px;
       font-weight: 800;
       color: var(--dark-brown);
       word-break: break-all;
       margin: 12px 0;
       user-select: all;
       cursor: pointer;
+      transition: background 0.2s;
+    }
+    .id-copy-box:hover {
+      background: #fff5a8;
     }
 
     .file-drop {
       border: 2px dashed var(--red-primary);
-      background-color: rgba(230, 74, 56, 0.05);
+      background-color: rgba(230, 74, 56, 0.04);
       border-radius: 14px;
-      padding: 18px;
+      padding: 16px;
       text-align: center;
       font-size: 13px;
       font-weight: 700;
       color: var(--text-red);
       margin-bottom: 14px;
       cursor: pointer;
-      transition: background-color 0.2s;
+      transition: all 0.2s;
     }
 
     .file-drop:hover {
-      background-color: rgba(230, 74, 56, 0.12);
+      background-color: rgba(230, 74, 56, 0.1);
+      border-color: var(--dark-brown);
     }
 
     .file-drop input { display: none; }
 
     .status-msg {
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 700;
       text-align: center;
       margin-bottom: 12px;
-      padding: 8px 12px;
-      border-radius: 10px;
+      padding: 10px 14px;
+      border-radius: 12px;
       display: none;
+      animation: fadeIn 0.2s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .status-msg:not(:empty) { display: block; }
-    .status-msg.error { background: #ffe5e8; color: #B00020; border: 1px solid #ffb3bc; }
-    .status-msg.success { background: #e2f7ea; color: #1A7A3D; border: 1px solid #a3e4bc; }
-    .status-msg.info { background: #fff4d4; color: #8a5a00; border: 1px solid #ffe08a; }
+    .status-msg.error { background: #ffe5e8; color: #B00020; border: 1.5px solid #ffb3bc; }
+    .status-msg.success { background: #e2f7ea; color: #1A7A3D; border: 1.5px solid #a3e4bc; }
+    .status-msg.info { background: #fff4d4; color: #8a5a00; border: 1.5px solid #ffe08a; }
 
     .hint {
-      font-size: 12px;
+      font-size: 11.5px;
       color: var(--dark-brown);
-      opacity: 0.78;
+      opacity: 0.8;
       margin-bottom: 14px;
       line-height: 1.5;
     }
@@ -281,7 +299,8 @@
       color: #FFFBD0;
       padding: 14px 18px;
       border-radius: 18px;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 12px rgba(59, 20, 32, 0.2);
     }
 
     .user-badge {
@@ -306,9 +325,21 @@
       border: none;
       padding: 6px 12px;
       border-radius: 10px;
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 800;
       cursor: pointer;
+      transition: background 0.15s;
+    }
+    .logout-btn:hover {
+      background: var(--red-hover);
+    }
+
+    .card-title {
+      font-family: var(--font-heading);
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text-red);
+      margin-bottom: 6px;
     }
   </style>
 </head>
@@ -360,12 +391,12 @@
 
     <!-- ÉCRAN VALIDATION ID -->
     <div id="screen-pending" class="glass-card hidden">
-      <h3 style="margin-bottom:10px; color:var(--text-red);">✅ Compte créé avec succès !</h3>
+      <h3 class="card-title">✅ Compte créé avec succès !</h3>
       <div class="hint">
         Pour activer ton accès, l'administrateur principal doit ajouter cet identifiant dans la liste <strong>ADMIN_USER_IDS</strong> :
       </div>
       <div id="pending-user-id" class="id-copy-box" title="Cliquer pour copier"></div>
-      <button id="btn-copy-id" class="btn-3d btn-secondary" style="margin-bottom: 12px;">📋 Copier l'identifiant</button>
+      <button id="btn-copy-id" class="btn-3d btn-secondary" style="margin-bottom: 10px;">📋 Copier l'identifiant</button>
       <button id="btn-pending-ok" class="btn-3d">Aller à la connexion</button>
     </div>
 
@@ -380,7 +411,7 @@
       </div>
 
       <div class="glass-card">
-        <h3 style="margin-bottom:8px; font-family:var(--font-heading); color:var(--text-red);">Base de connaissances nova.ai</h3>
+        <h3 class="card-title">Base de connaissances nova.ai</h3>
         <div class="hint">
           Renseigne ici les tarifs, tailles, délais de livraison ou politiques de retour. L'assistant IA utilisera ces informations pour répondre aux clients.
         </div>
@@ -397,7 +428,7 @@
       </div>
 
       <div class="glass-card">
-        <h3 style="margin-bottom:8px; font-family:var(--font-heading); color:var(--dark-brown);">Sécurité Biométrique</h3>
+        <h3 class="card-title" style="color:var(--dark-brown);">Sécurité Biométrique</h3>
         <div class="hint">Active l'authentification par empreinte digitale ou FaceID sur cet appareil pour un accès instantané.</div>
         <div id="fingerprint-status" class="status-msg"></div>
         <button id="btn-register-fingerprint" class="btn-3d btn-dark hidden">👆 Activer l'empreinte digitale</button>
@@ -416,9 +447,9 @@
     const APPWRITE_PROJECT_ID = '6ad4bd7b0036d37d3561';
     const NOVA_FUNCTION_ID = 'COLLE_ICI_LE_FUNCTION_ID';
 
+    // Votre ID utilisateur exact ajouté aux administrateurs autorisés
     const ADMIN_USER_IDS = [
-      'COLLE_ICI_USER_ID_1',
-      'COLLE_ICI_USER_ID_2'
+      '6af995680030f5cd189f'
     ];
 
     if (typeof pdfjsLib !== 'undefined') {
@@ -510,7 +541,7 @@
           screenLogin.classList.add('hidden');
           screenAdmin.classList.remove('hidden');
         } else {
-          setStatus(loginStatus, `Accès refusé. Ton ID (${user.$id}) n'est pas encore autorisé dans ADMIN_USER_IDS.`, "error");
+          setStatus(loginStatus, `Accès refusé. Ton ID (${user.$id}) n'est pas autorisé dans ADMIN_USER_IDS.`, "error");
           await account.deleteSession('current').catch(() => {});
         }
       } catch (e) {}
