@@ -3,10 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NOVANOD — Console Administrateur Pro</title>
+  <title>NOVANOD — Console Administrateur</title>
   <meta name="robots" content="noindex, nofollow">
 
-  <!-- Favicon officiel -->
   <link rel="icon" type="image/png" href="logo.png?v=6">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,18 +19,12 @@
       --dark-brown-shadow: #1c080e;
       --text-red: #D94432;
       --cream-bg: #FFFBD0;
-      --cream-card: #FFFFE8;
       --card-bg: rgba(255, 255, 255, 0.96);
       --font-heading: 'Fredoka', sans-serif;
       --font-body: 'Plus Jakarta Sans', sans-serif;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      -webkit-tap-highlight-color: transparent;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
     body {
       background: radial-gradient(circle at 50% 0%, #fff7cc, var(--cream-bg) 70%, #f7e6a1);
@@ -105,7 +98,6 @@
       box-shadow: 0 6px 0 var(--dark-brown), 0 16px 32px rgba(59, 20, 32, 0.15);
     }
 
-    /* Navigation par onglets Dashboard Pro */
     .dashboard-nav {
       display: flex;
       gap: 8px;
@@ -227,31 +219,12 @@
       transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.15s;
     }
 
-    .btn-3d:hover:not(:disabled) {
-      background-color: var(--red-hover);
-    }
+    .btn-3d:hover:not(:disabled) { background-color: var(--red-hover); }
+    .btn-3d:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 0 0 var(--dark-brown); }
+    .btn-3d:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn-3d.btn-dark { background-color: var(--dark-brown); box-shadow: 0 4px 0 var(--dark-brown-shadow); }
+    .btn-3d.btn-secondary { background-color: var(--cream-bg); color: var(--dark-brown); }
 
-    .btn-3d:active:not(:disabled) {
-      transform: translateY(4px);
-      box-shadow: 0 0 0 var(--dark-brown);
-    }
-
-    .btn-3d:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    .btn-3d.btn-dark {
-      background-color: var(--dark-brown);
-      box-shadow: 0 4px 0 var(--dark-brown-shadow);
-    }
-
-    .btn-3d.btn-secondary {
-      background-color: var(--cream-bg);
-      color: var(--dark-brown);
-    }
-
-    /* Grille de statistiques administrateur */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -283,7 +256,6 @@
       text-transform: uppercase;
     }
 
-    /* Liste des admins / journaux */
     .admin-list-item {
       background: #FFF;
       border: 2px solid var(--dark-brown);
@@ -311,10 +283,6 @@
       margin: 12px 0;
       user-select: all;
       cursor: pointer;
-      transition: background 0.2s;
-    }
-    .id-copy-box:hover {
-      background: #fff5a8;
     }
 
     .file-drop {
@@ -328,14 +296,7 @@
       color: var(--text-red);
       margin-bottom: 14px;
       cursor: pointer;
-      transition: all 0.2s;
     }
-
-    .file-drop:hover {
-      background-color: rgba(230, 74, 56, 0.1);
-      border-color: var(--dark-brown);
-    }
-
     .file-drop input { display: none; }
 
     .status-msg {
@@ -346,27 +307,13 @@
       padding: 10px 14px;
       border-radius: 12px;
       display: none;
-      animation: fadeIn 0.2s ease;
     }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-4px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
     .status-msg:not(:empty) { display: block; }
     .status-msg.error { background: #ffe5e8; color: #B00020; border: 1.5px solid #ffb3bc; }
     .status-msg.success { background: #e2f7ea; color: #1A7A3D; border: 1.5px solid #a3e4bc; }
     .status-msg.info { background: #fff4d4; color: #8a5a00; border: 1.5px solid #ffe08a; }
 
-    .hint {
-      font-size: 11.5px;
-      color: var(--dark-brown);
-      opacity: 0.8;
-      margin-bottom: 14px;
-      line-height: 1.5;
-    }
-
+    .hint { font-size: 11.5px; color: var(--dark-brown); opacity: 0.8; margin-bottom: 14px; line-height: 1.5; }
     .hidden { display: none !important; }
 
     .dashboard-header {
@@ -381,44 +328,10 @@
       box-shadow: 0 4px 12px rgba(59, 20, 32, 0.2);
     }
 
-    .user-badge {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 13px;
-      font-weight: 700;
-    }
-
-    .status-dot {
-      width: 10px;
-      height: 10px;
-      background-color: #4CE086;
-      border-radius: 50%;
-      box-shadow: 0 0 8px #4CE086;
-    }
-
-    .logout-btn {
-      background: var(--red-primary);
-      color: #fff;
-      border: none;
-      padding: 6px 12px;
-      border-radius: 10px;
-      font-size: 11.5px;
-      font-weight: 800;
-      cursor: pointer;
-      transition: background 0.15s;
-    }
-    .logout-btn:hover {
-      background: var(--red-hover);
-    }
-
-    .card-title {
-      font-family: var(--font-heading);
-      font-size: 17px;
-      font-weight: 700;
-      color: var(--text-red);
-      margin-bottom: 6px;
-    }
+    .user-badge { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; }
+    .status-dot { width: 10px; height: 10px; background-color: #4CE086; border-radius: 50%; box-shadow: 0 0 8px #4CE086; }
+    .logout-btn { background: var(--red-primary); color: #fff; border: none; padding: 6px 12px; border-radius: 10px; font-size: 11.5px; font-weight: 800; cursor: pointer; }
+    .card-title { font-family: var(--font-heading); font-size: 17px; font-weight: 700; color: var(--text-red); margin-bottom: 6px; }
   </style>
 </head>
 <body>
@@ -451,9 +364,7 @@
       </div>
 
       <div id="pane-signup" class="hidden">
-        <div class="hint">
-          Crée ton compte administrateur. Une fois créé, copie ton identifiant unique et transmet-le à l'administrateur principal pour validation.
-        </div>
+        <div class="hint">Crée ton compte administrateur et transmet ton ID à l'administrateur principal.</div>
         <label class="form-label">Adresse E-mail</label>
         <input type="email" id="signup-email" class="input-field" placeholder="nouvel.admin@novanod.com" autocomplete="username">
         
@@ -470,15 +381,13 @@
     <!-- ÉCRAN VALIDATION ID -->
     <div id="screen-pending" class="glass-card hidden">
       <h3 class="card-title">✅ Compte créé avec succès !</h3>
-      <div class="hint">
-        Pour activer ton accès, l'administrateur principal doit ajouter cet identifiant dans la liste <strong>ADMIN_USER_IDS</strong> :
-      </div>
-      <div id="pending-user-id" class="id-copy-box" title="Cliquer pour copier"></div>
+      <div class="hint">Transmets cet identifiant à l'administrateur principal pour validation dans ADMIN_USER_IDS :</div>
+      <div id="pending-user-id" class="id-copy-box"></div>
       <button id="btn-copy-id" class="btn-3d btn-secondary" style="margin-bottom: 10px;">📋 Copier l'identifiant</button>
       <button id="btn-pending-ok" class="btn-3d">Aller à la connexion</button>
     </div>
 
-    <!-- DASHBOARD ADMINISTRATEUR PRO -->
+    <!-- DASHBOARD ADMINISTRATEUR -->
     <div id="screen-admin" class="hidden">
       <div class="dashboard-header">
         <div class="user-badge">
@@ -488,7 +397,6 @@
         <button class="logout-btn" id="btn-logout">Déconnexion</button>
       </div>
 
-      <!-- Navigation des modules d'administration -->
       <div class="dashboard-nav">
         <button class="nav-tab active" data-target="tab-content-ai">🤖 Base nova.ai</button>
         <button class="nav-tab" data-target="tab-content-stats">📊 Statistiques</button>
@@ -498,9 +406,7 @@
       <!-- ONGLET 1 : BASE DE CONNAISSANCES -->
       <div id="tab-content-ai" class="glass-card">
         <h3 class="card-title">Base de connaissances nova.ai</h3>
-        <div class="hint">
-          Renseigne ici les tarifs, tailles, délais de livraison ou politiques de retour. L'assistant IA utilisera ces informations pour répondre aux clients.
-        </div>
+        <div class="hint">Renseigne ici les tarifs, tailles, délais de livraison ou politiques de retour.</div>
         
         <textarea id="knowledge-text" class="input-field" placeholder="Saisis ou colle les informations de la boutique NOVANOD..."></textarea>
 
@@ -513,7 +419,7 @@
         <button id="btn-save" class="btn-3d">💾 Enregistrer et Synchroniser</button>
       </div>
 
-      <!-- ONGLET 2 : STATISTIQUES ET ACTIVITÉ -->
+      <!-- ONGLET 2 : STATISTIQUES -->
       <div id="tab-content-stats" class="glass-card hidden">
         <h3 class="card-title">Statistiques de la Boutique</h3>
         <div class="hint">Vue d'ensemble de l'activité sur la plateforme NOVANOD.</div>
@@ -528,12 +434,6 @@
             <div class="stat-label">Mises à jour base</div>
           </div>
         </div>
-
-        <h3 class="card-title" style="margin-top:16px;">Journal d'activité récent</h3>
-        <div id="activity-log" style="font-size: 12px; font-weight: 700; color:var(--dark-brown);">
-          <div class="admin-list-item"><span>Synchronisation base de connaissances</span> <span>Il y a 10 min</span></div>
-          <div class="admin-list-item"><span>Connexion administrateur réussie</span> <span>Il y a 1 h</span></div>
-        </div>
       </div>
 
       <!-- ONGLET 3 : SÉCURITÉ & BIOMÉTRIE -->
@@ -547,7 +447,7 @@
         </div>
 
         <h3 class="card-title" style="margin-top:20px;">Sécurité Biométrique</h3>
-        <div class="hint">Active l'authentification par empreinte digitale ou FaceID sur cet appareil pour un accès instantané.</div>
+        <div class="hint">Active l'authentification par empreinte digitale ou FaceID sur cet appareil.</div>
         <div id="fingerprint-status" class="status-msg"></div>
         <button id="btn-register-fingerprint" class="btn-3d btn-dark hidden">👆 Activer l'empreinte digitale</button>
       </div>
@@ -590,7 +490,6 @@
       el.className = 'status-msg' + (msg ? ' ' + type : '');
     }
 
-    // Gestion des onglets du dashboard pro
     document.querySelectorAll('.nav-tab').forEach(tab => {
       tab.addEventListener('click', () => {
         document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
@@ -653,9 +552,7 @@
       const idText = document.getElementById('pending-user-id').textContent;
       navigator.clipboard.writeText(idText);
       document.getElementById('btn-copy-id').textContent = "✅ Identifiant copié !";
-      setTimeout(() => {
-        document.getElementById('btn-copy-id').textContent = "📋 Copier l'identifiant";
-      }, 2500);
+      setTimeout(() => { document.getElementById('btn-copy-id').textContent = "📋 Copier l'identifiant"; }, 2500);
     });
 
     document.getElementById('btn-pending-ok').addEventListener('click', () => {
@@ -672,7 +569,7 @@
           screenLogin.classList.add('hidden');
           screenAdmin.classList.remove('hidden');
         } else {
-          setStatus(loginStatus, `Accès refusé. Ton ID (${user.$id}) n'est pas autorisé dans ADMIN_USER_IDS.`, "error");
+          setStatus(loginStatus, `Accès refusé. Ton ID (${user.$id}) n'est pas autorisé.`, "error");
           await account.deleteSession('current').catch(() => {});
         }
       } catch (e) {}
@@ -691,7 +588,7 @@
         await account.createEmailPasswordSession(email, password);
         await checkAdminSession();
       } catch (e) {
-        setStatus(loginStatus, "Identifiants incorrects ou compte inexistant.", "error");
+        setStatus(loginStatus, "Identifiants incorrects.", "error");
       }
     });
 
@@ -742,14 +639,14 @@
         setStatus(saveStatus, "Le champ de connaissances est vide.", "error");
         return;
       }
-      setStatus(saveStatus, "Synchronisation avec nova.ai...", "info");
+      setStatus(saveStatus, "Synchronisation...", "info");
       try {
         const execution = await functions.createExecution(NOVA_FUNCTION_ID, JSON.stringify({ action: 'update_knowledge', content }), false);
         const data = JSON.parse(execution.responseBody || '{}');
         if (data.error) throw new Error(data.error);
         setStatus(saveStatus, "Base de connaissances enregistrée avec succès !", "success");
       } catch (e) {
-        setStatus(saveStatus, "Base enregistrée (Mode local / Synchronisation simulée).", "success");
+        setStatus(saveStatus, "Erreur : " + e.message, "error");
       }
     });
 
@@ -763,25 +660,21 @@
     }
 
     async function callNovaFunction(payload) {
-      try {
-        const execution = await functions.createExecution(NOVA_FUNCTION_ID, JSON.stringify(payload), false);
-        return JSON.parse(execution.responseBody || '{}');
-      } catch (err) {
-        return { error: err.message || "Erreur de communication avec la fonction Appwrite." };
-      }
+      const execution = await functions.createExecution(NOVA_FUNCTION_ID, JSON.stringify(payload), false);
+      return JSON.parse(execution.responseBody || '{}');
     }
 
     btnRegisterFingerprint.addEventListener('click', async () => {
-      setStatus(fingerprintStatus, "Initialisation biométrique...", "info");
+      setStatus(fingerprintStatus, "Veuillez poser votre doigt sur le capteur...", "info");
       try {
         const options = await callNovaFunction({ action: 'webauthn_register_options' });
         if (options.error) throw new Error(options.error);
         const credential = await startRegistration(options);
         const result = await callNovaFunction({ action: 'webauthn_register_verify', credential });
         if (result.error) throw new Error(result.error);
-        setStatus(fingerprintStatus, "Empreinte digitale activée !", "success");
+        setStatus(fingerprintStatus, "Empreinte digitale enregistrée avec succès !", "success");
       } catch (e) {
-        setStatus(fingerprintStatus, "Empreinte configurée pour cet appareil.", "success");
+        setStatus(fingerprintStatus, "Échec : " + e.message, "error");
       }
     });
 
