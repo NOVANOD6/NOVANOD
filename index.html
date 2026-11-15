@@ -83,7 +83,7 @@
 
     /* --- LOGO ROND PLACÉ TOUT EN HAUT SANS BORDURE --- */
     .top-brand-logo-container {
-      position: absolute;
+      position: fixed;
       top: 8px;
       left: 50%;
       transform: translateX(-50%);
@@ -1434,7 +1434,7 @@
 
     // ⚠️ À REMPLIR : colle ici le Function ID de ta fonction Appwrite nova-ai
     // (Appwrite Console → Functions → ta fonction → "Function ID" en haut de page).
-    const NOVA_FUNCTION_ID = 'COLLE_ICI_LE_FUNCTION_ID';
+    const NOVA_FUNCTION_ID = '6af9c951003622f41d2a';
 
     try {
       client = new Appwrite.Client();
@@ -1603,6 +1603,13 @@
         }
 
         const user = await account.get();
+        if (user.email && !user.emailVerification) {
+          await account.deleteSession('current').catch(() => {});
+          setNovaWidgetVisible(false);
+          navigateTo(getInitialScreen());
+          showToast("Veuillez d'abord vérifier votre e-mail via le lien reçu dans votre boîte de réception.");
+          return;
+        }
         displayUserData(user);
         setNovaWidgetVisible(true);
         navigateTo('screen-profile');
@@ -1689,14 +1696,16 @@
         await account.deleteSession('current').catch(() => {});
         await account.create(Appwrite.ID.unique(), email, password, username);
         await account.createEmailPasswordSession(email, password);
-        
-        try {
-          const verificationUrl = REDIRECT_URL + (REDIRECT_URL.includes('?') ? '&' : '?') + 'action=verify';
-          await account.createVerification(verificationUrl);
-        } catch(e) {}
 
-        showToast("Inscription réussie !");
-        await checkSession();
+        const verificationUrl = REDIRECT_URL + (REDIRECT_URL.includes('?') ? '&' : '?') + 'action=verify';
+        await account.createVerification(verificationUrl);
+
+        // Pas d'accès tant que l'e-mail n'est pas vérifié : on déconnecte
+        // immédiatement et on affiche l'écran "lien envoyé" à la place.
+        await account.deleteSession('current').catch(() => {});
+
+        document.getElementById('link-sent-message').textContent = `Un lien de confirmation a été envoyé à l'adresse ${email}. Veuillez cliquer sur ce lien dans votre boîte mail pour valider votre compte.`;
+        navigateTo('screen-link-sent');
       } catch (error) {
         showToast(getFriendlyErrorMessage(error));
       } finally {
@@ -1760,7 +1769,14 @@
       try {
         await account.deleteSession('current').catch(() => {});
         await account.createEmailPasswordSession(identifier, password);
-        
+
+        const user = await account.get();
+        if (user.email && !user.emailVerification) {
+          await account.deleteSession('current').catch(() => {});
+          showToast("Veuillez d'abord vérifier votre e-mail via le lien reçu dans votre boîte de réception.");
+          return;
+        }
+
         showToast("Connexion réussie !");
         await checkSession();
       } catch (error) {
