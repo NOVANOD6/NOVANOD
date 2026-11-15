@@ -1285,7 +1285,7 @@
   <!-- TOAST NOTIFICATION -->
   <div id="toast" class="status-toast"></div>
 
-  <!-- ================= WIDGET DE CHAT nova.ai — flottant, déplaçable au doigt ================= -->
+  <!-- ================= WIDGET DE CHAT nova.ai — bulle et fenêtre flottantes, déplaçables au doigt ================= -->
   <button id="nova-fab" class="nova-fab" aria-label="Ouvrir l'assistant nova.ai">
     <span class="nova-fab-pulse"></span>
     <img src="AI.png" alt="nova.ai" class="nova-fab-icon">
@@ -1603,12 +1603,6 @@
         }
 
         const user = await account.get();
-        if (user.email && !user.emailVerification) {
-          await account.deleteSession('current');
-          setNovaWidgetVisible(false);
-          navigateTo(getInitialScreen());
-          return;
-        }
         displayUserData(user);
         setNovaWidgetVisible(true);
         navigateTo('screen-profile');
@@ -1619,7 +1613,7 @@
     }
 
     function displayUserData(user) {
-      if (user.email === '' && !user.phone) {
+      if (!user.email && !user.phone) {
         document.getElementById('user-display-name').textContent = "Visiteur Anonyme";
         document.getElementById('user-email-display').textContent = "Mode Guest Actif";
         document.getElementById('user-phone-display').textContent = "";
@@ -1692,17 +1686,17 @@
       setButtonLoading('btn-submit-signup', true, 'S\'inscrire');
 
       try {
+        await account.deleteSession('current').catch(() => {});
         await account.create(Appwrite.ID.unique(), email, password, username);
         await account.createEmailPasswordSession(email, password);
         
-        const verificationUrl = REDIRECT_URL + (REDIRECT_URL.includes('?') ? '&' : '?') + 'action=verify';
-        await account.createVerification(verificationUrl);
+        try {
+          const verificationUrl = REDIRECT_URL + (REDIRECT_URL.includes('?') ? '&' : '?') + 'action=verify';
+          await account.createVerification(verificationUrl);
+        } catch(e) {}
 
-        await account.deleteSession('current');
-
-        document.getElementById('link-sent-message').textContent = `Un lien de confirmation a été envoyé à l'adresse ${email}. Veuillez cliquer sur ce lien dans votre boîte mail pour valider votre compte.`;
-        
-        navigateTo('screen-link-sent');
+        showToast("Inscription réussie !");
+        await checkSession();
       } catch (error) {
         showToast(getFriendlyErrorMessage(error));
       } finally {
@@ -1764,15 +1758,9 @@
       setButtonLoading('btn-submit-login', true, 'Se connecter');
 
       try {
+        await account.deleteSession('current').catch(() => {});
         await account.createEmailPasswordSession(identifier, password);
         
-        const user = await account.get();
-        if (user.email && !user.emailVerification) {
-          await account.deleteSession('current');
-          showToast("Veuillez d'abord vérifier votre e-mail via le lien reçu dans votre boîte de réception.");
-          return;
-        }
-
         showToast("Connexion réussie !");
         await checkSession();
       } catch (error) {
