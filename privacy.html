@@ -25,10 +25,12 @@
       --page: 1120px;
       --gutter: clamp(16px, 4vw, 32px);
       --arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E");
+      --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 .98 0 0 0 0 .82 0 0 0 .1 0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { color-scheme: dark; -webkit-text-size-adjust: 100%; }
+    html { color-scheme: dark; -webkit-text-size-adjust: 100%; scrollbar-color: var(--coral-deep) var(--burgundy-deep); }
+    @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
 
     body {
       min-height: 100vh;
@@ -40,10 +42,12 @@
       line-height: 1.7;
       background-color: var(--burgundy);
       background-image:
+        var(--grain),
         radial-gradient(ellipse 80% 45% at 50% -8%, rgba(230, 74, 56, 0.28), transparent 70%),
         linear-gradient(180deg, #3B1420 0%, #240A12 55%, #1A060C 100%);
     }
 
+    ::selection { background: var(--coral); color: var(--cream); }
     :focus-visible { outline: 3px solid var(--cream); outline-offset: 3px; }
 
     /* ───── En-tête ───── */
@@ -127,16 +131,28 @@
     .doc-nav a[aria-current="page"] { background: var(--cream); color: var(--burgundy-deep); }
 
     /* ───── Hero ───── */
+    .hero-band { position: relative; overflow: hidden; }
+
+    .hero-art {
+      position: absolute;
+      top: -30px;
+      right: -120px;
+      width: min(780px, 150%);
+      height: auto;
+      pointer-events: none;
+    }
+
     .hero {
+      position: relative;
       width: 100%;
       max-width: var(--page);
       margin: 0 auto;
-      padding: clamp(40px, 8vw, 72px) var(--gutter) clamp(28px, 5vw, 44px);
+      padding: clamp(40px, 8vw, 76px) var(--gutter) clamp(30px, 5vw, 48px);
       display: flex;
       flex-wrap: wrap;
       align-items: flex-end;
       justify-content: space-between;
-      gap: 24px 32px;
+      gap: 28px 32px;
     }
 
     .hero-copy { max-width: 720px; }
@@ -155,7 +171,8 @@
 
     .hero-title {
       margin-bottom: 16px;
-      font: 800 clamp(34px, 6vw, 58px)/1.06 var(--display);
+      font: 800 clamp(36px, 7vw, 68px)/1.04 var(--display);
+      letter-spacing: -0.005em;
       text-shadow: 3px 3px 0 var(--coral);
     }
 
@@ -166,7 +183,30 @@
       font-weight: 500;
     }
 
-    .listen {
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 22px;
+      margin-top: 20px;
+      color: var(--cream-soft);
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .hero-meta:empty { display: none; }
+    .hero-meta span { display: inline-flex; align-items: center; gap: 8px; }
+    .hero-meta span::before {
+      content: '';
+      width: 7px;
+      height: 7px;
+      background: var(--coral);
+      transform: rotate(45deg);
+    }
+
+    /* ───── Lecteur audio : pause, arrêt, vitesse ───── */
+    .player-slot { display: block; }
+    .player { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+
+    .play {
       display: inline-flex;
       align-items: center;
       gap: 12px;
@@ -179,34 +219,101 @@
       cursor: pointer;
       transition: background-color 0.2s;
     }
-    .listen[hidden] { display: none; }
-    .listen:hover { background: rgba(255, 251, 208, 0.14); }
+    .play:hover { background: rgba(255, 251, 208, 0.14); }
 
-    .listen-icon {
+    .play-icon {
       width: 36px;
       height: 36px;
+      flex: none;
       display: grid;
       place-items: center;
       border-radius: 50%;
       background: var(--coral-deep);
     }
-    .listen-icon::before {
+    .play-icon::before {
       content: '';
       margin-left: 3px;
       border-left: 11px solid var(--cream);
       border-top: 7px solid transparent;
       border-bottom: 7px solid transparent;
     }
-    .listen[aria-pressed="true"] .listen-icon::before {
-      width: 12px;
-      height: 12px;
+    .player[data-state="playing"] .play-icon::before {
+      width: 4px;
+      height: 14px;
       margin: 0;
       border: 0;
-      border-radius: 2px;
+      border-radius: 1px;
       background: var(--cream);
+      box-shadow: 8px 0 0 var(--cream);
+      transform: translateX(-4px);
     }
 
-    /* ───── Articles ───── */
+    .stop {
+      width: 36px;
+      height: 36px;
+      flex: none;
+      display: grid;
+      place-items: center;
+      border: 1.5px solid rgba(255, 251, 208, 0.4);
+      border-radius: 50%;
+      background: none;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .stop[hidden] { display: none; }
+    .stop::before { content: ''; width: 11px; height: 11px; border-radius: 2px; background: var(--cream); }
+    .stop:hover { background: rgba(255, 251, 208, 0.14); }
+
+    .speed {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px;
+      border: 1.5px solid rgba(255, 251, 208, 0.4);
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.2);
+    }
+    .speed button {
+      width: 34px;
+      height: 34px;
+      border: 0;
+      border-radius: 50%;
+      background: none;
+      color: var(--cream);
+      font: 700 19px/1 var(--sans);
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .speed button:hover:not(:disabled) { background: rgba(255, 251, 208, 0.14); }
+    .speed button:disabled { opacity: 0.35; cursor: default; }
+    .speed output { min-width: 50px; color: var(--cream); font: 700 13px/1 var(--sans); text-align: center; }
+
+    /* Pendant la lecture, le lecteur se fixe en bas de l'écran */
+    .player.is-docked {
+      position: fixed;
+      left: 50%;
+      bottom: max(16px, env(safe-area-inset-bottom));
+      z-index: 30;
+      width: max-content;
+      max-width: calc(100vw - 24px);
+      flex-wrap: nowrap;
+      gap: 8px;
+      padding: 7px 10px 7px 7px;
+      border: 1.5px solid var(--cream);
+      border-radius: 999px;
+      background: rgba(26, 6, 12, 0.94);
+      -webkit-backdrop-filter: blur(14px);
+      backdrop-filter: blur(14px);
+      box-shadow: 0 5px 0 var(--coral), 0 18px 40px rgba(0, 0, 0, 0.5);
+      transform: translateX(-50%);
+      animation: dock-in 0.25s ease-out;
+    }
+    .player.is-docked .play { padding: 0; gap: 0; border: 0; background: none; }
+    .player.is-docked .play-label { display: none; }
+    .player.is-docked .speed { border-color: var(--line); }
+    @keyframes dock-in { from { opacity: 0; transform: translate(-50%, 14px); } }
+    body.has-dock { padding-bottom: 92px; }
+
+    /* ───── Sommaire + articles ───── */
     .content {
       width: 100%;
       max-width: var(--page);
@@ -215,38 +322,69 @@
       flex: 1;
     }
 
-    .articles {
-      display: grid;
-      grid-template-columns: repeat(12, 1fr);
-      gap: clamp(18px, 2.6vw, 28px);
+    /* Mobile : barre collante de pastilles numérotées */
+    .toc {
+      position: sticky;
+      top: 0;
+      z-index: 15;
+      display: flex;
+      justify-content: space-between;
+      margin: 0 calc(var(--gutter) * -1) 22px;
+      padding: 10px var(--gutter);
+      background: rgba(26, 6, 12, 0.86);
+      -webkit-backdrop-filter: blur(14px);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--line);
     }
+    .toc:empty { display: none; }
+
+    .toc a {
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border: 1.5px solid var(--line);
+      border-radius: 50%;
+      color: var(--cream-soft);
+      font: 700 13px/1 var(--display);
+      text-decoration: none;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .toc a span { display: none; }
+    .toc a[aria-current] { background: var(--cream); border-color: var(--cream); color: var(--burgundy-deep); }
+
+    .articles { display: flex; flex-direction: column; gap: clamp(20px, 3vw, 30px); }
 
     .card {
-      grid-column: span 6;
+      scroll-margin-top: 84px;
       padding: clamp(22px, 3vw, 32px);
       border: 1.5px solid rgba(255, 251, 208, 0.3);
       border-radius: 22px;
-      background: linear-gradient(165deg, rgba(42, 12, 22, 0.96), rgba(24, 5, 11, 0.98));
-      box-shadow: 0 6px 0 var(--coral), 0 18px 36px rgba(0, 0, 0, 0.35);
+      background:
+        radial-gradient(120% 90% at 0% 0%, rgba(230, 74, 56, 0.14), transparent 55%),
+        linear-gradient(165deg, rgba(42, 12, 22, 0.97), rgba(24, 5, 11, 0.99));
+      box-shadow: inset 0 1px 0 rgba(255, 251, 208, 0.14), 0 6px 0 var(--coral), 0 18px 36px rgba(0, 0, 0, 0.35);
     }
-    .card-wide { grid-column: 1 / -1; }
 
-    .card-head { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+    .card.is-reading { outline: 2px solid var(--cream); outline-offset: 5px; }
+
+    .card-num { display: flex; align-items: baseline; gap: 10px; margin-bottom: 10px; }
+    .card-label { color: var(--cream-soft); font-size: 13px; font-weight: 700; }
+    .card-digit { color: var(--coral); font: 800 44px/1 var(--display); }
 
     .chip {
+      display: inline-block;
+      margin-bottom: 12px;
       padding: 3px 12px;
-      border: 1.5px solid var(--cream);
       border-radius: 999px;
-      background: var(--coral-deep);
+      background: var(--cream);
+      color: var(--burgundy-deep);
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 800;
       line-height: 1.5;
     }
 
-    .card-title {
-      margin-bottom: 12px;
-      font: 700 clamp(21px, 3vw, 25px)/1.2 var(--display);
-    }
+    .card-title { margin-bottom: 12px; font: 700 clamp(21px, 3vw, 26px)/1.2 var(--display); }
 
     .card-body {
       max-width: 68ch;
@@ -277,10 +415,10 @@
     .card-rule {
       border-color: var(--cream);
       background: linear-gradient(140deg, #D13C2C, #A92B20);
-      box-shadow: 0 6px 0 var(--cream), 0 18px 36px rgba(230, 74, 56, 0.3);
+      box-shadow: inset 0 1px 0 rgba(255, 251, 208, 0.3), 0 6px 0 var(--cream), 0 18px 36px rgba(230, 74, 56, 0.3);
     }
-    .card-rule .chip { background: var(--burgundy-deep); }
-    .card-rule .chip-rule { background: var(--cream); color: var(--burgundy-deep); }
+    .card-rule .card-label,
+    .card-rule .card-digit,
     .card-rule .card-body { color: var(--cream); }
     .card-rule .card-body strong {
       display: block;
@@ -344,10 +482,6 @@
       letter-spacing: 0.03em;
     }
 
-    @media (max-width: 860px) {
-      .card { grid-column: 1 / -1; }
-    }
-
     @media (max-width: 640px) {
       .site-header { position: static; }
       .header-inner { flex-wrap: wrap; gap: 12px; padding-top: 12px; padding-bottom: 14px; }
@@ -355,8 +489,47 @@
       .doc-nav a { flex: 1 1 auto; padding: 9px 8px; font-size: 12.5px; }
     }
 
+    /* Grand écran : sommaire latéral collant, numéro d'article en colonne */
+    @media (min-width: 1024px) {
+      .content { padding-top: 16px; }
+      .layout { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 48px; align-items: start; }
+
+      .toc {
+        top: 104px;
+        flex-direction: column;
+        gap: 4px;
+        margin: 0;
+        padding: 0;
+        background: none;
+        border: 0;
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+      }
+      .toc a {
+        width: auto;
+        height: auto;
+        display: flex;
+        align-items: baseline;
+        gap: 12px;
+        padding: 10px 14px;
+        border: 0;
+        border-radius: 14px;
+        font: 600 14px/1.35 var(--sans);
+      }
+      .toc a b { min-width: 22px; color: var(--coral-light); font: 800 13px/1.35 var(--display); }
+      .toc a span { display: inline; }
+      .toc a:hover { background: rgba(255, 251, 208, 0.07); color: var(--cream); }
+      .toc a[aria-current] { background: rgba(230, 74, 56, 0.18); color: var(--cream); }
+      .toc a[aria-current] b { color: var(--cream); }
+
+      .card { scroll-margin-top: 104px; display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 20px; padding: 36px; }
+      .card-num { flex-direction: column; align-items: flex-start; gap: 0; margin: 0; }
+      .card-digit { font-size: 58px; }
+      .card-body { font-size: 16px; }
+    }
+
     @media (prefers-reduced-motion: reduce) {
-      * { transition: none !important; }
+      * { transition: none !important; animation: none !important; }
     }
   </style>
 </head>
@@ -379,72 +552,115 @@
     </div>
   </header>
 
-  <section class="hero">
-    <div class="hero-copy">
-      <p class="hero-kicker">Protection des données 2026</p>
-      <h1 class="hero-title">Politique de Confidentialité</h1>
-      <p class="hero-lead">Transparence, sécurité et respect absolu de votre vie privée au sein de l'archipel et de l'écosystème NOVANOD.</p>
-    </div>
+  <div class="hero-band">
+    <svg class="hero-art" viewBox="0 0 800 520" aria-hidden="true" focusable="false">
+      <defs>
+        <path id="isle" vector-effect="non-scaling-stroke" d="M200 40C270 30 340 80 355 150C372 225 330 310 250 345C175 377 85 350 55 280C25 212 60 130 110 85C140 58 170 44 200 40Z"/>
+      </defs>
+      <g fill="none" stroke="#FFFBD0" stroke-width="1.5" stroke-opacity=".14">
+        <use href="#isle" transform="translate(560 230) rotate(-6) scale(1.18) translate(-200 -200)"/>
+        <use href="#isle" transform="translate(560 230) rotate(4) scale(0.95) translate(-200 -200)"/>
+        <use href="#isle" transform="translate(560 230) rotate(-3) scale(0.72) translate(-200 -200)"/>
+        <use href="#isle" transform="translate(560 230) rotate(7) scale(0.5) translate(-200 -200)"/>
+        <use href="#isle" transform="translate(190 410) rotate(10) scale(0.6) translate(-200 -200)"/>
+        <use href="#isle" transform="translate(190 410) rotate(-4) scale(0.42) translate(-200 -200)"/>
+      </g>
+      <use href="#isle" fill="#E64A38" fill-opacity=".2" stroke="none" transform="translate(560 230) rotate(2) scale(0.3) translate(-200 -200)"/>
+      <use href="#isle" fill="#E64A38" fill-opacity=".16" stroke="none" transform="translate(190 410) rotate(6) scale(0.22) translate(-200 -200)"/>
+    </svg>
 
-    <button type="button" class="listen" id="listen" aria-pressed="false">
-      <span class="listen-icon" aria-hidden="true"></span>
-      <span class="listen-label">Lire à haute voix</span>
-    </button>
-  </section>
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="hero-kicker">Protection des données 2026</p>
+        <h1 class="hero-title">Politique de Confidentialité</h1>
+        <p class="hero-lead">Transparence, sécurité et respect absolu de votre vie privée au sein de l'archipel et de l'écosystème NOVANOD.</p>
+        <div class="hero-meta" id="meta"></div>
+      </div>
+
+      <div class="player-slot" id="player-slot">
+        <div class="player" id="player" data-state="idle" role="group" aria-label="Lecture à haute voix">
+          <button type="button" class="play" id="play" aria-label="Lire à haute voix">
+            <span class="play-icon" aria-hidden="true"></span>
+            <span class="play-label">Lire à haute voix</span>
+          </button>
+          <button type="button" class="stop" id="stop" aria-label="Arrêter la lecture" title="Arrêter la lecture" hidden></button>
+          <div class="speed" role="group" aria-label="Vitesse de lecture">
+            <button type="button" id="slower" aria-label="Ralentir" title="Ralentir">−</button>
+            <output id="rate" aria-live="polite">1×</output>
+            <button type="button" id="faster" aria-label="Accélérer" title="Accélérer">+</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
 
   <main class="content">
-    <div class="articles" id="articles">
+    <div class="layout">
+      <nav class="toc" id="toc" aria-label="Sommaire"></nav>
 
-      <article class="card">
-        <div class="card-head"><span class="chip">Article 01</span></div>
-        <h2 class="card-title">Collecte des Données</h2>
-        <div class="card-body">
+      <div class="articles" id="articles">
+
+      <article class="card" id="article-1">
+        <p class="card-num"><span class="card-label">Article</span> <span class="card-digit">01</span></p>
+        <div class="card-main">
+          <h2 class="card-title">Collecte des Données</h2>
+          <div class="card-body">
           Les informations collectées sont strictement adaptées à votre mode de navigation :
           <ul>
             <li><strong>Mode Anonyme / Guest :</strong> Aucune donnée nominative conservée. Identifiant temporaire unique.</li>
             <li><strong>Réseaux Sociaux :</strong> Récupération sécurisée du nom et e-mail fournis par le fournisseur (Google, TikTok, Facebook).</li>
             <li><strong>Mode Buyer :</strong> Collecte sécurisée du nom d'utilisateur, de l'adresse e-mail et du numéro de téléphone.</li>
           </ul>
+          </div>
         </div>
       </article>
 
-      <article class="card">
-        <div class="card-head"><span class="chip">Article 02</span></div>
-        <h2 class="card-title">Usage des Données</h2>
-        <div class="card-body">
+      <article class="card" id="article-2">
+        <p class="card-num"><span class="card-label">Article</span> <span class="card-digit">02</span></p>
+        <div class="card-main">
+          <h2 class="card-title">Usage des Données</h2>
+          <div class="card-body">
           Vos informations sont exclusivement réservées à :
           <ul>
             <li>La création et la sécurisation de votre compte sur Appwrite Cloud.</li>
             <li>L'envoi des liens de confirmation et de réinitialisation de mot de passe.</li>
             <li>La gestion des accès et de vos interactions dans l'univers NOVANOD.</li>
           </ul>
+          </div>
         </div>
       </article>
 
-      <article class="card">
-        <div class="card-head"><span class="chip">Article 03</span></div>
-        <h2 class="card-title">Sécurité &amp; Infrastructure</h2>
-        <div class="card-body">
+      <article class="card" id="article-3">
+        <p class="card-num"><span class="card-label">Article</span> <span class="card-digit">03</span></p>
+        <div class="card-main">
+          <h2 class="card-title">Sécurité &amp; Infrastructure</h2>
+          <div class="card-body">
           Toutes les données sensibles et sessions sont chiffrées et hébergées sur l'infrastructure européenne d'Appwrite Cloud (Endpoint FRA). Les mots de passe ne sont jamais sauvegardés en clair.
+          </div>
         </div>
       </article>
 
-      <article class="card">
-        <div class="card-head"><span class="chip">Article 04</span></div>
-        <h2 class="card-title">Confidentialité Absolue</h2>
-        <div class="card-body">
+      <article class="card" id="article-4">
+        <p class="card-num"><span class="card-label">Article</span> <span class="card-digit">04</span></p>
+        <div class="card-main">
+          <h2 class="card-title">Confidentialité Absolue</h2>
+          <div class="card-body">
           NOVANOD ne vend, ne loue et ne partage aucune de vos données personnelles avec des organismes tiers à des fins commerciales.
+          </div>
         </div>
       </article>
 
-      <article class="card card-wide">
-        <div class="card-head"><span class="chip">Article 05</span></div>
-        <h2 class="card-title">Vos Droits (RGPD)</h2>
-        <div class="card-body">
+      <article class="card" id="article-5">
+        <p class="card-num"><span class="card-label">Article</span> <span class="card-digit">05</span></p>
+        <div class="card-main">
+          <h2 class="card-title">Vos Droits (RGPD)</h2>
+          <div class="card-body">
           Vous disposez d'un droit permanent d'accès, de rectification et de suppression de l'ensemble de vos données sur simple déconnexion ou fermeture du compte.
+          </div>
         </div>
       </article>
 
+      </div>
     </div>
 
     <nav class="page-nav" aria-label="Poursuivre la lecture">
@@ -462,6 +678,9 @@
   <footer class="site-footer">©2026 NOVANOD™, all rights reserved</footer>
 
   <script>
+    const articles = document.getElementById('articles');
+    const cards = [...articles.querySelectorAll('.card')];
+
     // Retour : ferme l'onglet s'il a été ouvert depuis l'accueil, sinon redirige.
     document.querySelector('[data-back]').addEventListener('click', (e) => {
       e.preventDefault();
@@ -469,33 +688,175 @@
       if (!window.closed) window.location.href = 'index.html';
     });
 
-    // Lecture à haute voix
+    // Infos de lecture (calculées à partir du contenu)
+    const words = articles.innerText.split(/\s+/).filter(Boolean).length;
+    const meta = document.getElementById('meta');
+    [`${cards.length} articles`, `${Math.max(1, Math.round(words / 200))} min de lecture`].forEach((text) => {
+      const item = document.createElement('span');
+      item.textContent = text;
+      meta.append(item);
+    });
+
+    // Sommaire généré depuis les articles + suivi de la lecture
+    const toc = document.getElementById('toc');
+    const links = cards.map((card) => {
+      const num = card.querySelector('.card-digit').textContent;
+      const title = card.querySelector('.card-title').textContent;
+      const link = document.createElement('a');
+      link.href = '#' + card.id;
+      link.setAttribute('aria-label', `Article ${num} : ${title}`);
+      link.innerHTML = '<b></b><span></span>';
+      link.firstChild.textContent = num;
+      link.lastChild.textContent = title;
+      toc.append(link);
+      return link;
+    });
+
+    const setActive = (index) => {
+      links.forEach((link, i) => {
+        if (i === index) link.setAttribute('aria-current', 'location');
+        else link.removeAttribute('aria-current');
+      });
+    };
+    setActive(0);
+
+    if ('IntersectionObserver' in window) {
+      const spy = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => { if (entry.isIntersecting) setActive(cards.indexOf(entry.target)); });
+      }, { rootMargin: '-25% 0px -65% 0px' });
+      cards.forEach((card) => spy.observe(card));
+      window.addEventListener('scroll', () => {
+        if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) setActive(cards.length - 1);
+      }, { passive: true });
+    }
+
+    // Lecture à haute voix : phrase par phrase, avec pause, arrêt et vitesse réglable
     (() => {
       const synth = window.speechSynthesis;
-      const btn = document.getElementById('listen');
-      if (!synth) { btn.hidden = true; return; }
+      const slot = document.getElementById('player-slot');
+      if (!synth || !window.SpeechSynthesisUtterance) { slot.hidden = true; return; }
 
-      const label = btn.querySelector('.listen-label');
-      const source = document.getElementById('articles');
-      let current = null;
+      const player = document.getElementById('player');
+      const playBtn = document.getElementById('play');
+      const stopBtn = document.getElementById('stop');
+      const slowerBtn = document.getElementById('slower');
+      const fasterBtn = document.getElementById('faster');
+      const rateOut = document.getElementById('rate');
 
-      const setReading = (on) => {
-        btn.setAttribute('aria-pressed', on);
-        label.textContent = on ? 'Arrêter la lecture' : 'Lire à haute voix';
-      };
-      const stop = () => { current = null; synth.cancel(); setReading(false); };
-
-      btn.addEventListener('click', () => {
-        if (current) return stop();
-        const u = new SpeechSynthesisUtterance(source.innerText);
-        u.lang = 'fr-FR';
-        u.rate = 0.96;
-        u.onend = u.onerror = () => { if (current === u) { current = null; setReading(false); } };
-        current = u;
-        synth.speak(u);
-        setReading(true);
+      // Contenu à lire : numéro, titre puis corps de chaque article, découpé en phrases
+      const sentences = (line) => line.match(/[^.!?]+[.!?]*/g) || [line];
+      const chunks = [];
+      cards.forEach((card) => {
+        const lines = [`Article ${Number(card.querySelector('.card-digit').textContent)}`];
+        const chip = card.querySelector('.chip');
+        if (chip) lines.push(chip.textContent);
+        lines.push(card.querySelector('.card-title').textContent);
+        lines.push(...card.querySelector('.card-body').innerText.split('\n'));
+        lines.forEach((line) => sentences(line).forEach((part) => {
+          const text = part.trim();
+          if (text) chunks.push({ text, card });
+        }));
       });
 
+      // Vitesse (mémorisée d'une page à l'autre)
+      const RATES = [0.75, 1, 1.25, 1.5, 1.75, 2];
+      let rateIndex = 1;
+      try {
+        const saved = RATES.indexOf(Number(localStorage.getItem('nod-rate')));
+        if (saved >= 0) rateIndex = saved;
+      } catch (e) { /* stockage indisponible : on garde la vitesse normale */ }
+
+      let state = 'idle';   // idle | playing | paused
+      let index = 0;        // phrase en cours
+      let run = 0;          // identifiant de la lecture active (ignore les anciens événements)
+      let current = null;   // garde une référence pour éviter le ramasse-miettes
+      let shown = null;     // article en cours de lecture
+
+      const renderRate = () => {
+        rateOut.textContent = String(RATES[rateIndex]).replace('.', ',') + '×';
+        slowerBtn.disabled = rateIndex === 0;
+        fasterBtn.disabled = rateIndex === RATES.length - 1;
+      };
+
+      const setDocked = (on) => {
+        if (on === player.classList.contains('is-docked')) return;
+        if (on) {   // garde la place du lecteur dans l'en-tête de page
+          slot.style.width = player.offsetWidth + 'px';
+          slot.style.height = player.offsetHeight + 'px';
+        } else {
+          slot.style.width = slot.style.height = '';
+        }
+        player.classList.toggle('is-docked', on);
+        document.body.classList.toggle('has-dock', on);
+      };
+
+      const setState = (next) => {
+        const active = next !== 'idle';
+        if (active !== (state !== 'idle')) setDocked(active);
+        state = next;
+        player.dataset.state = next;
+        stopBtn.hidden = !active;
+        const label = next === 'playing' ? 'Mettre en pause' : next === 'paused' ? 'Reprendre la lecture' : 'Lire à haute voix';
+        playBtn.setAttribute('aria-label', label);
+        playBtn.title = label;
+        if (!active && shown) { shown.classList.remove('is-reading'); shown = null; }
+      };
+
+      const isVisible = (el) => {
+        const r = el.getBoundingClientRect();
+        return r.bottom > 0 && r.top < window.innerHeight;
+      };
+
+      const showCard = (card) => {
+        const following = shown ? isVisible(shown) : true;   // ne ramène pas la page si on lit ailleurs
+        if (shown) shown.classList.remove('is-reading');
+        shown = card;
+        card.classList.add('is-reading');
+        if (following) card.scrollIntoView({ block: 'start', behavior: 'smooth' });
+      };
+
+      const halt = () => { run++; current = null; synth.cancel(); };
+
+      const finish = () => { halt(); index = 0; setState('idle'); };
+
+      const speakFromIndex = () => {
+        halt();
+        const token = run;
+        const step = () => {
+          if (token !== run) return;
+          if (index >= chunks.length) { finish(); return; }
+          const { text, card } = chunks[index];
+          if (card !== shown) showCard(card);
+          const u = new SpeechSynthesisUtterance(text);
+          u.lang = 'fr-FR';
+          u.rate = RATES[rateIndex];
+          u.onend = () => { if (token === run) { index++; step(); } };
+          u.onerror = (e) => { if (token === run && e.error !== 'canceled' && e.error !== 'interrupted') finish(); };
+          current = u;
+          synth.speak(u);
+        };
+        setTimeout(step, 80);   // laisse le navigateur terminer le cancel() précédent
+      };
+
+      playBtn.addEventListener('click', () => {
+        if (state === 'playing') { halt(); setState('paused'); return; }
+        if (state === 'idle') index = 0;
+        setState('playing');
+        speakFromIndex();
+      });
+
+      stopBtn.addEventListener('click', () => { halt(); index = 0; setState('idle'); });
+
+      const changeRate = (step) => {
+        rateIndex = Math.min(RATES.length - 1, Math.max(0, rateIndex + step));
+        renderRate();
+        try { localStorage.setItem('nod-rate', String(RATES[rateIndex])); } catch (e) { /* ignoré */ }
+        if (state === 'playing') speakFromIndex();   // la vitesse s'applique dès la phrase en cours
+      };
+      slowerBtn.addEventListener('click', () => changeRate(-1));
+      fasterBtn.addEventListener('click', () => changeRate(1));
+
+      renderRate();
       window.addEventListener('pagehide', () => synth.cancel());
     })();
   </script>
