@@ -2,128 +2,502 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>NOVANOD™ - Politique de Confidentialité & Conditions Utopiques</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#3B1420">
+  <title>NOVANOD™ — Politique de Confidentialité</title>
   <link rel="icon" type="image/png" href="logo.png?v=6">
+  <link rel="apple-touch-icon" href="logo.png?v=6">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --red-primary: #E64A38;
-      --dark-brown: #3B1420;
-      --text-red: #D94432;
-      --cream-bg: #FFFEE0;
-      --glass-bg: rgba(255, 254, 224, 0.95);
-      --font-heading: 'Fredoka', sans-serif;
-      --font-body: 'Plus Jakarta Sans', sans-serif;
+      --burgundy: #3B1420;
+      --burgundy-deep: #1E070E;
+      --coral: #E64A38;
+      --coral-deep: #C8372A;
+      --coral-light: #FF6B57;
+      --cream: #FFFBD0;
+      --cream-soft: rgba(255, 251, 208, 0.82);
+      --line: rgba(255, 251, 208, 0.16);
+      --display: 'Fredoka', system-ui, sans-serif;
+      --sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+      --page: 1120px;
+      --gutter: clamp(16px, 4vw, 32px);
+      --arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E");
     }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { color-scheme: dark; -webkit-text-size-adjust: 100%; }
+
     body {
-      background-color: #000;
-      color: var(--dark-brown);
-      font-family: var(--font-body);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      overflow-x: hidden;
+      color: var(--cream);
+      font-family: var(--sans);
+      line-height: 1.7;
+      background-color: var(--burgundy);
+      background-image:
+        radial-gradient(ellipse 80% 45% at 50% -8%, rgba(230, 74, 56, 0.28), transparent 70%),
+        linear-gradient(180deg, #3B1420 0%, #240A12 55%, #1A060C 100%);
+    }
+
+    :focus-visible { outline: 3px solid var(--cream); outline-offset: 3px; }
+
+    /* ───── En-tête ───── */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(26, 6, 12, 0.8);
+      -webkit-backdrop-filter: blur(16px);
+      backdrop-filter: blur(16px);
+      border-bottom: 1.5px solid rgba(230, 74, 56, 0.45);
+    }
+
+    .header-inner {
+      max-width: var(--page);
+      margin: 0 auto;
+      padding: 14px var(--gutter);
+      display: flex;
       align-items: center;
-      justify-content: center;
-      padding: 24px 16px;
+      gap: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      margin-right: auto;
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .brand-logo,
+    .brand-fallback { width: 48px; height: 48px; flex: none; border-radius: 50%; object-fit: contain; }
+
+    .brand-fallback {
+      display: grid;
+      place-items: center;
+      background: var(--coral-deep);
+      border: 2px solid var(--cream);
+      font: 800 22px/1 var(--display);
+    }
+    .brand-fallback[hidden] { display: none; }
+
+    .brand-text { display: flex; flex-direction: column; gap: 3px; }
+
+    .brand-motto {
+      font-size: 9.5px;
+      font-weight: 800;
+      letter-spacing: 0.34em;
+      text-transform: uppercase;
+      color: var(--coral-light);
+    }
+
+    .brand-name {
+      font: 800 clamp(25px, 6.5vw, 31px)/1 var(--display);
+      letter-spacing: 0.07em;
+      text-shadow: 2px 2px 0 var(--coral);
+    }
+
+    .doc-nav {
+      display: flex;
+      gap: 4px;
+      padding: 4px;
+      border: 1.5px solid var(--line);
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .doc-nav a {
+      padding: 8px 16px;
+      border-radius: 999px;
+      color: var(--cream-soft);
+      font-size: 13px;
+      font-weight: 700;
+      text-align: center;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .doc-nav a:hover { background: rgba(255, 251, 208, 0.1); color: var(--cream); }
+    .doc-nav a[aria-current="page"] { background: var(--cream); color: var(--burgundy-deep); }
+
+    /* ───── Hero ───── */
+    .hero {
+      width: 100%;
+      max-width: var(--page);
+      margin: 0 auto;
+      padding: clamp(40px, 8vw, 72px) var(--gutter) clamp(28px, 5vw, 44px);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px 32px;
+    }
+
+    .hero-copy { max-width: 720px; }
+
+    .hero-kicker {
+      display: inline-block;
+      margin-bottom: 18px;
+      padding: 6px 14px;
+      border: 1.5px solid var(--coral);
+      border-radius: 999px;
+      background: rgba(230, 74, 56, 0.16);
+      color: var(--coral-light);
+      font-size: 12.5px;
+      font-weight: 700;
+    }
+
+    .hero-title {
+      margin-bottom: 16px;
+      font: 800 clamp(34px, 6vw, 58px)/1.06 var(--display);
+      text-shadow: 3px 3px 0 var(--coral);
+    }
+
+    .hero-lead {
+      max-width: 60ch;
+      color: var(--cream-soft);
+      font-size: clamp(15.5px, 2.2vw, 17.5px);
+      font-weight: 500;
+    }
+
+    .listen {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 7px 20px 7px 7px;
+      border: 1.5px solid var(--cream);
+      border-radius: 999px;
+      background: rgba(255, 251, 208, 0.06);
+      color: var(--cream);
+      font: 700 14px/1 var(--sans);
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .listen[hidden] { display: none; }
+    .listen:hover { background: rgba(255, 251, 208, 0.14); }
+
+    .listen-icon {
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--coral-deep);
+    }
+    .listen-icon::before {
+      content: '';
+      margin-left: 3px;
+      border-left: 11px solid var(--cream);
+      border-top: 7px solid transparent;
+      border-bottom: 7px solid transparent;
+    }
+    .listen[aria-pressed="true"] .listen-icon::before {
+      width: 12px;
+      height: 12px;
+      margin: 0;
+      border: 0;
+      border-radius: 2px;
+      background: var(--cream);
+    }
+
+    /* ───── Articles ───── */
+    .content {
+      width: 100%;
+      max-width: var(--page);
+      margin: 0 auto;
+      padding: 8px var(--gutter) 0;
+      flex: 1;
+    }
+
+    .articles {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: clamp(18px, 2.6vw, 28px);
+    }
+
+    .card {
+      grid-column: span 6;
+      padding: clamp(22px, 3vw, 32px);
+      border: 1.5px solid rgba(255, 251, 208, 0.3);
+      border-radius: 22px;
+      background: linear-gradient(165deg, rgba(42, 12, 22, 0.96), rgba(24, 5, 11, 0.98));
+      box-shadow: 0 6px 0 var(--coral), 0 18px 36px rgba(0, 0, 0, 0.35);
+    }
+    .card-wide { grid-column: 1 / -1; }
+
+    .card-head { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+
+    .chip {
+      padding: 3px 12px;
+      border: 1.5px solid var(--cream);
+      border-radius: 999px;
+      background: var(--coral-deep);
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.5;
+    }
+
+    .card-title {
+      margin-bottom: 12px;
+      font: 700 clamp(21px, 3vw, 25px)/1.2 var(--display);
+    }
+
+    .card-body {
+      max-width: 68ch;
+      color: var(--cream-soft);
+      font-size: 15.5px;
+      font-weight: 500;
+    }
+    .card-body strong { color: var(--cream); font-weight: 800; }
+    .card-body ul { margin-top: 14px; list-style: none; }
+
+    .card-body li {
       position: relative;
+      padding: 12px 0 12px 22px;
+      border-top: 1px solid var(--line);
     }
-    .bg-video {
-      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-      object-fit: cover; z-index: -1; filter: brightness(0.9);
+    .card-body li::before {
+      content: '';
+      position: absolute;
+      top: 22px;
+      left: 2px;
+      width: 7px;
+      height: 7px;
+      background: var(--coral);
+      transform: rotate(45deg);
     }
-    .legal-card {
-      width: 100%; max-width: 540px; background: var(--glass-bg);
-      border: 2.5px solid var(--dark-brown); border-radius: 24px;
-      padding: 26px 22px 22px 22px;
-      box-shadow: 0px 10px 0px var(--dark-brown), 0px 20px 40px rgba(0,0,0,0.4);
-      z-index: 1;
+
+    /* La règle d'or : la seule carte pleine couleur */
+    .card-rule {
+      border-color: var(--cream);
+      background: linear-gradient(140deg, #D13C2C, #A92B20);
+      box-shadow: 0 6px 0 var(--cream), 0 18px 36px rgba(230, 74, 56, 0.3);
     }
-    .brand-header {
+    .card-rule .chip { background: var(--burgundy-deep); }
+    .card-rule .chip-rule { background: var(--cream); color: var(--burgundy-deep); }
+    .card-rule .card-body { color: var(--cream); }
+    .card-rule .card-body strong {
+      display: block;
+      margin-top: 10px;
+      font: 700 clamp(22px, 3.4vw, 28px)/1.25 var(--display);
+    }
+
+    /* ───── Navigation de bas de page ───── */
+    .page-nav {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: clamp(36px, 6vw, 56px);
+    }
+
+    .btn {
+      flex: 1 1 0;
+      max-width: 300px;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      text-align: center;
-      margin-bottom: 16px;
+      gap: 3px;
+      padding: 12px 16px;
+      border: 2px solid var(--cream);
+      border-radius: 16px;
+      color: var(--cream);
+      text-decoration: none;
+      transition: transform 0.1s, box-shadow 0.1s;
     }
-    .app-logo-badge {
-      width: 68px;
-      height: 68px;
-      aspect-ratio: 1 / 1;
-      flex-shrink: 0;
-      border-radius: 50%;
-      object-fit: cover;
-      border: none;
-      background: transparent;
-      margin-bottom: 10px;
-      display: block;
+    .btn:hover { transform: translateY(-2px); }
+    .btn:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0, 0, 0, 0.45); }
+
+    .btn-cap { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; }
+    .btn-main { font: 700 clamp(15px, 4.4vw, 17px)/1.2 var(--display); letter-spacing: 0.02em; }
+
+    .btn-back { background: var(--coral-deep); box-shadow: 0 4px 0 rgba(0, 0, 0, 0.45); }
+    .btn-back .arrow { transform: scaleX(-1); }
+
+    .btn-next {
+      align-items: flex-end;
+      text-align: right;
+      background: var(--burgundy-deep);
+      box-shadow: 0 4px 0 var(--coral);
     }
-    .brand-title { font-family: var(--font-heading); font-size: 20px; font-weight: 800; color: var(--text-red); text-transform: uppercase; }
-    .doc-subtitle { font-size: 13px; font-weight: 800; color: var(--dark-brown); text-transform: uppercase; margin-top: 2px; }
-    .legal-content { max-height: 50vh; overflow-y: auto; padding-right: 6px; margin: 16px 0; }
-    .article-item { margin-bottom: 14px; background: rgba(255,255,255,0.65); padding: 13px; border-radius: 12px; border-left: 3.5px solid var(--red-primary); }
-    .article-title { font-size: 13.5px; font-weight: 800; color: var(--text-red); margin-bottom: 6px; }
-    .article-body { font-size: 12px; line-height: 1.55; font-weight: 600; color: var(--dark-brown); }
-    .article-body ul { margin-top: 6px; padding-left: 16px; }
-    .article-body li { margin-bottom: 4px; }
-    .btn-3d {
-      width: 100%; height: 46px; border-radius: 12px; font-weight: 800;
-      display: flex; align-items: center; justify-content: center; cursor: pointer;
-      border: 2px solid var(--dark-brown); background-color: var(--red-primary); color: #fff;
-      box-shadow: 0px 3px 0px var(--dark-brown);
+
+    .arrow {
+      width: 14px;
+      height: 14px;
+      background: currentColor;
+      -webkit-mask: var(--arrow) center / contain no-repeat;
+      mask: var(--arrow) center / contain no-repeat;
+    }
+
+    .site-footer {
+      max-width: var(--page);
+      width: 100%;
+      margin: clamp(32px, 5vw, 48px) auto 0;
+      padding: 0 var(--gutter) 36px;
+      color: var(--coral-light);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+
+    @media (max-width: 860px) {
+      .card { grid-column: 1 / -1; }
+    }
+
+    @media (max-width: 640px) {
+      .site-header { position: static; }
+      .header-inner { flex-wrap: wrap; gap: 12px; padding-top: 12px; padding-bottom: 14px; }
+      .doc-nav { width: 100%; }
+      .doc-nav a { flex: 1 1 auto; padding: 9px 8px; font-size: 12.5px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; }
     }
   </style>
 </head>
 <body>
-  <video class="bg-video" autoplay loop muted playsinline>
-    <source src="a.mp4" type="video/mp4">
-  </video>
-  <div class="legal-card">
-    <div class="brand-header">
-      <img src="logo.png?v=6" alt="Logo NOVANOD" class="app-logo-badge">
-      <div class="brand-title">LES CONDITIONS UTOPIQUES DE NOD</div>
-      <div class="doc-subtitle">Politique de Confidentialité & Protection</div>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="brand">
+        <img src="logo.png?v=6" alt="Logo NOVANOD" class="brand-logo" width="48" height="48" onerror="this.hidden=true;this.nextElementSibling.hidden=false">
+        <span class="brand-fallback" aria-hidden="true" hidden>N</span>
+        <span class="brand-text">
+          <span class="brand-motto">Exist as you are</span>
+          <span class="brand-name">NOVANOD™</span>
+        </span>
+      </a>
+      <nav class="doc-nav" aria-label="Navigation légale">
+        <a href="privacy.html" aria-current="page">Confidentialité</a>
+        <a href="terms.html">Conditions Utopiques</a>
+      </nav>
     </div>
-    <div class="legal-content">
-      <div class="article-item">
-        <div class="article-title">1. Objet et Acceptation</div>
-        <div class="article-body">
-          L'accès et l'utilisation de la plateforme NOVANOD impliquent l'acceptation sans réserve des présentes conditions. En franchissant cette porte et en entrant dans l'espace de vie et les archives de NOD, tu acceptes de t'immerger dans notre univers et de respecter ses règles et notre charte de confidentialité.
-        </div>
-      </div>
-      <div class="article-item">
-        <div class="article-title">2. Typologie de Comptes & Données</div>
-        <div class="article-body">
-          La création d'un compte permet d'accéder aux fonctionnalités de la plateforme (épisodes, commandes, archives, drops). On distingue deux niveaux d'accès :
+  </header>
+
+  <section class="hero">
+    <div class="hero-copy">
+      <p class="hero-kicker">Protection des données 2026</p>
+      <h1 class="hero-title">Politique de Confidentialité</h1>
+      <p class="hero-lead">Transparence, sécurité et respect absolu de votre vie privée au sein de l'archipel et de l'écosystème NOVANOD.</p>
+    </div>
+
+    <button type="button" class="listen" id="listen" aria-pressed="false">
+      <span class="listen-icon" aria-hidden="true"></span>
+      <span class="listen-label">Lire à haute voix</span>
+    </button>
+  </section>
+
+  <main class="content">
+    <div class="articles" id="articles">
+
+      <article class="card">
+        <div class="card-head"><span class="chip">Article 01</span></div>
+        <h2 class="card-title">Collecte des Données</h2>
+        <div class="card-body">
+          Les informations collectées sont strictement adaptées à votre mode de navigation :
           <ul>
-            <li><strong>Compte GUEST (visiteur) :</strong> L'accès de base, direct au vestiaire en tant que visiteur, sans collecte superflue de données personnelles.</li>
-            <li><strong>Compte BUYER (acheteur) :</strong> L'accès exclusif aux commandes, séries limitées, aux codes secrets et aux avantages réservés à la communauté proche (e-mail, nom d'utilisateur et numéro de téléphone sécurisés).</li>
+            <li><strong>Mode Anonyme / Guest :</strong> Aucune donnée nominative conservée. Identifiant temporaire unique.</li>
+            <li><strong>Réseaux Sociaux :</strong> Récupération sécurisée du nom et e-mail fournis par le fournisseur (Google, TikTok, Facebook).</li>
+            <li><strong>Mode Buyer :</strong> Collecte sécurisée du nom d'utilisateur, de l'adresse e-mail et du numéro de téléphone.</li>
           </ul>
         </div>
-      </div>
-      <div class="article-item">
-        <div class="article-title">3. Authentification & Sécurité</div>
-        <div class="article-body">
-          Garde tes clés secrètes. Chaque action effectuée depuis ton profil engage ton identité dans l'espace de la marque. Tes identifiants sont protégés et chiffrés. En cas de compromission ou de perte de fil, utilise le lien de réinitialisation sécurisé que tu peux demander pour rétablir ta trajectoire.
+      </article>
+
+      <article class="card">
+        <div class="card-head"><span class="chip">Article 02</span></div>
+        <h2 class="card-title">Usage des Données</h2>
+        <div class="card-body">
+          Vos informations sont exclusivement réservées à :
+          <ul>
+            <li>La création et la sécurisation de votre compte sur Appwrite Cloud.</li>
+            <li>L'envoi des liens de confirmation et de réinitialisation de mot de passe.</li>
+            <li>La gestion des accès et de vos interactions dans l'univers NOVANOD.</li>
+          </ul>
         </div>
-      </div>
-      <div class="article-item">
-        <div class="article-title">4. Règles de Conduite & Respect</div>
-        <div class="article-body">
-          Dans l'espace de NOD, nous avons une seule règle : <strong>Existez tel que vous êtes et faites comme chez vous.</strong> Tes données personnelles restent strictement privées et ne sont jamais revendues.
+      </article>
+
+      <article class="card">
+        <div class="card-head"><span class="chip">Article 03</span></div>
+        <h2 class="card-title">Sécurité &amp; Infrastructure</h2>
+        <div class="card-body">
+          Toutes les données sensibles et sessions sont chiffrées et hébergées sur l'infrastructure européenne d'Appwrite Cloud (Endpoint FRA). Les mots de passe ne sont jamais sauvegardés en clair.
         </div>
-      </div>
-      <div class="article-item">
-        <div class="article-title">5. Propriété Intellectuelle</div>
-        <div class="article-body">
-          Tous les éléments visuels, animations, graphismes, illustrations et contenus de NOVANOD™ demeurent la propriété exclusive de la marque. Toute reproduction non autorisée perturbe l'équilibre de notre univers créatif et de notre archipel.
+      </article>
+
+      <article class="card">
+        <div class="card-head"><span class="chip">Article 04</span></div>
+        <h2 class="card-title">Confidentialité Absolue</h2>
+        <div class="card-body">
+          NOVANOD ne vend, ne loue et ne partage aucune de vos données personnelles avec des organismes tiers à des fins commerciales.
         </div>
-      </div>
+      </article>
+
+      <article class="card card-wide">
+        <div class="card-head"><span class="chip">Article 05</span></div>
+        <h2 class="card-title">Vos Droits (RGPD)</h2>
+        <div class="card-body">
+          Vous disposez d'un droit permanent d'accès, de rectification et de suppression de l'ensemble de vos données sur simple déconnexion ou fermeture du compte.
+        </div>
+      </article>
+
     </div>
-    <button class="btn-3d" onclick="window.close(); if(!window.closed){window.location.href='index.html';}">← RETOUR À L'APPLICATION</button>
-  </div>
+
+    <nav class="page-nav" aria-label="Poursuivre la lecture">
+      <a href="index.html" class="btn btn-back" data-back>
+        <span class="btn-cap"><i class="arrow" aria-hidden="true"></i>Retour à</span>
+        <span class="btn-main">NOVANOD</span>
+      </a>
+      <a href="terms.html" class="btn btn-next">
+        <span class="btn-cap">Lire les<i class="arrow" aria-hidden="true"></i></span>
+        <span class="btn-main">Conditions</span>
+      </a>
+    </nav>
+  </main>
+
+  <footer class="site-footer">©2026 NOVANOD™, all rights reserved</footer>
+
+  <script>
+    // Retour : ferme l'onglet s'il a été ouvert depuis l'accueil, sinon redirige.
+    document.querySelector('[data-back]').addEventListener('click', (e) => {
+      e.preventDefault();
+      window.close();
+      if (!window.closed) window.location.href = 'index.html';
+    });
+
+    // Lecture à haute voix
+    (() => {
+      const synth = window.speechSynthesis;
+      const btn = document.getElementById('listen');
+      if (!synth) { btn.hidden = true; return; }
+
+      const label = btn.querySelector('.listen-label');
+      const source = document.getElementById('articles');
+      let current = null;
+
+      const setReading = (on) => {
+        btn.setAttribute('aria-pressed', on);
+        label.textContent = on ? 'Arrêter la lecture' : 'Lire à haute voix';
+      };
+      const stop = () => { current = null; synth.cancel(); setReading(false); };
+
+      btn.addEventListener('click', () => {
+        if (current) return stop();
+        const u = new SpeechSynthesisUtterance(source.innerText);
+        u.lang = 'fr-FR';
+        u.rate = 0.96;
+        u.onend = u.onerror = () => { if (current === u) { current = null; setReading(false); } };
+        current = u;
+        synth.speak(u);
+        setReading(true);
+      });
+
+      window.addEventListener('pagehide', () => synth.cancel());
+    })();
+  </script>
 </body>
 </html>
