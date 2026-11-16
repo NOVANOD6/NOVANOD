@@ -115,7 +115,7 @@
       padding: 10px 0;
       font-family: var(--font-body);
       font-weight: 800;
-      font-size: 12.5px;
+      font-size: 11.5px;
       color: var(--dark-brown);
       border-radius: 10px;
       cursor: pointer;
@@ -285,19 +285,20 @@
       cursor: pointer;
     }
 
-    .file-drop {
-      border: 2px dashed var(--red-primary);
-      background-color: rgba(230, 74, 56, 0.04);
-      border-radius: 14px;
-      padding: 16px;
-      text-align: center;
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--text-red);
-      margin-bottom: 14px;
-      cursor: pointer;
-    }
-    .file-drop input { display: none; }
+    .feed-item { background: #FFF; border: 2px solid var(--dark-brown); border-left-width: 8px; border-radius: 12px; padding: 10px 14px; margin-bottom: 8px; font-size: 13px; font-weight: 600; line-height: 1.45; }
+    .feed-item b { display: block; font-weight: 800; }
+    .feed-item small { display: block; margin-top: 4px; opacity: 0.65; font-size: 11px; }
+    .feed-item pre { background: #FFFBD0; border-radius: 8px; padding: 8px; margin-top: 6px; font-size: 11.5px; white-space: pre-wrap; word-break: break-word; }
+    .feed-item.problem { border-left-color: #B00020; }
+    .feed-item.improvement { border-left-color: #E6A100; }
+    .feed-item.idea, .feed-item.code, .feed-item.pro { border-left-color: #1A7A3D; }
+    .feed-item.notification { border-left-color: var(--dark-brown); }
+    .score-box { text-align: center; margin: 18px 0 12px; }
+    .score-value { font-family: var(--font-heading); font-size: 58px; font-weight: 800; color: var(--text-red); line-height: 1; }
+    .crit { margin-bottom: 14px; font-size: 12.5px; font-weight: 800; }
+    .crit p { font-weight: 600; opacity: 0.85; line-height: 1.45; }
+    .crit-bar { height: 12px; border: 2px solid var(--dark-brown); border-radius: 8px; background: #FFF; overflow: hidden; margin: 5px 0; }
+    .crit-bar i { display: block; height: 100%; background: var(--red-primary); }
 
     .status-msg {
       font-size: 12.5px;
@@ -398,25 +399,28 @@
       </div>
 
       <div class="dashboard-nav">
-        <button class="nav-tab active" data-target="tab-content-ai">🤖 Base nova.ai</button>
-        <button class="nav-tab" data-target="tab-content-stats">📊 Statistiques</button>
-        <button class="nav-tab" data-target="tab-content-security">🛡️ Sécurité & Admins</button>
+        <button class="nav-tab active" data-target="tab-content-ai">🧠 Veille IA</button>
+        <button class="nav-tab" data-target="tab-content-client">⭐ IA client</button>
+        <button class="nav-tab" data-target="tab-content-stats">📊 Stats</button>
+        <button class="nav-tab" data-target="tab-content-security">🛡️ Sécurité</button>
       </div>
 
-      <!-- ONGLET 1 : BASE DE CONNAISSANCES -->
+      <!-- VEILLE IA : nova.ai agit en silence et signale tout ici -->
       <div id="tab-content-ai" class="glass-card">
-        <h3 class="card-title">Base de connaissances nova.ai</h3>
-        <div class="hint">Renseigne ici les tarifs, tailles, délais de livraison ou politiques de retour.</div>
-        
-        <textarea id="knowledge-text" class="input-field" placeholder="Saisis ou colle les informations de la boutique NOVANOD..."></textarea>
+        <h3 class="card-title">Veille silencieuse de nova.ai</h3>
+        <div class="hint">nova.ai surveille le site en continu et signale ici les problèmes, notifications, améliorations et propositions de code. Actualisation automatique chaque minute.</div>
+        <div id="watch-status" class="status-msg"></div>
+        <button id="btn-watch-scan" class="btn-3d">🔍 Analyser le site maintenant</button>
+        <div id="watch-feed"></div>
+      </div>
 
-        <div class="file-drop" id="file-drop-zone">
-          📄 Importer un document (.txt, .pdf, .docx)
-          <input type="file" id="file-input" accept=".txt,.pdf,.docx">
-        </div>
-
-        <div id="save-status" class="status-msg"></div>
-        <button id="btn-save" class="btn-3d">💾 Enregistrer et Synchroniser</button>
+      <!-- IA CLIENT (Gemini) -->
+      <div id="tab-content-client" class="glass-card hidden">
+        <h3 class="card-title">IA client</h3>
+        <div class="hint">Gemini visite le site comme un client : points positifs et négatifs justifiés, note par critère et note globale sur 100.</div>
+        <div id="client-status" class="status-msg"></div>
+        <button id="btn-client-review" class="btn-3d btn-dark">⭐ Lancer l’analyse client</button>
+        <div id="client-result"></div>
       </div>
 
       <!-- ONGLET 2 : STATISTIQUES -->
@@ -455,8 +459,6 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.1"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 
   <script type="module">
     import { startRegistration, startAuthentication } from 'https://cdn.jsdelivr.net/npm/@simplewebauthn/browser@9/+esm';
@@ -471,10 +473,6 @@
       '6af9a471001fa1cac5b9'
     ];
 
-    if (typeof pdfjsLib !== 'undefined') {
-      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-    }
-
     const client = new Appwrite.Client().setEndpoint(APPWRITE_ENDPOINT).setProject(APPWRITE_PROJECT_ID);
     const account = new Appwrite.Account(client);
     const functions = new Appwrite.Functions(client);
@@ -483,7 +481,6 @@
     const screenAdmin = document.getElementById('screen-admin');
     const screenPending = document.getElementById('screen-pending');
     const loginStatus = document.getElementById('login-status');
-    const saveStatus = document.getElementById('save-status');
 
     function setStatus(el, msg, type = 'info') {
       el.textContent = msg || '';
@@ -495,7 +492,7 @@
         document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
         tab.classList.add('active');
         const targetId = tab.getAttribute('data-target');
-        ['tab-content-ai', 'tab-content-stats', 'tab-content-security'].forEach(id => {
+        ['tab-content-ai', 'tab-content-client', 'tab-content-stats', 'tab-content-security'].forEach(id => {
           document.getElementById(id).classList.toggle('hidden', id !== targetId);
         });
       });
@@ -568,6 +565,7 @@
           document.getElementById('admin-welcome').textContent = user.name || user.email;
           screenLogin.classList.add('hidden');
           screenAdmin.classList.remove('hidden');
+          loadWatch(true);
         } else {
           setStatus(loginStatus, `Accès refusé. Ton ID (${user.$id}) n'est pas autorisé.`, "error");
           await account.deleteSession('current').catch(() => {});
@@ -599,57 +597,6 @@
       setStatus(loginStatus, '');
     });
 
-    const fileInput = document.getElementById('file-input');
-    const fileDropZone = document.getElementById('file-drop-zone');
-    const knowledgeText = document.getElementById('knowledge-text');
-    fileDropZone.addEventListener('click', () => fileInput.click());
-
-    fileInput.addEventListener('change', async () => {
-      const file = fileInput.files[0];
-      if (!file) return;
-      setStatus(saveStatus, `Lecture de ${file.name}...`, "info");
-      try {
-        let extracted = '';
-        if (file.name.endsWith('.txt')) {
-          extracted = await file.text();
-        } else if (file.name.endsWith('.pdf')) {
-          const buffer = await file.arrayBuffer();
-          const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
-          for (let i = 1; i <= pdf.numPages; i++) {
-            const page = await pdf.getPage(i);
-            const content = await page.getTextContent();
-            extracted += content.items.map(it => it.str).join(' ') + '\n';
-          }
-        } else if (file.name.endsWith('.docx')) {
-          const buffer = await file.arrayBuffer();
-          const result = await mammoth.extractRawText({ arrayBuffer: buffer });
-          extracted = result.value;
-        }
-        knowledgeText.value += (knowledgeText.value ? '\n\n' : '') + `--- ${file.name} ---\n` + extracted.trim();
-        setStatus(saveStatus, "Document extrait et ajouté avec succès.", "success");
-      } catch (e) {
-        setStatus(saveStatus, "Impossible de lire ce fichier.", "error");
-      }
-      fileInput.value = '';
-    });
-
-    document.getElementById('btn-save').addEventListener('click', async () => {
-      const content = knowledgeText.value.trim();
-      if (!content) {
-        setStatus(saveStatus, "Le champ de connaissances est vide.", "error");
-        return;
-      }
-      setStatus(saveStatus, "Synchronisation...", "info");
-      try {
-        const execution = await functions.createExecution(NOVA_FUNCTION_ID, JSON.stringify({ action: 'update_knowledge', content }), false);
-        const data = JSON.parse(execution.responseBody || '{}');
-        if (data.error) throw new Error(data.error);
-        setStatus(saveStatus, "Base de connaissances enregistrée avec succès !", "success");
-      } catch (e) {
-        setStatus(saveStatus, "Erreur : " + e.message, "error");
-      }
-    });
-
     const fingerprintStatus = document.getElementById('fingerprint-status');
     const btnRegisterFingerprint = document.getElementById('btn-register-fingerprint');
     const btnLoginFingerprint = document.getElementById('btn-login-fingerprint');
@@ -675,6 +622,133 @@
         setStatus(fingerprintStatus, "Empreinte digitale enregistrée avec succès !", "success");
       } catch (e) {
         setStatus(fingerprintStatus, "Échec : " + e.message, "error");
+      }
+    });
+
+    // ------------------------------------------------------------------
+    // VEILLE IA : rapports de nova.ai (silencieuse) + analyse directe du site
+    // La fonction Appwrite doit gérer : ai_feed, ai_monitor_run, ai_monitor_report, client_review
+    // ------------------------------------------------------------------
+    const $ = (id) => document.getElementById(id);
+    const el = (tag, cls, text) => {
+      const n = document.createElement(tag);
+      if (cls) n.className = cls;
+      if (text != null) n.textContent = text;
+      return n;
+    };
+    const TYPES = { problem: 'Problème', improvement: 'Amélioration', idea: 'Idée', code: 'Code proposé', notification: 'Notification' };
+
+    async function localScan() {
+      const t0 = performance.now();
+      const res = await fetch('index.html', { cache: 'no-store' });
+      const html = await res.text();
+      const ms = Math.round(performance.now() - t0);
+      const kb = Math.round(html.length / 1024);
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      const items = [];
+      const add = (type, title, detail) => items.push({ type, title, detail, ts: new Date().toISOString() });
+      if (!res.ok) add('problem', "Page d’accueil inaccessible", 'Code HTTP ' + res.status);
+      if (!doc.querySelector('meta[name="description"]')) add('improvement', 'Meta description absente', 'Elle sert au référencement et aux aperçus de lien.');
+      const noAlt = doc.querySelectorAll('img:not([alt])').length;
+      if (noAlt) add('improvement', noAlt + ' image(s) sans texte alternatif', 'Utile pour l’accessibilité et le référencement.');
+      if (!doc.querySelector('h1')) add('improvement', 'Aucun titre h1', 'Ajoute un titre principal à la page d’accueil.');
+      if (kb > 150) add('improvement', 'Page lourde : ' + kb + ' Ko', 'Sépare le CSS et le JavaScript dans des fichiers mis en cache.');
+      add('notification', 'Analyse directe terminée', ms + ' ms, ' + kb + ' Ko, ' + doc.querySelectorAll('img').length + ' images');
+      return { items, ms, kb, html };
+    }
+
+    function renderFeed(items) {
+      const box = $('watch-feed');
+      box.replaceChildren();
+      if (!items.length) { box.append(el('div', 'hint', 'Rien à signaler pour le moment.')); return; }
+      items.forEach((it) => {
+        const d = el('div', 'feed-item ' + (TYPES[it.type] ? it.type : 'notification'));
+        d.append(el('b', '', it.title || ''));
+        if (it.detail) d.append(el('div', '', it.detail));
+        if (it.code) d.append(el('pre', '', it.code));
+        d.append(el('small', '', (TYPES[it.type] || 'Info') + ', ' + new Date(it.ts || Date.now()).toLocaleString('fr-FR')));
+        box.append(d);
+      });
+    }
+
+    let localItems = [];
+    async function loadWatch(scan) {
+      const st = $('watch-status');
+      setStatus(st, scan ? 'Analyse en cours...' : '', 'info');
+      let remote = [], err = '';
+      if (scan) {
+        try { localItems = (await localScan()).items; } catch (e) { err = 'Lecture directe du site impossible. '; }
+      }
+      try {
+        const d = await callNovaFunction({ action: scan ? 'ai_monitor_run' : 'ai_feed' });
+        if (d.error) throw new Error(d.error);
+        remote = d.items || [];
+      } catch (e) { err += 'Serveur IA : ' + e.message; }
+      renderFeed([...localItems, ...remote].sort((x, y) => (Date.parse(y.ts) || 0) - (Date.parse(x.ts) || 0)));
+      setStatus(st, err || (scan ? 'Analyse terminée.' : ''), err ? 'error' : 'success');
+    }
+    $('btn-watch-scan').addEventListener('click', () => loadWatch(true));
+    setInterval(() => {
+      if (!screenAdmin.classList.contains('hidden') && !$('tab-content-ai').classList.contains('hidden')) loadWatch(false);
+    }, 60000);
+
+    // ------------------------------------------------------------------
+    // IA CLIENT : Gemini (clé gardée côté serveur) note le site sur 100
+    // ------------------------------------------------------------------
+    const WEIGHTS = { exemplarite: 20, contenu: 20, ux: 25, rapidite: 15, domaine: 10, accessibilite: 10 };
+    const NAMES = { exemplarite: 'Site exemplaire', contenu: 'Contenu', ux: 'Expérience utilisateur', rapidite: 'Rapidité', domaine: 'Adéquation au domaine', accessibilite: 'Accessibilité' };
+
+    $('btn-client-review').addEventListener('click', async () => {
+      const st = $('client-status'), out = $('client-result'), btn = $('btn-client-review');
+      btn.disabled = true;
+      out.replaceChildren();
+      setStatus(st, 'Mesure du site puis analyse par Gemini...', 'info');
+      try {
+        const scan = await localScan();
+        const speed = Math.round(Math.max(0, Math.min(100, 100 - Math.max(0, scan.ms - 300) / 20 - Math.max(0, scan.kb - 150) / 5)));
+        const d = await callNovaFunction({
+          action: 'client_review',
+          context: 'Boutique en ligne de tenues béninoises de marque (NOVANOD)',
+          html: scan.html.replace(/<(script|style)[\s\S]*?<\/\1>/gi, '').slice(0, 40000),
+          metrics: { ms: scan.ms, kb: scan.kb },
+          criteria: Object.keys(WEIGHTS).filter((k) => k !== 'rapidite')
+        });
+        if (d.error) throw new Error(d.error);
+        const crit = { ...(d.criteria || {}), rapidite: { score: speed, note: 'Calculée : ' + scan.ms + ' ms et ' + scan.kb + ' Ko mesurés sur cet appareil (page HTML seule).' } };
+        let total = 0, weights = 0;
+        Object.entries(WEIGHTS).forEach(([k, w]) => {
+          const s = Number(crit[k] && crit[k].score);
+          if (!isNaN(s)) { total += s * w; weights += w; }
+        });
+        const box = el('div', 'score-box');
+        box.append(
+          el('div', 'score-value', (weights ? Math.round(total / weights) : 0) + '/100'),
+          el('div', 'hint', 'Moyenne pondérée : ' + Object.entries(WEIGHTS).map(([k, w]) => NAMES[k] + ' ' + w + ' %').join(', ') + '.')
+        );
+        out.append(box);
+        if (d.summary) out.append(el('div', 'hint', d.summary));
+        Object.keys(WEIGHTS).forEach((k) => {
+          const c = crit[k];
+          if (!c) return;
+          const row = el('div', 'crit'), bar = el('div', 'crit-bar'), fill = el('i');
+          fill.style.width = Math.max(0, Math.min(100, Number(c.score) || 0)) + '%';
+          bar.append(fill);
+          row.append(el('span', '', NAMES[k] + ' : ' + c.score + '/100'), bar, el('p', '', c.note || ''));
+          out.append(row);
+        });
+        [['positives', 'Points positifs', 'pro'], ['negatives', 'Points négatifs', 'problem']].forEach(([key, title, cls]) => {
+          out.append(el('h3', 'card-title', title));
+          (d[key] || []).forEach((p) => {
+            const item = el('div', 'feed-item ' + cls);
+            item.append(el('b', '', p.point || ''), el('div', '', p.why || ''));
+            out.append(item);
+          });
+        });
+        setStatus(st, 'Analyse terminée.', 'success');
+      } catch (e) {
+        setStatus(st, 'Erreur : ' + e.message, 'error');
+      } finally {
+        btn.disabled = false;
       }
     });
 
