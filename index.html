@@ -91,6 +91,14 @@
       justify-content: center;
       align-items: center;
       z-index: 10;
+      /* Fond uni "badge" : la vidéo tourne en continu derrière TOUS les
+         écrans (pas seulement l'accueil) et son propre texte "WELCOME TO
+         NOVANOD" peut donc passer à cet endroit sur n'importe quel écran.
+         Ce fond masque proprement la vidéo sous le logo, sur tous les écrans. */
+      background-color: var(--cream-bg);
+      border-radius: 50%;
+      box-shadow: 0 2px 6px rgba(59, 20, 32, 0.25);
+      padding: 4px;
     }
 
     .top-brand-logo {
@@ -480,8 +488,7 @@
 
     .footer-copy {
       font-size: 9.5px;
-      color: rgb(217, 68, 50);
-      opacity: 0.4;
+      color: rgba(217, 68, 50, 0.95);
       margin-top: 6px;
       margin-bottom: 4px;
       letter-spacing: 0.2px;
@@ -1213,11 +1220,6 @@
 
     let client = null;
     let account = null;
-    let functions = null;
-
-    // ⚠️ À REMPLIR : colle ici le Function ID de ta fonction Appwrite nova-ai
-    // (Appwrite Console → Functions → ta fonction → "Function ID" en haut de page).
-    const NOVA_FUNCTION_ID = '6af9c951003622f41d2a';
 
     try {
       client = new Appwrite.Client();
@@ -1225,7 +1227,6 @@
         .setEndpoint(APPWRITE_ENDPOINT)
         .setProject(APPWRITE_PROJECT_ID);
       account = new Appwrite.Account(client);
-      functions = new Appwrite.Functions(client);
     } catch (err) {
       console.error("Erreur d'initialisation Appwrite:", err);
     }
@@ -1571,40 +1572,6 @@
     window.addEventListener('DOMContentLoaded', () => {
       checkSession();
     });
-
-    // ------------------------------------------------------------------
-    // nova.ai — veille silencieuse (aucune interface) : repère les problèmes
-    // côté visiteur et les signale à l'administration (voir admin.html)
-    // ------------------------------------------------------------------
-    (function novaSilentWatch() {
-      const queue = [], seen = new Set();
-      function report(type, title, detail) {
-        const key = type + '|' + title + '|' + detail;
-        if (seen.has(key) || queue.length >= 20) return;
-        seen.add(key);
-        queue.push({ type, title, detail: String(detail || '').slice(0, 300), page: location.pathname, ts: new Date().toISOString() });
-      }
-      window.addEventListener('error', (e) => {
-        const t = e.target;
-        if (t && t !== window && (t.src || t.href)) report('problem', 'Ressource introuvable', t.src || t.href);
-        else report('problem', e.message || 'Erreur JavaScript', (e.filename || '') + ':' + (e.lineno || 0));
-      }, true);
-      window.addEventListener('unhandledrejection', (e) => report('problem', 'Promesse rejetée', e.reason && e.reason.message));
-      window.addEventListener('load', () => setTimeout(() => {
-        const nav = performance.getEntriesByType('navigation')[0];
-        if (nav && nav.loadEventEnd > 3000) report('improvement', 'Chargement lent', Math.round(nav.loadEventEnd) + ' ms');
-        const noAlt = document.querySelectorAll('img:not([alt])').length;
-        if (noAlt) report('improvement', 'Images sans texte alternatif', noAlt + ' image(s)');
-        [...document.images].filter((i) => i.src && i.complete && i.naturalWidth === 0).forEach((i) => report('problem', 'Image cassée', i.src));
-      }, 1500));
-      async function flush() {
-        if (!queue.length || !functions || NOVA_FUNCTION_ID === 'COLLE_ICI_LE_FUNCTION_ID') return;
-        const events = queue.splice(0);
-        try { await functions.createExecution(NOVA_FUNCTION_ID, JSON.stringify({ action: 'ai_monitor_report', events }), true); } catch (e) {}
-      }
-      setInterval(flush, 60000);
-      document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flush(); });
-    })();
 
   </script>
 </body>

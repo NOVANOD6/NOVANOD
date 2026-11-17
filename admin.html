@@ -6,6 +6,7 @@
   <title>NOVANOD — Console Administrateur</title>
   <meta name="robots" content="noindex, nofollow">
 
+  <!-- Favicon officiel -->
   <link rel="icon" type="image/png" href="logo.png?v=6">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,12 +20,18 @@
       --dark-brown-shadow: #1c080e;
       --text-red: #D94432;
       --cream-bg: #FFFBD0;
-      --card-bg: rgba(255, 255, 255, 0.96);
+      --cream-card: #FFFFE8;
+      --card-bg: rgba(255, 255, 255, 0.94);
       --font-heading: 'Fredoka', sans-serif;
       --font-body: 'Plus Jakarta Sans', sans-serif;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
 
     body {
       background: radial-gradient(circle at 50% 0%, #fff7cc, var(--cream-bg) 70%, #f7e6a1);
@@ -35,12 +42,13 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 24px 14px;
+      justify-content: center;
+      padding: 20px 14px;
     }
 
     .admin-wrapper {
       width: 100%;
-      max-width: 650px;
+      max-width: 520px;
       animation: fadeUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
@@ -53,24 +61,25 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
       text-align: center;
     }
 
     .brand-logo {
-      width: 72px;
-      height: 72px;
+      width: 64px;
+      height: 64px;
       border-radius: 50%;
+      border: none;
       background: transparent;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       object-fit: cover;
-      box-shadow: 0 6px 16px rgba(59, 20, 32, 0.2);
+      box-shadow: 0 4px 12px rgba(59, 20, 32, 0.15);
     }
 
     .admin-title {
       font-family: var(--font-heading);
       color: var(--text-red);
-      font-size: 26px;
+      font-size: 24px;
       font-weight: 800;
       letter-spacing: 0.5px;
     }
@@ -78,13 +87,13 @@
     .admin-badge {
       background-color: var(--dark-brown);
       color: #FFFBD0;
-      font-size: 11px;
+      font-size: 10.5px;
       font-weight: 800;
-      padding: 5px 14px;
+      padding: 4px 12px;
       border-radius: 20px;
-      letter-spacing: 1.2px;
-      margin-top: 6px;
-      box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+      letter-spacing: 1px;
+      margin-top: 4px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.15);
     }
 
     .glass-card {
@@ -92,43 +101,10 @@
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border: 2.5px solid var(--dark-brown);
-      border-radius: 26px;
-      padding: 26px 22px;
-      margin-bottom: 20px;
+      border-radius: 24px;
+      padding: 24px 20px;
+      margin-bottom: 16px;
       box-shadow: 0 6px 0 var(--dark-brown), 0 16px 32px rgba(59, 20, 32, 0.15);
-    }
-
-    .dashboard-nav {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 18px;
-      background: rgba(59, 20, 32, 0.06);
-      padding: 5px;
-      border-radius: 14px;
-      border: 1.5px solid rgba(59, 20, 32, 0.1);
-    }
-
-    .nav-tab {
-      flex: 1;
-      border: none;
-      background: transparent;
-      padding: 10px 0;
-      font-family: var(--font-body);
-      font-weight: 800;
-      font-size: 11.5px;
-      color: var(--dark-brown);
-      border-radius: 10px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      opacity: 0.7;
-      text-align: center;
-    }
-
-    .nav-tab.active {
-      background-color: var(--red-primary);
-      color: #fff;
-      opacity: 1;
-      box-shadow: 0 2px 8px rgba(230, 74, 56, 0.4);
     }
 
     .auth-tabs {
@@ -194,7 +170,7 @@
     }
 
     textarea.input-field {
-      min-height: 180px;
+      min-height: 160px;
       line-height: 1.55;
       resize: vertical;
     }
@@ -219,54 +195,28 @@
       transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.15s;
     }
 
-    .btn-3d:hover:not(:disabled) { background-color: var(--red-hover); }
-    .btn-3d:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 0 0 var(--dark-brown); }
-    .btn-3d:disabled { opacity: 0.6; cursor: not-allowed; }
-    .btn-3d.btn-dark { background-color: var(--dark-brown); box-shadow: 0 4px 0 var(--dark-brown-shadow); }
-    .btn-3d.btn-secondary { background-color: var(--cream-bg); color: var(--dark-brown); }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin-bottom: 16px;
+    .btn-3d:hover:not(:disabled) {
+      background-color: var(--red-hover);
     }
 
-    .stat-card {
-      background: #FFFBD0;
-      border: 2px solid var(--dark-brown);
-      border-radius: 16px;
-      padding: 14px;
-      text-align: center;
-      box-shadow: 0 3px 0 var(--dark-brown);
+    .btn-3d:active:not(:disabled) {
+      transform: translateY(4px);
+      box-shadow: 0 0 0 var(--dark-brown);
     }
 
-    .stat-value {
-      font-family: var(--font-heading);
-      font-size: 22px;
-      font-weight: 800;
-      color: var(--text-red);
-      margin-bottom: 2px;
+    .btn-3d:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
     }
 
-    .stat-label {
-      font-size: 11px;
-      font-weight: 700;
+    .btn-3d.btn-dark {
+      background-color: var(--dark-brown);
+      box-shadow: 0 4px 0 var(--dark-brown-shadow);
+    }
+
+    .btn-3d.btn-secondary {
+      background-color: var(--cream-bg);
       color: var(--dark-brown);
-      text-transform: uppercase;
-    }
-
-    .admin-list-item {
-      background: #FFF;
-      border: 2px solid var(--dark-brown);
-      border-radius: 12px;
-      padding: 10px 14px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-      font-size: 13px;
-      font-weight: 700;
     }
 
     .id-copy-box {
@@ -283,22 +233,32 @@
       margin: 12px 0;
       user-select: all;
       cursor: pointer;
+      transition: background 0.2s;
+    }
+    .id-copy-box:hover {
+      background: #fff5a8;
     }
 
-    .feed-item { background: #FFF; border: 2px solid var(--dark-brown); border-left-width: 8px; border-radius: 12px; padding: 10px 14px; margin-bottom: 8px; font-size: 13px; font-weight: 600; line-height: 1.45; }
-    .feed-item b { display: block; font-weight: 800; }
-    .feed-item small { display: block; margin-top: 4px; opacity: 0.65; font-size: 11px; }
-    .feed-item pre { background: #FFFBD0; border-radius: 8px; padding: 8px; margin-top: 6px; font-size: 11.5px; white-space: pre-wrap; word-break: break-word; }
-    .feed-item.problem { border-left-color: #B00020; }
-    .feed-item.improvement { border-left-color: #E6A100; }
-    .feed-item.idea, .feed-item.code, .feed-item.pro { border-left-color: #1A7A3D; }
-    .feed-item.notification { border-left-color: var(--dark-brown); }
-    .score-box { text-align: center; margin: 18px 0 12px; }
-    .score-value { font-family: var(--font-heading); font-size: 58px; font-weight: 800; color: var(--text-red); line-height: 1; }
-    .crit { margin-bottom: 14px; font-size: 12.5px; font-weight: 800; }
-    .crit p { font-weight: 600; opacity: 0.85; line-height: 1.45; }
-    .crit-bar { height: 12px; border: 2px solid var(--dark-brown); border-radius: 8px; background: #FFF; overflow: hidden; margin: 5px 0; }
-    .crit-bar i { display: block; height: 100%; background: var(--red-primary); }
+    .file-drop {
+      border: 2px dashed var(--red-primary);
+      background-color: rgba(230, 74, 56, 0.04);
+      border-radius: 14px;
+      padding: 16px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-red);
+      margin-bottom: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .file-drop:hover {
+      background-color: rgba(230, 74, 56, 0.1);
+      border-color: var(--dark-brown);
+    }
+
+    .file-drop input { display: none; }
 
     .status-msg {
       font-size: 12.5px;
@@ -308,13 +268,27 @@
       padding: 10px 14px;
       border-radius: 12px;
       display: none;
+      animation: fadeIn 0.2s ease;
     }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     .status-msg:not(:empty) { display: block; }
     .status-msg.error { background: #ffe5e8; color: #B00020; border: 1.5px solid #ffb3bc; }
     .status-msg.success { background: #e2f7ea; color: #1A7A3D; border: 1.5px solid #a3e4bc; }
     .status-msg.info { background: #fff4d4; color: #8a5a00; border: 1.5px solid #ffe08a; }
 
-    .hint { font-size: 11.5px; color: var(--dark-brown); opacity: 0.8; margin-bottom: 14px; line-height: 1.5; }
+    .hint {
+      font-size: 11.5px;
+      color: var(--dark-brown);
+      opacity: 0.8;
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+
     .hidden { display: none !important; }
 
     .dashboard-header {
@@ -329,10 +303,149 @@
       box-shadow: 0 4px 12px rgba(59, 20, 32, 0.2);
     }
 
-    .user-badge { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; }
-    .status-dot { width: 10px; height: 10px; background-color: #4CE086; border-radius: 50%; box-shadow: 0 0 8px #4CE086; }
-    .logout-btn { background: var(--red-primary); color: #fff; border: none; padding: 6px 12px; border-radius: 10px; font-size: 11.5px; font-weight: 800; cursor: pointer; }
-    .card-title { font-family: var(--font-heading); font-size: 17px; font-weight: 700; color: var(--text-red); margin-bottom: 6px; }
+    .user-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      background-color: #4CE086;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #4CE086;
+    }
+
+    .logout-btn {
+      background: var(--red-primary);
+      color: #fff;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 10px;
+      font-size: 11.5px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .logout-btn:hover {
+      background: var(--red-hover);
+    }
+
+    .card-title {
+      font-family: var(--font-heading);
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text-red);
+      margin-bottom: 6px;
+    }
+
+    /* ----- Onglets du tableau de bord ----- */
+    .dash-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 14px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+    .dash-tab {
+      flex-shrink: 0;
+      background: rgba(59, 20, 32, 0.07);
+      border: 1.5px solid rgba(59, 20, 32, 0.12);
+      color: var(--dark-brown);
+      font-family: var(--font-body);
+      font-weight: 800;
+      font-size: 12px;
+      padding: 9px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      opacity: 0.65;
+      white-space: nowrap;
+    }
+    .dash-tab.active {
+      background: var(--red-primary);
+      color: #fff;
+      opacity: 1;
+      border-color: var(--dark-brown);
+      box-shadow: 0 2px 6px rgba(230,74,56,0.4);
+    }
+    .dash-pane { display: none; }
+    .dash-pane.active { display: block; }
+
+    /* ----- Statistiques utilisateurs ----- */
+    .stats-row { display: flex; gap: 8px; margin-bottom: 14px; }
+    .stat-box {
+      flex: 1;
+      background: rgba(255,255,255,0.7);
+      border: 1.5px solid rgba(59,20,32,0.15);
+      border-radius: 14px;
+      padding: 12px 6px;
+      text-align: center;
+    }
+    .stat-box .num { font-family: var(--font-heading); font-size: 22px; font-weight: 700; color: var(--red-primary); line-height: 1.1; }
+    .stat-box .lbl { font-size: 10px; font-weight: 800; color: var(--dark-brown); opacity: 0.7; text-transform: uppercase; margin-top: 2px; }
+
+    .user-list { max-height: 320px; overflow-y: auto; margin-bottom: 10px; }
+    .user-row {
+      background: rgba(255,255,255,0.6);
+      border: 1px solid rgba(59,20,32,0.12);
+      border-radius: 12px;
+      padding: 9px 12px;
+      margin-bottom: 7px;
+      font-size: 12px;
+    }
+    .user-row .u-name { font-weight: 800; color: var(--dark-brown); }
+    .user-row .u-email { color: var(--text-red); opacity: 0.85; word-break: break-all; }
+    .user-row .u-badge {
+      display: inline-block;
+      font-size: 9.5px;
+      font-weight: 800;
+      padding: 1px 8px;
+      border-radius: 8px;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+    .u-badge.verified { background: #e2f7ea; color: #1A7A3D; }
+    .u-badge.unverified { background: #fff4d4; color: #8a5a00; }
+
+    /* ----- Aperçu multi-écrans ----- */
+    .device-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+    .device-tab {
+      flex: 1 0 30%;
+      background: rgba(59,20,32,0.06);
+      border: 1.5px solid rgba(59,20,32,0.12);
+      border-radius: 10px;
+      padding: 7px 4px;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--dark-brown);
+      cursor: pointer;
+      opacity: 0.65;
+      text-align: center;
+    }
+    .device-tab.active { background: var(--red-primary); color: #fff; opacity: 1; }
+    .orientation-toggle { display: flex; gap: 6px; margin-bottom: 12px; }
+    .orientation-toggle button { flex: 1; }
+    .preview-frame-wrapper {
+      border: 2.5px solid var(--dark-brown);
+      border-radius: 14px;
+      overflow: hidden;
+      margin: 0 auto 10px;
+      background: #000;
+      box-shadow: 0 6px 0 var(--dark-brown);
+    }
+    .preview-frame-wrapper iframe {
+      border: none;
+      display: block;
+      transform-origin: top left;
+    }
+
+    .info-row { display: flex; justify-content: space-between; gap: 8px; padding: 8px 0; border-bottom: 1px dashed rgba(59,20,32,0.15); font-size: 12px; }
+    .info-row:last-child { border-bottom: none; }
+    .info-row .k { font-weight: 800; color: var(--dark-brown); }
+    .info-row .v { color: var(--text-red); word-break: break-all; text-align: right; }
   </style>
 </head>
 <body>
@@ -341,7 +454,7 @@
     <div class="header-brand">
       <img src="logo.png?v=6" alt="NOVANOD" class="brand-logo">
       <div class="admin-title">NOVANOD</div>
-      <div class="admin-badge">CONSOLE ADMINISTRATEUR PRO</div>
+      <div class="admin-badge">CONSOLE ADMINISTRATEUR</div>
     </div>
 
     <!-- ÉCRAN AUTHENTIFICATION -->
@@ -365,7 +478,9 @@
       </div>
 
       <div id="pane-signup" class="hidden">
-        <div class="hint">Crée ton compte administrateur et transmet ton ID à l'administrateur principal.</div>
+        <div class="hint">
+          Crée ton compte administrateur. Une fois créé, copie ton identifiant unique et transmet-le à l'administrateur principal pour validation.
+        </div>
         <label class="form-label">Adresse E-mail</label>
         <input type="email" id="signup-email" class="input-field" placeholder="nouvel.admin@novanod.com" autocomplete="username">
         
@@ -382,8 +497,10 @@
     <!-- ÉCRAN VALIDATION ID -->
     <div id="screen-pending" class="glass-card hidden">
       <h3 class="card-title">✅ Compte créé avec succès !</h3>
-      <div class="hint">Transmets cet identifiant à l'administrateur principal pour validation dans ADMIN_USER_IDS :</div>
-      <div id="pending-user-id" class="id-copy-box"></div>
+      <div class="hint">
+        Pour activer ton accès, l'administrateur principal doit ajouter cet identifiant dans la liste <strong>ADMIN_USER_IDS</strong> :
+      </div>
+      <div id="pending-user-id" class="id-copy-box" title="Cliquer pour copier"></div>
       <button id="btn-copy-id" class="btn-3d btn-secondary" style="margin-bottom: 10px;">📋 Copier l'identifiant</button>
       <button id="btn-pending-ok" class="btn-3d">Aller à la connexion</button>
     </div>
@@ -398,62 +515,93 @@
         <button class="logout-btn" id="btn-logout">Déconnexion</button>
       </div>
 
-      <div class="dashboard-nav">
-        <button class="nav-tab active" data-target="tab-content-ai">🧠 Veille IA</button>
-        <button class="nav-tab" data-target="tab-content-client">⭐ IA client</button>
-        <button class="nav-tab" data-target="tab-content-stats">📊 Stats</button>
-        <button class="nav-tab" data-target="tab-content-security">🛡️ Sécurité</button>
+      <div class="dash-tabs">
+        <button class="dash-tab active" data-pane="pane-reports">🔎 nova.ai</button>
+        <button class="dash-tab" data-pane="pane-security">🔒 Sécurité</button>
+        <button class="dash-tab" data-pane="pane-users">👥 Utilisateurs</button>
+        <button class="dash-tab" data-pane="pane-preview">📱 Aperçu</button>
+        <button class="dash-tab" data-pane="pane-settings">⚙️ Paramètres</button>
       </div>
 
-      <!-- VEILLE IA : nova.ai agit en silence et signale tout ici -->
-      <div id="tab-content-ai" class="glass-card">
-        <h3 class="card-title">Veille silencieuse de nova.ai</h3>
-        <div class="hint">nova.ai surveille le site en continu et signale ici les problèmes, notifications, améliorations et propositions de code. Actualisation automatique chaque minute.</div>
-        <div id="watch-status" class="status-msg"></div>
-        <button id="btn-watch-scan" class="btn-3d">🔍 Analyser le site maintenant</button>
-        <div id="watch-feed"></div>
-      </div>
-
-      <!-- IA CLIENT (Gemini) -->
-      <div id="tab-content-client" class="glass-card hidden">
-        <h3 class="card-title">IA client</h3>
-        <div class="hint">Gemini visite le site comme un client : points positifs et négatifs justifiés, note par critère et note globale sur 100.</div>
-        <div id="client-status" class="status-msg"></div>
-        <button id="btn-client-review" class="btn-3d btn-dark">⭐ Lancer l’analyse client</button>
-        <div id="client-result"></div>
-      </div>
-
-      <!-- ONGLET 2 : STATISTIQUES -->
-      <div id="tab-content-stats" class="glass-card hidden">
-        <h3 class="card-title">Statistiques de la Boutique</h3>
-        <div class="hint">Vue d'ensemble de l'activité sur la plateforme NOVANOD.</div>
-
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-value" id="stat-chats">142</div>
-            <div class="stat-label">Requêtes nova.ai</div>
+      <!-- ===== ONGLET : RAPPORTS nova.ai (analyse silencieuse) ===== -->
+      <div id="pane-reports" class="dash-pane active">
+        <div class="glass-card">
+          <h3 class="card-title">nova.ai surveille ton site en silence</h3>
+          <div class="hint">
+            nova.ai n'apparaît plus sur le site public. Il analyse en arrière-plan le code du site et l'activité des utilisateurs, et dépose ici ses observations — jamais visibles des clients.
           </div>
-          <div class="stat-card">
-            <div class="stat-value" id="stat-syncs">12</div>
-            <div class="stat-label">Mises à jour base</div>
+          <div id="reports-status" class="status-msg"></div>
+          <button id="btn-run-analysis" class="btn-3d">🔎 Lancer une analyse maintenant</button>
+        </div>
+        <div class="glass-card">
+          <h3 class="card-title">Derniers rapports</h3>
+          <div id="reports-list" class="user-list">
+            <div class="hint">Aucun rapport pour l'instant — lance une première analyse ci-dessus.</div>
           </div>
         </div>
       </div>
 
-      <!-- ONGLET 3 : SÉCURITÉ & BIOMÉTRIE -->
-      <div id="tab-content-security" class="glass-card hidden">
-        <h3 class="card-title">Administrateurs Autorisés</h3>
-        <div class="hint">Liste des identifiants ayant un accès complet à la console de gestion.</div>
-        
-        <div id="admins-list-container">
-          <div class="admin-list-item"><span>Rubis (Principal)</span> <span>Actif</span></div>
-          <div class="admin-list-item"><span>Donovan (Admin 2)</span> <span>Actif</span></div>
+      <!-- ===== ONGLET : SÉCURITÉ ===== -->
+      <div id="pane-security" class="dash-pane">
+        <div class="glass-card">
+          <h3 class="card-title" style="color:var(--dark-brown);">Sécurité Biométrique</h3>
+          <div class="hint">Active l'authentification par empreinte digitale ou FaceID sur cet appareil pour un accès instantané.</div>
+          <div id="fingerprint-status" class="status-msg"></div>
+          <button id="btn-register-fingerprint" class="btn-3d btn-dark hidden">👆 Activer l'empreinte digitale</button>
         </div>
+      </div>
 
-        <h3 class="card-title" style="margin-top:20px;">Sécurité Biométrique</h3>
-        <div class="hint">Active l'authentification par empreinte digitale ou FaceID sur cet appareil.</div>
-        <div id="fingerprint-status" class="status-msg"></div>
-        <button id="btn-register-fingerprint" class="btn-3d btn-dark hidden">👆 Activer l'empreinte digitale</button>
+      <!-- ===== ONGLET : UTILISATEURS ===== -->
+      <div id="pane-users" class="dash-pane">
+        <div class="glass-card">
+          <div class="stats-row">
+            <div class="stat-box"><div class="num" id="stat-total">—</div><div class="lbl">Comptes</div></div>
+            <div class="stat-box"><div class="num" id="stat-buyers">—</div><div class="lbl">Acheteurs</div></div>
+            <div class="stat-box"><div class="num" id="stat-visitors">—</div><div class="lbl">Visiteurs</div></div>
+          </div>
+          <div id="users-status" class="status-msg"></div>
+          <button id="btn-refresh-users" class="btn-3d btn-secondary">🔄 Actualiser</button>
+        </div>
+        <div class="glass-card">
+          <h3 class="card-title">Acheteurs</h3>
+          <div id="buyers-list" class="user-list"><div class="hint">Clique sur "Actualiser" ci-dessus.</div></div>
+        </div>
+        <div class="glass-card">
+          <h3 class="card-title">Visiteurs</h3>
+          <div id="visitors-list" class="user-list"><div class="hint">Clique sur "Actualiser" ci-dessus.</div></div>
+        </div>
+      </div>
+
+      <!-- ===== ONGLET : APERÇU MULTI-ÉCRANS ===== -->
+      <div id="pane-preview" class="dash-pane">
+        <div class="glass-card">
+          <h3 class="card-title">Aperçu du site</h3>
+          <div class="hint">Vérifie le rendu réel du site (novanod6.github.io) sur différents formats d'écran.</div>
+          <div class="device-tabs">
+            <button class="device-tab active" data-w="390" data-h="844">📱 Téléphone</button>
+            <button class="device-tab" data-w="768" data-h="1024">📟 Tablette</button>
+            <button class="device-tab" data-w="1366" data-h="860">🖥️ PC</button>
+          </div>
+          <div class="orientation-toggle">
+            <button id="btn-orient-portrait" class="dash-tab active">⬆️ Vertical</button>
+            <button id="btn-orient-landscape" class="dash-tab">➡️ Horizontal</button>
+          </div>
+          <div class="preview-frame-wrapper" id="preview-frame-wrapper">
+            <iframe id="preview-iframe" src="./"></iframe>
+          </div>
+          <button id="btn-refresh-preview" class="btn-3d btn-secondary">🔄 Recharger l'aperçu</button>
+        </div>
+      </div>
+
+      <!-- ===== ONGLET : PARAMÈTRES ===== -->
+      <div id="pane-settings" class="dash-pane">
+        <div class="glass-card">
+          <h3 class="card-title">Informations techniques</h3>
+          <div class="info-row"><span class="k">Projet Appwrite</span><span class="v" id="info-project">—</span></div>
+          <div class="info-row"><span class="k">Fonction nova.ai</span><span class="v" id="info-function">—</span></div>
+          <div class="info-row"><span class="k">Comptes admin configurés</span><span class="v" id="info-admins">—</span></div>
+          <div class="info-row"><span class="k">Site public</span><span class="v"><a href="https://novanod6.github.io/NOVANOD/" target="_blank">novanod6.github.io/NOVANOD</a></span></div>
+        </div>
       </div>
     </div>
   </div>
@@ -467,6 +615,7 @@
     const APPWRITE_PROJECT_ID = '6ad4bd7b0036d37d3561';
     const NOVA_FUNCTION_ID = '6af9c951003622f41d2a';
 
+    // Vos ID utilisateurs administrateurs autorisés
     const ADMIN_USER_IDS = [
       '6af995680030f5cd189f',
       '6af9b373003931cb00bd',
@@ -486,17 +635,6 @@
       el.textContent = msg || '';
       el.className = 'status-msg' + (msg ? ' ' + type : '');
     }
-
-    document.querySelectorAll('.nav-tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        const targetId = tab.getAttribute('data-target');
-        ['tab-content-ai', 'tab-content-client', 'tab-content-stats', 'tab-content-security'].forEach(id => {
-          document.getElementById(id).classList.toggle('hidden', id !== targetId);
-        });
-      });
-    });
 
     const tabLogin = document.getElementById('tab-login');
     const tabSignup = document.getElementById('tab-signup');
@@ -549,7 +687,9 @@
       const idText = document.getElementById('pending-user-id').textContent;
       navigator.clipboard.writeText(idText);
       document.getElementById('btn-copy-id').textContent = "✅ Identifiant copié !";
-      setTimeout(() => { document.getElementById('btn-copy-id').textContent = "📋 Copier l'identifiant"; }, 2500);
+      setTimeout(() => {
+        document.getElementById('btn-copy-id').textContent = "📋 Copier l'identifiant";
+      }, 2500);
     });
 
     document.getElementById('btn-pending-ok').addEventListener('click', () => {
@@ -565,9 +705,8 @@
           document.getElementById('admin-welcome').textContent = user.name || user.email;
           screenLogin.classList.add('hidden');
           screenAdmin.classList.remove('hidden');
-          loadWatch(true);
         } else {
-          setStatus(loginStatus, `Accès refusé. Ton ID (${user.$id}) n'est pas autorisé.`, "error");
+          setStatus(loginStatus, `Accès refusé. Ton ID (${user.$id}) n'est pas autorisé dans ADMIN_USER_IDS.`, "error");
           await account.deleteSession('current').catch(() => {});
         }
       } catch (e) {}
@@ -586,7 +725,7 @@
         await account.createEmailPasswordSession(email, password);
         await checkAdminSession();
       } catch (e) {
-        setStatus(loginStatus, "Identifiants incorrects.", "error");
+        setStatus(loginStatus, "Identifiants incorrects ou compte inexistant.", "error");
       }
     });
 
@@ -596,6 +735,163 @@
       screenLogin.classList.remove('hidden');
       setStatus(loginStatus, '');
     });
+
+    // ===================== ONGLETS DU TABLEAU DE BORD =====================
+    document.querySelectorAll('.dash-tab[data-pane]').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.dash-tab[data-pane]').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.dash-pane').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.pane).classList.add('active');
+        if (tab.dataset.pane === 'pane-users' && !usersLoadedOnce) refreshUsers();
+        if (tab.dataset.pane === 'pane-reports' && !reportsLoadedOnce) refreshReports();
+        if (tab.dataset.pane === 'pane-settings') populateSettings();
+        if (tab.dataset.pane === 'pane-preview' && typeof applyPreviewSize === 'function') applyPreviewSize();
+      });
+    });
+
+    // ===================== RAPPORTS nova.ai (analyse silencieuse) =====================
+    const reportsStatus = document.getElementById('reports-status');
+    const reportsList = document.getElementById('reports-list');
+    let reportsLoadedOnce = false;
+
+    function formatDate(iso) {
+      if (!iso) return '';
+      try { return new Date(iso).toLocaleString('fr-FR'); } catch (e) { return iso; }
+    }
+
+    function renderReports(reports) {
+      if (!reports || reports.length === 0) {
+        reportsList.innerHTML = '<div class="hint">Aucun rapport pour l\'instant.</div>';
+        return;
+      }
+      reportsList.innerHTML = reports.map(r => `
+        <div class="user-row">
+          <div class="u-name">${formatDate(r.createdAt || r.$createdAt)}</div>
+          <div style="white-space: pre-wrap; margin-top:4px;">${(r.report || '').replace(/</g, '&lt;')}</div>
+          <div class="hint" style="margin-top:6px; margin-bottom:0;">${(r.statsSummary || '').replace(/</g, '&lt;').replace(/\n/g, ' · ')}</div>
+        </div>
+      `).join('');
+    }
+
+    async function refreshReports() {
+      reportsLoadedOnce = true;
+      setStatus(reportsStatus, 'Chargement des rapports...', 'info');
+      try {
+        const result = await callNovaFunction({ action: 'list_reports' });
+        if (result.error) throw new Error(result.error);
+        renderReports(result.reports);
+        setStatus(reportsStatus, '', 'info');
+      } catch (e) {
+        setStatus(reportsStatus, 'Erreur : ' + e.message, 'error');
+      }
+    }
+
+    document.getElementById('btn-run-analysis').addEventListener('click', async () => {
+      const btn = document.getElementById('btn-run-analysis');
+      btn.disabled = true;
+      setStatus(reportsStatus, 'nova.ai analyse le site (ça peut prendre quelques secondes)...', 'info');
+      try {
+        const result = await callNovaFunction({ action: 'run_analysis' });
+        if (result.error) throw new Error(result.error);
+        setStatus(reportsStatus, 'Analyse terminée !', 'success');
+        await refreshReports();
+      } catch (e) {
+        setStatus(reportsStatus, 'Erreur : ' + e.message, 'error');
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    // ===================== UTILISATEURS (statistiques + listes) =====================
+    const usersStatus = document.getElementById('users-status');
+    let usersLoadedOnce = false;
+
+    function renderUserRow(u, type) {
+      const verifBadge = type === 'buyer'
+        ? `<span class="u-badge ${u.verified ? 'verified' : 'unverified'}">${u.verified ? 'vérifié' : 'non vérifié'}</span>`
+        : '';
+      return `
+        <div class="user-row">
+          <span class="u-name">${(u.name || '(sans nom)')}</span>${verifBadge}
+          ${u.email ? `<div class="u-email">${u.email}</div>` : ''}
+          ${u.phone ? `<div class="u-email">${u.phone}</div>` : ''}
+          <div class="hint" style="margin:2px 0 0;">Inscrit le ${formatDate(u.registeredAt)}</div>
+        </div>`;
+    }
+
+    async function refreshUsers() {
+      usersLoadedOnce = true;
+      setStatus(usersStatus, 'Chargement...', 'info');
+      try {
+        const result = await callNovaFunction({ action: 'list_users' });
+        if (result.error) throw new Error(result.error);
+        document.getElementById('stat-total').textContent = result.totalCount;
+        document.getElementById('stat-buyers').textContent = result.buyerCount;
+        document.getElementById('stat-visitors').textContent = result.visitorCount;
+        document.getElementById('buyers-list').innerHTML = result.buyers.length
+          ? result.buyers.map(u => renderUserRow(u, 'buyer')).join('')
+          : '<div class="hint">Aucun acheteur pour l\'instant.</div>';
+        document.getElementById('visitors-list').innerHTML = result.visitors.length
+          ? result.visitors.map(u => renderUserRow(u, 'visitor')).join('')
+          : '<div class="hint">Aucun visiteur pour l\'instant.</div>';
+        setStatus(usersStatus, '', 'info');
+      } catch (e) {
+        setStatus(usersStatus, 'Erreur : ' + e.message, 'error');
+      }
+    }
+    document.getElementById('btn-refresh-users').addEventListener('click', refreshUsers);
+
+    // ===================== APERÇU MULTI-ÉCRANS =====================
+    let previewW = 390, previewH = 844, previewLandscape = false;
+    const previewWrapper = document.getElementById('preview-frame-wrapper');
+    const previewIframe = document.getElementById('preview-iframe');
+
+    function applyPreviewSize() {
+      const w = previewLandscape ? previewH : previewW;
+      const h = previewLandscape ? previewW : previewH;
+      const containerWidth = previewWrapper.parentElement.clientWidth;
+      const scale = Math.min(1, (containerWidth - 4) / w);
+      previewIframe.style.width = w + 'px';
+      previewIframe.style.height = h + 'px';
+      previewIframe.style.transform = `scale(${scale})`;
+      previewWrapper.style.width = Math.round(w * scale) + 'px';
+      previewWrapper.style.height = Math.round(h * scale) + 'px';
+    }
+
+    document.querySelectorAll('.device-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.device-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        previewW = parseInt(tab.dataset.w, 10);
+        previewH = parseInt(tab.dataset.h, 10);
+        applyPreviewSize();
+      });
+    });
+    document.getElementById('btn-orient-portrait').addEventListener('click', () => {
+      previewLandscape = false;
+      document.getElementById('btn-orient-portrait').classList.add('active');
+      document.getElementById('btn-orient-landscape').classList.remove('active');
+      applyPreviewSize();
+    });
+    document.getElementById('btn-orient-landscape').addEventListener('click', () => {
+      previewLandscape = true;
+      document.getElementById('btn-orient-landscape').classList.add('active');
+      document.getElementById('btn-orient-portrait').classList.remove('active');
+      applyPreviewSize();
+    });
+    document.getElementById('btn-refresh-preview').addEventListener('click', () => {
+      previewIframe.src = previewIframe.src;
+    });
+    window.addEventListener('resize', applyPreviewSize);
+    applyPreviewSize();
+
+    // ===================== PARAMÈTRES =====================
+    function populateSettings() {
+      document.getElementById('info-project').textContent = APPWRITE_PROJECT_ID;
+      document.getElementById('info-function').textContent = NOVA_FUNCTION_ID;
+      document.getElementById('info-admins').textContent = ADMIN_USER_IDS.filter(id => id && id !== 'COLLE_ICI_USER_ID_1' && id !== 'COLLE_ICI_USER_ID_2').length;
+    }
 
     const fingerprintStatus = document.getElementById('fingerprint-status');
     const btnRegisterFingerprint = document.getElementById('btn-register-fingerprint');
@@ -607,148 +903,37 @@
     }
 
     async function callNovaFunction(payload) {
+      if (NOVA_FUNCTION_ID === 'COLLE_ICI_LE_FUNCTION_ID') return { error: 'NOVA_FUNCTION_ID non configuré.' };
       const execution = await functions.createExecution(NOVA_FUNCTION_ID, JSON.stringify(payload), false);
       return JSON.parse(execution.responseBody || '{}');
     }
 
     btnRegisterFingerprint.addEventListener('click', async () => {
-      setStatus(fingerprintStatus, "Veuillez poser votre doigt sur le capteur...", "info");
+      setStatus(fingerprintStatus, "Initialisation biométrique...", "info");
       try {
         const options = await callNovaFunction({ action: 'webauthn_register_options' });
         if (options.error) throw new Error(options.error);
         const credential = await startRegistration(options);
         const result = await callNovaFunction({ action: 'webauthn_register_verify', credential });
         if (result.error) throw new Error(result.error);
-        setStatus(fingerprintStatus, "Empreinte digitale enregistrée avec succès !", "success");
+        setStatus(fingerprintStatus, "Empreinte digitale activée !", "success");
       } catch (e) {
-        setStatus(fingerprintStatus, "Échec : " + e.message, "error");
+        setStatus(fingerprintStatus, e.message, "error");
       }
     });
 
-    // ------------------------------------------------------------------
-    // VEILLE IA : rapports de nova.ai (silencieuse) + analyse directe du site
-    // La fonction Appwrite doit gérer : ai_feed, ai_monitor_run, ai_monitor_report, client_review
-    // ------------------------------------------------------------------
-    const $ = (id) => document.getElementById(id);
-    const el = (tag, cls, text) => {
-      const n = document.createElement(tag);
-      if (cls) n.className = cls;
-      if (text != null) n.textContent = text;
-      return n;
-    };
-    const TYPES = { problem: 'Problème', improvement: 'Amélioration', idea: 'Idée', code: 'Code proposé', notification: 'Notification' };
-
-    async function localScan() {
-      const t0 = performance.now();
-      const res = await fetch('index.html', { cache: 'no-store' });
-      const html = await res.text();
-      const ms = Math.round(performance.now() - t0);
-      const kb = Math.round(html.length / 1024);
-      const doc = new DOMParser().parseFromString(html, 'text/html');
-      const items = [];
-      const add = (type, title, detail) => items.push({ type, title, detail, ts: new Date().toISOString() });
-      if (!res.ok) add('problem', "Page d’accueil inaccessible", 'Code HTTP ' + res.status);
-      if (!doc.querySelector('meta[name="description"]')) add('improvement', 'Meta description absente', 'Elle sert au référencement et aux aperçus de lien.');
-      const noAlt = doc.querySelectorAll('img:not([alt])').length;
-      if (noAlt) add('improvement', noAlt + ' image(s) sans texte alternatif', 'Utile pour l’accessibilité et le référencement.');
-      if (!doc.querySelector('h1')) add('improvement', 'Aucun titre h1', 'Ajoute un titre principal à la page d’accueil.');
-      if (kb > 150) add('improvement', 'Page lourde : ' + kb + ' Ko', 'Sépare le CSS et le JavaScript dans des fichiers mis en cache.');
-      add('notification', 'Analyse directe terminée', ms + ' ms, ' + kb + ' Ko, ' + doc.querySelectorAll('img').length + ' images');
-      return { items, ms, kb, html };
-    }
-
-    function renderFeed(items) {
-      const box = $('watch-feed');
-      box.replaceChildren();
-      if (!items.length) { box.append(el('div', 'hint', 'Rien à signaler pour le moment.')); return; }
-      items.forEach((it) => {
-        const d = el('div', 'feed-item ' + (TYPES[it.type] ? it.type : 'notification'));
-        d.append(el('b', '', it.title || ''));
-        if (it.detail) d.append(el('div', '', it.detail));
-        if (it.code) d.append(el('pre', '', it.code));
-        d.append(el('small', '', (TYPES[it.type] || 'Info') + ', ' + new Date(it.ts || Date.now()).toLocaleString('fr-FR')));
-        box.append(d);
-      });
-    }
-
-    let localItems = [];
-    async function loadWatch(scan) {
-      const st = $('watch-status');
-      setStatus(st, scan ? 'Analyse en cours...' : '', 'info');
-      let remote = [], err = '';
-      if (scan) {
-        try { localItems = (await localScan()).items; } catch (e) { err = 'Lecture directe du site impossible. '; }
-      }
+    btnLoginFingerprint.addEventListener('click', async () => {
+      setStatus(loginStatus, "Lecture biométrique...", "info");
       try {
-        const d = await callNovaFunction({ action: scan ? 'ai_monitor_run' : 'ai_feed' });
-        if (d.error) throw new Error(d.error);
-        remote = d.items || [];
-      } catch (e) { err += 'Serveur IA : ' + e.message; }
-      renderFeed([...localItems, ...remote].sort((x, y) => (Date.parse(y.ts) || 0) - (Date.parse(x.ts) || 0)));
-      setStatus(st, err || (scan ? 'Analyse terminée.' : ''), err ? 'error' : 'success');
-    }
-    $('btn-watch-scan').addEventListener('click', () => loadWatch(true));
-    setInterval(() => {
-      if (!screenAdmin.classList.contains('hidden') && !$('tab-content-ai').classList.contains('hidden')) loadWatch(false);
-    }, 60000);
-
-    // ------------------------------------------------------------------
-    // IA CLIENT : Gemini (clé gardée côté serveur) note le site sur 100
-    // ------------------------------------------------------------------
-    const WEIGHTS = { exemplarite: 20, contenu: 20, ux: 25, rapidite: 15, domaine: 10, accessibilite: 10 };
-    const NAMES = { exemplarite: 'Site exemplaire', contenu: 'Contenu', ux: 'Expérience utilisateur', rapidite: 'Rapidité', domaine: 'Adéquation au domaine', accessibilite: 'Accessibilité' };
-
-    $('btn-client-review').addEventListener('click', async () => {
-      const st = $('client-status'), out = $('client-result'), btn = $('btn-client-review');
-      btn.disabled = true;
-      out.replaceChildren();
-      setStatus(st, 'Mesure du site puis analyse par Gemini...', 'info');
-      try {
-        const scan = await localScan();
-        const speed = Math.round(Math.max(0, Math.min(100, 100 - Math.max(0, scan.ms - 300) / 20 - Math.max(0, scan.kb - 150) / 5)));
-        const d = await callNovaFunction({
-          action: 'client_review',
-          context: 'Boutique en ligne de tenues béninoises de marque (NOVANOD)',
-          html: scan.html.replace(/<(script|style)[\s\S]*?<\/\1>/gi, '').slice(0, 40000),
-          metrics: { ms: scan.ms, kb: scan.kb },
-          criteria: Object.keys(WEIGHTS).filter((k) => k !== 'rapidite')
-        });
-        if (d.error) throw new Error(d.error);
-        const crit = { ...(d.criteria || {}), rapidite: { score: speed, note: 'Calculée : ' + scan.ms + ' ms et ' + scan.kb + ' Ko mesurés sur cet appareil (page HTML seule).' } };
-        let total = 0, weights = 0;
-        Object.entries(WEIGHTS).forEach(([k, w]) => {
-          const s = Number(crit[k] && crit[k].score);
-          if (!isNaN(s)) { total += s * w; weights += w; }
-        });
-        const box = el('div', 'score-box');
-        box.append(
-          el('div', 'score-value', (weights ? Math.round(total / weights) : 0) + '/100'),
-          el('div', 'hint', 'Moyenne pondérée : ' + Object.entries(WEIGHTS).map(([k, w]) => NAMES[k] + ' ' + w + ' %').join(', ') + '.')
-        );
-        out.append(box);
-        if (d.summary) out.append(el('div', 'hint', d.summary));
-        Object.keys(WEIGHTS).forEach((k) => {
-          const c = crit[k];
-          if (!c) return;
-          const row = el('div', 'crit'), bar = el('div', 'crit-bar'), fill = el('i');
-          fill.style.width = Math.max(0, Math.min(100, Number(c.score) || 0)) + '%';
-          bar.append(fill);
-          row.append(el('span', '', NAMES[k] + ' : ' + c.score + '/100'), bar, el('p', '', c.note || ''));
-          out.append(row);
-        });
-        [['positives', 'Points positifs', 'pro'], ['negatives', 'Points négatifs', 'problem']].forEach(([key, title, cls]) => {
-          out.append(el('h3', 'card-title', title));
-          (d[key] || []).forEach((p) => {
-            const item = el('div', 'feed-item ' + cls);
-            item.append(el('b', '', p.point || ''), el('div', '', p.why || ''));
-            out.append(item);
-          });
-        });
-        setStatus(st, 'Analyse terminée.', 'success');
+        const options = await callNovaFunction({ action: 'webauthn_login_options' });
+        if (options.error) throw new Error(options.error);
+        const credential = await startAuthentication(options);
+        const result = await callNovaFunction({ action: 'webauthn_login_verify', credential });
+        if (result.error) throw new Error(result.error);
+        await account.createSession(result.userId, result.secret);
+        await checkAdminSession();
       } catch (e) {
-        setStatus(st, 'Erreur : ' + e.message, 'error');
-      } finally {
-        btn.disabled = false;
+        setStatus(loginStatus, e.message, "error");
       }
     });
 
