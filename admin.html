@@ -269,6 +269,11 @@
       border-radius: 12px;
       display: none;
       animation: fadeIn 0.2s ease;
+      max-width: 100%;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      box-sizing: border-box;
     }
 
     @keyframes fadeIn {
@@ -458,7 +463,8 @@
     .admin-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
     .admin-grid > .glass-card { margin-bottom:0; min-width:0; }
     .admin-toolbar { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
-    .admin-toolbar .input-field { flex:1 1 220px; margin:0; min-width:0; }
+    .admin-toolbar .input-field { flex:1 1 220px; margin:0; min-width:0; max-width:100%; }
+    .admin-toolbar > button { flex:0 1 auto; min-width:0; white-space:normal; }
     .admin-table-wrap { width:100%; overflow:auto; border:1px solid rgba(59,20,32,.14); border-radius:12px; }
     .admin-table { width:100%; min-width:620px; border-collapse:collapse; font-size:12px; background:#fff; }
     .admin-table th,.admin-table td { padding:10px; text-align:left; border-bottom:1px solid #eee; vertical-align:top; }
@@ -485,6 +491,8 @@
       .stats-row { flex-wrap:wrap; }
       .stat-box { min-width:calc(50% - 8px); }
       .admin-form-grid { grid-template-columns:1fr; gap:0; }
+      .admin-toolbar { align-items:stretch; }
+      .admin-toolbar > button { flex:1 1 140px; min-height:48px; }
       .dashboard-header { padding:12px; }
       .preview-frame-wrapper { max-width:100%; }
     }
