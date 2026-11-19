@@ -1,0 +1,74 @@
+name: NOVANOD - Tests Playwright et audit Lighthouse
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, master]
+  schedule:
+    - cron: '0 4 * * 1'
+
+permissions:
+  contents: read
+
+env:
+  SITE_URL: https://novanod6.github.io/NOVANOD/
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v4
+      - name: Installer Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: ''
+      - name: Installer les dépendances
+        run: npm install
+      - name: Installer Chromium pour Playwright
+        run: npx playwright install --with-deps chromium
+      - name: Préparer les dossiers de rapports
+        run: mkdir -p artifacts
+      - name: Tester le site avec Playwright
+        id: playwright
+        continue-on-error: true
+        run: npx playwright test
+      - name: Détecter Chromium pour Lighthouse
+        id: chrome
+        run: |
+          CHROME_BIN=$(find "$HOME/.cache/ms-playwright" -type f \( -name chrome -o -name chrome-headless-shell \) | head -n 1)
+          if [ -z "$CHROME_BIN" ]; then echo 'Chromium introuvable'; exit 1; fi
+          echo "CHROME_PATH=$CHROME_BIN" >> "$GITHUB_ENV"
+      - name: Audit Lighthouse mobile
+        id: lighthouse_mobile
+        continue-on-error: true
+        run: npx lighthouse "$SITE_URL" --only-categories=performance,accessibility,best-practices,seo --output=json --output-path=artifacts/lighthouse-mobile.json --chrome-path="$CHROME_PATH" --chrome-flags="--headless --no-sandbox"
+      - name: Audit Lighthouse ordinateur
+        id: lighthouse_desktop
+        continue-on-error: true
+        run: npx lighthouse "$SITE_URL" --preset=desktop --only-categories=performance,accessibility,best-practices,seo --output=json --output-path=artifacts/lighthouse-desktop.json --chrome-path="$CHROME_PATH" --chrome-flags="--headless --no-sandbox"
+      - name: Construire le rapport consolidé
+        if: always()
+        run: node scripts/build-audit-summary.mjs
+      - name: Envoyer le rapport à Appwrite
+        if: always() && hashFiles('artifacts/audit-summary.json') != ''
+        env:
+          APPWRITE_ENDPOINT: ${{ secrets.APPWRITE_ENDPOINT }}
+          APPWRITE_PROJECT_ID: ${{ secrets.APPWRITE_PROJECT_ID }}
+          APPWRITE_FUNCTION_ID: ${{ secrets.APPWRITE_FUNCTION_ID }}
+          APPWRITE_API_KEY: ${{ secrets.APPWRITE_API_KEY }}
+          NOVA_AUDIT_TOKEN: ${{ secrets.NOVA_AUDIT_TOKEN }}
+        run: node scripts/post-audit.mjs
+      - name: Publier les rapports et captures Playwright
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: novanod-audit-${{ github.run_id }}
+          path: artifacts/
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Échouer le workflow si les tests ou audits ont échoué
+        if: steps.playwright.outcome == 'failure' || steps.lighthouse_mobile.outcome == 'failure' || steps.lighthouse_desktop.outcome == 'failure'
+        run: exit 1
