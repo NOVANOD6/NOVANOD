@@ -1,0 +1,14 @@
+{
+  "name": "novanod-automated-audits",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:e2e": "playwright test",
+    "audit:lighthouse:mobile": "lighthouse \"$SITE_URL\" --only-categories=performance,accessibility,best-practices,seo --output=json --output-path=artifacts/lighthouse-mobile.json --chrome-flags=\"--headless --no-sandbox\"",
+    "audit:lighthouse:desktop": "lighthouse \"$SITE_URL\" --preset=desktop --only-categories=performance,accessibility,best-practices,seo --output=json --output-path=artifacts/lighthouse-desktop.json --chrome-flags=\"--headless --no-sandbox\""
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.56.1",
+    "lighthouse": "^12.8.2"
+  }
+}
