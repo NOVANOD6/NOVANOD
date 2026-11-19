@@ -446,6 +446,49 @@
     .info-row:last-child { border-bottom: none; }
     .info-row .k { font-weight: 800; color: var(--dark-brown); }
     .info-row .v { color: var(--text-red); word-break: break-all; text-align: right; }
+
+    /* NOVANOD responsive admin shell */
+    body { align-items: stretch; justify-content: flex-start; padding: clamp(10px, 2vw, 28px); }
+    .admin-wrapper { max-width: 1480px; margin: 0 auto; }
+    #screen-login, #screen-pending { width: 100%; max-width: 520px; margin-left: auto; margin-right: auto; }
+    #screen-admin { width: 100%; min-width: 0; }
+    .dash-tabs { flex-wrap: wrap; overflow: visible; }
+    .dash-tab { min-height: 42px; }
+    .glass-card { min-width: 0; }
+    .admin-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+    .admin-grid > .glass-card { margin-bottom:0; min-width:0; }
+    .admin-toolbar { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+    .admin-toolbar .input-field { flex:1 1 220px; margin:0; min-width:0; }
+    .admin-table-wrap { width:100%; overflow:auto; border:1px solid rgba(59,20,32,.14); border-radius:12px; }
+    .admin-table { width:100%; min-width:620px; border-collapse:collapse; font-size:12px; background:#fff; }
+    .admin-table th,.admin-table td { padding:10px; text-align:left; border-bottom:1px solid #eee; vertical-align:top; }
+    .admin-table th { background:#3B1420; color:#FFFBD0; position:sticky; top:0; }
+    .admin-table td { overflow-wrap:anywhere; }
+    .admin-action { border:1px solid #3B1420; background:#fff; color:#3B1420; padding:6px 9px; border-radius:8px; font-weight:800; cursor:pointer; margin:2px; }
+    .admin-action.danger { background:#ffe5e8; color:#9d1020; border-color:#9d1020; }
+    .admin-note { padding:12px; background:#fff7d6; border:1px solid #efd98c; border-radius:12px; font-size:12px; line-height:1.6; margin:10px 0; }
+    .admin-output { white-space:pre-wrap; overflow-wrap:anywhere; background:#fff; border:1px solid rgba(59,20,32,.14); border-radius:12px; padding:12px; min-height:70px; font-size:12px; line-height:1.6; }
+    .admin-section-title { font-family:var(--font-heading); color:var(--text-red); font-size:18px; margin-bottom:10px; }
+    .admin-form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+    .admin-form-grid .input-field { margin-bottom:8px; }
+    .preview-frame-wrapper { position:relative; flex:none; }
+    .preview-frame-wrapper iframe { position:absolute; top:0; left:0; transform-origin:top left; }
+    @media (max-width: 900px) {
+      .admin-grid { grid-template-columns:1fr; }
+      .dashboard-header { gap:10px; flex-wrap:wrap; }
+    }
+    @media (max-width: 600px) {
+      body { padding:8px; }
+      .glass-card { padding:16px 12px; border-radius:18px; }
+      .dash-tabs { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .dash-tab { white-space:normal; padding:9px 6px; font-size:11px; }
+      .stats-row { flex-wrap:wrap; }
+      .stat-box { min-width:calc(50% - 8px); }
+      .admin-form-grid { grid-template-columns:1fr; gap:0; }
+      .dashboard-header { padding:12px; }
+      .preview-frame-wrapper { max-width:100%; }
+    }
+
   </style>
 </head>
 <body>
@@ -521,6 +564,12 @@
         <button class="dash-tab" data-pane="pane-users">👥 Utilisateurs</button>
         <button class="dash-tab" data-pane="pane-preview">📱 Aperçu</button>
         <button class="dash-tab" data-pane="pane-settings">⚙️ Paramètres</button>
+        <button class="dash-tab" data-pane="pane-teams">🧩 Équipes</button>
+        <button class="dash-tab" data-pane="pane-database">🗄️ Base de données</button>
+        <button class="dash-tab" data-pane="pane-storage">📁 Stockage</button>
+        <button class="dash-tab" data-pane="pane-messaging">✉️ Messagerie</button>
+        <button class="dash-tab" data-pane="pane-analytics">📈 Analyses IA</button>
+        <button class="dash-tab" data-pane="pane-assistant">🤖 Assistant</button>
       </div>
 
       <!-- ===== ONGLET : RAPPORTS nova.ai (analyse silencieuse) ===== -->
@@ -560,15 +609,26 @@
             <div class="stat-box"><div class="num" id="stat-visitors">—</div><div class="lbl">Visiteurs</div></div>
           </div>
           <div id="users-status" class="status-msg"></div>
-          <button id="btn-refresh-users" class="btn-3d btn-secondary">🔄 Actualiser</button>
+          <div class="admin-toolbar">
+            <input id="user-search" class="input-field" placeholder="Rechercher nom, e-mail ou ID…">
+            <button id="btn-refresh-users" class="btn-3d btn-secondary" style="width:auto;padding:0 18px;">🔄 Actualiser</button>
+          </div>
         </div>
         <div class="glass-card">
-          <h3 class="card-title">Acheteurs</h3>
-          <div id="buyers-list" class="user-list"><div class="hint">Clique sur "Actualiser" ci-dessus.</div></div>
+          <h3 class="card-title">Créer un utilisateur</h3>
+          <div class="admin-form-grid">
+            <input id="new-user-name" class="input-field" placeholder="Nom complet">
+            <input id="new-user-email" class="input-field" type="email" placeholder="Adresse e-mail">
+            <input id="new-user-password" class="input-field" type="password" placeholder="Mot de passe (8 caractères min.)">
+            <input id="new-user-phone" class="input-field" placeholder="Téléphone (facultatif)">
+          </div>
+          <button id="btn-create-user" class="btn-3d">＋ Créer le compte</button>
+          <div class="hint">La création est effectuée côté serveur. Le mot de passe n'est jamais affiché dans la liste.</div>
         </div>
         <div class="glass-card">
-          <h3 class="card-title">Visiteurs</h3>
-          <div id="visitors-list" class="user-list"><div class="hint">Clique sur "Actualiser" ci-dessus.</div></div>
+          <h3 class="card-title">Acheteurs et visiteurs</h3>
+          <div id="users-table" class="admin-table-wrap"><div class="hint">Clique sur « Actualiser » pour charger les comptes.</div></div>
+          <div class="admin-note">Les actions de blocage, modification, suppression et révocation de sessions sont sensibles. Elles sont protégées côté fonction et doivent être réservées aux administrateurs autorisés.</div>
         </div>
       </div>
 
@@ -579,8 +639,8 @@
           <div class="hint">Vérifie le rendu réel du site (novanod6.github.io) sur différents formats d'écran.</div>
           <div class="device-tabs">
             <button class="device-tab active" data-w="390" data-h="844">📱 Téléphone</button>
-            <button class="device-tab" data-w="768" data-h="1024">📟 Tablette</button>
-            <button class="device-tab" data-w="1366" data-h="860">🖥️ PC</button>
+            <button class="device-tab" data-w="820" data-h="1180">📟 Tablette</button>
+            <button class="device-tab" data-w="1440" data-h="900">🖥️ PC</button>
           </div>
           <div class="orientation-toggle">
             <button id="btn-orient-portrait" class="dash-tab active">⬆️ Vertical</button>
@@ -603,6 +663,139 @@
           <div class="info-row"><span class="k">Site public</span><span class="v"><a href="https://novanod6.github.io/NOVANOD/" target="_blank">novanod6.github.io/NOVANOD</a></span></div>
         </div>
       </div>
+
+      <!-- ===== ÉQUIPES & PERMISSIONS ===== -->
+      <div id="pane-teams" class="dash-pane">
+        <div class="glass-card">
+          <h3 class="card-title">Gestion des équipes</h3>
+          <div class="admin-note">Les équipes Appwrite organisent les membres et leurs rôles. Les permissions de ressources restent à définir explicitement dans les collections, buckets et fonctions.</div>
+          <div class="admin-toolbar">
+            <input id="team-name" class="input-field" placeholder="Nom de la nouvelle équipe">
+            <button id="btn-create-team" class="btn-3d" style="width:auto;padding:0 18px;">Créer l'équipe</button>
+            <button id="btn-refresh-teams" class="btn-3d btn-secondary" style="width:auto;padding:0 18px;">Actualiser</button>
+          </div>
+          <div id="teams-status" class="status-msg"></div>
+          <div id="teams-output" class="admin-output">Les équipes apparaîtront ici.</div>
+        </div>
+        <div class="glass-card">
+          <h3 class="card-title">Ajouter un membre</h3>
+          <input id="membership-team-id" class="input-field" placeholder="ID de l'équipe">
+          <input id="membership-email" class="input-field" type="email" placeholder="E-mail du membre">
+          <input id="membership-roles" class="input-field" placeholder="Rôles séparés par virgules (ex. admin,moderator)">
+          <button id="btn-add-member" class="btn-3d">Envoyer l'invitation</button>
+          <div class="hint">Appwrite peut envoyer une invitation selon la configuration du projet. Les permissions réelles doivent ensuite être appliquées aux ressources.</div>
+        </div>
+        <div class="glass-card">
+          <h3 class="card-title">Membres et rôles</h3>
+          <input id="team-members-team-id" class="input-field" placeholder="ID de l'équipe">
+          <button id="btn-list-team-members" class="btn-3d btn-secondary">Lister les membres</button>
+          <div id="team-members-output" class="admin-output">Les membres apparaîtront ici.</div>
+          <input id="team-membership-id" class="input-field" placeholder="ID du membre (membershipId)">
+          <input id="team-membership-roles" class="input-field" placeholder="Nouveaux rôles séparés par virgules">
+          <div class="admin-toolbar">
+            <button id="btn-update-team-member" class="btn-3d">Modifier les rôles</button>
+            <button id="btn-remove-team-member" class="btn-3d btn-secondary">Retirer le membre</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== BASE DE DONNÉES ===== -->
+      <div id="pane-database" class="dash-pane">
+        <div class="glass-card">
+          <h3 class="card-title">Explorateur de collections</h3>
+          <div class="admin-note">L'explorateur utilise les droits serveur de la fonction. Évite d'exposer une clé API dans cette page. La liste des collections et documents dépend des scopes accordés à la fonction.</div>
+          <button id="btn-load-collections" class="btn-3d btn-secondary">Lister les collections</button>
+          <div id="database-status" class="status-msg"></div>
+          <div id="collections-output" class="admin-output">Aucune collection chargée.</div>
+        </div>
+        <div class="glass-card">
+          <h3 class="card-title">Documents</h3>
+          <input id="db-collection-id" class="input-field" placeholder="ID de collection">
+          <input id="db-document-id" class="input-field" placeholder="ID du document (pour modifier/supprimer)">
+          <textarea id="db-document-data" class="input-field" placeholder='Données JSON, ex. {"name":"Produit","price":12000}'></textarea>
+          <div class="admin-toolbar">
+            <button id="btn-list-documents" class="btn-3d btn-secondary">Lister</button>
+            <button id="btn-create-document" class="btn-3d">Créer</button>
+            <button id="btn-update-document" class="btn-3d btn-secondary">Modifier</button>
+            <button id="btn-delete-document" class="btn-3d btn-secondary">Supprimer</button>
+          </div>
+          <div id="documents-output" class="admin-output">Les documents apparaîtront ici.</div>
+        </div>
+      </div>
+
+      <!-- ===== STOCKAGE ===== -->
+      <div id="pane-storage" class="dash-pane">
+        <div class="glass-card">
+          <h3 class="card-title">Buckets et fichiers</h3>
+          <button id="btn-load-buckets" class="btn-3d btn-secondary">Lister les buckets</button>
+          <div id="storage-status" class="status-msg"></div>
+          <div id="buckets-output" class="admin-output">Aucun bucket chargé.</div>
+          <input id="storage-bucket-id" class="input-field" placeholder="ID du bucket">
+          <button id="btn-list-files" class="btn-3d">Lister les fichiers</button>
+          <div id="files-output" class="admin-output">Les fichiers apparaîtront ici.</div>
+          <input id="storage-file-id" class="input-field" placeholder="ID du fichier à supprimer">
+          <button id="btn-delete-file" class="btn-3d btn-secondary">Supprimer le fichier sélectionné</button>
+          <div class="admin-note">L'upload de gros fichiers doit être réalisé avec l'API Storage côté navigateur authentifié ou via une fonction dédiée avec streaming. Cette console expose ici la consultation et la suppression sécurisée, pas un faux upload.</div>
+        </div>
+      </div>
+
+      <!-- ===== MESSAGERIE ===== -->
+      <div id="pane-messaging" class="dash-pane">
+        <div class="glass-card">
+          <h3 class="card-title">Envoyer un message</h3>
+          <label class="form-label">Canal</label>
+          <select id="message-channel" class="input-field">
+            <option value="email">E-mail</option><option value="sms">SMS</option><option value="push">Notification Push</option>
+          </select>
+          <input id="message-user-id" class="input-field" placeholder="ID utilisateur (ou laisser vide pour plusieurs destinataires)">
+          <input id="message-topic-id" class="input-field" placeholder="ID du topic Appwrite (facultatif)">
+          <input id="message-subject" class="input-field" placeholder="Objet / titre">
+          <textarea id="message-content" class="input-field" placeholder="Contenu du message"></textarea>
+          <button id="btn-send-message" class="btn-3d">Envoyer via Appwrite Messaging</button>
+          <div id="messaging-status" class="status-msg"></div>
+          <div id="messaging-output" class="admin-output">Les réponses du service de messagerie apparaîtront ici.</div>
+          <div class="admin-note">Pour envoyer à tous, crée et utilise un topic Appwrite avec des abonnés consentants. Ne pas envoyer de campagnes marketing sans base légale/consentement et mécanisme de désinscription. Un fournisseur e-mail/SMS/push doit être configuré dans Appwrite.</div>
+        </div>
+      </div>
+
+      <!-- ===== ANALYSES IA ===== -->
+      <div id="pane-analytics" class="dash-pane">
+        <div class="glass-card">
+          <h3 class="card-title">Centre d'analyse NOVANOD</h3>
+          <div class="hint">Chaque audit produit un rapport séparé avec preuves disponibles, limites, gravité, recommandations et score. Les tests actifs intrusifs sont exclus : l'audit de sécurité reste défensif et non destructif.</div>
+          <div class="admin-form-grid">
+            <button class="btn-3d" data-analysis="problem">🔎 Analyse problème</button>
+            <button class="btn-3d" data-analysis="client">🛍️ Analyse client</button>
+            <button class="btn-3d" data-analysis="security">🛡️ Analyse sécurité</button>
+            <button class="btn-3d" data-analysis="statistics">📊 Analyse statistique</button>
+            <button class="btn-3d btn-secondary" data-analysis="business">💼 Analyse business</button>
+            <button class="btn-3d btn-secondary" data-analysis="merchandising">👗 Analyse merchandising</button>
+            <button class="btn-3d btn-secondary" data-analysis="support">💬 Analyse service client</button>
+            <button class="btn-3d btn-secondary" data-analysis="marketing">📣 Analyse marketing</button>
+            <button class="btn-3d btn-secondary" data-analysis="maintenance">⚙️ Maintenance proactive</button>
+          </div>
+          <div id="analysis-status" class="status-msg"></div>
+          <div id="analysis-output" class="admin-output">Choisis un audit pour générer un rapport détaillé.</div>
+        </div>
+        <div class="glass-card">
+          <h3 class="card-title">Historique des rapports</h3>
+          <div id="analysis-history" class="admin-output">Les rapports seront enregistrés dans la collection de rapports configurée.</div>
+        </div>
+      </div>
+
+      <!-- ===== ASSISTANT ADMIN ===== -->
+      <div id="pane-assistant" class="dash-pane">
+        <div class="glass-card">
+          <h3 class="card-title">Assistant NOVANOD</h3>
+          <div class="hint">Assistant réservé aux administrateurs : synthèse des alertes et préparation de recommandations. Les actions sensibles nécessitent toujours une validation humaine.</div>
+          <textarea id="assistant-question" class="input-field" placeholder="Ex. Résume les risques prioritaires et propose un plan d'action…"></textarea>
+          <button id="btn-assistant-ask" class="btn-3d">Demander à nova.ai</button>
+          <div id="assistant-status" class="status-msg"></div>
+          <div id="assistant-output" class="admin-output">En attente de ta demande.</div>
+          <div class="admin-note">L'agent ne doit pas supprimer des comptes, modifier des prix, changer des permissions ou envoyer une campagne de masse sans confirmation explicite d'un administrateur.</div>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -820,7 +1013,7 @@
         </div>`;
     }
 
-    async function refreshUsers() {
+    async function refreshUsersLegacy() {
       usersLoadedOnce = true;
       setStatus(usersStatus, 'Chargement...', 'info');
       try {
@@ -847,7 +1040,7 @@
     const previewWrapper = document.getElementById('preview-frame-wrapper');
     const previewIframe = document.getElementById('preview-iframe');
 
-    function applyPreviewSize() {
+    function applyPreviewSizeLegacy() {
       const w = previewLandscape ? previewH : previewW;
       const h = previewLandscape ? previewW : previewH;
       const containerWidth = previewWrapper.parentElement.clientWidth;
@@ -936,6 +1129,252 @@
         setStatus(loginStatus, e.message, "error");
       }
     });
+
+
+    // ===================== MODULES ADMIN NOVANOD =====================
+    const adminCall = async (action, extra = {}) => {
+      const result = await callNovaFunction({ action, ...extra });
+      if (result?.error) throw new Error(result.error);
+      return result;
+    };
+    const out = (id, value) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = typeof value === 'string' ? value : JSON.stringify(value, null, 2);
+    };
+    const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, c => ({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+    }[c]));
+    let cachedUsers = [];
+
+    async function refreshUsers() {
+      usersLoadedOnce = true;
+      setStatus(usersStatus, 'Chargement des comptes...', 'info');
+      try {
+        const result = await adminCall('list_users');
+        cachedUsers = [...(result.buyers || []), ...(result.visitors || [])];
+        document.getElementById('stat-total').textContent = result.totalCount ?? cachedUsers.length;
+        document.getElementById('stat-buyers').textContent = result.buyerCount ?? (result.buyers || []).length;
+        document.getElementById('stat-visitors').textContent = result.visitorCount ?? (result.visitors || []).length;
+        renderUsersTable();
+        setStatus(usersStatus, '', 'info');
+      } catch (e) { setStatus(usersStatus, 'Erreur : ' + e.message, 'error'); }
+    }
+    function renderUsersTable() {
+      const q = (document.getElementById('user-search')?.value || '').toLowerCase();
+      const rows = cachedUsers.filter(u => [u.name,u.email,u.id,u.phone].join(' ').toLowerCase().includes(q));
+      const host = document.getElementById('users-table');
+      if (!rows.length) { host.innerHTML = '<div class="hint">Aucun utilisateur correspondant.</div>'; return; }
+      host.innerHTML = `<table class="admin-table"><thead><tr><th>Utilisateur</th><th>Statut</th><th>Inscription</th><th>Actions</th></tr></thead><tbody>${
+        rows.map(u => `<tr><td><b>${escapeHtml(u.name || '(sans nom)')}</b><br>${escapeHtml(u.email || '')}<br><small>${escapeHtml(u.id)}</small></td>
+        <td>${u.verified ? 'Vérifié' : 'Non vérifié'} · ${u.status === false ? 'Bloqué' : 'Actif'}<br><small>${escapeHtml((u.labels || []).join(', '))}</small></td>
+        <td>${escapeHtml(formatDate(u.registeredAt))}</td><td>
+        <button class="admin-action" data-user-action="sessions" data-id="${escapeHtml(u.id)}">Sessions</button>
+        <button class="admin-action" data-user-action="edit" data-id="${escapeHtml(u.id)}">Modifier</button>
+        <button class="admin-action" data-user-action="labels" data-id="${escapeHtml(u.id)}">Labels</button>
+        <button class="admin-action" data-user-action="${u.status === false ? 'unblock' : 'block'}" data-id="${escapeHtml(u.id)}">${u.status === false ? 'Débloquer' : 'Bloquer'}</button>
+        <button class="admin-action danger" data-user-action="delete" data-id="${escapeHtml(u.id)}">Supprimer</button>
+        </td></tr>`).join('')
+      }</tbody></table>`;
+    }
+    document.getElementById('user-search')?.addEventListener('input', renderUsersTable);
+    document.getElementById('users-table')?.addEventListener('click', async ev => {
+      const b = ev.target.closest('[data-user-action]');
+      if (!b) return;
+      const id = b.dataset.id, action = b.dataset.userAction;
+      try {
+        if (action === 'delete' && !confirm('Supprimer définitivement cet utilisateur ?')) return;
+        if (action === 'block' || action === 'unblock') {
+          await adminCall('user_status', { userId:id, status: action === 'unblock' });
+        } else if (action === 'delete') {
+          await adminCall('user_delete', { userId:id });
+        } else if (action === 'sessions') {
+          const r = await adminCall('user_sessions', { userId:id });
+          const sessions = r.sessions || [];
+          const summary = sessions.map(x => `${x.$id} · ${x.clientName || 'Appareil'} · ${x.osName || ''} · ${x.ip || ''}`).join('\\n');
+          if (!sessions.length) { alert('Aucune session active.'); return; }
+          const sessionId = prompt('Sessions actives (copie l’ID à révoquer) :\\n\\n' + summary + '\\n\\nID de session à déconnecter :');
+          if (sessionId && confirm('Déconnecter cette session à distance ?')) {
+            await adminCall('user_session_delete', { userId:id, sessionId:sessionId.trim() });
+            alert('Session révoquée.');
+          }
+          return;
+        } else if (action === 'labels') {
+          const labels = prompt('Labels séparés par des virgules :');
+          if (labels === null) return;
+          await adminCall('user_labels', { userId:id, labels:labels.split(',').map(x=>x.trim()).filter(Boolean) });
+        } else if (action === 'edit') {
+          const current = cachedUsers.find(x=>x.id===id) || {};
+          const name = prompt('Nom :', current.name || '');
+          if (name === null) return;
+          const email = prompt('E-mail :', current.email || '');
+          if (email === null) return;
+          const password = prompt('Nouveau mot de passe (laisser vide pour ne pas modifier) :') || '';
+          await adminCall('user_update', { userId:id, name, email, password });
+        }
+        await refreshUsers();
+      } catch(e) { alert('Erreur : ' + e.message); }
+    });
+    document.getElementById('btn-create-user')?.addEventListener('click', async () => {
+      try {
+        const payload = {
+          name:document.getElementById('new-user-name').value.trim(),
+          email:document.getElementById('new-user-email').value.trim(),
+          password:document.getElementById('new-user-password').value,
+          phone:document.getElementById('new-user-phone').value.trim()
+        };
+        if (!payload.email || payload.password.length < 8) throw new Error('E-mail requis et mot de passe de 8 caractères minimum.');
+        const r = await adminCall('user_create', payload);
+        setStatus(usersStatus, 'Compte créé : ' + r.userId, 'success');
+        ['new-user-name','new-user-email','new-user-password','new-user-phone'].forEach(id=>document.getElementById(id).value='');
+        await refreshUsers();
+      } catch(e) { setStatus(usersStatus, e.message, 'error'); }
+    });
+
+    // Teams
+    async function refreshTeams() {
+      try { const r=await adminCall('teams_list'); out('teams-output',r.teams || r); setStatus(document.getElementById('teams-status'),'','info'); }
+      catch(e){ setStatus(document.getElementById('teams-status'),e.message,'error'); }
+    }
+    document.getElementById('btn-refresh-teams')?.addEventListener('click',refreshTeams);
+    document.getElementById('btn-create-team')?.addEventListener('click',async()=>{
+      try { const name=document.getElementById('team-name').value.trim(); if(!name) throw new Error('Nom requis.');
+        const r=await adminCall('team_create',{name}); out('teams-output',r); await refreshTeams();
+      } catch(e){setStatus(document.getElementById('teams-status'),e.message,'error');}
+    });
+    document.getElementById('btn-add-member')?.addEventListener('click',async()=>{
+      try { const r=await adminCall('team_add_member',{
+        teamId:document.getElementById('membership-team-id').value.trim(),
+        email:document.getElementById('membership-email').value.trim(),
+        roles:document.getElementById('membership-roles').value.split(',').map(x=>x.trim()).filter(Boolean)
+      }); out('teams-output',r); setStatus(document.getElementById('teams-status'),'Invitation créée.','success');
+      } catch(e){setStatus(document.getElementById('teams-status'),e.message,'error');}
+    });
+    document.getElementById('btn-list-team-members')?.addEventListener('click',async()=>{
+      try { const teamId=document.getElementById('team-members-team-id').value.trim(); const r=await adminCall('team_memberships_list',{teamId}); out('team-members-output',r.memberships||r); }
+      catch(e){out('team-members-output','Erreur : '+e.message);}
+    });
+    document.getElementById('btn-update-team-member')?.addEventListener('click',async()=>{
+      try { const teamId=document.getElementById('team-members-team-id').value.trim(),membershipId=document.getElementById('team-membership-id').value.trim();
+        const roles=document.getElementById('team-membership-roles').value.split(',').map(x=>x.trim()).filter(Boolean);
+        const r=await adminCall('team_membership_update',{teamId,membershipId,roles}); out('team-members-output',r);
+      } catch(e){out('team-members-output','Erreur : '+e.message);}
+    });
+    document.getElementById('btn-remove-team-member')?.addEventListener('click',async()=>{
+      try { const teamId=document.getElementById('team-members-team-id').value.trim(),membershipId=document.getElementById('team-membership-id').value.trim();
+        if(!confirm('Retirer ce membre de l’équipe ?')) return;
+        const r=await adminCall('team_membership_delete',{teamId,membershipId}); out('team-members-output',r);
+      } catch(e){out('team-members-output','Erreur : '+e.message);}
+    });
+
+    // Database explorer
+    document.getElementById('btn-load-collections')?.addEventListener('click',async()=>{
+      try { const r=await adminCall('db_collections'); out('collections-output',r.collections || r); setStatus(document.getElementById('database-status'),'Collections chargées.','success'); }
+      catch(e){setStatus(document.getElementById('database-status'),e.message,'error');}
+    });
+    const dbPayload = () => {
+      const collectionId=document.getElementById('db-collection-id').value.trim();
+      const documentId=document.getElementById('db-document-id').value.trim();
+      const raw=document.getElementById('db-document-data').value.trim();
+      let data={}; if(raw) data=JSON.parse(raw);
+      return {collectionId,documentId,data};
+    };
+    document.getElementById('btn-list-documents')?.addEventListener('click',async()=>{
+      try { const p=dbPayload(); const r=await adminCall('db_documents_list',p); out('documents-output',r.documents || r); }
+      catch(e){out('documents-output','Erreur : '+e.message);}
+    });
+    document.getElementById('btn-create-document')?.addEventListener('click',async()=>{
+      try { const p=dbPayload(); const r=await adminCall('db_document_create',p); out('documents-output',r); }
+      catch(e){out('documents-output','Erreur : '+e.message);}
+    });
+    document.getElementById('btn-update-document')?.addEventListener('click',async()=>{
+      try { const p=dbPayload(); const r=await adminCall('db_document_update',p); out('documents-output',r); }
+      catch(e){out('documents-output','Erreur : '+e.message);}
+    });
+    document.getElementById('btn-delete-document')?.addEventListener('click',async()=>{
+      try { const p=dbPayload(); if(!p.documentId || !confirm('Supprimer ce document ?')) return; const r=await adminCall('db_document_delete',p); out('documents-output',r); }
+      catch(e){out('documents-output','Erreur : '+e.message);}
+    });
+
+    // Storage
+    document.getElementById('btn-load-buckets')?.addEventListener('click',async()=>{
+      try { const r=await adminCall('storage_buckets'); out('buckets-output',r.buckets || r); setStatus(document.getElementById('storage-status'),'Buckets chargés.','success'); }
+      catch(e){setStatus(document.getElementById('storage-status'),e.message,'error');}
+    });
+    document.getElementById('btn-list-files')?.addEventListener('click',async()=>{
+      try { const bucketId=document.getElementById('storage-bucket-id').value.trim(); const r=await adminCall('storage_files',{bucketId}); out('files-output',r.files || r); }
+      catch(e){out('files-output','Erreur : '+e.message);}
+    });
+    document.getElementById('btn-delete-file')?.addEventListener('click',async()=>{
+      try { const bucketId=document.getElementById('storage-bucket-id').value.trim(),fileId=document.getElementById('storage-file-id').value.trim();
+        if(!confirm('Supprimer définitivement ce fichier ?')) return;
+        const r=await adminCall('storage_file_delete',{bucketId,fileId}); out('files-output',r);
+      } catch(e){out('files-output','Erreur : '+e.message);}
+    });
+
+    // Messaging
+    document.getElementById('btn-send-message')?.addEventListener('click',async()=>{
+      try {
+        const channel=document.getElementById('message-channel').value;
+        const userId=document.getElementById('message-user-id').value.trim();
+        const topicId=document.getElementById('message-topic-id').value.trim();
+        const subject=document.getElementById('message-subject').value.trim();
+        const content=document.getElementById('message-content').value.trim();
+        if(!content || (!userId && !topicId)) throw new Error('Contenu et destinataire (ID utilisateur ou topic) requis.');
+        if(!confirm('Confirmer l’envoi de ce message ?')) return;
+        const r=await adminCall('message_send',{channel,userId,topicId,subject,content});
+        out('messaging-output',r); setStatus(document.getElementById('messaging-status'),'Message transmis à Appwrite Messaging.','success');
+      } catch(e){setStatus(document.getElementById('messaging-status'),e.message,'error');}
+    });
+
+    // AI role-based audits and assistant.
+    document.querySelectorAll('[data-analysis]').forEach(btn=>btn.addEventListener('click',async()=>{
+      const kind=btn.dataset.analysis, status=document.getElementById('analysis-status');
+      setStatus(status,'nova.ai exécute l’audit « '+kind+' »…','info');
+      out('analysis-output','Analyse en cours…');
+      try {
+        const r=await adminCall('run_analysis',{analysisType:kind});
+        out('analysis-output',r.report?.report || r.report || r);
+        setStatus(status,'Rapport enregistré.','success');
+        const h=await adminCall('list_reports');
+        out('analysis-history',(h.reports||[]).map(x=>`${formatDate(x.createdAt||x.$createdAt)} · ${x.analysisType||'audit'}\n${x.report||''}`).join('\n\n') || 'Aucun rapport.');
+      } catch(e){setStatus(status,e.message,'error');out('analysis-output','Erreur : '+e.message);}
+    }));
+    document.getElementById('btn-assistant-ask')?.addEventListener('click',async()=>{
+      const question=document.getElementById('assistant-question').value.trim();
+      if(!question) return setStatus(document.getElementById('assistant-status'),'Écris une demande.','error');
+      setStatus(document.getElementById('assistant-status'),'nova.ai prépare sa réponse…','info');
+      try { const r=await adminCall('assistant',{question}); out('assistant-output',r.answer||r); setStatus(document.getElementById('assistant-status'),'Réponse prête.','success'); }
+      catch(e){setStatus(document.getElementById('assistant-status'),e.message,'error');}
+    });
+
+    // Load richer reports and teams lazily when opening their workspace.
+    document.querySelectorAll('.dash-tab[data-pane]').forEach(tab => {
+      tab.addEventListener('click', () => {
+        if (tab.dataset.pane === 'pane-teams') refreshTeams();
+      });
+    });
+
+    // More accurate preview sizing: use the available content width, account for
+    // device orientation, and recompute after layout changes.
+    function applyPreviewSize() {
+      const w = previewLandscape ? previewH : previewW;
+      const h = previewLandscape ? previewW : previewH;
+      const parent = previewWrapper.parentElement;
+      const style = getComputedStyle(parent);
+      const availableWidth = Math.max(240, parent.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight) - 8);
+      const scale = Math.min(1, availableWidth / w);
+      previewIframe.style.width = w + 'px';
+      previewIframe.style.height = h + 'px';
+      previewIframe.style.transform = `scale(${scale})`;
+      previewWrapper.style.width = Math.round(w * scale) + 'px';
+      previewWrapper.style.height = Math.round(h * scale) + 'px';
+      previewWrapper.style.marginLeft = 'auto';
+      previewWrapper.style.marginRight = 'auto';
+    }
+    if ('ResizeObserver' in window) {
+      const previewObserver = new ResizeObserver(() => applyPreviewSize());
+      previewObserver.observe(previewWrapper.parentElement);
+    }
 
     checkAdminSession();
   </script>
