@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NOVANOD — Console Administrateur</title>
   <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="Console privée NOVANOD : administration, audits GitHub, Gemini Interactions et Groq.">
 
   <!-- Favicon officiel -->
   <link rel="icon" type="image/png" href="logo.png?v=6">
@@ -13,6 +14,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
+
     :root {
       --red-primary: #E64A38;
       --red-hover: #D03D2B;
@@ -269,11 +271,6 @@
       border-radius: 12px;
       display: none;
       animation: fadeIn 0.2s ease;
-      max-width: 100%;
-      white-space: normal;
-      overflow-wrap: anywhere;
-      word-break: break-word;
-      box-sizing: border-box;
     }
 
     @keyframes fadeIn {
@@ -451,6 +448,7 @@
     .info-row:last-child { border-bottom: none; }
     .info-row .k { font-weight: 800; color: var(--dark-brown); }
     .info-row .v { color: var(--text-red); word-break: break-all; text-align: right; }
+  
 
     /* NOVANOD responsive admin shell */
     body { align-items: stretch; justify-content: flex-start; padding: clamp(10px, 2vw, 28px); }
@@ -466,14 +464,15 @@
     .admin-toolbar .input-field { flex:1 1 220px; margin:0; min-width:0; max-width:100%; }
     .admin-toolbar > button { flex:0 1 auto; min-width:0; white-space:normal; }
     .admin-table-wrap { width:100%; overflow:auto; border:1px solid rgba(59,20,32,.14); border-radius:12px; }
-    .admin-table { width:100%; min-width:620px; border-collapse:collapse; font-size:12px; background:#fff; }
-    .admin-table th,.admin-table td { padding:10px; text-align:left; border-bottom:1px solid #eee; vertical-align:top; }
+    .admin-table { width:100%; min-width:620px; border-collapse:collapse; font-size:12px; background:#FFFBD0; }
+    .admin-table th,.admin-table td { padding:10px; text-align:left; border-bottom:1px solid #FFFBD0; vertical-align:top; }
     .admin-table th { background:#3B1420; color:#FFFBD0; position:sticky; top:0; }
     .admin-table td { overflow-wrap:anywhere; }
-    .admin-action { border:1px solid #3B1420; background:#fff; color:#3B1420; padding:6px 9px; border-radius:8px; font-weight:800; cursor:pointer; margin:2px; }
-    .admin-action.danger { background:#ffe5e8; color:#9d1020; border-color:#9d1020; }
-    .admin-note { padding:12px; background:#fff7d6; border:1px solid #efd98c; border-radius:12px; font-size:12px; line-height:1.6; margin:10px 0; }
-    .admin-output { white-space:pre-wrap; overflow-wrap:anywhere; background:#fff; border:1px solid rgba(59,20,32,.14); border-radius:12px; padding:12px; min-height:70px; font-size:12px; line-height:1.6; }
+    .admin-action { border:1px solid #3B1420; background:#FFFBD0; color:#3B1420; padding:6px 9px; border-radius:8px; font-weight:800; cursor:pointer; margin:2px; }
+    .admin-action.danger { background:#E64A38; color:#FFFBD0; border-color:#3B1420; }
+    .admin-note { padding:12px; background:#FFFBD0; border:1px solid #FFFBD0; border-radius:12px; font-size:12px; line-height:1.6; margin:10px 0; }
+    .admin-output { overflow-wrap:anywhere; white-space:pre-wrap; }
+    .admin-output { white-space:pre-wrap; overflow-wrap:anywhere; background:#FFFBD0; border:1px solid rgba(59,20,32,.14); border-radius:12px; padding:12px; min-height:70px; font-size:12px; line-height:1.6; }
     .admin-section-title { font-family:var(--font-heading); color:var(--text-red); font-size:18px; margin-bottom:10px; }
     .admin-form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
     .admin-form-grid .input-field { margin-bottom:8px; }
@@ -497,6 +496,60 @@
       .preview-frame-wrapper { max-width:100%; }
     }
 
+
+    /* ===== NOVANOD NEON CONSOLE — nouvelle identité visuelle ===== */
+    :root{
+      --red-primary:#E64A38;--red-hover:#E64A38;--dark-brown:#3B1420;
+      --dark-brown-shadow:#3B1420;--text-red:#E64A38;--cream-bg:#FFFBD0;
+      --cream-card:#FFFBD0;--card-bg:rgba(255,251,208,.94);
+      --font-heading:'Plus Jakarta Sans',sans-serif;--font-body:'Plus Jakarta Sans',sans-serif;
+    }
+    html{background:#FFFBD0;scroll-behavior:smooth}
+    body{background:radial-gradient(ellipse at 12% 0%,rgba(230,74,56,.12),transparent 38%),radial-gradient(ellipse at 90% 15%,rgba(255,251,208,.7),transparent 34%),#FFFBD0;color:#3B1420; padding:clamp(10px,2vw,28px)}
+    .admin-wrapper{max-width:1500px;width:100%}
+    .header-brand{flex-direction:row;justify-content:flex-start;gap:13px;text-align:left;margin:0 0 22px;padding:14px 18px;background:rgba(59,20,32,.82);border:1px solid rgba(59,20,32,.16);border-radius:18px;box-shadow:0 12px 35px rgba(59,20,32,.22)}
+    .brand-logo{width:46px;height:46px;margin:0;border-radius:13px;box-shadow:0 0 24px rgba(59,20,32,.24)}
+    .admin-title{font-size:21px;color:#FFFBD0;letter-spacing:1.4px}
+    .admin-badge{margin:0 0 0 auto;background:rgba(230,74,56,.12);color:#E64A38;border:1px solid rgba(230,74,56,.25);box-shadow:none;font-size:9px;letter-spacing:1.1px}
+    .glass-card{background:linear-gradient(145deg,rgba(255,251,208,.98),rgba(255,251,208,.97));border:1px solid rgba(59,20,32,.16);border-radius:18px;padding:22px;box-shadow:0 10px 28px rgba(59,20,32,.12);backdrop-filter:blur(16px);margin-bottom:16px;color:#3B1420}
+    .card-title,.admin-section-title{color:#E64A38!important;font-family:var(--font-heading);font-size:17px;font-weight:800;letter-spacing:-.2px}
+    .hint,.admin-note{color:#3B1420;line-height:1.65}
+    .admin-note{background:rgba(59,20,32,.08);border:1px solid rgba(59,20,32,.2);border-radius:12px}
+    .form-label{color:#3B1420;font-size:11px;letter-spacing:.8px}
+    .input-field,textarea.input-field,select.input-field{background:#FFFBD0;color:#3B1420;border:1px solid rgba(59,20,32,.25);border-radius:11px;padding:13px 14px}
+    .input-field::placeholder{color:#3B1420}
+    .input-field:focus,textarea.input-field:focus{background:#FFFBD0;border-color:#E64A38;box-shadow:0 0 0 3px rgba(230,74,56,.15)}
+    .btn-3d{background:linear-gradient(110deg,#E64A38,#E64A38);color:#FFFBD0;border:1px solid rgba(230,74,56,.25);border-radius:11px;box-shadow:0 5px 16px rgba(230,74,56,.2);font-weight:800;min-height:46px;transition:transform .18s,filter .18s}
+    .btn-3d:hover{filter:brightness(1.12);transform:translateY(-1px)}
+    .btn-secondary,.btn-dark{background:#3B1420!important;color:#FFFBD0!important;border:1px solid #3B1420!important;box-shadow:none!important}
+    .auth-tabs{background:rgba(59,20,32,.06);border:1px solid rgba(59,20,32,.12);border-radius:12px}
+    .auth-tab{color:#3B1420}.auth-tab.active{background:#3B1420;color:#FFFBD0;box-shadow:none}
+    .dashboard-header{background:rgba(59,20,32,.9);border:1px solid rgba(59,20,32,.16);border-radius:16px;padding:14px 18px;margin-bottom:14px}
+    .user-badge{color:#3B1420}.status-dot{background:#3B1420;box-shadow:0 0 10px rgba(59,20,32,.7)}
+    .logout-btn{background:rgba(59,20,32,.1);color:#E64A38;border:1px solid rgba(59,20,32,.25);border-radius:10px;padding:10px 14px}
+    .dash-tabs{display:flex;gap:7px;padding:8px;margin:0 0 16px;background:rgba(59,20,32,.92);border:1px solid rgba(59,20,32,.15);border-radius:15px;position:sticky;top:6px;z-index:10;backdrop-filter:blur(14px)}
+    .dash-tab{background:transparent;color:#3B1420;border:1px solid transparent;border-radius:10px;padding:10px 13px;font-weight:700;transition:.18s}
+    .dash-tab:hover{background:rgba(59,20,32,.1);color:#3B1420}
+    .dash-tab.active{background:rgba(59,20,32,.2);color:#3B1420;border-color:rgba(59,20,32,.3)}
+    .stats-row{gap:10px}.stat-box{background:#FFFBD0;border:1px solid rgba(59,20,32,.15);border-radius:13px;color:#3B1420;box-shadow:none;padding:16px}.stat-box .num{color:#E64A38}.stat-box .lbl{color:#3B1420}
+    .admin-table-wrap{border:1px solid rgba(59,20,32,.18);border-radius:12px;background:#FFFBD0}.admin-table{background:#FFFBD0;color:#3B1420}.admin-table th{background:#FFFBD0;color:#3B1420}.admin-table td{border-bottom:1px solid rgba(59,20,32,.12)}.admin-action{background:#FFFBD0;color:#3B1420;border:1px solid rgba(59,20,32,.2)}.admin-action.danger{background:rgba(59,20,32,.12);color:#E64A38;border-color:#E64A38}
+    .admin-output,.id-copy-box{background:#FFFBD0;color:#3B1420;border:1px solid rgba(59,20,32,.18);border-radius:12px}
+    .status-msg{color:#3B1420}.device-tab{background:#FFFBD0;color:#3B1420;border:1px solid rgba(59,20,32,.2);border-radius:9px}.device-tab.active{background:#E64A38;color:white}
+    a{color:#E64A38}
+    @media(max-width:700px){.header-brand{padding:12px;gap:10px}.brand-logo{width:40px;height:40px}.admin-title{font-size:18px}.admin-badge{font-size:8px;padding:5px 8px}.dash-tabs{position:static;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;padding:7px}.dash-tab{font-size:11px;min-height:43px;padding:8px 5px}.glass-card{padding:16px;border-radius:15px}.dashboard-header{padding:12px}}
+
+  
+
+    /* Symboles d’interface professionnels — palette NOVANOD */
+    .ui-symbol, .dash-tab, .device-tab, .btn-3d {
+      font-variant-emoji: text;
+    }
+    .dash-tab, .device-tab {
+      letter-spacing: .1px;
+    }
+    .dash-tab::first-letter, .device-tab::first-letter {
+      color: var(--red-primary);
+    }
   </style>
 </head>
 <body>
@@ -525,7 +578,7 @@
         <input type="password" id="admin-password" class="input-field" placeholder="••••••••" autocomplete="current-password">
         
         <button id="btn-login" class="btn-3d">Se connecter au Dashboard</button>
-        <button id="btn-login-fingerprint" class="btn-3d btn-secondary hidden">👆 Connexion Biométrique</button>
+        <button id="btn-login-fingerprint" class="btn-3d btn-secondary hidden">◎ Connexion Biométrique</button>
       </div>
 
       <div id="pane-signup" class="hidden">
@@ -547,12 +600,12 @@
 
     <!-- ÉCRAN VALIDATION ID -->
     <div id="screen-pending" class="glass-card hidden">
-      <h3 class="card-title">✅ Compte créé avec succès !</h3>
+      <h3 class="card-title">✓ Compte créé avec succès !</h3>
       <div class="hint">
         Pour activer ton accès, l'administrateur principal doit ajouter cet identifiant dans la liste <strong>ADMIN_USER_IDS</strong> :
       </div>
       <div id="pending-user-id" class="id-copy-box" title="Cliquer pour copier"></div>
-      <button id="btn-copy-id" class="btn-3d btn-secondary" style="margin-bottom: 10px;">📋 Copier l'identifiant</button>
+      <button id="btn-copy-id" class="btn-3d btn-secondary" style="margin-bottom: 10px;">▤ Copier l'identifiant</button>
       <button id="btn-pending-ok" class="btn-3d">Aller à la connexion</button>
     </div>
 
@@ -567,17 +620,17 @@
       </div>
 
       <div class="dash-tabs">
-        <button class="dash-tab active" data-pane="pane-reports">🔎 nova.ai</button>
-        <button class="dash-tab" data-pane="pane-security">🔒 Sécurité</button>
-        <button class="dash-tab" data-pane="pane-users">👥 Utilisateurs</button>
-        <button class="dash-tab" data-pane="pane-preview">📱 Aperçu</button>
-        <button class="dash-tab" data-pane="pane-settings">⚙️ Paramètres</button>
-        <button class="dash-tab" data-pane="pane-teams">🧩 Équipes</button>
-        <button class="dash-tab" data-pane="pane-database">🗄️ Base de données</button>
-        <button class="dash-tab" data-pane="pane-storage">📁 Stockage</button>
-        <button class="dash-tab" data-pane="pane-messaging">✉️ Messagerie</button>
-        <button class="dash-tab" data-pane="pane-analytics">📈 Analyses IA</button>
-        <button class="dash-tab" data-pane="pane-assistant">🤖 Assistant</button>
+        <button class="dash-tab active" data-pane="pane-reports">⌕ nova.ai</button>
+        <button class="dash-tab" data-pane="pane-security">◇ Sécurité</button>
+        <button class="dash-tab" data-pane="pane-users">♧ Utilisateurs</button>
+        <button class="dash-tab" data-pane="pane-preview">▯ Aperçu</button>
+        <button class="dash-tab" data-pane="pane-settings">⚙ Paramètres</button>
+        <button class="dash-tab" data-pane="pane-teams">▦ Équipes</button>
+        <button class="dash-tab" data-pane="pane-database">▤ Base de données</button>
+        <button class="dash-tab" data-pane="pane-storage">▱ Stockage</button>
+        <button class="dash-tab" data-pane="pane-messaging">✉ Messagerie</button>
+        <button class="dash-tab" data-pane="pane-analytics">⌁ Analyses IA</button>
+        <button class="dash-tab" data-pane="pane-assistant">⌘ Assistant</button>
       </div>
 
       <!-- ===== ONGLET : RAPPORTS nova.ai (analyse silencieuse) ===== -->
@@ -588,7 +641,7 @@
             nova.ai n'apparaît plus sur le site public. Il analyse en arrière-plan le code du site et l'activité des utilisateurs, et dépose ici ses observations — jamais visibles des clients.
           </div>
           <div id="reports-status" class="status-msg"></div>
-          <button id="btn-run-analysis" class="btn-3d">🔎 Lancer une analyse maintenant</button>
+          <button id="btn-run-analysis" class="btn-3d">⌕ Lancer une analyse maintenant</button>
         </div>
         <div class="glass-card">
           <h3 class="card-title">Derniers rapports</h3>
@@ -604,7 +657,7 @@
           <h3 class="card-title" style="color:var(--dark-brown);">Sécurité Biométrique</h3>
           <div class="hint">Active l'authentification par empreinte digitale ou FaceID sur cet appareil pour un accès instantané.</div>
           <div id="fingerprint-status" class="status-msg"></div>
-          <button id="btn-register-fingerprint" class="btn-3d btn-dark hidden">👆 Activer l'empreinte digitale</button>
+          <button id="btn-register-fingerprint" class="btn-3d btn-dark hidden">◎ Activer l'empreinte digitale</button>
         </div>
       </div>
 
@@ -619,7 +672,7 @@
           <div id="users-status" class="status-msg"></div>
           <div class="admin-toolbar">
             <input id="user-search" class="input-field" placeholder="Rechercher nom, e-mail ou ID…">
-            <button id="btn-refresh-users" class="btn-3d btn-secondary" style="width:auto;padding:0 18px;">🔄 Actualiser</button>
+            <button id="btn-refresh-users" class="btn-3d btn-secondary" style="width:auto;padding:0 18px;">↻ Actualiser</button>
           </div>
         </div>
         <div class="glass-card">
@@ -646,18 +699,18 @@
           <h3 class="card-title">Aperçu du site</h3>
           <div class="hint">Vérifie le rendu réel du site (novanod6.github.io) sur différents formats d'écran.</div>
           <div class="device-tabs">
-            <button class="device-tab active" data-w="390" data-h="844">📱 Téléphone</button>
-            <button class="device-tab" data-w="820" data-h="1180">📟 Tablette</button>
-            <button class="device-tab" data-w="1440" data-h="900">🖥️ PC</button>
+            <button class="device-tab active" data-w="390" data-h="844">▯ Téléphone</button>
+            <button class="device-tab" data-w="820" data-h="1180">▣ Tablette</button>
+            <button class="device-tab" data-w="1440" data-h="900">▰ PC</button>
           </div>
           <div class="orientation-toggle">
             <button id="btn-orient-portrait" class="dash-tab active">⬆️ Vertical</button>
-            <button id="btn-orient-landscape" class="dash-tab">➡️ Horizontal</button>
+            <button id="btn-orient-landscape" class="dash-tab">→ Horizontal</button>
           </div>
           <div class="preview-frame-wrapper" id="preview-frame-wrapper">
             <iframe id="preview-iframe" src="./"></iframe>
           </div>
-          <button id="btn-refresh-preview" class="btn-3d btn-secondary">🔄 Recharger l'aperçu</button>
+          <button id="btn-refresh-preview" class="btn-3d btn-secondary">↻ Recharger l'aperçu</button>
         </div>
       </div>
 
@@ -769,21 +822,44 @@
       <!-- ===== ANALYSES IA ===== -->
       <div id="pane-analytics" class="dash-pane">
         <div class="glass-card">
+          <h3 class="card-title">Audits automatiques GitHub · Playwright + Lighthouse</h3>
+          <div class="hint">GitHub Actions teste le site public sur plusieurs tailles d’écran et exécute Lighthouse. Les résultats sont enregistrés dans Appwrite. Lance ensuite l’analyse IA pour obtenir les rapports Gemini, Groq et leur synthèse.</div>
+          <button id="btn-analyze-github-audit" class="btn-3d">◉ Analyser le dernier audit GitHub avec Gemini + Groq</button>
+          <div id="github-audit-status" class="status-msg">En attente du premier rapport GitHub Actions.</div>
+          <h4>Résultat Gemini · audit automatisé</h4>
+          <div id="github-audit-gemini" class="admin-output">En attente.</div>
+          <h4>Résultat Groq · audit automatisé</h4>
+          <div id="github-audit-groq" class="admin-output">En attente.</div>
+          <h4>Synthèse commune · audit automatisé</h4>
+          <div id="github-audit-combined" class="admin-output">Lance le workflow GitHub, puis demande l’analyse ici.</div>
+        </div>
+        <div class="glass-card">
           <h3 class="card-title">Centre d'analyse NOVANOD</h3>
           <div class="hint">Chaque audit produit un rapport séparé avec preuves disponibles, limites, gravité, recommandations et score. Les tests actifs intrusifs sont exclus : l'audit de sécurité reste défensif et non destructif.</div>
+          <label class="hint" for="analysis-provider">Fournisseur IA pour chaque analyse</label>
+          <select id="analysis-provider" class="input-field">
+            <option value="both" selected>Gemini + Groq + synthèse commune</option>
+            <option value="gemini">Gemini uniquement</option>
+            <option value="groq">Groq uniquement</option>
+          </select>
           <div class="admin-form-grid">
-            <button class="btn-3d" data-analysis="problem">🔎 Analyse problème</button>
-            <button class="btn-3d" data-analysis="client">🛍️ Analyse client</button>
-            <button class="btn-3d" data-analysis="security">🛡️ Analyse sécurité</button>
-            <button class="btn-3d" data-analysis="statistics">📊 Analyse statistique</button>
-            <button class="btn-3d btn-secondary" data-analysis="business">💼 Analyse business</button>
-            <button class="btn-3d btn-secondary" data-analysis="merchandising">👗 Analyse merchandising</button>
-            <button class="btn-3d btn-secondary" data-analysis="support">💬 Analyse service client</button>
-            <button class="btn-3d btn-secondary" data-analysis="marketing">📣 Analyse marketing</button>
-            <button class="btn-3d btn-secondary" data-analysis="maintenance">⚙️ Maintenance proactive</button>
+            <button class="btn-3d" data-analysis="problem">⌕ Analyse problème</button>
+            <button class="btn-3d" data-analysis="client">◇ Analyse client</button>
+            <button class="btn-3d" data-analysis="security">⬡ Analyse sécurité</button>
+            <button class="btn-3d" data-analysis="statistics">▥ Analyse statistique</button>
+            <button class="btn-3d btn-secondary" data-analysis="business">▣ Analyse business</button>
+            <button class="btn-3d btn-secondary" data-analysis="merchandising">◇ Analyse merchandising</button>
+            <button class="btn-3d btn-secondary" data-analysis="support">▤ Analyse service client</button>
+            <button class="btn-3d btn-secondary" data-analysis="marketing">◁ Analyse marketing</button>
+            <button class="btn-3d btn-secondary" data-analysis="maintenance">⚙ Maintenance proactive</button>
           </div>
           <div id="analysis-status" class="status-msg"></div>
-          <div id="analysis-output" class="admin-output">Choisis un audit pour générer un rapport détaillé.</div>
+          <h4>Résultat Gemini</h4>
+          <div id="analysis-gemini-output" class="admin-output">En attente du rapport Gemini.</div>
+          <h4>Résultat Groq</h4>
+          <div id="analysis-groq-output" class="admin-output">En attente du rapport Groq.</div>
+          <h4>Synthèse commune des deux IA</h4>
+          <div id="analysis-output" class="admin-output">Choisis un audit pour générer les rapports détaillés et la synthèse.</div>
         </div>
         <div class="glass-card">
           <h3 class="card-title">Historique des rapports</h3>
@@ -797,8 +873,19 @@
           <h3 class="card-title">Assistant NOVANOD</h3>
           <div class="hint">Assistant réservé aux administrateurs : synthèse des alertes et préparation de recommandations. Les actions sensibles nécessitent toujours une validation humaine.</div>
           <textarea id="assistant-question" class="input-field" placeholder="Ex. Résume les risques prioritaires et propose un plan d'action…"></textarea>
+          <label class="hint" for="assistant-provider">Fournisseur de l'assistant</label>
+          <select id="assistant-provider" class="input-field">
+            <option value="both" selected>Gemini + Groq + synthèse commune</option>
+            <option value="gemini">Gemini uniquement</option>
+            <option value="groq">Groq uniquement</option>
+          </select>
           <button id="btn-assistant-ask" class="btn-3d">Demander à nova.ai</button>
           <div id="assistant-status" class="status-msg"></div>
+          <h4>Réponse Gemini</h4>
+          <div id="assistant-gemini-output" class="admin-output">En attente.</div>
+          <h4>Réponse Groq</h4>
+          <div id="assistant-groq-output" class="admin-output">En attente.</div>
+          <h4>Synthèse commune</h4>
           <div id="assistant-output" class="admin-output">En attente de ta demande.</div>
           <div class="admin-note">L'agent ne doit pas supprimer des comptes, modifier des prix, changer des permissions ou envoyer une campagne de masse sans confirmation explicite d'un administrateur.</div>
         </div>
@@ -887,9 +974,9 @@
     document.getElementById('btn-copy-id').addEventListener('click', () => {
       const idText = document.getElementById('pending-user-id').textContent;
       navigator.clipboard.writeText(idText);
-      document.getElementById('btn-copy-id').textContent = "✅ Identifiant copié !";
+      document.getElementById('btn-copy-id').textContent = "✓ Identifiant copié !";
       setTimeout(() => {
-        document.getElementById('btn-copy-id').textContent = "📋 Copier l'identifiant";
+        document.getElementById('btn-copy-id').textContent = "▤ Copier l'identifiant";
       }, 2500);
     });
 
@@ -1334,25 +1421,86 @@
       } catch(e){setStatus(document.getElementById('messaging-status'),e.message,'error');}
     });
 
-    // AI role-based audits and assistant.
+    // AI role-based audits and assistant: show plain-text provider reports,
+    // never stringify an empty wrapper object as "{}".
+    const aiResultText = r => {
+      if (!r || typeof r !== 'object') return String(r ?? 'Aucun résultat retourné.');
+      if (r.providers) {
+        const p = r.providers, parts = [];
+        if (p.gemini) parts.push('════════ RAPPORT GEMINI ════════\n' + p.gemini);
+        else if (p.errors?.gemini) parts.push('GEMINI INDISPONIBLE\n' + p.errors.gemini);
+        if (p.groq) parts.push('════════ RAPPORT GROQ ════════\n' + p.groq);
+        else if (p.errors?.groq) parts.push('GROQ INDISPONIBLE\n' + p.errors.groq);
+        if (p.combined) parts.push('════════ SYNTHÈSE COMMUNE ════════\n' + p.combined);
+        if (p.errors?.synthesis) parts.push(p.errors.synthesis);
+        if (parts.length) return parts.join('\n\n');
+      }
+      if (typeof r.report === 'string' && r.report.trim()) return r.report;
+      if (typeof r.answer === 'string' && r.answer.trim()) return r.answer;
+      if (r.report && typeof r.report.report === 'string') return r.report.report;
+      return 'Le serveur n’a renvoyé aucun texte de rapport. Vérifie les journaux de la fonction Appwrite et la réponse du fournisseur IA.';
+    };
+    const renderProviderOutputs = (prefix, r) => {
+      const p = r?.providers || {};
+      out(prefix+'-gemini-output', p.gemini || (p.errors?.gemini ? 'Indisponible : '+p.errors.gemini : 'Aucun résultat Gemini demandé.'));
+      out(prefix+'-groq-output', p.groq || (p.errors?.groq ? 'Indisponible : '+p.errors.groq : 'Aucun résultat Groq demandé.'));
+      out(prefix==='analysis'?'analysis-output':'assistant-output', p.combined || r?.report || r?.answer || 'Aucune synthèse commune retournée.');
+    };
     document.querySelectorAll('[data-analysis]').forEach(btn=>btn.addEventListener('click',async()=>{
       const kind=btn.dataset.analysis, status=document.getElementById('analysis-status');
-      setStatus(status,'nova.ai exécute l’audit « '+kind+' »…','info');
-      out('analysis-output','Analyse en cours…');
+      const providerMode=document.getElementById('analysis-provider')?.value || 'both';
+      btn.disabled=true;
+      setStatus(status,'Analyse « '+kind+' » en cours avec '+(providerMode==='both'?'Gemini et Groq':providerMode)+'…','info');
+      out('analysis-output','Analyse en cours… Les deux modèles peuvent prendre un peu de temps.');
       try {
-        const r=await adminCall('run_analysis',{analysisType:kind});
-        out('analysis-output',r.report?.report || r.report || r);
-        setStatus(status,'Rapport enregistré.','success');
+        const r=await adminCall('run_analysis',{analysisType:kind,providerMode});
+        const text=aiResultText(r);
+        if (!text || text.startsWith('Le serveur n’a renvoyé')) throw new Error(text);
+        renderProviderOutputs('analysis',r);
+        const partial = r.providers?.errors && Object.keys(r.providers.errors).length;
+        setStatus(status,partial?'Rapport partiel enregistré : un fournisseur ou la synthèse est indisponible.':'Rapports Gemini, Groq et synthèse enregistrés.','success');
         const h=await adminCall('list_reports');
-        out('analysis-history',(h.reports||[]).map(x=>`${formatDate(x.createdAt||x.$createdAt)} · ${x.analysisType||'audit'}\n${x.report||''}`).join('\n\n') || 'Aucun rapport.');
+        out('analysis-history',(h.reports||[]).map(x=>`${formatDate(x.createdAt||x.$createdAt)} · ${x.analysisType||'audit'}\n${x.report||'Rapport sans texte enregistré.'}`).join('\n\n') || 'Aucun rapport.');
       } catch(e){setStatus(status,e.message,'error');out('analysis-output','Erreur : '+e.message);}
+      finally { btn.disabled=false; }
     }));
+    document.getElementById('btn-analyze-github-audit')?.addEventListener('click',async()=>{
+      const btn=document.getElementById('btn-analyze-github-audit');
+      const status=document.getElementById('github-audit-status');
+      btn.disabled=true;
+      setStatus(status,'Récupération du dernier audit GitHub et analyse par Gemini + Groq…','info');
+      out('github-audit-combined','Analyse en cours…');
+      try {
+        const r=await adminCall('analyze_github_audit',{providerMode:'both'});
+        const providers=r.providers||{};
+        out('github-audit-gemini',providers.gemini || ('Indisponible : '+(providers.errors?.gemini||'aucun résultat')));
+        out('github-audit-groq',providers.groq || ('Indisponible : '+(providers.errors?.groq||'aucun résultat')));
+        out('github-audit-combined',providers.combined || r.report || 'Aucune synthèse retournée.');
+        const partial=providers.errors && Object.keys(providers.errors).length;
+        setStatus(status,partial?'Rapport partiel : un fournisseur ou la synthèse est indisponible.':'Audit analysé et rapport enregistré dans Appwrite.','success');
+      } catch(e) { setStatus(status,e.message,'error'); out('github-audit-combined','Erreur : '+e.message); }
+      finally { btn.disabled=false; }
+    });
+
     document.getElementById('btn-assistant-ask')?.addEventListener('click',async()=>{
       const question=document.getElementById('assistant-question').value.trim();
+      const providerMode=document.getElementById('assistant-provider')?.value || 'both';
       if(!question) return setStatus(document.getElementById('assistant-status'),'Écris une demande.','error');
-      setStatus(document.getElementById('assistant-status'),'nova.ai prépare sa réponse…','info');
-      try { const r=await adminCall('assistant',{question}); out('assistant-output',r.answer||r); setStatus(document.getElementById('assistant-status'),'Réponse prête.','success'); }
-      catch(e){setStatus(document.getElementById('assistant-status'),e.message,'error');}
+      const btn=document.getElementById('btn-assistant-ask');
+      btn.disabled=true;
+      setStatus(document.getElementById('assistant-status'),'Gemini et Groq préparent leurs réponses…','info');
+      out('assistant-output','Réponse en cours…');
+      try {
+        const r=await adminCall('assistant',{question,providerMode});
+        const answer=aiResultText(r);
+        if (!answer || answer.startsWith('Le serveur n’a renvoyé')) throw new Error(answer);
+        renderProviderOutputs('assistant',r);
+        const partial = r.providers?.errors && Object.keys(r.providers.errors).length;
+        setStatus(document.getElementById('assistant-status'),partial?'Réponse partielle : un fournisseur est indisponible.':'Réponses séparées et synthèse prêtes.','success');
+      } catch(e){
+        setStatus(document.getElementById('assistant-status'),e.message,'error');
+        out('assistant-output','Erreur : '+e.message);
+      } finally { btn.disabled=false; }
     });
 
     // Load richer reports and teams lazily when opening their workspace.
