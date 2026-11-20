@@ -1,0 +1,48 @@
+name: NOVANOD - Déploiement GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Vérifier et publier NOVANOD
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v4
+
+      - name: Vérifier les fichiers essentiels
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in index.html admin.html privacy.html terms.html; do
+            test -s "$file" || { echo "::error::Fichier requis absent ou vide : $file"; exit 1; }
+          done
+          test -d .github/workflows
+          echo "Fichiers essentiels présents."
+
+      - name: Configurer GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Préparer l'artefact statique
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - name: Déployer sur GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
