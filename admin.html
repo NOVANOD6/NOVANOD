@@ -1079,15 +1079,23 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
 
     function renderReports(reports) {
       if (!reports || reports.length === 0) {
-        reportsList.innerHTML = '<div class="hint">Aucun rapport pour l\'instant.</div>';
+        reportsList.textContent = '';
+        const empty = document.createElement('div');
+        empty.className = 'hint';
+        empty.textContent = "Aucun rapport pour l'instant.";
+        reportsList.append(empty);
         return;
       }
+      // Les rapports proviennent du backend : encoder toutes les valeurs avant insertion HTML.
+      const safe = value => String(value ?? '').replace(/[&<>"']/g, char => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[char]));
       reportsList.innerHTML = reports.map(r => `
-        <div class="user-row">
-          <div class="u-name">${formatDate(r.createdAt || r.$createdAt)}</div>
-          <div style="white-space: pre-wrap; margin-top:4px;">${(r.report || '').replace(/</g, '&lt;')}</div>
-          <div class="hint" style="margin-top:6px; margin-bottom:0;">${(r.statsSummary || '').replace(/</g, '&lt;').replace(/\n/g, ' · ')}</div>
-        </div>
+        <article class="user-row">
+          <div class="u-name">${safe(formatDate(r.createdAt || r.$createdAt))}</div>
+          <div style="white-space: pre-wrap; margin-top:4px;">${safe(r.report || '')}</div>
+          <div class="hint" style="margin-top:6px; margin-bottom:0;">${safe(r.statsSummary || '').replace(/\n/g, ' · ')}</div>
+        </article>
       `).join('');
     }
 
