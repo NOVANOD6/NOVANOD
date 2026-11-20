@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NOVANOD — Console Administrateur</title>
   <meta name="robots" content="noindex, nofollow">
-  <meta name="description" content="Console privée NOVANOD : administration, audits GitHub, Gemini Interactions et Groq.">
 
   <!-- Favicon officiel -->
   <link rel="icon" type="image/png" href="logo.png?v=6">
@@ -14,7 +13,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
-
     :root {
       --red-primary: #E64A38;
       --red-hover: #D03D2B;
@@ -436,120 +434,21 @@
       overflow: hidden;
       margin: 0 auto 10px;
       background: #000;
-      box-shadow: 0 6px 0 var(--dark-brown);
+      /* Ombre douce et ÉGALE sur tous les côtés (l'ancienne ombre "bouton 3D",
+         épaisse uniquement en bas, rendait le cadre visiblement asymétrique) */
+      box-shadow: 0 4px 14px rgba(59, 20, 32, 0.35);
     }
     .preview-frame-wrapper iframe {
       border: none;
       display: block;
       transform-origin: top left;
     }
+    .orientation-toggle.disabled { opacity: 0.35; pointer-events: none; }
 
     .info-row { display: flex; justify-content: space-between; gap: 8px; padding: 8px 0; border-bottom: 1px dashed rgba(59,20,32,0.15); font-size: 12px; }
     .info-row:last-child { border-bottom: none; }
     .info-row .k { font-weight: 800; color: var(--dark-brown); }
     .info-row .v { color: var(--text-red); word-break: break-all; text-align: right; }
-  
-
-    /* NOVANOD responsive admin shell */
-    body { align-items: stretch; justify-content: flex-start; padding: clamp(10px, 2vw, 28px); }
-    .admin-wrapper { max-width: 1480px; margin: 0 auto; }
-    #screen-login, #screen-pending { width: 100%; max-width: 520px; margin-left: auto; margin-right: auto; }
-    #screen-admin { width: 100%; min-width: 0; }
-    .dash-tabs { flex-wrap: wrap; overflow: visible; }
-    .dash-tab { min-height: 42px; }
-    .glass-card { min-width: 0; }
-    .admin-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
-    .admin-grid > .glass-card { margin-bottom:0; min-width:0; }
-    .admin-toolbar { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
-    .admin-toolbar .input-field { flex:1 1 220px; margin:0; min-width:0; max-width:100%; }
-    .admin-toolbar > button { flex:0 1 auto; min-width:0; white-space:normal; }
-    .admin-table-wrap { width:100%; overflow:auto; border:1px solid rgba(59,20,32,.14); border-radius:12px; }
-    .admin-table { width:100%; min-width:620px; border-collapse:collapse; font-size:12px; background:#FFFBD0; }
-    .admin-table th,.admin-table td { padding:10px; text-align:left; border-bottom:1px solid #FFFBD0; vertical-align:top; }
-    .admin-table th { background:#3B1420; color:#FFFBD0; position:sticky; top:0; }
-    .admin-table td { overflow-wrap:anywhere; }
-    .admin-action { border:1px solid #3B1420; background:#FFFBD0; color:#3B1420; padding:6px 9px; border-radius:8px; font-weight:800; cursor:pointer; margin:2px; }
-    .admin-action.danger { background:#E64A38; color:#FFFBD0; border-color:#3B1420; }
-    .admin-note { padding:12px; background:#FFFBD0; border:1px solid #FFFBD0; border-radius:12px; font-size:12px; line-height:1.6; margin:10px 0; }
-    .admin-output { overflow-wrap:anywhere; white-space:pre-wrap; }
-    .admin-output { white-space:pre-wrap; overflow-wrap:anywhere; background:#FFFBD0; border:1px solid rgba(59,20,32,.14); border-radius:12px; padding:12px; min-height:70px; font-size:12px; line-height:1.6; }
-    .admin-section-title { font-family:var(--font-heading); color:var(--text-red); font-size:18px; margin-bottom:10px; }
-    .admin-form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
-    .admin-form-grid .input-field { margin-bottom:8px; }
-    .preview-frame-wrapper { position:relative; flex:none; }
-    .preview-frame-wrapper iframe { position:absolute; top:0; left:0; transform-origin:top left; }
-    @media (max-width: 900px) {
-      .admin-grid { grid-template-columns:1fr; }
-      .dashboard-header { gap:10px; flex-wrap:wrap; }
-    }
-    @media (max-width: 600px) {
-      body { padding:8px; }
-      .glass-card { padding:16px 12px; border-radius:18px; }
-      .dash-tabs { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); }
-      .dash-tab { white-space:normal; padding:9px 6px; font-size:11px; }
-      .stats-row { flex-wrap:wrap; }
-      .stat-box { min-width:calc(50% - 8px); }
-      .admin-form-grid { grid-template-columns:1fr; gap:0; }
-      .admin-toolbar { align-items:stretch; }
-      .admin-toolbar > button { flex:1 1 140px; min-height:48px; }
-      .dashboard-header { padding:12px; }
-      .preview-frame-wrapper { max-width:100%; }
-    }
-
-
-    /* ===== NOVANOD NEON CONSOLE — nouvelle identité visuelle ===== */
-    :root{
-      --red-primary:#E64A38;--red-hover:#E64A38;--dark-brown:#3B1420;
-      --dark-brown-shadow:#3B1420;--text-red:#E64A38;--cream-bg:#FFFBD0;
-      --cream-card:#FFFBD0;--card-bg:rgba(255,251,208,.94);
-      --font-heading:'Plus Jakarta Sans',sans-serif;--font-body:'Plus Jakarta Sans',sans-serif;
-    }
-    html{background:#FFFBD0;scroll-behavior:smooth}
-    body{background:radial-gradient(ellipse at 12% 0%,rgba(230,74,56,.12),transparent 38%),radial-gradient(ellipse at 90% 15%,rgba(255,251,208,.7),transparent 34%),#FFFBD0;color:#3B1420; padding:clamp(10px,2vw,28px)}
-    .admin-wrapper{max-width:1500px;width:100%}
-    .header-brand{flex-direction:row;justify-content:flex-start;gap:13px;text-align:left;margin:0 0 22px;padding:14px 18px;background:rgba(59,20,32,.82);border:1px solid rgba(59,20,32,.16);border-radius:18px;box-shadow:0 12px 35px rgba(59,20,32,.22)}
-    .brand-logo{width:46px;height:46px;margin:0;border-radius:13px;box-shadow:0 0 24px rgba(59,20,32,.24)}
-    .admin-title{font-size:21px;color:#FFFBD0;letter-spacing:1.4px}
-    .admin-badge{margin:0 0 0 auto;background:rgba(230,74,56,.12);color:#E64A38;border:1px solid rgba(230,74,56,.25);box-shadow:none;font-size:9px;letter-spacing:1.1px}
-    .glass-card{background:linear-gradient(145deg,rgba(255,251,208,.98),rgba(255,251,208,.97));border:1px solid rgba(59,20,32,.16);border-radius:18px;padding:22px;box-shadow:0 10px 28px rgba(59,20,32,.12);backdrop-filter:blur(16px);margin-bottom:16px;color:#3B1420}
-    .card-title,.admin-section-title{color:#E64A38!important;font-family:var(--font-heading);font-size:17px;font-weight:800;letter-spacing:-.2px}
-    .hint,.admin-note{color:#3B1420;line-height:1.65}
-    .admin-note{background:rgba(59,20,32,.08);border:1px solid rgba(59,20,32,.2);border-radius:12px}
-    .form-label{color:#3B1420;font-size:11px;letter-spacing:.8px}
-    .input-field,textarea.input-field,select.input-field{background:#FFFBD0;color:#3B1420;border:1px solid rgba(59,20,32,.25);border-radius:11px;padding:13px 14px}
-    .input-field::placeholder{color:#3B1420}
-    .input-field:focus,textarea.input-field:focus{background:#FFFBD0;border-color:#E64A38;box-shadow:0 0 0 3px rgba(230,74,56,.15)}
-    .btn-3d{background:linear-gradient(110deg,#E64A38,#E64A38);color:#FFFBD0;border:1px solid rgba(230,74,56,.25);border-radius:11px;box-shadow:0 5px 16px rgba(230,74,56,.2);font-weight:800;min-height:46px;transition:transform .18s,filter .18s}
-    .btn-3d:hover{filter:brightness(1.12);transform:translateY(-1px)}
-    .btn-secondary,.btn-dark{background:#3B1420!important;color:#FFFBD0!important;border:1px solid #3B1420!important;box-shadow:none!important}
-    .auth-tabs{background:rgba(59,20,32,.06);border:1px solid rgba(59,20,32,.12);border-radius:12px}
-    .auth-tab{color:#3B1420}.auth-tab.active{background:#3B1420;color:#FFFBD0;box-shadow:none}
-    .dashboard-header{background:rgba(59,20,32,.9);border:1px solid rgba(59,20,32,.16);border-radius:16px;padding:14px 18px;margin-bottom:14px}
-    .user-badge{color:#3B1420}.status-dot{background:#3B1420;box-shadow:0 0 10px rgba(59,20,32,.7)}
-    .logout-btn{background:rgba(59,20,32,.1);color:#E64A38;border:1px solid rgba(59,20,32,.25);border-radius:10px;padding:10px 14px}
-    .dash-tabs{display:flex;gap:7px;padding:8px;margin:0 0 16px;background:rgba(59,20,32,.92);border:1px solid rgba(59,20,32,.15);border-radius:15px;position:sticky;top:6px;z-index:10;backdrop-filter:blur(14px)}
-    .dash-tab{background:transparent;color:#3B1420;border:1px solid transparent;border-radius:10px;padding:10px 13px;font-weight:700;transition:.18s}
-    .dash-tab:hover{background:rgba(59,20,32,.1);color:#3B1420}
-    .dash-tab.active{background:rgba(59,20,32,.2);color:#3B1420;border-color:rgba(59,20,32,.3)}
-    .stats-row{gap:10px}.stat-box{background:#FFFBD0;border:1px solid rgba(59,20,32,.15);border-radius:13px;color:#3B1420;box-shadow:none;padding:16px}.stat-box .num{color:#E64A38}.stat-box .lbl{color:#3B1420}
-    .admin-table-wrap{border:1px solid rgba(59,20,32,.18);border-radius:12px;background:#FFFBD0}.admin-table{background:#FFFBD0;color:#3B1420}.admin-table th{background:#FFFBD0;color:#3B1420}.admin-table td{border-bottom:1px solid rgba(59,20,32,.12)}.admin-action{background:#FFFBD0;color:#3B1420;border:1px solid rgba(59,20,32,.2)}.admin-action.danger{background:rgba(59,20,32,.12);color:#E64A38;border-color:#E64A38}
-    .admin-output,.id-copy-box{background:#FFFBD0;color:#3B1420;border:1px solid rgba(59,20,32,.18);border-radius:12px}
-    .status-msg{color:#3B1420}.device-tab{background:#FFFBD0;color:#3B1420;border:1px solid rgba(59,20,32,.2);border-radius:9px}.device-tab.active{background:#E64A38;color:white}
-    a{color:#E64A38}
-    @media(max-width:700px){.header-brand{padding:12px;gap:10px}.brand-logo{width:40px;height:40px}.admin-title{font-size:18px}.admin-badge{font-size:8px;padding:5px 8px}.dash-tabs{position:static;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;padding:7px}.dash-tab{font-size:11px;min-height:43px;padding:8px 5px}.glass-card{padding:16px;border-radius:15px}.dashboard-header{padding:12px}}
-
-  
-
-    /* Symboles d’interface professionnels — palette NOVANOD */
-    .ui-symbol, .dash-tab, .device-tab, .btn-3d {
-      font-variant-emoji: text;
-    }
-    .dash-tab, .device-tab {
-      letter-spacing: .1px;
-    }
-    .dash-tab::first-letter, .device-tab::first-letter {
-      color: var(--red-primary);
-    }
   </style>
 </head>
 <body>
@@ -578,7 +477,7 @@
         <input type="password" id="admin-password" class="input-field" placeholder="••••••••" autocomplete="current-password">
         
         <button id="btn-login" class="btn-3d">Se connecter au Dashboard</button>
-        <button id="btn-login-fingerprint" class="btn-3d btn-secondary hidden">◎ Connexion Biométrique</button>
+        <button id="btn-login-fingerprint" class="btn-3d btn-secondary hidden">👆 Connexion Biométrique</button>
       </div>
 
       <div id="pane-signup" class="hidden">
@@ -600,12 +499,12 @@
 
     <!-- ÉCRAN VALIDATION ID -->
     <div id="screen-pending" class="glass-card hidden">
-      <h3 class="card-title">✓ Compte créé avec succès !</h3>
+      <h3 class="card-title">✅ Compte créé avec succès !</h3>
       <div class="hint">
         Pour activer ton accès, l'administrateur principal doit ajouter cet identifiant dans la liste <strong>ADMIN_USER_IDS</strong> :
       </div>
       <div id="pending-user-id" class="id-copy-box" title="Cliquer pour copier"></div>
-      <button id="btn-copy-id" class="btn-3d btn-secondary" style="margin-bottom: 10px;">▤ Copier l'identifiant</button>
+      <button id="btn-copy-id" class="btn-3d btn-secondary" style="margin-bottom: 10px;">📋 Copier l'identifiant</button>
       <button id="btn-pending-ok" class="btn-3d">Aller à la connexion</button>
     </div>
 
@@ -620,17 +519,15 @@
       </div>
 
       <div class="dash-tabs">
-        <button class="dash-tab active" data-pane="pane-reports">⌕ nova.ai</button>
-        <button class="dash-tab" data-pane="pane-security">◇ Sécurité</button>
-        <button class="dash-tab" data-pane="pane-users">♧ Utilisateurs</button>
-        <button class="dash-tab" data-pane="pane-preview">▯ Aperçu</button>
-        <button class="dash-tab" data-pane="pane-settings">⚙ Paramètres</button>
-        <button class="dash-tab" data-pane="pane-teams">▦ Équipes</button>
-        <button class="dash-tab" data-pane="pane-database">▤ Base de données</button>
-        <button class="dash-tab" data-pane="pane-storage">▱ Stockage</button>
-        <button class="dash-tab" data-pane="pane-messaging">✉ Messagerie</button>
-        <button class="dash-tab" data-pane="pane-analytics">⌁ Analyses IA</button>
-        <button class="dash-tab" data-pane="pane-assistant">⌘ Assistant</button>
+        <button class="dash-tab active" data-pane="pane-reports">🔎 nova.ai</button>
+        <button class="dash-tab" data-pane="pane-users">👥 Utilisateurs</button>
+        <button class="dash-tab" data-pane="pane-teams">🧑‍🤝‍🧑 Équipes</button>
+        <button class="dash-tab" data-pane="pane-db">🗄️ Données</button>
+        <button class="dash-tab" data-pane="pane-storage">🖼️ Stockage</button>
+        <button class="dash-tab" data-pane="pane-messaging">✉️ Messagerie</button>
+        <button class="dash-tab" data-pane="pane-security">🔒 Sécurité</button>
+        <button class="dash-tab" data-pane="pane-preview">📱 Aperçu</button>
+        <button class="dash-tab" data-pane="pane-settings">⚙️ Paramètres</button>
       </div>
 
       <!-- ===== ONGLET : RAPPORTS nova.ai (analyse silencieuse) ===== -->
@@ -638,15 +535,30 @@
         <div class="glass-card">
           <h3 class="card-title">nova.ai surveille ton site en silence</h3>
           <div class="hint">
-            nova.ai n'apparaît plus sur le site public. Il analyse en arrière-plan le code du site et l'activité des utilisateurs, et dépose ici ses observations — jamais visibles des clients.
+            nova.ai n'apparaît plus sur le site public. Choisis un type d'analyse : il examine le code et les statistiques réelles, puis dépose ici son rapport — jamais visible des clients.
+          </div>
+          <div class="device-tabs">
+            <button class="device-tab mode-tab active" data-mode="problems">⚠️ Problèmes</button>
+            <button class="device-tab mode-tab" data-mode="clients">🧑‍💻 Clients</button>
+            <button class="device-tab mode-tab" data-mode="security">🛡️ Sécurité</button>
+            <button class="device-tab mode-tab" data-mode="stats">📊 Performance</button>
           </div>
           <div id="reports-status" class="status-msg"></div>
-          <button id="btn-run-analysis" class="btn-3d">⌕ Lancer une analyse maintenant</button>
+          <button id="btn-run-analysis" class="btn-3d">🔎 Lancer cette analyse</button>
         </div>
         <div class="glass-card">
           <h3 class="card-title">Derniers rapports</h3>
           <div id="reports-list" class="user-list">
             <div class="hint">Aucun rapport pour l'instant — lance une première analyse ci-dessus.</div>
+          </div>
+        </div>
+        <div class="glass-card">
+          <h3 class="card-title">💬 Assistant nova.ai (privé)</h3>
+          <div class="hint">Pose une question à nova.ai — visible seulement par toi, jamais par les clients.</div>
+          <div id="admin-chat-messages" class="user-list" style="max-height:220px;"></div>
+          <div style="display:flex; gap:6px;">
+            <input type="text" id="admin-chat-input" class="input-field" style="margin-bottom:0;" placeholder="Pose ta question à nova.ai...">
+            <button id="btn-admin-chat-send" class="btn-3d" style="width:auto; flex-shrink:0; padding:0 16px;">➤</button>
           </div>
         </div>
       </div>
@@ -657,7 +569,7 @@
           <h3 class="card-title" style="color:var(--dark-brown);">Sécurité Biométrique</h3>
           <div class="hint">Active l'authentification par empreinte digitale ou FaceID sur cet appareil pour un accès instantané.</div>
           <div id="fingerprint-status" class="status-msg"></div>
-          <button id="btn-register-fingerprint" class="btn-3d btn-dark hidden">◎ Activer l'empreinte digitale</button>
+          <button id="btn-register-fingerprint" class="btn-3d btn-dark hidden">👆 Activer l'empreinte digitale</button>
         </div>
       </div>
 
@@ -669,27 +581,103 @@
             <div class="stat-box"><div class="num" id="stat-buyers">—</div><div class="lbl">Acheteurs</div></div>
             <div class="stat-box"><div class="num" id="stat-visitors">—</div><div class="lbl">Visiteurs</div></div>
           </div>
+          <div class="stats-row">
+            <div class="stat-box"><div class="num" id="stat-today">—</div><div class="lbl">Nouveaux aujourd'hui</div></div>
+            <div class="stat-box"><div class="num" id="stat-week">—</div><div class="lbl">Nouveaux cette semaine</div></div>
+          </div>
           <div id="users-status" class="status-msg"></div>
-          <div class="admin-toolbar">
-            <input id="user-search" class="input-field" placeholder="Rechercher nom, e-mail ou ID…">
-            <button id="btn-refresh-users" class="btn-3d btn-secondary" style="width:auto;padding:0 18px;">↻ Actualiser</button>
-          </div>
+          <button id="btn-refresh-users" class="btn-3d btn-secondary">🔄 Actualiser</button>
         </div>
         <div class="glass-card">
-          <h3 class="card-title">Créer un utilisateur</h3>
-          <div class="admin-form-grid">
-            <input id="new-user-name" class="input-field" placeholder="Nom complet">
-            <input id="new-user-email" class="input-field" type="email" placeholder="Adresse e-mail">
-            <input id="new-user-password" class="input-field" type="password" placeholder="Mot de passe (8 caractères min.)">
-            <input id="new-user-phone" class="input-field" placeholder="Téléphone (facultatif)">
-          </div>
-          <button id="btn-create-user" class="btn-3d">＋ Créer le compte</button>
-          <div class="hint">La création est effectuée côté serveur. Le mot de passe n'est jamais affiché dans la liste.</div>
+          <h3 class="card-title">➕ Créer un utilisateur</h3>
+          <input type="text" id="newuser-name" class="input-field" placeholder="Nom">
+          <input type="email" id="newuser-email" class="input-field" placeholder="E-mail">
+          <input type="password" id="newuser-password" class="input-field" placeholder="Mot de passe (min. 8 car.)">
+          <div id="newuser-status" class="status-msg"></div>
+          <button id="btn-create-user" class="btn-3d">Créer</button>
         </div>
         <div class="glass-card">
-          <h3 class="card-title">Acheteurs et visiteurs</h3>
-          <div id="users-table" class="admin-table-wrap"><div class="hint">Clique sur « Actualiser » pour charger les comptes.</div></div>
-          <div class="admin-note">Les actions de blocage, modification, suppression et révocation de sessions sont sensibles. Elles sont protégées côté fonction et doivent être réservées aux administrateurs autorisés.</div>
+          <h3 class="card-title">Acheteurs</h3>
+          <div id="buyers-list" class="user-list"><div class="hint">Clique sur "Actualiser" ci-dessus.</div></div>
+        </div>
+        <div class="glass-card">
+          <h3 class="card-title">Visiteurs</h3>
+          <div id="visitors-list" class="user-list"><div class="hint">Clique sur "Actualiser" ci-dessus.</div></div>
+        </div>
+      </div>
+
+      <!-- ===== ONGLET : ÉQUIPES ===== -->
+      <div id="pane-teams" class="dash-pane">
+        <div class="glass-card">
+          <h3 class="card-title">➕ Créer une équipe</h3>
+          <input type="text" id="newteam-name" class="input-field" placeholder="Nom (ex : Modérateurs)">
+          <div id="teams-status" class="status-msg"></div>
+          <button id="btn-create-team" class="btn-3d">Créer</button>
+          <button id="btn-refresh-teams" class="btn-3d btn-secondary">🔄 Actualiser</button>
+        </div>
+        <div id="teams-list"><div class="hint" style="padding:0 4px;">Clique sur "Actualiser".</div></div>
+      </div>
+
+      <!-- ===== ONGLET : BASE DE DONNÉES ===== -->
+      <div id="pane-db" class="dash-pane">
+        <div class="glass-card">
+          <h3 class="card-title">Collections</h3>
+          <select id="db-collection-select" class="input-field"><option value="">— Choisir une collection —</option></select>
+          <div id="db-status" class="status-msg"></div>
+          <button id="btn-refresh-collections" class="btn-3d btn-secondary">🔄 Actualiser la liste</button>
+        </div>
+        <div class="glass-card">
+          <h3 class="card-title">➕ Nouveau document</h3>
+          <div class="hint">Colle un objet JSON correspondant aux champs de la collection choisie.</div>
+          <textarea id="db-new-doc" class="input-field" style="min-height:90px;" placeholder='{"exemple": "valeur"}'></textarea>
+          <button id="btn-create-doc" class="btn-3d">Créer le document</button>
+        </div>
+        <div class="glass-card">
+          <h3 class="card-title">Documents</h3>
+          <div id="db-documents-list" class="user-list"><div class="hint">Choisis une collection ci-dessus.</div></div>
+        </div>
+      </div>
+
+      <!-- ===== ONGLET : STOCKAGE ===== -->
+      <div id="pane-storage" class="dash-pane">
+        <div class="glass-card">
+          <h3 class="card-title">Buckets</h3>
+          <select id="storage-bucket-select" class="input-field"><option value="">— Choisir un bucket —</option></select>
+          <div id="storage-status" class="status-msg"></div>
+          <button id="btn-refresh-buckets" class="btn-3d btn-secondary">🔄 Actualiser la liste</button>
+        </div>
+        <div class="glass-card">
+          <h3 class="card-title">➕ Importer un fichier</h3>
+          <div class="hint">Images, PDF, vidéos (taille raisonnable, ~4 Mo max par ce canal).</div>
+          <input type="file" id="storage-file-input" class="input-field">
+          <button id="btn-upload-file" class="btn-3d">Envoyer</button>
+        </div>
+        <div class="glass-card">
+          <h3 class="card-title">Fichiers</h3>
+          <div id="storage-files-list" class="user-list"><div class="hint">Choisis un bucket ci-dessus.</div></div>
+        </div>
+      </div>
+
+      <!-- ===== ONGLET : MESSAGERIE ===== -->
+      <div id="pane-messaging" class="dash-pane">
+        <div class="glass-card">
+          <h3 class="card-title">✉️ Envoyer un e-mail</h3>
+          <div class="hint">À tous les acheteurs avec e-mail vérifié, sauf si tu précises des destinataires. Nécessite un fournisseur e-mail configuré dans Appwrite (Messaging → Providers).</div>
+          <input type="text" id="msg-subject" class="input-field" placeholder="Sujet">
+          <textarea id="msg-content" class="input-field" style="min-height:90px;" placeholder="Contenu du message..."></textarea>
+          <div id="messaging-status" class="status-msg"></div>
+          <button id="btn-send-email" class="btn-3d">Envoyer l'e-mail</button>
+        </div>
+        <div class="glass-card">
+          <h3 class="card-title">📱 Envoyer un SMS</h3>
+          <div class="hint">Nécessite un fournisseur SMS configuré dans Appwrite.</div>
+          <textarea id="msg-sms-content" class="input-field" style="min-height:70px;" placeholder="Texte du SMS..."></textarea>
+          <button id="btn-send-sms" class="btn-3d btn-secondary">Envoyer le SMS</button>
+        </div>
+        <div class="glass-card">
+          <h3 class="card-title">Historique</h3>
+          <div id="messaging-history" class="user-list"><div class="hint">Pas encore chargé.</div></div>
+          <button id="btn-refresh-messaging" class="btn-3d btn-secondary">🔄 Actualiser</button>
         </div>
       </div>
 
@@ -699,18 +687,18 @@
           <h3 class="card-title">Aperçu du site</h3>
           <div class="hint">Vérifie le rendu réel du site (novanod6.github.io) sur différents formats d'écran.</div>
           <div class="device-tabs">
-            <button class="device-tab active" data-w="390" data-h="844">▯ Téléphone</button>
-            <button class="device-tab" data-w="820" data-h="1180">▣ Tablette</button>
-            <button class="device-tab" data-w="1440" data-h="900">▰ PC</button>
+            <button class="device-tab active" data-w="390" data-h="844" data-rotatable="1">📱 Téléphone</button>
+            <button class="device-tab" data-w="768" data-h="1024" data-rotatable="1">📟 Tablette</button>
+            <button class="device-tab" data-w="1440" data-h="900" data-rotatable="0">🖥️ PC</button>
           </div>
-          <div class="orientation-toggle">
+          <div class="orientation-toggle" id="orientation-toggle">
             <button id="btn-orient-portrait" class="dash-tab active">⬆️ Vertical</button>
-            <button id="btn-orient-landscape" class="dash-tab">→ Horizontal</button>
+            <button id="btn-orient-landscape" class="dash-tab">➡️ Horizontal</button>
           </div>
           <div class="preview-frame-wrapper" id="preview-frame-wrapper">
-            <iframe id="preview-iframe" src="./"></iframe>
+            <iframe id="preview-iframe" src="index.html"></iframe>
           </div>
-          <button id="btn-refresh-preview" class="btn-3d btn-secondary">↻ Recharger l'aperçu</button>
+          <button id="btn-refresh-preview" class="btn-3d btn-secondary">🔄 Recharger l'aperçu</button>
         </div>
       </div>
 
@@ -721,176 +709,10 @@
           <div class="info-row"><span class="k">Projet Appwrite</span><span class="v" id="info-project">—</span></div>
           <div class="info-row"><span class="k">Fonction nova.ai</span><span class="v" id="info-function">—</span></div>
           <div class="info-row"><span class="k">Comptes admin configurés</span><span class="v" id="info-admins">—</span></div>
+          <div class="info-row" style="display:block;"><span class="k">Documents par collection</span><div class="v" id="info-collections" style="text-align:left; margin-top:4px;">—</div></div>
           <div class="info-row"><span class="k">Site public</span><span class="v"><a href="https://novanod6.github.io/NOVANOD/" target="_blank">novanod6.github.io/NOVANOD</a></span></div>
         </div>
       </div>
-
-      <!-- ===== ÉQUIPES & PERMISSIONS ===== -->
-      <div id="pane-teams" class="dash-pane">
-        <div class="glass-card">
-          <h3 class="card-title">Gestion des équipes</h3>
-          <div class="admin-note">Les équipes Appwrite organisent les membres et leurs rôles. Les permissions de ressources restent à définir explicitement dans les collections, buckets et fonctions.</div>
-          <div class="admin-toolbar">
-            <input id="team-name" class="input-field" placeholder="Nom de la nouvelle équipe">
-            <button id="btn-create-team" class="btn-3d" style="width:auto;padding:0 18px;">Créer l'équipe</button>
-            <button id="btn-refresh-teams" class="btn-3d btn-secondary" style="width:auto;padding:0 18px;">Actualiser</button>
-          </div>
-          <div id="teams-status" class="status-msg"></div>
-          <div id="teams-output" class="admin-output">Les équipes apparaîtront ici.</div>
-        </div>
-        <div class="glass-card">
-          <h3 class="card-title">Ajouter un membre</h3>
-          <input id="membership-team-id" class="input-field" placeholder="ID de l'équipe">
-          <input id="membership-email" class="input-field" type="email" placeholder="E-mail du membre">
-          <input id="membership-roles" class="input-field" placeholder="Rôles séparés par virgules (ex. admin,moderator)">
-          <button id="btn-add-member" class="btn-3d">Envoyer l'invitation</button>
-          <div class="hint">Appwrite peut envoyer une invitation selon la configuration du projet. Les permissions réelles doivent ensuite être appliquées aux ressources.</div>
-        </div>
-        <div class="glass-card">
-          <h3 class="card-title">Membres et rôles</h3>
-          <input id="team-members-team-id" class="input-field" placeholder="ID de l'équipe">
-          <button id="btn-list-team-members" class="btn-3d btn-secondary">Lister les membres</button>
-          <div id="team-members-output" class="admin-output">Les membres apparaîtront ici.</div>
-          <input id="team-membership-id" class="input-field" placeholder="ID du membre (membershipId)">
-          <input id="team-membership-roles" class="input-field" placeholder="Nouveaux rôles séparés par virgules">
-          <div class="admin-toolbar">
-            <button id="btn-update-team-member" class="btn-3d">Modifier les rôles</button>
-            <button id="btn-remove-team-member" class="btn-3d btn-secondary">Retirer le membre</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- ===== BASE DE DONNÉES ===== -->
-      <div id="pane-database" class="dash-pane">
-        <div class="glass-card">
-          <h3 class="card-title">Explorateur de collections</h3>
-          <div class="admin-note">L'explorateur utilise les droits serveur de la fonction. Évite d'exposer une clé API dans cette page. La liste des collections et documents dépend des scopes accordés à la fonction.</div>
-          <button id="btn-load-collections" class="btn-3d btn-secondary">Lister les collections</button>
-          <div id="database-status" class="status-msg"></div>
-          <div id="collections-output" class="admin-output">Aucune collection chargée.</div>
-        </div>
-        <div class="glass-card">
-          <h3 class="card-title">Documents</h3>
-          <input id="db-collection-id" class="input-field" placeholder="ID de collection">
-          <input id="db-document-id" class="input-field" placeholder="ID du document (pour modifier/supprimer)">
-          <textarea id="db-document-data" class="input-field" placeholder='Données JSON, ex. {"name":"Produit","price":12000}'></textarea>
-          <div class="admin-toolbar">
-            <button id="btn-list-documents" class="btn-3d btn-secondary">Lister</button>
-            <button id="btn-create-document" class="btn-3d">Créer</button>
-            <button id="btn-update-document" class="btn-3d btn-secondary">Modifier</button>
-            <button id="btn-delete-document" class="btn-3d btn-secondary">Supprimer</button>
-          </div>
-          <div id="documents-output" class="admin-output">Les documents apparaîtront ici.</div>
-        </div>
-      </div>
-
-      <!-- ===== STOCKAGE ===== -->
-      <div id="pane-storage" class="dash-pane">
-        <div class="glass-card">
-          <h3 class="card-title">Buckets et fichiers</h3>
-          <button id="btn-load-buckets" class="btn-3d btn-secondary">Lister les buckets</button>
-          <div id="storage-status" class="status-msg"></div>
-          <div id="buckets-output" class="admin-output">Aucun bucket chargé.</div>
-          <input id="storage-bucket-id" class="input-field" placeholder="ID du bucket">
-          <button id="btn-list-files" class="btn-3d">Lister les fichiers</button>
-          <div id="files-output" class="admin-output">Les fichiers apparaîtront ici.</div>
-          <input id="storage-file-id" class="input-field" placeholder="ID du fichier à supprimer">
-          <button id="btn-delete-file" class="btn-3d btn-secondary">Supprimer le fichier sélectionné</button>
-          <div class="admin-note">L'upload de gros fichiers doit être réalisé avec l'API Storage côté navigateur authentifié ou via une fonction dédiée avec streaming. Cette console expose ici la consultation et la suppression sécurisée, pas un faux upload.</div>
-        </div>
-      </div>
-
-      <!-- ===== MESSAGERIE ===== -->
-      <div id="pane-messaging" class="dash-pane">
-        <div class="glass-card">
-          <h3 class="card-title">Envoyer un message</h3>
-          <label class="form-label">Canal</label>
-          <select id="message-channel" class="input-field">
-            <option value="email">E-mail</option><option value="sms">SMS</option><option value="push">Notification Push</option>
-          </select>
-          <input id="message-user-id" class="input-field" placeholder="ID utilisateur (ou laisser vide pour plusieurs destinataires)">
-          <input id="message-topic-id" class="input-field" placeholder="ID du topic Appwrite (facultatif)">
-          <input id="message-subject" class="input-field" placeholder="Objet / titre">
-          <textarea id="message-content" class="input-field" placeholder="Contenu du message"></textarea>
-          <button id="btn-send-message" class="btn-3d">Envoyer via Appwrite Messaging</button>
-          <div id="messaging-status" class="status-msg"></div>
-          <div id="messaging-output" class="admin-output">Les réponses du service de messagerie apparaîtront ici.</div>
-          <div class="admin-note">Pour envoyer à tous, crée et utilise un topic Appwrite avec des abonnés consentants. Ne pas envoyer de campagnes marketing sans base légale/consentement et mécanisme de désinscription. Un fournisseur e-mail/SMS/push doit être configuré dans Appwrite.</div>
-        </div>
-      </div>
-
-      <!-- ===== ANALYSES IA ===== -->
-      <div id="pane-analytics" class="dash-pane">
-        <div class="glass-card">
-          <h3 class="card-title">Audits automatiques GitHub · Playwright + Lighthouse</h3>
-          <div class="hint">GitHub Actions teste le site public sur plusieurs tailles d’écran et exécute Lighthouse. Les résultats sont enregistrés dans Appwrite. Lance ensuite l’analyse IA pour obtenir les rapports Gemini, Groq et leur synthèse.</div>
-          <button id="btn-analyze-github-audit" class="btn-3d">◉ Analyser le dernier audit GitHub avec Gemini + Groq</button>
-          <div id="github-audit-status" class="status-msg">En attente du premier rapport GitHub Actions.</div>
-          <h4>Résultat Gemini · audit automatisé</h4>
-          <div id="github-audit-gemini" class="admin-output">En attente.</div>
-          <h4>Résultat Groq · audit automatisé</h4>
-          <div id="github-audit-groq" class="admin-output">En attente.</div>
-          <h4>Synthèse commune · audit automatisé</h4>
-          <div id="github-audit-combined" class="admin-output">Lance le workflow GitHub, puis demande l’analyse ici.</div>
-        </div>
-        <div class="glass-card">
-          <h3 class="card-title">Centre d'analyse NOVANOD</h3>
-          <div class="hint">Chaque audit produit un rapport séparé avec preuves disponibles, limites, gravité, recommandations et score. Les tests actifs intrusifs sont exclus : l'audit de sécurité reste défensif et non destructif.</div>
-          <label class="hint" for="analysis-provider">Fournisseur IA pour chaque analyse</label>
-          <select id="analysis-provider" class="input-field">
-            <option value="both" selected>Gemini + Groq + synthèse commune</option>
-            <option value="gemini">Gemini uniquement</option>
-            <option value="groq">Groq uniquement</option>
-          </select>
-          <div class="admin-form-grid">
-            <button class="btn-3d" data-analysis="problem">⌕ Analyse problème</button>
-            <button class="btn-3d" data-analysis="client">◇ Analyse client</button>
-            <button class="btn-3d" data-analysis="security">⬡ Analyse sécurité</button>
-            <button class="btn-3d" data-analysis="statistics">▥ Analyse statistique</button>
-            <button class="btn-3d btn-secondary" data-analysis="business">▣ Analyse business</button>
-            <button class="btn-3d btn-secondary" data-analysis="merchandising">◇ Analyse merchandising</button>
-            <button class="btn-3d btn-secondary" data-analysis="support">▤ Analyse service client</button>
-            <button class="btn-3d btn-secondary" data-analysis="marketing">◁ Analyse marketing</button>
-            <button class="btn-3d btn-secondary" data-analysis="maintenance">⚙ Maintenance proactive</button>
-          </div>
-          <div id="analysis-status" class="status-msg"></div>
-          <h4>Résultat Gemini</h4>
-          <div id="analysis-gemini-output" class="admin-output">En attente du rapport Gemini.</div>
-          <h4>Résultat Groq</h4>
-          <div id="analysis-groq-output" class="admin-output">En attente du rapport Groq.</div>
-          <h4>Synthèse commune des deux IA</h4>
-          <div id="analysis-output" class="admin-output">Choisis un audit pour générer les rapports détaillés et la synthèse.</div>
-        </div>
-        <div class="glass-card">
-          <h3 class="card-title">Historique des rapports</h3>
-          <div id="analysis-history" class="admin-output">Les rapports seront enregistrés dans la collection de rapports configurée.</div>
-        </div>
-      </div>
-
-      <!-- ===== ASSISTANT ADMIN ===== -->
-      <div id="pane-assistant" class="dash-pane">
-        <div class="glass-card">
-          <h3 class="card-title">Assistant NOVANOD</h3>
-          <div class="hint">Assistant réservé aux administrateurs : synthèse des alertes et préparation de recommandations. Les actions sensibles nécessitent toujours une validation humaine.</div>
-          <textarea id="assistant-question" class="input-field" placeholder="Ex. Résume les risques prioritaires et propose un plan d'action…"></textarea>
-          <label class="hint" for="assistant-provider">Fournisseur de l'assistant</label>
-          <select id="assistant-provider" class="input-field">
-            <option value="both" selected>Gemini + Groq + synthèse commune</option>
-            <option value="gemini">Gemini uniquement</option>
-            <option value="groq">Groq uniquement</option>
-          </select>
-          <button id="btn-assistant-ask" class="btn-3d">Demander à nova.ai</button>
-          <div id="assistant-status" class="status-msg"></div>
-          <h4>Réponse Gemini</h4>
-          <div id="assistant-gemini-output" class="admin-output">En attente.</div>
-          <h4>Réponse Groq</h4>
-          <div id="assistant-groq-output" class="admin-output">En attente.</div>
-          <h4>Synthèse commune</h4>
-          <div id="assistant-output" class="admin-output">En attente de ta demande.</div>
-          <div class="admin-note">L'agent ne doit pas supprimer des comptes, modifier des prix, changer des permissions ou envoyer une campagne de masse sans confirmation explicite d'un administrateur.</div>
-        </div>
-      </div>
-
     </div>
   </div>
 
@@ -913,6 +735,7 @@
     const client = new Appwrite.Client().setEndpoint(APPWRITE_ENDPOINT).setProject(APPWRITE_PROJECT_ID);
     const account = new Appwrite.Account(client);
     const functions = new Appwrite.Functions(client);
+    const storage = new Appwrite.Storage(client); // pour générer les URL d'aperçu d'images uniquement
 
     const screenLogin = document.getElementById('screen-login');
     const screenAdmin = document.getElementById('screen-admin');
@@ -974,9 +797,9 @@
     document.getElementById('btn-copy-id').addEventListener('click', () => {
       const idText = document.getElementById('pending-user-id').textContent;
       navigator.clipboard.writeText(idText);
-      document.getElementById('btn-copy-id').textContent = "✓ Identifiant copié !";
+      document.getElementById('btn-copy-id').textContent = "✅ Identifiant copié !";
       setTimeout(() => {
-        document.getElementById('btn-copy-id').textContent = "▤ Copier l'identifiant";
+        document.getElementById('btn-copy-id').textContent = "📋 Copier l'identifiant";
       }, 2500);
     });
 
@@ -1035,6 +858,10 @@
         if (tab.dataset.pane === 'pane-reports' && !reportsLoadedOnce) refreshReports();
         if (tab.dataset.pane === 'pane-settings') populateSettings();
         if (tab.dataset.pane === 'pane-preview' && typeof applyPreviewSize === 'function') applyPreviewSize();
+        if (tab.dataset.pane === 'pane-teams' && !teamsLoadedOnce) refreshTeams();
+        if (tab.dataset.pane === 'pane-db' && !collectionsLoadedOnce) refreshCollections();
+        if (tab.dataset.pane === 'pane-storage' && !bucketsLoadedOnce) refreshBuckets();
+        if (tab.dataset.pane === 'pane-messaging' && !messagingLoadedOnce) refreshMessagingHistory();
       });
     });
 
@@ -1048,6 +875,16 @@
       try { return new Date(iso).toLocaleString('fr-FR'); } catch (e) { return iso; }
     }
 
+    const MODE_LABELS = { problems: '⚠️ Problèmes', clients: '🧑‍💻 Clients', security: '🛡️ Sécurité', stats: '📊 Performance' };
+    let currentAnalysisMode = 'problems';
+    document.querySelectorAll('.mode-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentAnalysisMode = tab.dataset.mode;
+      });
+    });
+
     function renderReports(reports) {
       if (!reports || reports.length === 0) {
         reportsList.innerHTML = '<div class="hint">Aucun rapport pour l\'instant.</div>';
@@ -1055,7 +892,7 @@
       }
       reportsList.innerHTML = reports.map(r => `
         <div class="user-row">
-          <div class="u-name">${formatDate(r.createdAt || r.$createdAt)}</div>
+          <div class="u-name">${MODE_LABELS[r.mode] || '⚠️ Problèmes'} <span class="hint" style="margin:0; display:inline;">· ${formatDate(r.createdAt || r.$createdAt)}</span></div>
           <div style="white-space: pre-wrap; margin-top:4px;">${(r.report || '').replace(/</g, '&lt;')}</div>
           <div class="hint" style="margin-top:6px; margin-bottom:0;">${(r.statsSummary || '').replace(/</g, '&lt;').replace(/\n/g, ' · ')}</div>
         </div>
@@ -1078,9 +915,9 @@
     document.getElementById('btn-run-analysis').addEventListener('click', async () => {
       const btn = document.getElementById('btn-run-analysis');
       btn.disabled = true;
-      setStatus(reportsStatus, 'nova.ai analyse le site (ça peut prendre quelques secondes)...', 'info');
+      setStatus(reportsStatus, `nova.ai lance l'analyse "${MODE_LABELS[currentAnalysisMode]}" (quelques secondes)...`, 'info');
       try {
-        const result = await callNovaFunction({ action: 'run_analysis' });
+        const result = await callNovaFunction({ action: 'analyze', mode: currentAnalysisMode });
         if (result.error) throw new Error(result.error);
         setStatus(reportsStatus, 'Analyse terminée !', 'success');
         await refreshReports();
@@ -1091,6 +928,35 @@
       }
     });
 
+    // ----- Assistant nova.ai privé -----
+    const adminChatMessages = document.getElementById('admin-chat-messages');
+    function addAdminChatMsg(text, who) {
+      const div = document.createElement('div');
+      div.className = 'user-row';
+      div.style.background = who === 'user' ? 'rgba(230,74,56,0.1)' : 'rgba(255,255,255,0.6)';
+      div.textContent = text;
+      adminChatMessages.appendChild(div);
+      adminChatMessages.scrollTop = adminChatMessages.scrollHeight;
+    }
+    async function sendAdminChat() {
+      const input = document.getElementById('admin-chat-input');
+      const message = input.value.trim();
+      if (!message) return;
+      addAdminChatMsg(message, 'user');
+      input.value = '';
+      addAdminChatMsg('nova.ai réfléchit...', 'bot');
+      try {
+        const result = await callNovaFunction({ action: 'admin_chat', message });
+        adminChatMessages.lastChild.remove();
+        addAdminChatMsg(result.error || result.reply || 'Pas de réponse.', 'bot');
+      } catch (e) {
+        adminChatMessages.lastChild.remove();
+        addAdminChatMsg('Erreur : ' + e.message, 'bot');
+      }
+    }
+    document.getElementById('btn-admin-chat-send').addEventListener('click', sendAdminChat);
+    document.getElementById('admin-chat-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') sendAdminChat(); });
+
     // ===================== UTILISATEURS (statistiques + listes) =====================
     const usersStatus = document.getElementById('users-status');
     let usersLoadedOnce = false;
@@ -1099,16 +965,24 @@
       const verifBadge = type === 'buyer'
         ? `<span class="u-badge ${u.verified ? 'verified' : 'unverified'}">${u.verified ? 'vérifié' : 'non vérifié'}</span>`
         : '';
+      const blockedBadge = u.status === false ? `<span class="u-badge unverified">bloqué</span>` : '';
       return `
-        <div class="user-row">
-          <span class="u-name">${(u.name || '(sans nom)')}</span>${verifBadge}
+        <div class="user-row" data-uid="${u.id}">
+          <span class="u-name">${(u.name || '(sans nom)')}</span>${verifBadge}${blockedBadge}
           ${u.email ? `<div class="u-email">${u.email}</div>` : ''}
           ${u.phone ? `<div class="u-email">${u.phone}</div>` : ''}
-          <div class="hint" style="margin:2px 0 0;">Inscrit le ${formatDate(u.registeredAt)}</div>
+          <div class="hint" style="margin:2px 0 6px;">Inscrit le ${formatDate(u.registeredAt)}</div>
+          <div style="display:flex; flex-wrap:wrap; gap:5px;">
+            <button class="dash-tab" data-action="edit" style="padding:5px 9px; font-size:10.5px;">✏️ Modifier</button>
+            <button class="dash-tab" data-action="toggle-block" style="padding:5px 9px; font-size:10.5px;">${u.status === false ? '✅ Débloquer' : '🚫 Bloquer'}</button>
+            <button class="dash-tab" data-action="sessions" style="padding:5px 9px; font-size:10.5px;">📱 Sessions</button>
+            <button class="dash-tab" data-action="labels" style="padding:5px 9px; font-size:10.5px;">🏷️ Labels</button>
+            <button class="dash-tab" data-action="delete" style="padding:5px 9px; font-size:10.5px; color:#B00020;">🗑️ Supprimer</button>
+          </div>
         </div>`;
     }
 
-    async function refreshUsersLegacy() {
+    async function refreshUsers() {
       usersLoadedOnce = true;
       setStatus(usersStatus, 'Chargement...', 'info');
       try {
@@ -1117,6 +991,12 @@
         document.getElementById('stat-total').textContent = result.totalCount;
         document.getElementById('stat-buyers').textContent = result.buyerCount;
         document.getElementById('stat-visitors').textContent = result.visitorCount;
+        callNovaFunction({ action: 'get_dashboard_stats' }).then(stats => {
+          if (stats.error) return;
+          document.getElementById('stat-today').textContent = stats.newToday;
+          document.getElementById('stat-week').textContent = stats.newThisWeek;
+          window.__novaCollectionsStats = stats.collections || [];
+        });
         document.getElementById('buyers-list').innerHTML = result.buyers.length
           ? result.buyers.map(u => renderUserRow(u, 'buyer')).join('')
           : '<div class="hint">Aucun acheteur pour l\'instant.</div>';
@@ -1130,12 +1010,351 @@
     }
     document.getElementById('btn-refresh-users').addEventListener('click', refreshUsers);
 
+    document.getElementById('btn-create-user').addEventListener('click', async () => {
+      const name = document.getElementById('newuser-name').value.trim();
+      const email = document.getElementById('newuser-email').value.trim();
+      const password = document.getElementById('newuser-password').value;
+      const st = document.getElementById('newuser-status');
+      if (!email || !password) { setStatus(st, 'E-mail et mot de passe requis.', 'error'); return; }
+      setStatus(st, 'Création...', 'info');
+      try {
+        const result = await callNovaFunction({ action: 'user_create', email, password, name });
+        if (result.error) throw new Error(result.error);
+        setStatus(st, 'Utilisateur créé !', 'success');
+        document.getElementById('newuser-name').value = '';
+        document.getElementById('newuser-email').value = '';
+        document.getElementById('newuser-password').value = '';
+        refreshUsers();
+      } catch (e) {
+        setStatus(st, 'Erreur : ' + e.message, 'error');
+      }
+    });
+
+    // Un seul écouteur (délégation) pour les boutons d'action sur chaque ligne utilisateur
+    async function handleUserRowClick(e) {
+      const btn = e.target.closest('button[data-action]');
+      if (!btn) return;
+      const row = btn.closest('.user-row');
+      const uid = row.dataset.uid;
+      const action = btn.dataset.action;
+
+      if (action === 'edit') {
+        const newName = prompt('Nouveau nom (laisser vide pour ne pas changer) :');
+        const newPassword = prompt('Nouveau mot de passe (laisser vide pour ne pas changer) :');
+        if (newName === null && newPassword === null) return;
+        const payload = { action: 'user_update', userId: uid };
+        if (newName) payload.name = newName;
+        if (newPassword) payload.password = newPassword;
+        const result = await callNovaFunction(payload);
+        alert(result.error ? 'Erreur : ' + result.error : 'Modifié !');
+        if (!result.error) refreshUsers();
+      }
+
+      if (action === 'toggle-block') {
+        const isBlocking = !btn.textContent.includes('Débloquer');
+        if (!confirm(isBlocking ? 'Bloquer ce compte ?' : 'Débloquer ce compte ?')) return;
+        const result = await callNovaFunction({ action: 'user_set_status', userId: uid, enabled: !isBlocking });
+        alert(result.error ? 'Erreur : ' + result.error : 'Fait !');
+        if (!result.error) refreshUsers();
+      }
+
+      if (action === 'delete') {
+        if (!confirm('Supprimer DÉFINITIVEMENT ce compte ? Cette action est irréversible.')) return;
+        const result = await callNovaFunction({ action: 'user_delete', userId: uid });
+        alert(result.error ? 'Erreur : ' + result.error : 'Compte supprimé.');
+        if (!result.error) refreshUsers();
+      }
+
+      if (action === 'sessions') {
+        const result = await callNovaFunction({ action: 'user_list_sessions', userId: uid });
+        if (result.error) { alert('Erreur : ' + result.error); return; }
+        const sessions = result.sessions || [];
+        if (!sessions.length) { alert('Aucune session active.'); return; }
+        const list = sessions.map((s, i) => `${i + 1}. ${s.clientName || 'Appareil'} / ${s.osName || ''} — ${s.ip || ''}`).join('\n');
+        if (confirm(list + '\n\nDéconnecter TOUS les appareils de cet utilisateur ?')) {
+          const r2 = await callNovaFunction({ action: 'user_delete_session', userId: uid });
+          alert(r2.error ? 'Erreur : ' + r2.error : 'Déconnecté de tous les appareils.');
+        }
+      }
+
+      if (action === 'labels') {
+        const current = prompt('Labels actuels inconnus ici — tape les nouveaux labels séparés par une virgule (ex: premium,banni) :');
+        if (current === null) return;
+        const labels = current.split(',').map(s => s.trim()).filter(Boolean);
+        const result = await callNovaFunction({ action: 'user_update_labels', userId: uid, labels });
+        alert(result.error ? 'Erreur : ' + result.error : 'Labels mis à jour.');
+      }
+    }
+    document.getElementById('buyers-list').addEventListener('click', handleUserRowClick);
+    document.getElementById('visitors-list').addEventListener('click', handleUserRowClick);
+
+    // ===================== ÉQUIPES =====================
+    let teamsLoadedOnce = false;
+    const teamsStatus = document.getElementById('teams-status');
+
+    async function refreshTeams() {
+      teamsLoadedOnce = true;
+      setStatus(teamsStatus, 'Chargement...', 'info');
+      try {
+        const result = await callNovaFunction({ action: 'team_list' });
+        if (result.error) throw new Error(result.error);
+        const container = document.getElementById('teams-list');
+        if (!result.teams.length) { container.innerHTML = '<div class="hint" style="padding:0 4px;">Aucune équipe pour l\'instant.</div>'; return; }
+        container.innerHTML = result.teams.map(t => `
+          <div class="glass-card" data-team-id="${t.$id}">
+            <h3 class="card-title" style="font-size:14px;">${t.name} <span class="hint" style="display:inline;">(${t.total} membre${t.total > 1 ? 's' : ''})</span></h3>
+            <div class="members-list" data-team="${t.$id}"><div class="hint">Chargement des membres...</div></div>
+            <div style="display:flex; gap:5px; margin-top:8px;">
+              <button class="dash-tab" data-team-action="add-member" data-team="${t.$id}" style="padding:6px 10px; font-size:10.5px;">➕ Ajouter un membre (User ID)</button>
+              <button class="dash-tab" data-team-action="delete-team" data-team="${t.$id}" style="padding:6px 10px; font-size:10.5px; color:#B00020;">🗑️ Supprimer l'équipe</button>
+            </div>
+          </div>
+        `).join('');
+        for (const t of result.teams) loadTeamMembers(t.$id);
+        setStatus(teamsStatus, '', 'info');
+      } catch (e) {
+        setStatus(teamsStatus, 'Erreur : ' + e.message, 'error');
+      }
+    }
+
+    async function loadTeamMembers(teamId) {
+      const el = document.querySelector(`.members-list[data-team="${teamId}"]`);
+      if (!el) return;
+      const result = await callNovaFunction({ action: 'team_list_members', teamId });
+      if (result.error) { el.innerHTML = '<div class="hint">Erreur de chargement.</div>'; return; }
+      el.innerHTML = (result.memberships || []).map(m => `
+        <div class="user-row">
+          <span class="u-name">${m.userName || m.userEmail || m.userId}</span>
+          <span class="hint" style="display:inline; margin-left:6px;">${(m.roles || []).join(', ') || 'membre'}</span>
+          <button class="dash-tab" data-team-action="remove-member" data-team="${teamId}" data-membership="${m.$id}" style="padding:4px 8px; font-size:10px; margin-left:6px; color:#B00020;">Retirer</button>
+        </div>
+      `).join('') || '<div class="hint">Aucun membre.</div>';
+    }
+
+    document.getElementById('btn-create-team').addEventListener('click', async () => {
+      const name = document.getElementById('newteam-name').value.trim();
+      if (!name) return;
+      const result = await callNovaFunction({ action: 'team_create', name });
+      if (result.error) { setStatus(teamsStatus, 'Erreur : ' + result.error, 'error'); return; }
+      document.getElementById('newteam-name').value = '';
+      refreshTeams();
+    });
+    document.getElementById('btn-refresh-teams').addEventListener('click', refreshTeams);
+
+    document.getElementById('teams-list').addEventListener('click', async (e) => {
+      const btn = e.target.closest('button[data-team-action]');
+      if (!btn) return;
+      const teamId = btn.dataset.team;
+      if (btn.dataset.teamAction === 'delete-team') {
+        if (!confirm('Supprimer cette équipe ?')) return;
+        const r = await callNovaFunction({ action: 'team_delete', teamId });
+        if (r.error) alert('Erreur : ' + r.error); else refreshTeams();
+      }
+      if (btn.dataset.teamAction === 'add-member') {
+        const userId = prompt('User ID de la personne à ajouter (Appwrite Console → Auth → Users) :');
+        if (!userId) return;
+        const rolesStr = prompt('Rôles séparés par une virgule (ex: moderateur) — laisser vide si aucun :') || '';
+        const roles = rolesStr.split(',').map(s => s.trim()).filter(Boolean);
+        const r = await callNovaFunction({ action: 'team_add_member', teamId, userId, roles });
+        if (r.error) alert('Erreur : ' + r.error); else loadTeamMembers(teamId);
+      }
+      if (btn.dataset.teamAction === 'remove-member') {
+        if (!confirm('Retirer ce membre de l\'équipe ?')) return;
+        const r = await callNovaFunction({ action: 'team_remove_member', teamId, membershipId: btn.dataset.membership });
+        if (r.error) alert('Erreur : ' + r.error); else loadTeamMembers(teamId);
+      }
+    });
+
+    // ===================== BASE DE DONNÉES =====================
+    let collectionsLoadedOnce = false;
+    const dbStatus = document.getElementById('db-status');
+    const dbSelect = document.getElementById('db-collection-select');
+
+    async function refreshCollections() {
+      collectionsLoadedOnce = true;
+      setStatus(dbStatus, 'Chargement...', 'info');
+      try {
+        const result = await callNovaFunction({ action: 'db_list_collections' });
+        if (result.error) throw new Error(result.error);
+        dbSelect.innerHTML = '<option value="">— Choisir une collection —</option>' +
+          result.collections.map(c => `<option value="${c.$id}">${c.name} (${c.$id})</option>`).join('');
+        setStatus(dbStatus, '', 'info');
+      } catch (e) {
+        setStatus(dbStatus, 'Erreur : ' + e.message, 'error');
+      }
+    }
+    document.getElementById('btn-refresh-collections').addEventListener('click', refreshCollections);
+
+    async function loadDocuments() {
+      const collectionId = dbSelect.value;
+      const container = document.getElementById('db-documents-list');
+      if (!collectionId) { container.innerHTML = '<div class="hint">Choisis une collection ci-dessus.</div>'; return; }
+      container.innerHTML = '<div class="hint">Chargement...</div>';
+      const result = await callNovaFunction({ action: 'db_list_documents', collectionId });
+      if (result.error) { container.innerHTML = '<div class="hint">Erreur : ' + result.error + '</div>'; return; }
+      if (!result.documents.length) { container.innerHTML = '<div class="hint">Aucun document.</div>'; return; }
+      container.innerHTML = result.documents.map(d => {
+        const { $id, $collectionId, $databaseId, $createdAt, $updatedAt, $permissions, ...fields } = d;
+        return `
+        <div class="user-row" data-doc-id="${$id}">
+          <div class="hint" style="margin:0;">${$id}</div>
+          <div style="white-space:pre-wrap; font-size:11px; margin:4px 0;">${JSON.stringify(fields, null, 1).replace(/</g, '&lt;')}</div>
+          <div style="display:flex; gap:5px;">
+            <button class="dash-tab" data-doc-action="edit" style="padding:5px 9px; font-size:10.5px;">✏️ Modifier</button>
+            <button class="dash-tab" data-doc-action="delete" style="padding:5px 9px; font-size:10.5px; color:#B00020;">🗑️ Supprimer</button>
+          </div>
+        </div>`;
+      }).join('');
+    }
+    dbSelect.addEventListener('change', loadDocuments);
+
+    document.getElementById('btn-create-doc').addEventListener('click', async () => {
+      const collectionId = dbSelect.value;
+      if (!collectionId) { alert('Choisis une collection.'); return; }
+      let data;
+      try { data = JSON.parse(document.getElementById('db-new-doc').value); } catch (e) { alert('JSON invalide.'); return; }
+      const result = await callNovaFunction({ action: 'db_create_document', collectionId, data });
+      if (result.error) { alert('Erreur : ' + result.error); return; }
+      document.getElementById('db-new-doc').value = '';
+      loadDocuments();
+    });
+
+    document.getElementById('db-documents-list').addEventListener('click', async (e) => {
+      const btn = e.target.closest('button[data-doc-action]');
+      if (!btn) return;
+      const row = btn.closest('.user-row');
+      const documentId = row.dataset.docId;
+      const collectionId = dbSelect.value;
+      if (btn.dataset.docAction === 'delete') {
+        if (!confirm('Supprimer ce document ?')) return;
+        const r = await callNovaFunction({ action: 'db_delete_document', collectionId, documentId });
+        if (r.error) alert('Erreur : ' + r.error); else loadDocuments();
+      }
+      if (btn.dataset.docAction === 'edit') {
+        const currentJson = row.querySelector('div[style*="white-space"]').textContent;
+        const edited = prompt('Modifie le JSON puis valide :', currentJson);
+        if (!edited) return;
+        let data;
+        try { data = JSON.parse(edited); } catch (e) { alert('JSON invalide.'); return; }
+        const r = await callNovaFunction({ action: 'db_update_document', collectionId, documentId, data });
+        if (r.error) alert('Erreur : ' + r.error); else loadDocuments();
+      }
+    });
+
+    // ===================== STOCKAGE =====================
+    let bucketsLoadedOnce = false;
+    const storageStatus = document.getElementById('storage-status');
+    const bucketSelect = document.getElementById('storage-bucket-select');
+
+    async function refreshBuckets() {
+      bucketsLoadedOnce = true;
+      setStatus(storageStatus, 'Chargement...', 'info');
+      try {
+        const result = await callNovaFunction({ action: 'storage_list_buckets' });
+        if (result.error) throw new Error(result.error);
+        bucketSelect.innerHTML = '<option value="">— Choisir un bucket —</option>' +
+          result.buckets.map(b => `<option value="${b.$id}">${b.name} (${b.$id})</option>`).join('');
+        setStatus(storageStatus, '', 'info');
+      } catch (e) {
+        setStatus(storageStatus, 'Erreur : ' + e.message, 'error');
+      }
+    }
+    document.getElementById('btn-refresh-buckets').addEventListener('click', refreshBuckets);
+
+    async function loadFiles() {
+      const bucketId = bucketSelect.value;
+      const container = document.getElementById('storage-files-list');
+      if (!bucketId) { container.innerHTML = '<div class="hint">Choisis un bucket ci-dessus.</div>'; return; }
+      container.innerHTML = '<div class="hint">Chargement...</div>';
+      const result = await callNovaFunction({ action: 'storage_list_files', bucketId });
+      if (result.error) { container.innerHTML = '<div class="hint">Erreur : ' + result.error + '</div>'; return; }
+      if (!result.files.length) { container.innerHTML = '<div class="hint">Aucun fichier.</div>'; return; }
+      container.innerHTML = result.files.map(f => {
+        const isImage = (f.mimeType || '').startsWith('image/');
+        let previewUrl = '';
+        try { previewUrl = storage.getFileView(bucketId, f.$id).toString(); } catch (e) {}
+        return `
+        <div class="user-row" data-file-id="${f.$id}">
+          ${isImage && previewUrl ? `<img src="${previewUrl}" style="max-width:100%; max-height:120px; border-radius:8px; margin-bottom:6px;" loading="lazy">` : ''}
+          <span class="u-name">${f.name}</span>
+          <div class="hint" style="margin:2px 0;">${f.mimeType || ''} · ${Math.round((f.sizeOriginal || 0) / 1024)} Ko</div>
+          <button class="dash-tab" data-file-action="delete" style="padding:5px 9px; font-size:10.5px; color:#B00020;">🗑️ Supprimer</button>
+        </div>`;
+      }).join('');
+    }
+    bucketSelect.addEventListener('change', loadFiles);
+
+    document.getElementById('btn-upload-file').addEventListener('click', async () => {
+      const bucketId = bucketSelect.value;
+      const fileInput = document.getElementById('storage-file-input');
+      const file = fileInput.files[0];
+      if (!bucketId) { alert('Choisis un bucket.'); return; }
+      if (!file) { alert('Choisis un fichier.'); return; }
+      if (file.size > 4 * 1024 * 1024) { alert('Fichier trop volumineux pour cette méthode (max ~4 Mo).'); return; }
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const base64 = reader.result.split(',')[1];
+        const result = await callNovaFunction({ action: 'storage_upload_file', bucketId, fileName: file.name, contentBase64: base64 });
+        if (result.error) { alert('Erreur : ' + result.error); return; }
+        fileInput.value = '';
+        loadFiles();
+      };
+      reader.readAsDataURL(file);
+    });
+
+    document.getElementById('storage-files-list').addEventListener('click', async (e) => {
+      const btn = e.target.closest('button[data-file-action="delete"]');
+      if (!btn) return;
+      const fileId = btn.closest('.user-row').dataset.fileId;
+      if (!confirm('Supprimer ce fichier ?')) return;
+      const r = await callNovaFunction({ action: 'storage_delete_file', bucketId: bucketSelect.value, fileId });
+      if (r.error) alert('Erreur : ' + r.error); else loadFiles();
+    });
+
+    // ===================== MESSAGERIE =====================
+    let messagingLoadedOnce = false;
+    const messagingStatus = document.getElementById('messaging-status');
+
+    document.getElementById('btn-send-email').addEventListener('click', async () => {
+      const subject = document.getElementById('msg-subject').value.trim();
+      const content = document.getElementById('msg-content').value.trim();
+      if (!subject || !content) { setStatus(messagingStatus, 'Sujet et contenu requis.', 'error'); return; }
+      setStatus(messagingStatus, 'Envoi...', 'info');
+      const result = await callNovaFunction({ action: 'messaging_send_email', subject, content });
+      if (result.error) setStatus(messagingStatus, 'Erreur : ' + result.error, 'error');
+      else { setStatus(messagingStatus, 'E-mail envoyé !', 'success'); refreshMessagingHistory(); }
+    });
+
+    document.getElementById('btn-send-sms').addEventListener('click', async () => {
+      const content = document.getElementById('msg-sms-content').value.trim();
+      if (!content) return;
+      setStatus(messagingStatus, 'Envoi...', 'info');
+      const result = await callNovaFunction({ action: 'messaging_send_sms', content });
+      if (result.error) setStatus(messagingStatus, 'Erreur : ' + result.error, 'error');
+      else { setStatus(messagingStatus, 'SMS envoyé !', 'success'); refreshMessagingHistory(); }
+    });
+
+    async function refreshMessagingHistory() {
+      messagingLoadedOnce = true;
+      const result = await callNovaFunction({ action: 'messaging_list_history' });
+      const container = document.getElementById('messaging-history');
+      if (result.error) { container.innerHTML = '<div class="hint">Erreur : ' + result.error + '</div>'; return; }
+      if (!result.messages || !result.messages.length) { container.innerHTML = '<div class="hint">Aucun message envoyé pour l\'instant.</div>'; return; }
+      container.innerHTML = result.messages.map(m => `
+        <div class="user-row">
+          <span class="u-name">${m.subject || m.providerType || 'Message'}</span>
+          <div class="hint" style="margin:2px 0;">${formatDate(m.$createdAt)} · statut : ${m.status}</div>
+        </div>
+      `).join('');
+    }
+    document.getElementById('btn-refresh-messaging').addEventListener('click', refreshMessagingHistory);
+
     // ===================== APERÇU MULTI-ÉCRANS =====================
     let previewW = 390, previewH = 844, previewLandscape = false;
     const previewWrapper = document.getElementById('preview-frame-wrapper');
     const previewIframe = document.getElementById('preview-iframe');
 
-    function applyPreviewSizeLegacy() {
+    function applyPreviewSize() {
       const w = previewLandscape ? previewH : previewW;
       const h = previewLandscape ? previewW : previewH;
       const containerWidth = previewWrapper.parentElement.clientWidth;
@@ -1147,12 +1366,16 @@
       previewWrapper.style.height = Math.round(h * scale) + 'px';
     }
 
+    const orientationToggle = document.getElementById('orientation-toggle');
     document.querySelectorAll('.device-tab').forEach(tab => {
       tab.addEventListener('click', () => {
         document.querySelectorAll('.device-tab').forEach(t => t.classList.remove('active'));
         tab.classList.add('active');
         previewW = parseInt(tab.dataset.w, 10);
         previewH = parseInt(tab.dataset.h, 10);
+        const rotatable = tab.dataset.rotatable === '1';
+        orientationToggle.classList.toggle('disabled', !rotatable);
+        if (!rotatable) previewLandscape = false; // un PC ne "tourne" pas
         applyPreviewSize();
       });
     });
@@ -1179,6 +1402,10 @@
       document.getElementById('info-project').textContent = APPWRITE_PROJECT_ID;
       document.getElementById('info-function').textContent = NOVA_FUNCTION_ID;
       document.getElementById('info-admins').textContent = ADMIN_USER_IDS.filter(id => id && id !== 'COLLE_ICI_USER_ID_1' && id !== 'COLLE_ICI_USER_ID_2').length;
+      const colStats = window.__novaCollectionsStats;
+      document.getElementById('info-collections').innerHTML = (colStats && colStats.length)
+        ? colStats.map(c => `${c.name} : ${c.count}`).join('<br>')
+        : "— (ouvre d'abord l'onglet Utilisateurs pour charger ces chiffres)";
     }
 
     const fingerprintStatus = document.getElementById('fingerprint-status');
@@ -1224,313 +1451,6 @@
         setStatus(loginStatus, e.message, "error");
       }
     });
-
-
-    // ===================== MODULES ADMIN NOVANOD =====================
-    const adminCall = async (action, extra = {}) => {
-      const result = await callNovaFunction({ action, ...extra });
-      if (result?.error) throw new Error(result.error);
-      return result;
-    };
-    const out = (id, value) => {
-      const el = document.getElementById(id);
-      if (el) el.textContent = typeof value === 'string' ? value : JSON.stringify(value, null, 2);
-    };
-    const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, c => ({
-      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
-    }[c]));
-    let cachedUsers = [];
-
-    async function refreshUsers() {
-      usersLoadedOnce = true;
-      setStatus(usersStatus, 'Chargement des comptes...', 'info');
-      try {
-        const result = await adminCall('list_users');
-        cachedUsers = [...(result.buyers || []), ...(result.visitors || [])];
-        document.getElementById('stat-total').textContent = result.totalCount ?? cachedUsers.length;
-        document.getElementById('stat-buyers').textContent = result.buyerCount ?? (result.buyers || []).length;
-        document.getElementById('stat-visitors').textContent = result.visitorCount ?? (result.visitors || []).length;
-        renderUsersTable();
-        setStatus(usersStatus, '', 'info');
-      } catch (e) { setStatus(usersStatus, 'Erreur : ' + e.message, 'error'); }
-    }
-    function renderUsersTable() {
-      const q = (document.getElementById('user-search')?.value || '').toLowerCase();
-      const rows = cachedUsers.filter(u => [u.name,u.email,u.id,u.phone].join(' ').toLowerCase().includes(q));
-      const host = document.getElementById('users-table');
-      if (!rows.length) { host.innerHTML = '<div class="hint">Aucun utilisateur correspondant.</div>'; return; }
-      host.innerHTML = `<table class="admin-table"><thead><tr><th>Utilisateur</th><th>Statut</th><th>Inscription</th><th>Actions</th></tr></thead><tbody>${
-        rows.map(u => `<tr><td><b>${escapeHtml(u.name || '(sans nom)')}</b><br>${escapeHtml(u.email || '')}<br><small>${escapeHtml(u.id)}</small></td>
-        <td>${u.verified ? 'Vérifié' : 'Non vérifié'} · ${u.status === false ? 'Bloqué' : 'Actif'}<br><small>${escapeHtml((u.labels || []).join(', '))}</small></td>
-        <td>${escapeHtml(formatDate(u.registeredAt))}</td><td>
-        <button class="admin-action" data-user-action="sessions" data-id="${escapeHtml(u.id)}">Sessions</button>
-        <button class="admin-action" data-user-action="edit" data-id="${escapeHtml(u.id)}">Modifier</button>
-        <button class="admin-action" data-user-action="labels" data-id="${escapeHtml(u.id)}">Labels</button>
-        <button class="admin-action" data-user-action="${u.status === false ? 'unblock' : 'block'}" data-id="${escapeHtml(u.id)}">${u.status === false ? 'Débloquer' : 'Bloquer'}</button>
-        <button class="admin-action danger" data-user-action="delete" data-id="${escapeHtml(u.id)}">Supprimer</button>
-        </td></tr>`).join('')
-      }</tbody></table>`;
-    }
-    document.getElementById('user-search')?.addEventListener('input', renderUsersTable);
-    document.getElementById('users-table')?.addEventListener('click', async ev => {
-      const b = ev.target.closest('[data-user-action]');
-      if (!b) return;
-      const id = b.dataset.id, action = b.dataset.userAction;
-      try {
-        if (action === 'delete' && !confirm('Supprimer définitivement cet utilisateur ?')) return;
-        if (action === 'block' || action === 'unblock') {
-          await adminCall('user_status', { userId:id, status: action === 'unblock' });
-        } else if (action === 'delete') {
-          await adminCall('user_delete', { userId:id });
-        } else if (action === 'sessions') {
-          const r = await adminCall('user_sessions', { userId:id });
-          const sessions = r.sessions || [];
-          const summary = sessions.map(x => `${x.$id} · ${x.clientName || 'Appareil'} · ${x.osName || ''} · ${x.ip || ''}`).join('\\n');
-          if (!sessions.length) { alert('Aucune session active.'); return; }
-          const sessionId = prompt('Sessions actives (copie l’ID à révoquer) :\\n\\n' + summary + '\\n\\nID de session à déconnecter :');
-          if (sessionId && confirm('Déconnecter cette session à distance ?')) {
-            await adminCall('user_session_delete', { userId:id, sessionId:sessionId.trim() });
-            alert('Session révoquée.');
-          }
-          return;
-        } else if (action === 'labels') {
-          const labels = prompt('Labels séparés par des virgules :');
-          if (labels === null) return;
-          await adminCall('user_labels', { userId:id, labels:labels.split(',').map(x=>x.trim()).filter(Boolean) });
-        } else if (action === 'edit') {
-          const current = cachedUsers.find(x=>x.id===id) || {};
-          const name = prompt('Nom :', current.name || '');
-          if (name === null) return;
-          const email = prompt('E-mail :', current.email || '');
-          if (email === null) return;
-          const password = prompt('Nouveau mot de passe (laisser vide pour ne pas modifier) :') || '';
-          await adminCall('user_update', { userId:id, name, email, password });
-        }
-        await refreshUsers();
-      } catch(e) { alert('Erreur : ' + e.message); }
-    });
-    document.getElementById('btn-create-user')?.addEventListener('click', async () => {
-      try {
-        const payload = {
-          name:document.getElementById('new-user-name').value.trim(),
-          email:document.getElementById('new-user-email').value.trim(),
-          password:document.getElementById('new-user-password').value,
-          phone:document.getElementById('new-user-phone').value.trim()
-        };
-        if (!payload.email || payload.password.length < 8) throw new Error('E-mail requis et mot de passe de 8 caractères minimum.');
-        const r = await adminCall('user_create', payload);
-        setStatus(usersStatus, 'Compte créé : ' + r.userId, 'success');
-        ['new-user-name','new-user-email','new-user-password','new-user-phone'].forEach(id=>document.getElementById(id).value='');
-        await refreshUsers();
-      } catch(e) { setStatus(usersStatus, e.message, 'error'); }
-    });
-
-    // Teams
-    async function refreshTeams() {
-      try { const r=await adminCall('teams_list'); out('teams-output',r.teams || r); setStatus(document.getElementById('teams-status'),'','info'); }
-      catch(e){ setStatus(document.getElementById('teams-status'),e.message,'error'); }
-    }
-    document.getElementById('btn-refresh-teams')?.addEventListener('click',refreshTeams);
-    document.getElementById('btn-create-team')?.addEventListener('click',async()=>{
-      try { const name=document.getElementById('team-name').value.trim(); if(!name) throw new Error('Nom requis.');
-        const r=await adminCall('team_create',{name}); out('teams-output',r); await refreshTeams();
-      } catch(e){setStatus(document.getElementById('teams-status'),e.message,'error');}
-    });
-    document.getElementById('btn-add-member')?.addEventListener('click',async()=>{
-      try { const r=await adminCall('team_add_member',{
-        teamId:document.getElementById('membership-team-id').value.trim(),
-        email:document.getElementById('membership-email').value.trim(),
-        roles:document.getElementById('membership-roles').value.split(',').map(x=>x.trim()).filter(Boolean)
-      }); out('teams-output',r); setStatus(document.getElementById('teams-status'),'Invitation créée.','success');
-      } catch(e){setStatus(document.getElementById('teams-status'),e.message,'error');}
-    });
-    document.getElementById('btn-list-team-members')?.addEventListener('click',async()=>{
-      try { const teamId=document.getElementById('team-members-team-id').value.trim(); const r=await adminCall('team_memberships_list',{teamId}); out('team-members-output',r.memberships||r); }
-      catch(e){out('team-members-output','Erreur : '+e.message);}
-    });
-    document.getElementById('btn-update-team-member')?.addEventListener('click',async()=>{
-      try { const teamId=document.getElementById('team-members-team-id').value.trim(),membershipId=document.getElementById('team-membership-id').value.trim();
-        const roles=document.getElementById('team-membership-roles').value.split(',').map(x=>x.trim()).filter(Boolean);
-        const r=await adminCall('team_membership_update',{teamId,membershipId,roles}); out('team-members-output',r);
-      } catch(e){out('team-members-output','Erreur : '+e.message);}
-    });
-    document.getElementById('btn-remove-team-member')?.addEventListener('click',async()=>{
-      try { const teamId=document.getElementById('team-members-team-id').value.trim(),membershipId=document.getElementById('team-membership-id').value.trim();
-        if(!confirm('Retirer ce membre de l’équipe ?')) return;
-        const r=await adminCall('team_membership_delete',{teamId,membershipId}); out('team-members-output',r);
-      } catch(e){out('team-members-output','Erreur : '+e.message);}
-    });
-
-    // Database explorer
-    document.getElementById('btn-load-collections')?.addEventListener('click',async()=>{
-      try { const r=await adminCall('db_collections'); out('collections-output',r.collections || r); setStatus(document.getElementById('database-status'),'Collections chargées.','success'); }
-      catch(e){setStatus(document.getElementById('database-status'),e.message,'error');}
-    });
-    const dbPayload = () => {
-      const collectionId=document.getElementById('db-collection-id').value.trim();
-      const documentId=document.getElementById('db-document-id').value.trim();
-      const raw=document.getElementById('db-document-data').value.trim();
-      let data={}; if(raw) data=JSON.parse(raw);
-      return {collectionId,documentId,data};
-    };
-    document.getElementById('btn-list-documents')?.addEventListener('click',async()=>{
-      try { const p=dbPayload(); const r=await adminCall('db_documents_list',p); out('documents-output',r.documents || r); }
-      catch(e){out('documents-output','Erreur : '+e.message);}
-    });
-    document.getElementById('btn-create-document')?.addEventListener('click',async()=>{
-      try { const p=dbPayload(); const r=await adminCall('db_document_create',p); out('documents-output',r); }
-      catch(e){out('documents-output','Erreur : '+e.message);}
-    });
-    document.getElementById('btn-update-document')?.addEventListener('click',async()=>{
-      try { const p=dbPayload(); const r=await adminCall('db_document_update',p); out('documents-output',r); }
-      catch(e){out('documents-output','Erreur : '+e.message);}
-    });
-    document.getElementById('btn-delete-document')?.addEventListener('click',async()=>{
-      try { const p=dbPayload(); if(!p.documentId || !confirm('Supprimer ce document ?')) return; const r=await adminCall('db_document_delete',p); out('documents-output',r); }
-      catch(e){out('documents-output','Erreur : '+e.message);}
-    });
-
-    // Storage
-    document.getElementById('btn-load-buckets')?.addEventListener('click',async()=>{
-      try { const r=await adminCall('storage_buckets'); out('buckets-output',r.buckets || r); setStatus(document.getElementById('storage-status'),'Buckets chargés.','success'); }
-      catch(e){setStatus(document.getElementById('storage-status'),e.message,'error');}
-    });
-    document.getElementById('btn-list-files')?.addEventListener('click',async()=>{
-      try { const bucketId=document.getElementById('storage-bucket-id').value.trim(); const r=await adminCall('storage_files',{bucketId}); out('files-output',r.files || r); }
-      catch(e){out('files-output','Erreur : '+e.message);}
-    });
-    document.getElementById('btn-delete-file')?.addEventListener('click',async()=>{
-      try { const bucketId=document.getElementById('storage-bucket-id').value.trim(),fileId=document.getElementById('storage-file-id').value.trim();
-        if(!confirm('Supprimer définitivement ce fichier ?')) return;
-        const r=await adminCall('storage_file_delete',{bucketId,fileId}); out('files-output',r);
-      } catch(e){out('files-output','Erreur : '+e.message);}
-    });
-
-    // Messaging
-    document.getElementById('btn-send-message')?.addEventListener('click',async()=>{
-      try {
-        const channel=document.getElementById('message-channel').value;
-        const userId=document.getElementById('message-user-id').value.trim();
-        const topicId=document.getElementById('message-topic-id').value.trim();
-        const subject=document.getElementById('message-subject').value.trim();
-        const content=document.getElementById('message-content').value.trim();
-        if(!content || (!userId && !topicId)) throw new Error('Contenu et destinataire (ID utilisateur ou topic) requis.');
-        if(!confirm('Confirmer l’envoi de ce message ?')) return;
-        const r=await adminCall('message_send',{channel,userId,topicId,subject,content});
-        out('messaging-output',r); setStatus(document.getElementById('messaging-status'),'Message transmis à Appwrite Messaging.','success');
-      } catch(e){setStatus(document.getElementById('messaging-status'),e.message,'error');}
-    });
-
-    // AI role-based audits and assistant: show plain-text provider reports,
-    // never stringify an empty wrapper object as "{}".
-    const aiResultText = r => {
-      if (!r || typeof r !== 'object') return String(r ?? 'Aucun résultat retourné.');
-      if (r.providers) {
-        const p = r.providers, parts = [];
-        if (p.gemini) parts.push('════════ RAPPORT GEMINI ════════\n' + p.gemini);
-        else if (p.errors?.gemini) parts.push('GEMINI INDISPONIBLE\n' + p.errors.gemini);
-        if (p.groq) parts.push('════════ RAPPORT GROQ ════════\n' + p.groq);
-        else if (p.errors?.groq) parts.push('GROQ INDISPONIBLE\n' + p.errors.groq);
-        if (p.combined) parts.push('════════ SYNTHÈSE COMMUNE ════════\n' + p.combined);
-        if (p.errors?.synthesis) parts.push(p.errors.synthesis);
-        if (parts.length) return parts.join('\n\n');
-      }
-      if (typeof r.report === 'string' && r.report.trim()) return r.report;
-      if (typeof r.answer === 'string' && r.answer.trim()) return r.answer;
-      if (r.report && typeof r.report.report === 'string') return r.report.report;
-      return 'Le serveur n’a renvoyé aucun texte de rapport. Vérifie les journaux de la fonction Appwrite et la réponse du fournisseur IA.';
-    };
-    const renderProviderOutputs = (prefix, r) => {
-      const p = r?.providers || {};
-      out(prefix+'-gemini-output', p.gemini || (p.errors?.gemini ? 'Indisponible : '+p.errors.gemini : 'Aucun résultat Gemini demandé.'));
-      out(prefix+'-groq-output', p.groq || (p.errors?.groq ? 'Indisponible : '+p.errors.groq : 'Aucun résultat Groq demandé.'));
-      out(prefix==='analysis'?'analysis-output':'assistant-output', p.combined || r?.report || r?.answer || 'Aucune synthèse commune retournée.');
-    };
-    document.querySelectorAll('[data-analysis]').forEach(btn=>btn.addEventListener('click',async()=>{
-      const kind=btn.dataset.analysis, status=document.getElementById('analysis-status');
-      const providerMode=document.getElementById('analysis-provider')?.value || 'both';
-      btn.disabled=true;
-      setStatus(status,'Analyse « '+kind+' » en cours avec '+(providerMode==='both'?'Gemini et Groq':providerMode)+'…','info');
-      out('analysis-output','Analyse en cours… Les deux modèles peuvent prendre un peu de temps.');
-      try {
-        const r=await adminCall('run_analysis',{analysisType:kind,providerMode});
-        const text=aiResultText(r);
-        if (!text || text.startsWith('Le serveur n’a renvoyé')) throw new Error(text);
-        renderProviderOutputs('analysis',r);
-        const partial = r.providers?.errors && Object.keys(r.providers.errors).length;
-        setStatus(status,partial?'Rapport partiel enregistré : un fournisseur ou la synthèse est indisponible.':'Rapports Gemini, Groq et synthèse enregistrés.','success');
-        const h=await adminCall('list_reports');
-        out('analysis-history',(h.reports||[]).map(x=>`${formatDate(x.createdAt||x.$createdAt)} · ${x.analysisType||'audit'}\n${x.report||'Rapport sans texte enregistré.'}`).join('\n\n') || 'Aucun rapport.');
-      } catch(e){setStatus(status,e.message,'error');out('analysis-output','Erreur : '+e.message);}
-      finally { btn.disabled=false; }
-    }));
-    document.getElementById('btn-analyze-github-audit')?.addEventListener('click',async()=>{
-      const btn=document.getElementById('btn-analyze-github-audit');
-      const status=document.getElementById('github-audit-status');
-      btn.disabled=true;
-      setStatus(status,'Récupération du dernier audit GitHub et analyse par Gemini + Groq…','info');
-      out('github-audit-combined','Analyse en cours…');
-      try {
-        const r=await adminCall('analyze_github_audit',{providerMode:'both'});
-        const providers=r.providers||{};
-        out('github-audit-gemini',providers.gemini || ('Indisponible : '+(providers.errors?.gemini||'aucun résultat')));
-        out('github-audit-groq',providers.groq || ('Indisponible : '+(providers.errors?.groq||'aucun résultat')));
-        out('github-audit-combined',providers.combined || r.report || 'Aucune synthèse retournée.');
-        const partial=providers.errors && Object.keys(providers.errors).length;
-        setStatus(status,partial?'Rapport partiel : un fournisseur ou la synthèse est indisponible.':'Audit analysé et rapport enregistré dans Appwrite.','success');
-      } catch(e) { setStatus(status,e.message,'error'); out('github-audit-combined','Erreur : '+e.message); }
-      finally { btn.disabled=false; }
-    });
-
-    document.getElementById('btn-assistant-ask')?.addEventListener('click',async()=>{
-      const question=document.getElementById('assistant-question').value.trim();
-      const providerMode=document.getElementById('assistant-provider')?.value || 'both';
-      if(!question) return setStatus(document.getElementById('assistant-status'),'Écris une demande.','error');
-      const btn=document.getElementById('btn-assistant-ask');
-      btn.disabled=true;
-      setStatus(document.getElementById('assistant-status'),'Gemini et Groq préparent leurs réponses…','info');
-      out('assistant-output','Réponse en cours…');
-      try {
-        const r=await adminCall('assistant',{question,providerMode});
-        const answer=aiResultText(r);
-        if (!answer || answer.startsWith('Le serveur n’a renvoyé')) throw new Error(answer);
-        renderProviderOutputs('assistant',r);
-        const partial = r.providers?.errors && Object.keys(r.providers.errors).length;
-        setStatus(document.getElementById('assistant-status'),partial?'Réponse partielle : un fournisseur est indisponible.':'Réponses séparées et synthèse prêtes.','success');
-      } catch(e){
-        setStatus(document.getElementById('assistant-status'),e.message,'error');
-        out('assistant-output','Erreur : '+e.message);
-      } finally { btn.disabled=false; }
-    });
-
-    // Load richer reports and teams lazily when opening their workspace.
-    document.querySelectorAll('.dash-tab[data-pane]').forEach(tab => {
-      tab.addEventListener('click', () => {
-        if (tab.dataset.pane === 'pane-teams') refreshTeams();
-      });
-    });
-
-    // More accurate preview sizing: use the available content width, account for
-    // device orientation, and recompute after layout changes.
-    function applyPreviewSize() {
-      const w = previewLandscape ? previewH : previewW;
-      const h = previewLandscape ? previewW : previewH;
-      const parent = previewWrapper.parentElement;
-      const style = getComputedStyle(parent);
-      const availableWidth = Math.max(240, parent.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight) - 8);
-      const scale = Math.min(1, availableWidth / w);
-      previewIframe.style.width = w + 'px';
-      previewIframe.style.height = h + 'px';
-      previewIframe.style.transform = `scale(${scale})`;
-      previewWrapper.style.width = Math.round(w * scale) + 'px';
-      previewWrapper.style.height = Math.round(h * scale) + 'px';
-      previewWrapper.style.marginLeft = 'auto';
-      previewWrapper.style.marginRight = 'auto';
-    }
-    if ('ResizeObserver' in window) {
-      const previewObserver = new ResizeObserver(() => applyPreviewSize());
-      previewObserver.observe(previewWrapper.parentElement);
-    }
 
     checkAdminSession();
   </script>
