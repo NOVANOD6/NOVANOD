@@ -578,6 +578,11 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
 @media(max-width:980px){.dash-tabs{grid-template-columns:repeat(4,minmax(0,1fr))!important}}
 @media(max-width:620px){body{padding:10px!important}.header-brand{padding:12px 14px!important;border-radius:17px!important}.dash-tabs{display:flex!important;overflow-x:auto!important;gap:8px!important;padding:2px 2px 10px!important;scrollbar-width:thin}.dash-tab{flex:0 0 104px!important;min-height:78px!important;padding:9px 6px!important;border-radius:13px!important}.nav-illustration{width:28px;height:28px}.dash-label{font-size:10px}.admin-toolbar{align-items:stretch;flex-direction:column}.admin-search{width:100%}.glass-card{padding:15px!important;border-radius:16px!important}.dashboard-header{padding:12px!important}}
 
+
+/* NOVANOD ADMIN REDESIGN — responsive, editorial, accessible */
+:root{--red-primary:#d94a3a;--red-hover:#bd382b;--dark-brown:#32121f;--dark-brown-shadow:#210b14;--text-red:#c83f32;--cream-bg:#f7f2e9;--cream-card:#fffdf8;--card-bg:#fffdf8;--font-heading:'Plus Jakarta Sans',sans-serif;--font-body:'Plus Jakarta Sans',sans-serif}
+body{display:block;min-height:100vh;padding:24px clamp(14px,3vw,42px);background:#f7f2e9;color:#32121f}.admin-wrapper{max-width:1440px;margin:0 auto;width:100%}.header-brand{flex-direction:row;justify-content:flex-start;gap:14px;text-align:left;padding:14px 4px 24px;margin-bottom:8px}.brand-logo{width:48px;height:48px;margin:0}.admin-title{font-size:clamp(22px,3vw,30px);letter-spacing:-.7px;color:#32121f}.admin-badge{margin:0;background:#f3e3dc;color:#9f3028;box-shadow:none;border-radius:999px;padding:7px 12px}.glass-card{background:#fffdf8;border:1px solid #e8dfd2;border-radius:22px;padding:clamp(18px,2.5vw,28px);margin-bottom:18px;box-shadow:0 8px 30px rgba(50,18,31,.055);backdrop-filter:none}.card-title{font-size:clamp(19px,2vw,24px);letter-spacing:-.6px;color:#32121f;margin-bottom:10px}.hint{color:#74665f;line-height:1.65}.btn-3d{border:0!important;border-radius:13px!important;box-shadow:none!important;background:#d94a3a!important;color:#fff!important;min-height:48px;padding:12px 18px!important;font-weight:750!important;transition:transform .18s,background .18s}.btn-3d:hover{background:#bd382b!important;transform:translateY(-1px)}.btn-3d:disabled{opacity:.55;transform:none}.btn-dark,.btn-secondary{background:#32121f!important;color:#fff!important}.input-field,textarea.input-field,select.input-field{border:1px solid #ded4c8!important;border-radius:12px!important;background:#fff!important;color:#32121f!important;min-height:46px;padding:12px 14px!important}.input-field:focus,textarea.input-field:focus{border-color:#d94a3a!important;box-shadow:0 0 0 3px rgba(217,74,58,.12)!important}.dash-tab{border:1px solid #e6dbd0!important;border-radius:11px!important;background:#fffdf8!important;color:#59464a!important;padding:10px 14px!important;min-height:42px}.dash-tab.active{background:#32121f!important;color:#fff!important;border-color:#32121f!important}.dash-pane{padding-top:12px}.user-row,.admin-output{background:#fffaf0!important;border:1px solid #e9dfd1!important;border-radius:14px!important;padding:16px!important;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.65;color:#45313a}.admin-output{max-height:520px;overflow:auto}.stats-row{gap:12px}.stat-box{background:#f8eee7!important;border:1px solid #efddd2!important;border-radius:16px!important;box-shadow:none!important;padding:18px!important}.stat-box .num{color:#b93b30!important;font-size:clamp(25px,4vw,34px)!important}.admin-form-grid{gap:12px}.admin-note{background:#f8eee7;border-left:3px solid #d94a3a;padding:12px 14px;border-radius:8px;color:#66565b}#pane-reports>.glass-card:first-child{background:linear-gradient(120deg,#32121f 0%,#54202d 58%,#8e332d 100%);color:#fff;border:0;position:relative;overflow:hidden}#pane-reports>.glass-card:first-child .card-title,#pane-reports>.glass-card:first-child .hint{color:#fff}#pane-reports>.glass-card:first-child .hint{opacity:.82;max-width:760px}#reports-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr));gap:14px}.report-card{background:#fffdf8;border:1px solid #e8dfd2;border-radius:17px;padding:18px;min-width:0}.report-card h4{font-size:16px;color:#32121f;margin-bottom:7px}.report-meta{font-size:12px;color:#81716b;margin-bottom:12px}.report-summary{color:#59464a;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}.report-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:14px 0}.report-metric{background:#f8eee7;border-radius:12px;padding:10px;text-align:center}.report-metric strong{display:block;color:#b93b30;font-size:20px}.report-metric span{display:block;font-size:11px;color:#74665f;margin-top:3px}.metric-track{height:7px;border-radius:99px;background:#eee5dc;overflow:hidden;margin-top:6px}.metric-fill{height:100%;background:#d94a3a;border-radius:99px}#pane-analytics h4{font-size:16px;color:#32121f;margin:20px 0 8px}#pane-analytics .admin-output{min-height:100px}@media(min-width:900px){#pane-analytics .glass-card:nth-child(2) .admin-form-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.glass-card{padding:26px}}@media(max-width:640px){body{padding:12px 10px}.header-brand{padding:10px 4px 18px}.glass-card{border-radius:17px;padding:17px 14px}.admin-wrapper{max-width:100%}.report-metrics{gap:6px}.report-metric{padding:9px 5px}.report-metric strong{font-size:18px}.dash-tab{white-space:nowrap}.admin-output{max-height:420px}}
+
 </style>
 </head>
 <body>
@@ -1077,26 +1082,45 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       try { return new Date(iso).toLocaleString('fr-FR'); } catch (e) { return iso; }
     }
 
+    function escapeReportHtml(value) {
+      return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+    }
+    function reportPlainText(raw) {
+      if (typeof raw !== 'string') return JSON.stringify(raw ?? {}, null, 2);
+      try {
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+          return Object.entries(parsed).map(([key,value]) => {
+            const label=key.replace(/([A-Z])/g,' $1').replace(/[_-]/g,' ').replace(/^./,x=>x.toUpperCase());
+            return label+' : '+(typeof value==='object'?JSON.stringify(value,null,2):String(value));
+          }).join('\\n\\n');
+        }
+      } catch {}
+      return raw;
+    }
+    function reportMetric(label,value,total) {
+      const n=Number(value)||0, pct=total>0?Math.max(0,Math.min(100,n/total*100)):0;
+      return '<div class="report-metric"><strong>'+escapeReportHtml(n)+'</strong><span>'+escapeReportHtml(label)+'</span><div class="metric-track"><div class="metric-fill" style="width:'+pct+'%"></div></div></div>';
+    }
     function renderReports(reports) {
       if (!reports || reports.length === 0) {
         reportsList.textContent = '';
-        const empty = document.createElement('div');
-        empty.className = 'hint';
-        empty.textContent = "Aucun rapport pour l'instant.";
-        reportsList.append(empty);
-        return;
+        const empty=document.createElement('div'); empty.className='hint';
+        empty.textContent='Aucun rapport pour le moment. Lance une analyse pour créer le premier rapport.';
+        reportsList.append(empty); return;
       }
-      // Les rapports proviennent du backend : encoder toutes les valeurs avant insertion HTML.
-      const safe = value => String(value ?? '').replace(/[&<>"']/g, char => ({
-        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-      }[char]));
-      reportsList.innerHTML = reports.map(r => `
-        <article class="user-row">
-          <div class="u-name">${safe(formatDate(r.createdAt || r.$createdAt))}</div>
-          <div style="white-space: pre-wrap; margin-top:4px;">${safe(r.report || '')}</div>
-          <div class="hint" style="margin-top:6px; margin-bottom:0;">${safe(r.statsSummary || '').replace(/\n/g, ' · ')}</div>
-        </article>
-      `).join('');
+      reportsList.innerHTML = reports.map(r => {
+        const total=Number(r.totalUsers)||0, buyers=Number(r.buyerCount)||0, visitors=Number(r.visitorCount)||0;
+        const type=String(r.analysisType||'Analyse').replace(/[_-]/g,' ');
+        const full=reportPlainText(r.report||'Rapport sans contenu enregistré.');
+        const preview=full.length>1400?full.slice(0,1400)+'…':full;
+        return '<article class="report-card"><h4>'+escapeReportHtml(type.charAt(0).toUpperCase()+type.slice(1))+'</h4><div class="report-meta">'+escapeReportHtml(formatDate(r.createdAt||r.$createdAt))+'</div>'+
+          (total?'<div class="report-metrics">'+reportMetric('Comptes',total,total)+reportMetric('Acheteurs',buyers,total)+reportMetric('Visiteurs',visitors,total)+'</div>':'')+
+          '<div class="report-summary">'+escapeReportHtml(preview)+'</div>'+
+          (full.length>1400?'<details style="margin-top:12px"><summary style="cursor:pointer;font-weight:700;color:#b93b30">Lire le rapport complet</summary><div class="report-summary" style="margin-top:10px">'+escapeReportHtml(full)+'</div></details>':'')+
+          (r.statsSummary?'<details style="margin-top:12px"><summary style="cursor:pointer;font-weight:700;color:#b93b30">Voir les données utilisées</summary><div class="report-summary" style="margin-top:8px">'+escapeReportHtml(r.statsSummary)+'</div></details>':'')+
+          '</article>';
+      }).join('');
     }
 
     async function refreshReports() {
