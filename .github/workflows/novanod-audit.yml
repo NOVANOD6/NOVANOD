@@ -4,6 +4,8 @@ on:
   workflow_dispatch:
   push:
     branches: [main, master]
+  pull_request:
+    branches: [main, master]
   schedule:
     - cron: '0 4 * * 1'
 
@@ -31,6 +33,20 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Préparer les dossiers de rapports
         run: mkdir -p artifacts
+      - name: Démarrer une prévisualisation de la Pull Request sous /NOVANOD/
+        if: github.event_name == 'pull_request'
+        run: |
+          node scripts/serve-pages-preview.mjs > /tmp/novanod-preview.log 2>&1 &
+          echo $! > /tmp/novanod-preview.pid
+          for attempt in {1..20}; do
+            if curl --fail --silent http://127.0.0.1:4173/NOVANOD/ > /dev/null; then
+              echo "SITE_URL=http://127.0.0.1:4173/NOVANOD/" >> "$GITHUB_ENV"
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/novanod-preview.log
+          exit 1
       - name: Tester le site avec Playwright
         id: playwright
         continue-on-error: true
@@ -53,7 +69,8 @@ jobs:
         if: always()
         run: node scripts/build-audit-summary.mjs
       - name: Envoyer le rapport à Appwrite
-        if: always() && hashFiles('artifacts/audit-summary.json') != ''
+        # Les audits de Pull Request restent dans les artefacts ; aucun secret Appwrite n'est requis.
+        if: always() && hashFiles('artifacts/audit-summary.json') != '' && github.event_name != 'pull_request'
         env:
           APPWRITE_ENDPOINT: ${{ secrets.APPWRITE_ENDPOINT }}
           APPWRITE_PROJECT_ID: ${{ secrets.APPWRITE_PROJECT_ID }}

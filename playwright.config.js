@@ -17,9 +17,9 @@ export default defineConfig({
     ignoreHTTPSErrors: false,
   },
   projects: [
-    { name: 'chromium-mobile', use: { ...devices['Pixel 7'] } },
-    { name: 'chromium-tablet', use: { ...devices['iPad Mini'] } },
-    { name: 'chromium-desktop', use: { ...devices['Desktop Chrome'] } },
+    { name: 'chromium-mobile', use: { ...devices['Pixel 7'], browserName: 'chromium' } },
+    { name: 'chromium-tablet', use: { ...devices['iPad Mini'], browserName: 'chromium' } },
+    { name: 'chromium-desktop', use: { ...devices['Desktop Chrome'], browserName: 'chromium' } },
   ],
   outputDir: 'artifacts/test-results',
   timeout: 45000,
