@@ -33,6 +33,20 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Préparer les dossiers de rapports
         run: mkdir -p artifacts
+      - name: Démarrer une prévisualisation de la Pull Request sous /NOVANOD/
+        if: github.event_name == 'pull_request'
+        run: |
+          node scripts/serve-pages-preview.mjs > /tmp/novanod-preview.log 2>&1 &
+          echo $! > /tmp/novanod-preview.pid
+          for attempt in {1..20}; do
+            if curl --fail --silent http://127.0.0.1:4173/NOVANOD/ > /dev/null; then
+              echo "SITE_URL=http://127.0.0.1:4173/NOVANOD/" >> "$GITHUB_ENV"
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/novanod-preview.log
+          exit 1
       - name: Tester le site avec Playwright
         id: playwright
         continue-on-error: true
