@@ -1133,15 +1133,18 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     let usersLoadedOnce = false;
 
     function renderUserRow(u, type) {
+      const safe = value => String(value ?? '').replace(/[&<>"']/g, char => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[char]));
       const verifBadge = type === 'buyer'
         ? `<span class="u-badge ${u.verified ? 'verified' : 'unverified'}">${u.verified ? 'vérifié' : 'non vérifié'}</span>`
         : '';
       return `
         <div class="user-row">
-          <span class="u-name">${(u.name || '(sans nom)')}</span>${verifBadge}
-          ${u.email ? `<div class="u-email">${u.email}</div>` : ''}
-          ${u.phone ? `<div class="u-email">${u.phone}</div>` : ''}
-          <div class="hint" style="margin:2px 0 0;">Inscrit le ${formatDate(u.registeredAt)}</div>
+          <span class="u-name">${safe(u.name || '(sans nom)')}</span>${verifBadge}
+          ${u.email ? `<div class="u-email">${safe(u.email)}</div>` : ''}
+          ${u.phone ? `<div class="u-email">${safe(u.phone)}</div>` : ''}
+          <div class="hint" style="margin:2px 0 0;">Inscrit le ${safe(formatDate(u.registeredAt))}</div>
         </div>`;
     }
 
