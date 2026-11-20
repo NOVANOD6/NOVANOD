@@ -1,14 +1,14 @@
 import { test, expect } from '@playwright/test';
 
 test('la page d’accueil répond sans erreur HTTP', async ({ page }) => {
-  const response = await page.goto('/', { waitUntil: 'domcontentloaded' });
+  const response = await page.goto('./', { waitUntil: 'domcontentloaded' });
   expect(response, 'Aucune réponse HTTP reçue').not.toBeNull();
   expect(response.status(), `HTTP ${response.status()} sur la page d’accueil`).toBeLessThan(400);
   await expect(page.locator('body')).toBeVisible();
 });
 
 test('la page ne déborde pas horizontalement sur le viewport testé', async ({ page }) => {
-  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
   const dimensions = await page.evaluate(() => ({
     viewport: document.documentElement.clientWidth,
     document: document.documentElement.scrollWidth,
@@ -20,7 +20,7 @@ test('la page ne déborde pas horizontalement sur le viewport testé', async ({ 
 });
 
 test('tous les liens internes restent dans le sous-répertoire GitHub Pages et répondent', async ({ page, request, baseURL }) => {
-  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
 
   const base = new URL(baseURL);
   const hrefs = await page.locator('a[href]').evaluateAll(nodes =>
@@ -47,7 +47,7 @@ test('tous les liens internes restent dans le sous-répertoire GitHub Pages et r
 test('aucune exception JavaScript non gérée au chargement', async ({ page }) => {
   const pageErrors = [];
   page.on('pageerror', error => pageErrors.push(error.message));
-  await page.goto('/', { waitUntil: 'networkidle', timeout: 30000 }).catch(() => {});
+  await page.goto('./', { waitUntil: 'networkidle', timeout: 30000 }).catch(() => {});
   await page.waitForTimeout(1000);
   expect(pageErrors, pageErrors.join('\\n')).toEqual([]);
 });
