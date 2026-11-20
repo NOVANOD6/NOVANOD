@@ -578,7 +578,150 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
 @media(max-width:980px){.dash-tabs{grid-template-columns:repeat(4,minmax(0,1fr))!important}}
 @media(max-width:620px){body{padding:10px!important}.header-brand{padding:12px 14px!important;border-radius:17px!important}.dash-tabs{display:flex!important;overflow-x:auto!important;gap:8px!important;padding:2px 2px 10px!important;scrollbar-width:thin}.dash-tab{flex:0 0 104px!important;min-height:78px!important;padding:9px 6px!important;border-radius:13px!important}.nav-illustration{width:28px;height:28px}.dash-label{font-size:10px}.admin-toolbar{align-items:stretch;flex-direction:column}.admin-search{width:100%}.glass-card{padding:15px!important;border-radius:16px!important}.dashboard-header{padding:12px!important}}
 
-</style>
+
+    
+    /* ===== NOVANOD ADMIN — refonte compacte / editorial ===== */
+    :root {
+      --red-primary:#E64A38;
+      --red-hover:#cf3d2e;
+      --dark-brown:#3B1420;
+      --dark-brown-shadow:#260c14;
+      --text-red:#B9362A;
+      --cream-bg:#FFFBD0;
+      --cream-card:#fffef0;
+      --card-bg:#fffef0;
+      --font-heading:'Plus Jakarta Sans',sans-serif;
+      --font-body:'Plus Jakarta Sans',sans-serif;
+    }
+    html { background:#FFFBD0; }
+    body {
+      display:block; min-height:100vh; padding:24px clamp(14px,3vw,44px);
+      color:#3B1420; background:#FFFBD0;
+      font-family:'Plus Jakarta Sans',sans-serif;
+    }
+    .admin-wrapper { max-width:1440px; margin:0 auto; }
+    .header-brand {
+      min-height:72px; display:flex; flex-direction:row; align-items:center;
+      justify-content:flex-start; gap:14px; text-align:left;
+      margin:0 0 22px; padding:10px 0 16px;
+      background:transparent; border:0; border-bottom:1px solid rgba(59,20,32,.16);
+      border-radius:0; box-shadow:none;
+    }
+    .brand-logo { width:42px; height:42px; margin:0; border-radius:12px; box-shadow:none; }
+    .admin-title { color:#3B1420; font-size:20px; font-weight:800; letter-spacing:-.7px; }
+    .admin-badge { margin:0 0 0 4px; padding:6px 10px; border-radius:5px; background:#E64A38; color:#fff; box-shadow:none; font-size:9px; letter-spacing:1px; }
+    #screen-login,#screen-pending { max-width:460px; margin:7vh auto 0; }
+    #screen-admin { width:100%; }
+    .glass-card {
+      min-width:0; margin:0 0 14px; padding:20px;
+      background:#fffef0; border:1px solid rgba(59,20,32,.10);
+      border-radius:10px; box-shadow:0 3px 12px rgba(59,20,32,.045);
+      backdrop-filter:none; color:#3B1420;
+    }
+    .admin-grid { gap:12px; align-items:start; }
+    .card-title,.admin-section-title {
+      margin-bottom:13px; color:#B9362A!important;
+      font-size:15px; line-height:1.35; font-weight:800; letter-spacing:-.35px;
+    }
+    .dashboard-header {
+      min-height:58px; margin:0 0 16px; padding:12px 16px;
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      color:#FFFBD0; background:#3B1420; border:0; border-radius:9px; box-shadow:none;
+    }
+    .dashboard-header .user-badge { color:#FFFBD0; font-size:12px; }
+    .status-dot { width:7px; height:7px; background:#E64A38; box-shadow:none; }
+    .logout-btn { padding:8px 12px; border:1px solid rgba(255,251,208,.25); border-radius:6px; background:#E64A38; color:#fff; }
+    .dash-tabs {
+      position:static; display:flex; flex-wrap:wrap; gap:5px;
+      margin:0 0 18px; padding:0; overflow:visible;
+      background:transparent; border:0; border-bottom:1px solid rgba(59,20,32,.15);
+      border-radius:0; box-shadow:none; backdrop-filter:none;
+    }
+    .dash-tab {
+      flex:0 0 auto; min-height:38px; margin:0; padding:9px 13px;
+      color:#3B1420; background:transparent; border:0;
+      border-bottom:2px solid transparent; border-radius:0;
+      font-size:11px; font-weight:700; opacity:.68;
+    }
+    .dash-tab:hover { color:#B9362A; background:rgba(230,74,56,.05); }
+    .dash-tab.active {
+      color:#B9362A; background:transparent; border:0;
+      border-bottom:2px solid #E64A38; border-radius:0; box-shadow:none; opacity:1;
+    }
+    .dash-pane.active { animation:adminPaneIn .18s ease-out; }
+    @keyframes adminPaneIn { from{opacity:.5;transform:translateY(4px)} to{opacity:1;transform:none} }
+    .stats-row { gap:10px; margin:0 0 14px; }
+    .stat-box {
+      min-width:0; padding:13px 15px; text-align:left;
+      background:#fffef0; border:0; border-left:3px solid #E64A38;
+      border-radius:4px; box-shadow:0 2px 9px rgba(59,20,32,.04);
+    }
+    .stat-box .num { color:#3B1420; font-size:25px; letter-spacing:-1px; }
+    .stat-box .lbl { margin-top:5px; color:#3B1420; font-size:9px; letter-spacing:.7px; }
+    .form-label { margin:0 0 6px; color:#3B1420; font-size:10px; letter-spacing:.55px; }
+    .input-field,textarea.input-field,select.input-field {
+      min-height:42px; margin-bottom:12px; padding:10px 12px;
+      color:#3B1420; background:#fff; border:1px solid rgba(59,20,32,.19);
+      border-radius:6px; font-size:12px; font-weight:600; box-shadow:none;
+    }
+    .input-field::placeholder { color:rgba(59,20,32,.45); }
+    .input-field:focus,textarea.input-field:focus {
+      border-color:#E64A38; background:#fff; box-shadow:0 0 0 3px rgba(230,74,56,.10);
+    }
+    textarea.input-field { min-height:120px; }
+    .btn-3d {
+      width:auto; min-width:120px; min-height:40px; height:auto;
+      margin:0 6px 8px 0; padding:10px 15px;
+      display:inline-flex; border:1px solid #E64A38; border-radius:6px;
+      background:#E64A38; color:#fff; box-shadow:none;
+      font-size:11px; font-weight:800; letter-spacing:.1px;
+    }
+    .btn-3d:hover:not(:disabled) { background:#cf3d2e; transform:translateY(-1px); box-shadow:0 4px 10px rgba(230,74,56,.15); }
+    .btn-3d:active:not(:disabled) { transform:translateY(0); box-shadow:none; }
+    .btn-3d.btn-dark,.btn-3d.btn-secondary {
+      color:#3B1420!important; background:transparent!important;
+      border:1px solid rgba(59,20,32,.24)!important; box-shadow:none!important;
+    }
+    .auth-tabs { padding:3px; border:0; border-radius:7px; background:rgba(59,20,32,.06); }
+    .auth-tab { padding:10px; border-radius:5px; font-size:12px; }
+    .auth-tab.active { color:#fff; background:#3B1420; box-shadow:none; }
+    .admin-note { padding:11px 13px; border:0; border-left:3px solid #E64A38; border-radius:3px; background:rgba(230,74,56,.07); }
+    .admin-table-wrap { overflow:auto; border:1px solid rgba(59,20,32,.12); border-radius:7px; }
+    .admin-table { background:#fffef0; font-size:11px; }
+    .admin-table th { padding:11px 12px; background:#3B1420; color:#FFFBD0; }
+    .admin-table td { padding:10px 12px; border-bottom:1px solid rgba(59,20,32,.09); }
+    .admin-action { padding:6px 9px; border:1px solid rgba(59,20,32,.2); border-radius:5px; background:transparent; color:#3B1420; font-size:10px; }
+    .admin-action.danger { color:#fff; background:#E64A38; border-color:#E64A38; }
+    .admin-output { min-height:56px; padding:14px; background:#fffef0; border:1px solid rgba(59,20,32,.12); border-radius:7px; font-size:11px; }
+    .user-row { padding:11px 12px; border:0; border-bottom:1px solid rgba(59,20,32,.1); border-radius:0; background:transparent; }
+    .file-drop { padding:15px; border:1px dashed rgba(230,74,56,.55); border-radius:7px; background:rgba(230,74,56,.035); }
+    .id-copy-box { border:1px dashed #E64A38; border-radius:6px; background:rgba(230,74,56,.045); }
+    .status-msg { padding:10px 12px; border-radius:6px; text-align:left; }
+    .preview-frame-wrapper { border:1px solid #3B1420; border-radius:8px; box-shadow:none; }
+    .info-row { border-bottom:1px solid rgba(59,20,32,.1); }
+    @media (min-width:1100px) {
+      .admin-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+      .admin-grid > .glass-card { margin:0; }
+    }
+    @media (max-width:760px) {
+      body { padding:12px; }
+      .header-brand { min-height:58px; margin-bottom:15px; padding:8px 0 12px; }
+      .brand-logo { width:36px; height:36px; }
+      .admin-title { font-size:17px; }
+      .dashboard-header { padding:11px 12px; }
+      .dash-tabs { display:flex; flex-wrap:nowrap; overflow-x:auto; padding-bottom:2px; }
+      .dash-tab { flex:0 0 auto; white-space:nowrap; }
+      .glass-card { padding:15px; border-radius:8px; }
+      .stats-row { flex-wrap:wrap; }
+      .stat-box { flex:1 1 calc(50% - 8px); }
+      .admin-form-grid { grid-template-columns:1fr; }
+      .btn-3d { min-height:42px; }
+    }
+    @media (prefers-reduced-motion:reduce) {
+      *,*::before,*::after { animation-duration:.01ms!important; transition-duration:.01ms!important; scroll-behavior:auto!important; }
+    }
+
+  </style>
 </head>
 <body>
 
