@@ -449,6 +449,71 @@
     .info-row:last-child { border-bottom: none; }
     .info-row .k { font-weight: 800; color: var(--dark-brown); }
     .info-row .v { color: var(--text-red); word-break: break-all; text-align: right; }
+  
+    /* ===== NOVANOD ADMIN V2 — refonte visuelle ===== */
+    :root{
+      --red-primary:#E64A38;--red-hover:#cf3829;--dark-brown:#3B1420;
+      --dark-brown-shadow:#260b13;--text-red:#B9362A;--cream-bg:#FFFBD0;
+      --cream-card:#FFFFE8;--card-bg:#FFFDF0;
+      --font-heading:'Fredoka',sans-serif;--font-body:'Plus Jakarta Sans',sans-serif;
+    }
+    body{
+      display:block;min-height:100vh;padding:24px clamp(14px,3vw,42px);
+      background:radial-gradient(ellipse at 12% 0%,#fff5b7 0%,#FFFBD0 48%,#f7e9ad 100%);
+    }
+    .admin-wrapper{max-width:1440px;margin:0 auto;width:100%;animation:fadeUp .35s ease both}
+    .header-brand{flex-direction:row;justify-content:flex-start;gap:14px;text-align:left;margin:0 0 22px;padding:16px 20px;background:#3B1420;border:2px solid #3B1420;border-radius:22px;box-shadow:0 6px 0 #260b13}
+    .brand-logo{width:48px;height:48px;margin:0;box-shadow:none}
+    .admin-title{font-size:27px;color:#FFFBD0;line-height:1}
+    .admin-badge{margin:0 0 0 4px;background:#E64A38;color:#FFFBD0;letter-spacing:.7px}
+    .glass-card{background:#FFFFE8;border:2px solid #3B1420;border-radius:20px;padding:clamp(16px,2vw,24px);box-shadow:0 4px 0 #3B1420,0 12px 28px rgba(59,20,32,.09);backdrop-filter:none}
+    #screen-login,#screen-pending{max-width:540px;margin:6vh auto}
+    #screen-admin{width:100%}
+    .dashboard-header{border:2px solid #3B1420;border-radius:18px;padding:16px 20px;box-shadow:0 4px 0 #260b13}
+    .status-dot{background:#E64A38;box-shadow:0 0 0 4px rgba(230,74,56,.2)}
+    .dash-tabs{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:9px;overflow:visible;margin:0 0 20px;padding:0}
+    .dash-tab{min-width:0;min-height:88px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;white-space:normal;text-align:center;padding:12px 8px;border:2px solid #3B1420;border-radius:16px;background:#FFFFE8;opacity:1;color:#3B1420;box-shadow:0 3px 0 #3B1420;transition:transform .15s,background .15s}
+    .dash-tab:hover{transform:translateY(-2px);background:#FFFBD0}
+    .dash-tab.active{background:#E64A38;color:#FFFBD0;border-color:#3B1420;box-shadow:0 3px 0 #3B1420}
+    .nav-illustration{width:34px;height:34px;display:block;flex:none}
+    .dash-label{font-size:11px;line-height:1.2;font-weight:800}
+    .dash-pane{width:100%}
+    .dash-pane.active{animation:fadeUp .22s ease both}
+    .card-title{font-size:19px;color:#B9362A}
+    .auth-tabs,.stat-box,.user-row,.device-tab{border-color:rgba(59,20,32,.24);background:#FFFBD0}
+    .stat-box{border:1.5px solid #3B1420}
+    .stat-box .num{color:#E64A38}
+    .status-msg.error,.status-msg.success,.status-msg.info{background:#FFFBD0;color:#3B1420;border:1.5px solid #E64A38}
+    .u-badge.verified,.u-badge.unverified{background:#FFFBD0;color:#3B1420;border:1px solid #E64A38}
+    .input-field{background:#FFFDF0;border-color:#3B1420}
+    .btn-3d{background:#E64A38;border-color:#3B1420;box-shadow:0 4px 0 #3B1420}
+    .btn-3d.btn-dark{background:#3B1420;box-shadow:0 4px 0 #260b13}
+    .btn-3d.btn-secondary{background:#FFFBD0;color:#3B1420}
+    .dash-tab.active .nav-illustration{filter:brightness(0) invert(1)}
+    .admin-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 14px}
+    .admin-toolbar-title{font:700 20px var(--font-heading);color:#3B1420}
+    .admin-search{width:min(360px,100%);margin:0;padding:11px 14px;border:2px solid #3B1420;border-radius:13px;background:#FFFFE8;color:#3B1420;font:600 12px var(--font-body)}
+    .admin-search:focus{outline:3px solid rgba(230,74,56,.22);border-color:#E64A38}
+    @media(max-width:1050px){.dash-tabs{grid-template-columns:repeat(5,minmax(0,1fr))}}
+    @media(max-width:620px){
+      body{padding:12px 10px}
+      .header-brand{padding:12px 14px;margin-bottom:14px;border-radius:17px}
+      .brand-logo{width:40px;height:40px}
+      .admin-title{font-size:23px}
+      .admin-badge{font-size:8px;padding:4px 7px;letter-spacing:.3px}
+      .dash-tabs{display:flex;overflow-x:auto;gap:7px;padding:2px 2px 9px;scrollbar-width:thin}
+      .dash-tab{flex:0 0 92px;min-height:78px;padding:9px 5px;border-radius:13px}
+      .nav-illustration{width:29px;height:29px}
+      .dash-label{font-size:10px}
+      .admin-toolbar{align-items:stretch;flex-direction:column}
+      .admin-search{width:100%}
+      .dashboard-header{padding:12px}
+      .glass-card{padding:16px 13px;border-radius:17px}
+      .stats-row{gap:6px}
+      .stat-box{padding:10px 4px}
+      .stat-box .num{font-size:20px}
+    }
+
   </style>
 </head>
 <body>
@@ -518,6 +583,7 @@
         <button class="logout-btn" id="btn-logout">Déconnexion</button>
       </div>
 
+      <div class="admin-toolbar"><div class="admin-toolbar-title">Centre de contrôle</div><input id="admin-module-search" class="admin-search" type="search" placeholder="Rechercher un module..." aria-label="Rechercher un module"></div>
       <div class="dash-tabs">
         <button class="dash-tab active" data-pane="pane-reports">🔎 nova.ai</button>
         <button class="dash-tab" data-pane="pane-users">👥 Utilisateurs</button>
@@ -1450,6 +1516,17 @@
       } catch (e) {
         setStatus(loginStatus, e.message, "error");
       }
+    });
+
+
+    // Recherche rapide des modules — ne modifie pas les permissions ni les données.
+    const moduleSearch = document.getElementById('admin-module-search');
+    if (moduleSearch) moduleSearch.addEventListener('input', () => {
+      const q = moduleSearch.value.trim().toLocaleLowerCase('fr');
+      document.querySelectorAll('.dash-tabs .dash-tab').forEach(tab => {
+        const label = tab.textContent.toLocaleLowerCase('fr');
+        tab.classList.toggle('hidden', q && !label.includes(q));
+      });
     });
 
     checkAdminSession();
