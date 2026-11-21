@@ -8,7 +8,7 @@ test('la page d’accueil répond sans erreur HTTP', async ({ page }) => {
 });
 
 test('la page ne déborde pas horizontalement sur le viewport testé', async ({ page }) => {
-  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
   await page.waitForTimeout(500);
   const dimensions = await page.evaluate(() => ({
     viewport: document.documentElement.clientWidth,
@@ -21,8 +21,8 @@ test('la page ne déborde pas horizontalement sur le viewport testé', async ({ 
 });
 
 test('les liens internes visibles ont une destination exploitable', async ({ page, request }) => {
-  await page.goto('/', { waitUntil: 'domcontentloaded' });
-  const sitePrefix = new URL('/', page.url()).href;
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  const sitePrefix = new URL('./', page.url()).href;
   const hrefs = await page.locator('a[href]').evaluateAll((nodes, prefix) =>
     [...new Set(nodes.map(a => a.href).filter(Boolean))]
       .filter(href => href.startsWith(prefix))
@@ -37,7 +37,7 @@ test('les liens internes visibles ont une destination exploitable', async ({ pag
 test('aucune exception JavaScript non gérée au chargement', async ({ page }) => {
   const pageErrors = [];
   page.on('pageerror', error => pageErrors.push(error.message));
-  await page.goto('/', { waitUntil: 'networkidle', timeout: 30000 }).catch(() => {});
+  await page.goto('./', { waitUntil: 'networkidle', timeout: 30000 }).catch(() => {});
   await page.waitForTimeout(1000);
   expect(pageErrors, pageErrors.join('\n')).toEqual([]);
 });
@@ -84,7 +84,7 @@ test('admin : le JavaScript ne contient pas d’erreur au chargement', async ({ 
 });
 
 test('site public : captures des formats téléphone, tablette et ordinateur', async ({ page }, testInfo) => {
-  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
   await page.screenshot({ path: `artifacts/public-${testInfo.project.name}.png`, fullPage: true });
   const size = await page.evaluate(() => ({
     viewport: document.documentElement.clientWidth,

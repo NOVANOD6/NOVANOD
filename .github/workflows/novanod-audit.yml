@@ -1,7 +1,9 @@
-name: NOVANOD - Tests Playwright et audit Lighthouse
+name: NOVANOD - Tests Playwright, audit Lighthouse et sécurité
 
 on:
   workflow_dispatch:
+  pull_request:
+    branches: [main]
   push:
     branches: [main, master]
   schedule:
@@ -27,10 +29,22 @@ jobs:
           cache: ''
       - name: Installer les dépendances
         run: npm install
-      - name: Installer Chromium pour Playwright
-        run: npx playwright install --with-deps chromium
       - name: Préparer les dossiers de rapports
         run: mkdir -p artifacts
+      - name: Audit des dépendances npm
+        if: always()
+        run: npm audit --json > artifacts/npm-audit.json || true
+      - name: Envoyer une alerte Appwrite si vulnérabilité élevée ou critique
+        if: always() && github.event_name != 'pull_request' && hashFiles('artifacts/npm-audit.json') != ''
+        env:
+          APPWRITE_ENDPOINT: ${{ secrets.APPWRITE_ENDPOINT }}
+          APPWRITE_PROJECT_ID: ${{ secrets.APPWRITE_PROJECT_ID }}
+          APPWRITE_FUNCTION_ID: ${{ secrets.APPWRITE_FUNCTION_ID }}
+          APPWRITE_API_KEY: ${{ secrets.APPWRITE_API_KEY }}
+          NOVA_SECURITY_ALERT_TOKEN: ${{ secrets.NOVA_SECURITY_ALERT_TOKEN }}
+        run: node scripts/post-security-event.mjs
+      - name: Installer Chromium pour Playwright
+        run: npx playwright install --with-deps chromium
       - name: Tester le site avec Playwright
         id: playwright
         continue-on-error: true
@@ -53,7 +67,7 @@ jobs:
         if: always()
         run: node scripts/build-audit-summary.mjs
       - name: Envoyer le rapport à Appwrite
-        if: always() && hashFiles('artifacts/audit-summary.json') != ''
+        if: always() && github.event_name != 'pull_request' && hashFiles('artifacts/audit-summary.json') != ''
         env:
           APPWRITE_ENDPOINT: ${{ secrets.APPWRITE_ENDPOINT }}
           APPWRITE_PROJECT_ID: ${{ secrets.APPWRITE_PROJECT_ID }}
@@ -61,7 +75,16 @@ jobs:
           APPWRITE_API_KEY: ${{ secrets.APPWRITE_API_KEY }}
           NOVA_AUDIT_TOKEN: ${{ secrets.NOVA_AUDIT_TOKEN }}
         run: node scripts/post-audit.mjs
-      - name: Publier les rapports et captures Playwright
+      - name: Transférer les captures Playwright vers le bucket privé Appwrite
+        if: always() && github.event_name != 'pull_request' && hashFiles('artifacts/**/*.png', 'artifacts/**/*.jpg', 'artifacts/**/*.jpeg', 'artifacts/**/*.webp') != ''
+        env:
+          APPWRITE_ENDPOINT: ${{ secrets.APPWRITE_ENDPOINT }}
+          APPWRITE_PROJECT_ID: ${{ secrets.APPWRITE_PROJECT_ID }}
+          APPWRITE_FUNCTION_ID: ${{ secrets.APPWRITE_FUNCTION_ID }}
+          APPWRITE_API_KEY: ${{ secrets.APPWRITE_API_KEY }}
+          NOVA_AUDIT_TOKEN: ${{ secrets.NOVA_AUDIT_TOKEN }}
+        run: node scripts/post-audit-artifacts.mjs
+      - name: Publier les rapports, vidéos et traces Playwright dans GitHub
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -71,4 +94,8 @@ jobs:
           retention-days: 30
       - name: Échouer le workflow si les tests ou audits ont échoué
         if: steps.playwright.outcome == 'failure' || steps.lighthouse_mobile.outcome == 'failure' || steps.lighthouse_desktop.outcome == 'failure'
-        run: exit 1
+        run: |
+          echo "Playwright: ${{ steps.playwright.outcome }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "Lighthouse mobile: ${{ steps.lighthouse_mobile.outcome }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "Lighthouse ordinateur: ${{ steps.lighthouse_desktop.outcome }}" >> "$GITHUB_STEP_SUMMARY"
+          exit 1
