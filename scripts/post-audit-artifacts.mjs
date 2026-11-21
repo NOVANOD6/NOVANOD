@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-const root = 'artifacts/test-results';
+const root = 'artifacts';
 const maxBytes = 2_500_000;
 const extensions = new Map([['.png','image/png'],['.jpg','image/jpeg'],['.jpeg','image/jpeg'],['.webp','image/webp']]);
 async function walk(dir) {
