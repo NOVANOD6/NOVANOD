@@ -926,15 +926,33 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     .analysis-geo-table th,.analysis-geo-table td{padding:7px;text-align:left;border-bottom:1px solid rgba(59,20,32,.1);overflow-wrap:anywhere}
     .analysis-geo-table th{color:#3B1420}
     @media(max-width:760px){.analysis-chart-grid{grid-template-columns:1fr}}
+\n
+    /* En-tête administrateur calqué sur l'identité visuelle de index.html */
+    .header-brand.admin-brand-header{
+      min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+      gap:8px;text-align:center;margin:0 auto 22px;padding:8px 0 14px;
+      border:0;background:transparent;box-shadow:none;
+    }
+    .admin-brand-header .brand-logo{
+      display:block;width:58px;height:58px;margin:0;border-radius:50%;
+      object-fit:cover;border:0;background:transparent;box-shadow:none;
+    }
+    .admin-brand-header .admin-title{
+      margin:0;color:#3B1420;font-size:13px;font-weight:800;letter-spacing:1.4px;
+    }
+    .admin-brand-header .admin-badge{display:none}
+    @media(max-width:620px){
+      .header-brand.admin-brand-header{margin-bottom:15px;padding:5px 0 10px}
+      .admin-brand-header .brand-logo{width:44px;height:44px}
+    }
 \n  </style>
 </head>
 <body>
 
   <div class="admin-wrapper">
-    <div class="header-brand">
-      <img src="logo.png?v=6" alt="NOVANOD" class="brand-logo">
-      <div class="admin-title">NOVANOD</div>
-      <div class="admin-badge">CONSOLE ADMINISTRATEUR</div>
+    <div class="header-brand admin-brand-header">
+      <img src="logo.png?v=7" alt="Logo NOVANOD" class="brand-logo">
+      <div class="admin-title">ADMINISTRATEUR</div>
     </div>
 
     <!-- ÉCRAN AUTHENTIFICATION -->
