@@ -1093,7 +1093,8 @@
 
       <section id="novanod-notifications" aria-live="polite" style="margin:14px 0;padding:14px;border:1px solid rgba(59,20,32,.18);border-radius:16px;background:rgba(255,255,255,.72);box-shadow:0 8px 18px rgba(59,20,32,.12);">
         <h3 style="font-size:14px;font-weight:800;margin-bottom:8px;color:var(--dark-brown,#3B1420);">Messages et notifications</h3>
-        <p id="push-connection-status" style="font-size:11px;opacity:.75;margin-bottom:8px;">Activation des notifications après connexion…</p>
+        <button id="btn-enable-push" class="btn-3d btn-red" type="button" style="margin-bottom:8px;">Activer les notifications NOVANOD</button>
+        <p id="push-connection-status" style="font-size:11px;opacity:.75;margin-bottom:8px;">Connectez-vous puis activez les notifications.</p>
         <div id="push-notification-list" style="display:grid;gap:8px;">
           <p style="font-size:12px;opacity:.7;">Aucun message reçu pour le moment.</p>
         </div>
@@ -1687,7 +1688,11 @@
     }
 
     window.NOVANODPush = { start:startPush, stop:stopPush };
-    window.addEventListener('novanod:authenticated', startPush);
+    document.getElementById('btn-enable-push')?.addEventListener('click', startPush);
+    window.addEventListener('novanod:authenticated', () => {
+      const status = document.getElementById('push-connection-status');
+      if (status && !active) status.textContent = 'Compte connecté. Appuie sur le bouton pour activer les notifications sur cet appareil.';
+    });
     renderPushHistory();
   </script>
 
