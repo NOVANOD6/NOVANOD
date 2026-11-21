@@ -864,6 +864,24 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       *,*::before,*::after { scroll-behavior:auto!important; animation-duration:.01ms!important; transition-duration:.01ms!important; }
     }
 
+  
+    /* NOVANOD — composants visuels fonctionnels, palette crème/bordeaux/corail */
+    .device-tab{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:11px 16px;min-height:54px;font-weight:800}
+    .device-tab svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    .device-tab span,.orientation-button span,.analysis-action span{display:block}
+    .orientation-toggle{display:flex;gap:10px;margin:0 0 14px}
+    .orientation-button{flex:1;display:flex;align-items:center;justify-content:center;gap:10px;min-height:58px;padding:10px 14px;border:1.5px solid var(--nova-burgundy);border-radius:12px;background:var(--nova-paper);color:var(--nova-burgundy);font:700 13px inherit;cursor:pointer}
+    .orientation-button svg{width:34px;height:34px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    .orientation-button.active{background:var(--nova-burgundy);color:var(--nova-cream);box-shadow:0 3px 0 rgba(59,20,32,.25)}
+    .analysis-action{display:flex;align-items:center;justify-content:flex-start;gap:12px;text-align:left;min-height:66px}
+    .analysis-action svg{width:38px;height:38px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+    .analysis-action span{line-height:1.3}
+    .fingerprint-mark{width:25px;height:25px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vertical-align:middle;margin-right:8px}
+    .btn-3d:has(.fingerprint-mark){display:inline-flex;align-items:center;justify-content:center;gap:8px}
+    .orientation-toggle[hidden]{display:none!important}
+    button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid rgba(230,74,56,.45);outline-offset:2px}
+    @media(max-width:620px){.device-tab{flex:1 1 100px;padding:9px 8px;gap:6px}.orientation-button{min-height:54px;padding:8px}.analysis-action{min-height:60px}}
+
   </style>
 </head>
 <body>
@@ -892,7 +910,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         <input type="password" id="admin-password" class="input-field" placeholder="••••••••" autocomplete="current-password">
         
         <button id="btn-login" class="btn-3d">Se connecter au Dashboard</button>
-        <button id="btn-login-fingerprint" class="btn-3d btn-secondary hidden">◎ Connexion Biométrique</button>
+        <button id="btn-login-fingerprint" class="btn-3d btn-secondary hidden"><svg class="fingerprint-mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 7c-9 0-16 7-16 16M24 13c-6 0-11 5-11 11 0 7-1 12-4 16M24 19c-3 0-5 2-5 5 0 9-1 14-4 18M24 25c0 9-1 15-3 19M30 9c6 2 10 8 10 14 0 8-1 14-4 19M30 16c3 2 5 5 5 9 0 5 0 9-2 13"/></svg><span>Connexion biométrique</span></button>
       </div>
 
       <div id="pane-signup" class="hidden">
@@ -972,7 +990,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           <h3 class="card-title" style="color:var(--dark-brown);">Sécurité Biométrique</h3>
           <div class="hint">Active l'authentification par empreinte digitale ou FaceID sur cet appareil pour un accès instantané.</div>
           <div id="fingerprint-status" class="status-msg"></div>
-          <button id="btn-register-fingerprint" class="btn-3d btn-dark hidden">◎ Activer l'empreinte digitale</button>
+          <button id="btn-register-fingerprint" class="btn-3d btn-dark hidden"><svg class="fingerprint-mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 7c-9 0-16 7-16 16M24 13c-6 0-11 5-11 11 0 7-1 12-4 16M24 19c-3 0-5 2-5 5 0 9-1 14-4 18M24 25c0 9-1 15-3 19M30 9c6 2 10 8 10 14 0 8-1 14-4 19M30 16c3 2 5 5 5 9 0 5 0 9-2 13"/></svg><span>Activer l'empreinte digitale</span></button>
         </div>
       </div>
 
@@ -1012,15 +1030,15 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       <div id="pane-preview" class="dash-pane">
         <div class="glass-card">
           <h3 class="card-title">Aperçu du site</h3>
-          <div class="hint">Vérifie le rendu réel du site (novanod6.github.io) sur différents formats d'écran.</div>
+          <div class="hint">Vérifie le rendu réel du site NOVANOD sur téléphone, tablette et ordinateur.</div>
           <div class="device-tabs">
-            <button class="device-tab active" data-w="390" data-h="844">▯ Téléphone</button>
-            <button class="device-tab" data-w="820" data-h="1180">▣ Tablette</button>
-            <button class="device-tab" data-w="1440" data-h="900">▰ PC</button>
+            <button class="device-tab active" data-w="390" data-h="844" data-device="phone"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="9" y="2.5" width="14" height="27" rx="2.5"/><path d="M14 25.5h4"/></svg><span>Téléphone</span></button>
+            <button class="device-tab" data-w="820" data-h="1180" data-device="tablet"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="3" width="24" height="26" rx="2.5"/><circle cx="16" cy="25.5" r=".8"/></svg><span>Tablette</span></button>
+            <button class="device-tab" data-w="1440" data-h="900" data-device="desktop"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="4" width="26" height="19" rx="2"/><path d="M12 28h8M16 23v5"/></svg><span>PC</span></button>
           </div>
           <div class="orientation-toggle">
-            <button id="btn-orient-portrait" class="dash-tab active">⬆️ Vertical</button>
-            <button id="btn-orient-landscape" class="dash-tab">→ Horizontal</button>
+            <button id="btn-orient-portrait" class="orientation-button active" aria-label="Orientation verticale"><svg viewBox="0 0 36 36" aria-hidden="true"><rect x="11" y="3" width="14" height="30" rx="2.5"/><path d="M15 28h6"/></svg><span>Vertical</span></button>
+            <button id="btn-orient-landscape" class="orientation-button" aria-label="Orientation horizontale"><svg viewBox="0 0 36 36" aria-hidden="true"><rect x="3" y="11" width="30" height="14" rx="2.5"/><path d="M27 15v6"/></svg><span>Horizontal</span></button>
           </div>
           <div class="preview-frame-wrapper" id="preview-frame-wrapper">
             <iframe id="preview-iframe" src="./"></iframe>
@@ -1158,15 +1176,15 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
             <option value="groq">Groq uniquement</option>
           </select>
           <div class="admin-form-grid">
-            <button class="btn-3d" data-analysis="problem">⌕ Analyse problème</button>
-            <button class="btn-3d" data-analysis="client">◇ Analyse client</button>
-            <button class="btn-3d" data-analysis="security">⬡ Analyse sécurité</button>
-            <button class="btn-3d" data-analysis="statistics">▥ Analyse statistique</button>
-            <button class="btn-3d btn-secondary" data-analysis="business">▣ Analyse business</button>
-            <button class="btn-3d btn-secondary" data-analysis="merchandising">◇ Analyse merchandising</button>
-            <button class="btn-3d btn-secondary" data-analysis="support">▤ Analyse service client</button>
-            <button class="btn-3d btn-secondary" data-analysis="marketing">◁ Analyse marketing</button>
-            <button class="btn-3d btn-secondary" data-analysis="maintenance">⚙ Maintenance proactive</button>
+            <button class="btn-3d analysis-action" data-analysis="problem"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M7 7h26v26H7zM12 14h16M12 20h10M12 26h7"/><circle cx="29" cy="27" r="5"/><path d="m32.5 30.5 4 4"/></svg><span>Analyse problème</span></button>
+            <button class="btn-3d analysis-action" data-analysis="client"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="15" cy="13" r="6"/><path d="M4 34c0-7 5-12 11-12s11 5 11 12M29 10h7M32.5 6.5v7M29 23h7"/></svg><span>Analyse client</span></button>
+            <button class="btn-3d analysis-action" data-analysis="security"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="m20 4 13 5v9c0 9-5 14-13 18C12 32 7 27 7 18V9z"/><path d="m13 20 5 5 10-11"/></svg><span>Analyse sécurité</span></button>
+            <button class="btn-3d analysis-action" data-analysis="statistics"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M5 34V6M5 34h31M11 28V19h6v9M21 28V11h6v17M31 28V5h5v23"/></svg><span>Analyse statistique</span></button>
+            <button class="btn-3d btn-secondary analysis-action" data-analysis="business"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="5" y="12" width="30" height="22" rx="2"/><path d="M14 12V7h12v5M5 20h30M17 20v4h6v-4"/></svg><span>Analyse business</span></button>
+            <button class="btn-3d btn-secondary analysis-action" data-analysis="merchandising"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M5 7h30v27H5zM5 15h30M13 7v8M27 7v8M12 22h16M12 27h10"/></svg><span>Analyse merchandising</span></button>
+            <button class="btn-3d btn-secondary analysis-action" data-analysis="support"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M5 20a15 15 0 0 1 30 0M5 20v7h7v-9H5M35 20v7h-7v-9h7M28 31c-2 3-5 4-9 4"/></svg><span>Analyse service client</span></button>
+            <button class="btn-3d btn-secondary analysis-action" data-analysis="marketing"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M5 18h8l18-9v22l-18-9H5zM13 22l4 11h7l-5-8M31 15l5-4M31 25l5 4"/></svg><span>Analyse marketing</span></button>
+            <button class="btn-3d btn-secondary analysis-action" data-analysis="maintenance"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M8 30 25 13M22 8l5-5 10 10-5 5M6 34l7-2-5-5zM19 19l-7-7 4-4 7 7"/></svg><span>Maintenance proactive</span></button>
           </div>
           <div id="analysis-status" class="status-msg"></div>
           <h4>Résultat Gemini</h4>
@@ -1312,7 +1330,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           setStatus(loginStatus, `Accès refusé. Ton ID (${user.$id}) n'est pas autorisé dans ADMIN_USER_IDS.`, "error");
           await account.deleteSession('current').catch(() => {});
         }
-      } catch (e) {}
+      } catch (e) { setStatus(loginStatus, 'Session non restaurée : ' + (e.message || 'aucune session active.'), 'info'); }
     }
 
     document.getElementById('btn-login').addEventListener('click', async () => {
@@ -1468,6 +1486,9 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         tab.classList.add('active');
         previewW = parseInt(tab.dataset.w, 10);
         previewH = parseInt(tab.dataset.h, 10);
+        const desktop = tab.dataset.device === 'desktop';
+        document.querySelector('.orientation-toggle').hidden = desktop;
+        if (desktop) { previewLandscape = false; document.getElementById('btn-orient-portrait').classList.add('active'); document.getElementById('btn-orient-landscape').classList.remove('active'); }
         applyPreviewSize();
       });
     });
@@ -1478,6 +1499,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       applyPreviewSize();
     });
     document.getElementById('btn-orient-landscape').addEventListener('click', () => {
+      if (document.querySelector('.device-tab.active')?.dataset.device === 'desktop') return;
       previewLandscape = true;
       document.getElementById('btn-orient-landscape').classList.add('active');
       document.getElementById('btn-orient-portrait').classList.remove('active');
@@ -1506,9 +1528,17 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     }
 
     async function callNovaFunction(payload) {
-      if (NOVA_FUNCTION_ID === 'COLLE_ICI_LE_FUNCTION_ID') return { error: 'NOVA_FUNCTION_ID non configuré.' };
+      if (!NOVA_FUNCTION_ID || NOVA_FUNCTION_ID === 'COLLE_ICI_LE_FUNCTION_ID') throw new Error('Identifiant de fonction NOVANOD non configuré.');
       const execution = await functions.createExecution(NOVA_FUNCTION_ID, JSON.stringify(payload), false);
-      return JSON.parse(execution.responseBody || '{}');
+      const body = execution.responseBody || '';
+      let result;
+      try { result = body ? JSON.parse(body) : {}; }
+      catch { throw new Error('La fonction NOVANOD a renvoyé une réponse non JSON (HTTP ' + execution.responseStatusCode + ').'); }
+      if (execution.status === 'failed' || (execution.responseStatusCode && execution.responseStatusCode >= 400)) {
+        throw new Error(result.error || result.message || ('Échec de la fonction NOVANOD (HTTP ' + execution.responseStatusCode + ').'));
+      }
+      if (!result || typeof result !== 'object' || Array.isArray(result)) throw new Error('Format de réponse inattendu de la fonction NOVANOD.');
+      return result;
     }
 
     btnRegisterFingerprint.addEventListener('click', async () => {
