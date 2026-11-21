@@ -1172,7 +1172,6 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           </div>
           <div id="documents-output" class="admin-output">Les documents apparaîtront ici.</div>
         </div>
-      </div>
 
         <div class="glass-card">
           <h3 class="card-title">TablesDB · Tables et propriétés</h3>
@@ -1470,7 +1469,10 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         tab.classList.add('active');
         document.getElementById(tab.dataset.pane).classList.add('active');
         if (tab.dataset.pane === 'pane-users' && !usersLoadedOnce) refreshUsers();
-        if (tab.dataset.pane === 'pane-reports' && !reportsLoadedOnce) refreshReports();
+        if (tab.dataset.pane === 'pane-reports') {
+          const prefs = JSON.parse(localStorage.getItem('novanod_admin_preferences') || '{}');
+          if (!reportsLoadedOnce || prefs.autoRefreshReports !== false) refreshReports();
+        }
         if (tab.dataset.pane === 'pane-settings') populateSettings();
         if (tab.dataset.pane === 'pane-preview' && typeof applyPreviewSize === 'function') applyPreviewSize();
       });
