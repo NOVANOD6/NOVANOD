@@ -1,9 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-const required = ['APPWRITE_ENDPOINT','APPWRITE_PROJECT_ID','APPWRITE_FUNCTION_ID','APPWRITE_API_KEY','NOVA_AUDIT_TOKEN'];
-for (const key of required) if (!process.env[key]) throw new Error(`Secret GitHub manquant : ${key}`);
-
 const root = 'artifacts/test-results';
 const maxBytes = 2_500_000;
 const extensions = new Map([['.png','image/png'],['.jpg','image/jpeg'],['.jpeg','image/jpeg'],['.webp','image/webp']]);
@@ -24,6 +21,8 @@ if (!files.length) {
   console.log('Aucune capture image Playwright à transférer. Les artefacts GitHub restent publiés séparément.');
   process.exit(0);
 }
+const required = ['APPWRITE_ENDPOINT','APPWRITE_PROJECT_ID','APPWRITE_FUNCTION_ID','APPWRITE_API_KEY','NOVA_AUDIT_TOKEN'];
+for (const key of required) if (!process.env[key]) throw new Error(`Secret GitHub manquant : ${key}`);
 const endpoint = process.env.APPWRITE_ENDPOINT.replace(/\/$/,'');
 const executionUrl = `${endpoint}/functions/${encodeURIComponent(process.env.APPWRITE_FUNCTION_ID)}/executions`;
 let uploaded = 0;
