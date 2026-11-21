@@ -41,3 +41,53 @@ test('aucune exception JavaScript non gérée au chargement', async ({ page }) =
   expect(pageErrors, pageErrors.join('\n')).toEqual([]);
 });
     
+
+
+test('admin : écran de connexion et identité visuelle chargent correctement', async ({ page }) => {
+  const response = await page.goto('admin.html', { waitUntil: 'domcontentloaded' });
+  expect(response).not.toBeNull();
+  expect(response.status()).toBeLessThan(400);
+  await expect(page.locator('#screen-login')).toBeVisible();
+  await expect(page.locator('.header-brand')).toBeVisible();
+  const palette = await page.locator(':root').evaluate(el => {
+    const css = getComputedStyle(el);
+    return {
+      cream: css.getPropertyValue('--cream-bg').trim(),
+      burgundy: css.getPropertyValue('--dark-brown').trim(),
+    };
+  });
+  expect(palette.cream.toLowerCase()).toBe('#fffbd0');
+  expect(palette.burgundy.toLowerCase()).toBe('#3b1420');
+  await page.screenshot({ path: 'artifacts/admin-login.png', fullPage: true });
+});
+
+test('admin : contrôles visuels appareil et analyses sont présents sans pictogrammes textuels', async ({ page }) => {
+  await page.goto('admin.html', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('.device-tab[data-device="phone"] svg')).toBeVisible();
+  await expect(page.locator('.device-tab[data-device="tablet"] svg')).toBeVisible();
+  await expect(page.locator('.device-tab[data-device="desktop"] svg')).toBeVisible();
+  await expect(page.locator('#btn-orient-portrait svg')).toBeVisible();
+  await expect(page.locator('#btn-orient-landscape svg')).toBeVisible();
+  await expect(page.locator('.analysis-action svg').first()).toBeVisible();
+  await expect(page.locator('#btn-register-fingerprint .fingerprint-mark')).toHaveCount(1);
+  await page.screenshot({ path: 'artifacts/admin-controls.png', fullPage: true });
+});
+
+test('admin : le JavaScript ne contient pas d’erreur au chargement', async ({ page }) => {
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  const response = await page.goto('admin.html', { waitUntil: 'domcontentloaded' });
+  expect(response).not.toBeNull();
+  await page.waitForTimeout(1200);
+  expect(errors, errors.join('\\n')).toEqual([]);
+});
+
+test('site public : captures des formats téléphone, tablette et ordinateur', async ({ page }, testInfo) => {
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.screenshot({ path: `artifacts/public-${testInfo.project.name}.png`, fullPage: true });
+  const size = await page.evaluate(() => ({
+    viewport: document.documentElement.clientWidth,
+    document: document.documentElement.scrollWidth,
+  }));
+  expect(size.document).toBeLessThanOrEqual(size.viewport + 2);
+});
