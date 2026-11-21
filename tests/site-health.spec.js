@@ -22,10 +22,11 @@ test('la page ne déborde pas horizontalement sur le viewport testé', async ({ 
 
 test('les liens internes visibles ont une destination exploitable', async ({ page, request }) => {
   await page.goto('/', { waitUntil: 'domcontentloaded' });
-  const hrefs = await page.locator('a[href]').evaluateAll(nodes =>
+  const sitePrefix = new URL('/', page.url()).href;
+  const hrefs = await page.locator('a[href]').evaluateAll((nodes, prefix) =>
     [...new Set(nodes.map(a => a.href).filter(Boolean))]
-      .filter(href => href.startsWith(new URL('/', page.url()).origin + new URL('/', page.url()).pathname))
-      .slice(0, 30)
+      .filter(href => href.startsWith(prefix))
+      .slice(0, 30), sitePrefix
   );
   for (const href of hrefs) {
     const response = await request.get(href, { failOnStatusCode: false, timeout: 15000 });
