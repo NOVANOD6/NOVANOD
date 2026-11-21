@@ -1,4 +1,4 @@
-name: NOVANOD - Tests Playwright et audit Lighthouse
+name: NOVANOD - Tests Playwright, audit Lighthouse et sécurité
 
 on:
   workflow_dispatch:
@@ -27,10 +27,22 @@ jobs:
           cache: ''
       - name: Installer les dépendances
         run: npm install
-      - name: Installer Chromium pour Playwright
-        run: npx playwright install --with-deps chromium
       - name: Préparer les dossiers de rapports
         run: mkdir -p artifacts
+      - name: Audit des dépendances npm
+        if: always()
+        run: npm audit --json > artifacts/npm-audit.json || true
+      - name: Envoyer une alerte Appwrite si vulnérabilité élevée ou critique
+        if: always() && hashFiles('artifacts/npm-audit.json') != ''
+        env:
+          APPWRITE_ENDPOINT: ${{ secrets.APPWRITE_ENDPOINT }}
+          APPWRITE_PROJECT_ID: ${{ secrets.APPWRITE_PROJECT_ID }}
+          APPWRITE_FUNCTION_ID: ${{ secrets.APPWRITE_FUNCTION_ID }}
+          APPWRITE_API_KEY: ${{ secrets.APPWRITE_API_KEY }}
+          NOVA_SECURITY_ALERT_TOKEN: ${{ secrets.NOVA_SECURITY_ALERT_TOKEN }}
+        run: node scripts/post-security-event.mjs
+      - name: Installer Chromium pour Playwright
+        run: npx playwright install --with-deps chromium
       - name: Tester le site avec Playwright
         id: playwright
         continue-on-error: true
@@ -61,7 +73,16 @@ jobs:
           APPWRITE_API_KEY: ${{ secrets.APPWRITE_API_KEY }}
           NOVA_AUDIT_TOKEN: ${{ secrets.NOVA_AUDIT_TOKEN }}
         run: node scripts/post-audit.mjs
-      - name: Publier les rapports et captures Playwright
+      - name: Transférer les captures Playwright vers le bucket privé Appwrite
+        if: always() && hashFiles('artifacts/test-results/**/*.png', 'artifacts/test-results/**/*.jpg', 'artifacts/test-results/**/*.jpeg', 'artifacts/test-results/**/*.webp') != ''
+        env:
+          APPWRITE_ENDPOINT: ${{ secrets.APPWRITE_ENDPOINT }}
+          APPWRITE_PROJECT_ID: ${{ secrets.APPWRITE_PROJECT_ID }}
+          APPWRITE_FUNCTION_ID: ${{ secrets.APPWRITE_FUNCTION_ID }}
+          APPWRITE_API_KEY: ${{ secrets.APPWRITE_API_KEY }}
+          NOVA_AUDIT_TOKEN: ${{ secrets.NOVA_AUDIT_TOKEN }}
+        run: node scripts/post-audit-artifacts.mjs
+      - name: Publier les rapports, vidéos et traces Playwright dans GitHub
         if: always()
         uses: actions/upload-artifact@v4
         with:
