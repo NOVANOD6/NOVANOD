@@ -1091,6 +1091,15 @@
         <p id="user-phone-display" style="font-size: 11.5px; opacity: 0.85; margin-top: 2px;"></p>
       </div>
 
+      <section id="novanod-notifications" aria-live="polite" style="margin:14px 0;padding:14px;border:1px solid rgba(59,20,32,.18);border-radius:16px;background:rgba(255,255,255,.72);box-shadow:0 8px 18px rgba(59,20,32,.12);">
+        <h3 style="font-size:14px;font-weight:800;margin-bottom:8px;color:var(--dark-brown,#3B1420);">Messages et notifications</h3>
+        <button id="btn-enable-push" class="btn-3d btn-red" type="button" style="margin-bottom:8px;">Activer les notifications NOVANOD</button>
+        <p id="push-connection-status" style="font-size:11px;opacity:.75;margin-bottom:8px;">Connectez-vous puis activez les notifications.</p>
+        <div id="push-notification-list" style="display:grid;gap:8px;">
+          <p style="font-size:12px;opacity:.7;">Aucun message reçu pour le moment.</p>
+        </div>
+      </section>
+
       <button class="btn-3d btn-dark" onclick="handleLogout()">Se déconnecter</button>
     </div>
 
@@ -1386,6 +1395,7 @@
         }
         displayUserData(user);
         navigateTo('screen-profile');
+        window.dispatchEvent(new CustomEvent('novanod:authenticated', { detail:{ userId:user.$id } }));
       } catch (err) {
         navigateTo(getInitialScreen());
       }
@@ -1561,6 +1571,7 @@
     async function handleLogout() {
       if (!account) return;
       try {
+        await window.NOVANODPush?.stop?.();
         await account.deleteSession('current');
         showToast("Vous avez été déconnecté.");
         navigateTo('screen-home');
@@ -1574,5 +1585,116 @@
     });
 
   </script>
+
+  <script type="module">
+    import { Client, Push } from 'https://cdn.jsdelivr.net/npm/appwrite@29.0.0/+esm';
+
+    const pushClient = new Client()
+      .setEndpoint('https://fra.cloud.appwrite.io/v1')
+      .setProject('6ad4bd7b0036d37d3561');
+
+    // Identifiant stable par navigateur : permet de récupérer les notifications manquées
+    // à la prochaine ouverture (la rétention dépend de la configuration Appwrite).
+    let pushClientId = localStorage.getItem('novanod_push_client_id');
+    if (!pushClientId) {
+      pushClientId = crypto.randomUUID();
+      localStorage.setItem('novanod_push_client_id', pushClientId);
+    }
+    pushClient.setPushClientId(pushClientId);
+
+    let push = null;
+    let starting = false;
+    let active = false;
+    let toastTimer = null;
+
+    function renderPushHistory() {
+      const host = document.getElementById('push-notification-list');
+      if (!host) return;
+      const items = JSON.parse(sessionStorage.getItem('novanod_push_history') || '[]');
+      if (!items.length) {
+        host.innerHTML = '<p style="font-size:12px;opacity:.7;">Aucun message reçu pour le moment.</p>';
+        return;
+      }
+      host.replaceChildren();
+      items.forEach(item => {
+        const card = document.createElement('article');
+        card.style.cssText = 'padding:10px;border-radius:12px;background:#fff;border:1px solid rgba(59,20,32,.12);box-shadow:0 4px 10px rgba(59,20,32,.08);';
+        const title = document.createElement('strong');
+        title.style.cssText = 'display:block;font-size:12px;color:#3B1420;margin-bottom:3px;';
+        title.textContent = item.title || 'Message NOVANOD';
+        const body = document.createElement('p');
+        body.style.cssText = 'font-size:12px;line-height:1.45;color:#3B1420;white-space:pre-wrap;';
+        body.textContent = item.body || 'Vous avez reçu une notification.';
+        const date = document.createElement('small');
+        date.style.cssText = 'display:block;margin-top:5px;font-size:10px;opacity:.6;';
+        date.textContent = new Date(item.receivedAt).toLocaleString('fr-FR');
+        card.append(title, body, date);
+        host.append(card);
+      });
+    }
+
+    function showPushToast(title, body) {
+      const toast = document.getElementById('toast');
+      if (!toast) return;
+      if (toastTimer) clearTimeout(toastTimer);
+      toast.textContent = (title ? title + ' — ' : '') + body;
+      toast.classList.add('show');
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 6000);
+    }
+
+    async function startPush() {
+      if (active || starting) return;
+      starting = true;
+      const status = document.getElementById('push-connection-status');
+      try {
+        push = new Push(pushClient);
+        await push.subscribe((message) => {
+          let payload = {};
+          try { payload = JSON.parse(message.data || '{}'); } catch { payload = { notification:{ body:message.data || '' } }; }
+          const notification = payload.notification || {};
+          const item = {
+            id:payload.messageId || crypto.randomUUID(),
+            title:notification.title || 'Message NOVANOD',
+            body:notification.body || payload.body || payload.message || 'Vous avez reçu une notification.',
+            receivedAt:new Date().toISOString()
+          };
+          const history = JSON.parse(sessionStorage.getItem('novanod_push_history') || '[]');
+          if (!history.some(existing => existing.id === item.id)) {
+            history.unshift(item);
+            sessionStorage.setItem('novanod_push_history', JSON.stringify(history.slice(0,20)));
+          }
+          renderPushHistory();
+          showPushToast(item.title, item.body);
+        });
+        active = true;
+        if (status) status.textContent = 'Notifications connectées : les messages envoyés à ce compte apparaîtront ici.';
+      } catch (error) {
+        if (status) status.textContent = 'Notifications non connectées. Ouvre le site après connexion et vérifie le fournisseur Appwrite Push : ' + (error?.message || error);
+        console.warn('NOVANOD Push:', error);
+        try { push?.close(); } catch {}
+        push = null;
+      } finally {
+        starting = false;
+      }
+    }
+
+    async function stopPush() {
+      if (!push) return;
+      try { await push.close(); } catch (error) { console.warn('Fermeture Push:', error); }
+      push = null;
+      active = false;
+      const status = document.getElementById('push-connection-status');
+      if (status) status.textContent = 'Notifications déconnectées.';
+    }
+
+    window.NOVANODPush = { start:startPush, stop:stopPush };
+    document.getElementById('btn-enable-push')?.addEventListener('click', startPush);
+    window.addEventListener('novanod:authenticated', () => {
+      const status = document.getElementById('push-connection-status');
+      if (status && !active) status.textContent = 'Compte connecté. Appuie sur le bouton pour activer les notifications sur cet appareil.';
+    });
+    renderPushHistory();
+  </script>
+
 </body>
 </html>

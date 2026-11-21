@@ -474,6 +474,33 @@
     .admin-output { overflow-wrap:anywhere; white-space:pre-wrap; }
     .admin-output { white-space:pre-wrap; overflow-wrap:anywhere; background:#FFFBD0; border:1px solid rgba(59,20,32,.14); border-radius:12px; padding:12px; min-height:70px; font-size:12px; line-height:1.6; }
     .admin-section-title { font-family:var(--font-heading); color:var(--text-red); font-size:18px; margin-bottom:10px; }
+
+    /* Icônes 3D : volume, lumière, perspective et ombres plutôt que pictogrammes plats */
+    .analysis-action { transform-style:preserve-3d; perspective:700px; }
+    .analysis-action svg {
+      width:58px;height:58px;padding:10px;border-radius:18px;overflow:visible;
+      fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;
+      background:radial-gradient(circle at 28% 18%,#fff 0,rgba(255,255,255,.72) 16%,transparent 45%),linear-gradient(145deg,#fff7d4,#f5c8a8 52%,#e8a68f);
+      border:1px solid rgba(255,255,255,.9);
+      filter:drop-shadow(0 5px 0 rgba(59,20,32,.18)) drop-shadow(0 12px 10px rgba(59,20,32,.2));
+      transform:perspective(500px) rotateX(9deg) rotateY(-8deg) translateZ(8px);
+      transition:transform .2s ease,filter .2s ease;
+    }
+    .analysis-action:hover svg { transform:perspective(500px) rotateX(0) rotateY(0) translateY(-5px) scale(1.06);filter:drop-shadow(0 8px 0 rgba(59,20,32,.16)) drop-shadow(0 16px 14px rgba(59,20,32,.24)); }
+    .nav-illustration,.device-tab svg,.orientation-button svg {
+      filter:drop-shadow(0 2px 0 rgba(255,255,255,.7)) drop-shadow(0 5px 4px rgba(59,20,32,.24));
+      transform:perspective(260px) rotateX(7deg) translateZ(3px);
+    }
+    .fingerprint-mark {
+      width:36px;height:36px;fill:none;stroke:currentColor;stroke-width:2.1;
+      stroke-linecap:round;stroke-linejoin:round;
+      filter:drop-shadow(0 2px 0 rgba(255,255,255,.7)) drop-shadow(0 6px 5px rgba(59,20,32,.28));
+      transform:perspective(300px) rotateY(-12deg) translateZ(5px);
+    }
+    .divider {height:1px;background:rgba(59,20,32,.14);margin:14px 0;}
+    body.admin-compact .glass-card { padding:14px 16px; margin-bottom:10px; }
+    body.admin-compact .admin-output { min-height:48px; padding:8px; }
+    body.admin-compact .dash-tabs { gap:4px; padding:5px; }
     .admin-form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
     .admin-form-grid .input-field { margin-bottom:8px; }
     .preview-frame-wrapper { position:relative; flex:none; }
@@ -910,7 +937,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         <input type="password" id="admin-password" class="input-field" placeholder="••••••••" autocomplete="current-password">
         
         <button id="btn-login" class="btn-3d">Se connecter au Dashboard</button>
-        <button id="btn-login-fingerprint" class="btn-3d btn-secondary hidden"><svg class="fingerprint-mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 7c-9 0-16 7-16 16M24 13c-6 0-11 5-11 11 0 7-1 12-4 16M24 19c-3 0-5 2-5 5 0 9-1 14-4 18M24 25c0 9-1 15-3 19M30 9c6 2 10 8 10 14 0 8-1 14-4 19M30 16c3 2 5 5 5 9 0 5 0 9-2 13"/></svg><span>Connexion biométrique</span></button>
+        <button id="btn-login-fingerprint" class="btn-3d btn-secondary hidden"><svg class="fingerprint-mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 7c-9 0-16 7-16 16M24 13c-6 0-11 5-11 11 0 7-1 12-4 16M24 19c-3 0-5 2-5 5 0 9-1 14-4 18M24 25c0 9-1 15-3 19M30 9c6 2 10 8 10 14 0 8-1 14-4 19M30 16c3 2 5 5 5 9 0 5 0 9-2 13"/></svg><span>Déverrouiller avec l'empreinte du téléphone</span></button>
       </div>
 
       <div id="pane-signup" class="hidden">
@@ -948,7 +975,6 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           <span class="status-dot"></span>
           <span id="admin-welcome">Admin connecté</span>
         </div>
-        <button class="logout-btn" id="btn-logout">Déconnexion</button>
       </div>
 
       <div class="admin-toolbar"><div class="admin-toolbar-title">Centre de contrôle NOVANOD</div><input id="admin-module-search" class="admin-search" type="search" placeholder="Rechercher un module…" aria-label="Rechercher un module"></div>
@@ -988,11 +1014,11 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       <div id="pane-security" class="dash-pane">
         <div class="glass-card">
           <h3 class="card-title" style="color:var(--dark-brown);">Sécurité biométrique</h3>
-          <div class="hint">Enregistre jusqu'à cinq passkeys pour cet administrateur. Android vérifie l'empreinte, le visage ou le verrouillage sécurisé de l'appareil. NOVANOD ne reçoit jamais les données biométriques.</div>
+          <div class="hint">Enregistre jusqu'à cinq passkeys sur ton téléphone. Android déclenchera l'authentification biométrique locale (empreinte si le capteur et le système la proposent, sinon le mécanisme sécurisé configuré sur l'appareil). NOVANOD ne reçoit et ne stocke jamais ton empreinte digitale.</div>
           <div id="fingerprint-status" class="status-msg" role="status" aria-live="polite"></div>
           <div id="passkey-count" class="hint">Chargement des passkeys…</div>
           <div id="passkey-list" class="user-list" aria-live="polite"></div>
-          <button id="btn-register-fingerprint" class="btn-3d btn-dark hidden"><svg class="fingerprint-mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 7c-9 0-16 7-16 16M24 13c-6 0-11 5-11 11 0 7-1 12-4 16M24 19c-3 0-5 2-5 5 0 9-1 14-4 18M24 25c0 9-1 15-3 19M30 9c6 2 10 8 10 14 0 8-1 14-4 19M30 16c3 2 5 5 5 9 0 5 0 9-2 13"/></svg><span>Ajouter une passkey</span></button>
+          <button id="btn-register-fingerprint" class="btn-3d btn-dark hidden"><svg class="fingerprint-mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 7c-9 0-16 7-16 16M24 13c-6 0-11 5-11 11 0 7-1 12-4 16M24 19c-3 0-5 2-5 5 0 9-1 14-4 18M24 25c0 9-1 15-3 19M30 9c6 2 10 8 10 14 0 8-1 14-4 19M30 16c3 2 5 5 5 9 0 5 0 9-2 13"/></svg><span>Enregistrer l'empreinte de ce téléphone</span></button>
           <button id="btn-refresh-passkeys" class="admin-action">Actualiser la liste</button>
         </div>
       </div>
@@ -1013,6 +1039,10 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         </div>
         <div class="glass-card">
           <h3 class="card-title">Créer un utilisateur</h3>
+          <label class="hint" style="display:flex;gap:8px;align-items:center;margin:4px 0 12px;">
+            <input id="new-user-email-verified" type="checkbox">
+            Valider immédiatement l'e-mail (uniquement si l'adresse a déjà été vérifiée)
+          </label>
           <div class="admin-form-grid">
             <input id="new-user-name" class="input-field" placeholder="Nom complet">
             <input id="new-user-email" class="input-field" type="email" placeholder="Adresse e-mail">
@@ -1020,7 +1050,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
             <input id="new-user-phone" class="input-field" placeholder="Téléphone (facultatif)">
           </div>
           <button id="btn-create-user" class="btn-3d">＋ Créer le compte</button>
-          <div class="hint">La création est effectuée côté serveur. Le mot de passe n'est jamais affiché dans la liste.</div>
+          <div class="hint">La création est effectuée côté serveur. Le mot de passe n'est jamais affiché dans la liste. Si Appwrite renvoie HTTP 401/403, vérifie que la clé serveur de la fonction possède le scope <b>users.write</b>. Sans validation d'e-mail, le site public demandera à l'utilisateur de confirmer son adresse avant l'accès.</div>
         </div>
         <div class="glass-card">
           <h3 class="card-title">Acheteurs et visiteurs</h3>
@@ -1052,6 +1082,30 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
 
       <!-- ===== ONGLET : PARAMÈTRES ===== -->
       <div id="pane-settings" class="dash-pane">
+        <div class="glass-card">
+          <h3 class="card-title">Préférences de la console</h3>
+          <div class="admin-form-grid">
+            <div>
+              <label class="form-label" for="settings-ai-provider">Fournisseur IA par défaut</label>
+              <select id="settings-ai-provider" class="input-field">
+                <option value="both">Gemini + Groq</option><option value="gemini">Gemini uniquement</option><option value="groq">Groq uniquement</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label" for="settings-density">Affichage</label>
+              <select id="settings-density" class="input-field">
+                <option value="comfortable">Confortable</option><option value="compact">Compact</option>
+              </select>
+            </div>
+          </div>
+          <label class="hint" style="display:flex;gap:8px;align-items:center;">
+            <input id="settings-auto-refresh" type="checkbox"> Actualiser l'historique des rapports à l'ouverture
+          </label>
+          <button id="btn-save-settings" class="btn-3d">Enregistrer les paramètres</button>
+          <div id="settings-status" class="status-msg" role="status" aria-live="polite"></div>
+          <button class="btn-3d btn-dark" id="btn-logout" type="button">Se déconnecter de NOVANOD</button>
+          <div class="admin-note">La déconnexion est volontairement regroupée ici : ce bouton est l'unique bouton de déconnexion de la console administrateur.</div>
+        </div>
         <div class="glass-card">
           <h3 class="card-title">Informations techniques</h3>
           <div class="info-row"><span class="k">Projet Appwrite</span><span class="v" id="info-project">—</span></div>
@@ -1118,6 +1172,52 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           </div>
           <div id="documents-output" class="admin-output">Les documents apparaîtront ici.</div>
         </div>
+
+        <div class="glass-card">
+          <h3 class="card-title">TablesDB · Tables et propriétés</h3>
+          <div class="admin-note">TablesDB est différent de DocumentsDB. Sélectionne une base de type TablesDB. Ne saisis pas l'ID de la base DocumentsDB nova_db si elle n'apparaît pas dans la liste. Les opérations de création nécessitent les scopes serveur <b>databases.read</b> et <b>databases.write</b>.</div>
+          <button id="btn-tablesdb-load-databases" class="btn-3d btn-secondary">Lister les bases TablesDB</button>
+          <div id="tablesdb-status" class="status-msg"></div>
+          <div id="tablesdb-databases-output" class="admin-output">Les bases TablesDB apparaîtront ici.</div>
+          <input id="tablesdb-database-id" class="input-field" placeholder="ID de la base TablesDB">
+          <div class="admin-form-grid">
+            <input id="tablesdb-new-database-id" class="input-field" placeholder="ID personnalisé (facultatif)">
+            <input id="tablesdb-new-database-name" class="input-field" placeholder="Nom de la nouvelle base">
+          </div>
+          <button id="btn-tablesdb-create-database" class="btn-3d">Créer une base TablesDB</button>
+          <div class="divider"></div>
+          <div class="admin-form-grid">
+            <input id="tablesdb-new-table-id" class="input-field" placeholder="ID de table (facultatif)">
+            <input id="tablesdb-new-table-name" class="input-field" placeholder="Nom de la table">
+          </div>
+          <button id="btn-tablesdb-create-table" class="btn-3d">＋ Créer une table</button>
+          <button id="btn-tablesdb-list-tables" class="btn-3d btn-secondary">Lister les tables</button>
+          <div id="tablesdb-tables-output" class="admin-output">Les tables apparaîtront ici.</div>
+          <input id="tablesdb-table-id" class="input-field" placeholder="ID de la table">
+          <button id="btn-tablesdb-list-columns" class="btn-3d btn-secondary">Lister les propriétés</button>
+          <div id="tablesdb-columns-output" class="admin-output">Les propriétés apparaîtront ici.</div>
+          <h4>Ajouter une propriété</h4>
+          <div class="admin-form-grid">
+            <input id="tablesdb-column-key" class="input-field" placeholder="Nom (ex. productName)">
+            <select id="tablesdb-column-type" class="input-field">
+              <option value="string">Texte court (string)</option><option value="varchar">Varchar</option><option value="text">Texte long</option>
+              <option value="integer">Entier</option><option value="bigint">Grand entier</option><option value="float">Décimal</option>
+              <option value="boolean">Booléen</option><option value="datetime">Date et heure</option><option value="email">E-mail</option>
+              <option value="enum">Énumération</option><option value="url">URL</option>
+            </select>
+            <input id="tablesdb-column-size" class="input-field" type="number" min="1" max="16381" placeholder="Taille (string/varchar)">
+            <input id="tablesdb-column-default" class="input-field" placeholder="Valeur par défaut (facultatif)">
+            <input id="tablesdb-column-elements" class="input-field" placeholder="Valeurs enum séparées par virgules">
+          </div>
+          <label class="hint" style="display:flex;gap:8px;align-items:center;"><input id="tablesdb-column-required" type="checkbox"> Obligatoire</label>
+          <label class="hint" style="display:flex;gap:8px;align-items:center;"><input id="tablesdb-column-array" type="checkbox"> Tableau de valeurs (array)</label>
+          <button id="btn-tablesdb-create-column" class="btn-3d">Ajouter la propriété</button>
+          <div class="admin-toolbar">
+            <input id="tablesdb-delete-column-key" class="input-field" placeholder="Nom de la propriété à supprimer">
+            <button id="btn-tablesdb-delete-column" class="btn-3d btn-secondary">Supprimer la propriété</button>
+            <button id="btn-tablesdb-delete-table" class="btn-3d btn-secondary">Supprimer la table</button>
+          </div>
+        </div>
       </div>
 
       <!-- ===== STOCKAGE ===== -->
@@ -1151,7 +1251,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           <button id="btn-send-message" class="btn-3d">Envoyer via Appwrite Messaging</button>
           <div id="messaging-status" class="status-msg"></div>
           <div id="messaging-output" class="admin-output">Les réponses du service de messagerie apparaîtront ici.</div>
-          <div class="admin-note">Pour envoyer à tous, crée et utilise un topic Appwrite avec des abonnés consentants. Ne pas envoyer de campagnes marketing sans base légale/consentement et mécanisme de désinscription. Un fournisseur e-mail/SMS/push doit être configuré dans Appwrite.</div>
+          <div class="admin-note">Pour PUSH : configure un fournisseur Appwrite Push dans Appwrite → Messaging → Providers et active l'abonnement Push dans le site public. Un message accepté par l'API n'est pas une preuve de livraison. Pour e-mail/SMS, configure un fournisseur adapté et vérifie que le compte destinataire possède une cible e-mail/téléphone valide. Les topics doivent avoir des abonnés autorisés.</div>
         </div>
       </div>
 
@@ -1241,7 +1341,6 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
 
     // Vos ID utilisateurs administrateurs autorisés
     const ADMIN_USER_IDS = [
-      '6af995680030f5cd189f',
       '6af9b373003931cb00bd',
       '6af9a471001fa1cac5b9'
     ];
@@ -1370,7 +1469,10 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         tab.classList.add('active');
         document.getElementById(tab.dataset.pane).classList.add('active');
         if (tab.dataset.pane === 'pane-users' && !usersLoadedOnce) refreshUsers();
-        if (tab.dataset.pane === 'pane-reports' && !reportsLoadedOnce) refreshReports();
+        if (tab.dataset.pane === 'pane-reports') {
+          const prefs = JSON.parse(localStorage.getItem('novanod_admin_preferences') || '{}');
+          if (!reportsLoadedOnce || prefs.autoRefreshReports !== false) refreshReports();
+        }
         if (tab.dataset.pane === 'pane-settings') populateSettings();
         if (tab.dataset.pane === 'pane-preview' && typeof applyPreviewSize === 'function') applyPreviewSize();
       });
@@ -1520,8 +1622,25 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     function populateSettings() {
       document.getElementById('info-project').textContent = APPWRITE_PROJECT_ID;
       document.getElementById('info-function').textContent = NOVA_FUNCTION_ID;
-      document.getElementById('info-admins').textContent = ADMIN_USER_IDS.filter(id => id && id !== 'COLLE_ICI_USER_ID_1' && id !== 'COLLE_ICI_USER_ID_2').length;
+      document.getElementById('info-admins').textContent = ADMIN_USER_IDS.length;
+      const prefs = JSON.parse(localStorage.getItem('novanod_admin_preferences') || '{}');
+      document.getElementById('settings-ai-provider').value = prefs.provider || 'both';
+      document.getElementById('settings-density').value = prefs.density || 'comfortable';
+      document.getElementById('settings-auto-refresh').checked = prefs.autoRefreshReports !== false;
+      document.body.classList.toggle('admin-compact', prefs.density === 'compact');
     }
+    document.getElementById('btn-save-settings')?.addEventListener('click', () => {
+      const prefs = {
+        provider:document.getElementById('settings-ai-provider').value,
+        density:document.getElementById('settings-density').value,
+        autoRefreshReports:document.getElementById('settings-auto-refresh').checked
+      };
+      localStorage.setItem('novanod_admin_preferences', JSON.stringify(prefs));
+      document.getElementById('analysis-provider').value = prefs.provider;
+      document.getElementById('assistant-provider').value = prefs.provider;
+      document.body.classList.toggle('admin-compact', prefs.density === 'compact');
+      setStatus(document.getElementById('settings-status'), 'Paramètres enregistrés sur cet appareil.', 'success');
+    });
 
     const fingerprintStatus = document.getElementById('fingerprint-status');
     const btnRegisterFingerprint = document.getElementById('btn-register-fingerprint');
@@ -1721,7 +1840,8 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           name:document.getElementById('new-user-name').value.trim(),
           email:document.getElementById('new-user-email').value.trim(),
           password:document.getElementById('new-user-password').value,
-          phone:document.getElementById('new-user-phone').value.trim()
+          phone:document.getElementById('new-user-phone').value.trim(),
+          emailVerified:document.getElementById('new-user-email-verified').checked
         };
         if (!payload.email || payload.password.length < 8) throw new Error('E-mail requis et mot de passe de 8 caractères minimum.');
         const r = await adminCall('user_create', payload);
@@ -1796,6 +1916,90 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       catch(e){out('documents-output','Erreur : '+e.message);}
     });
 
+
+    // TablesDB moderne : gestion des tables et propriétés typées.
+    const tablesDbValue = id => document.getElementById(id)?.value.trim() || '';
+    const tablesDbCall = async (action, extra={}) => adminCall(action, {
+      databaseId:tablesDbValue('tablesdb-database-id'), ...extra
+    });
+    document.getElementById('btn-tablesdb-load-databases')?.addEventListener('click', async () => {
+      try {
+        const r=await adminCall('tablesdb_list_databases');
+        out('tablesdb-databases-output',r.databases || r);
+        setStatus(document.getElementById('tablesdb-status'),'Bases TablesDB chargées.','success');
+      } catch(e) { setStatus(document.getElementById('tablesdb-status'),e.message,'error'); }
+    });
+    document.getElementById('btn-tablesdb-create-database')?.addEventListener('click', async () => {
+      try {
+        const name=tablesDbValue('tablesdb-new-database-name');
+        if(!name) throw new Error('Nom de la base requis.');
+        const databaseId=tablesDbValue('tablesdb-new-database-id');
+        const r=await adminCall('tablesdb_create_database',{name,databaseId:databaseId || undefined});
+        out('tablesdb-databases-output',r.database || r);
+        if(r.database?.$id) document.getElementById('tablesdb-database-id').value=r.database.$id;
+        setStatus(document.getElementById('tablesdb-status'),'Base TablesDB créée.','success');
+      } catch(e) { setStatus(document.getElementById('tablesdb-status'),e.message,'error'); }
+    });
+    document.getElementById('btn-tablesdb-list-tables')?.addEventListener('click', async () => {
+      try { const r=await tablesDbCall('tablesdb_list_tables'); out('tablesdb-tables-output',r.tables || r); }
+      catch(e) { setStatus(document.getElementById('tablesdb-status'),e.message,'error'); }
+    });
+    document.getElementById('btn-tablesdb-create-table')?.addEventListener('click', async () => {
+      try {
+        const name=tablesDbValue('tablesdb-new-table-name');
+        if(!name) throw new Error('Nom de la table requis.');
+        const tableId=tablesDbValue('tablesdb-new-table-id');
+        const r=await tablesDbCall('tablesdb_create_table',{name,tableId:tableId || undefined});
+        out('tablesdb-tables-output',r.table || r);
+        if(r.table?.$id) document.getElementById('tablesdb-table-id').value=r.table.$id;
+        setStatus(document.getElementById('tablesdb-status'),'Table créée. Ajoute maintenant ses propriétés.', 'success');
+      } catch(e) { setStatus(document.getElementById('tablesdb-status'),e.message,'error'); }
+    });
+    document.getElementById('btn-tablesdb-list-columns')?.addEventListener('click', async () => {
+      try {
+        const tableId=tablesDbValue('tablesdb-table-id'); if(!tableId) throw new Error('ID de table requis.');
+        const r=await tablesDbCall('tablesdb_list_columns',{tableId});
+        out('tablesdb-columns-output',r.columns || r);
+      } catch(e) { setStatus(document.getElementById('tablesdb-status'),e.message,'error'); }
+    });
+    document.getElementById('btn-tablesdb-create-column')?.addEventListener('click', async () => {
+      try {
+        const tableId=tablesDbValue('tablesdb-table-id'); if(!tableId) throw new Error('ID de table requis.');
+        const column={
+          key:tablesDbValue('tablesdb-column-key'),
+          type:tablesDbValue('tablesdb-column-type'),
+          size:tablesDbValue('tablesdb-column-size'),
+          default:tablesDbValue('tablesdb-column-default'),
+          elements:tablesDbValue('tablesdb-column-elements'),
+          required:document.getElementById('tablesdb-column-required').checked,
+          array:document.getElementById('tablesdb-column-array').checked
+        };
+        if(!column.default) delete column.default;
+        if(!column.size) delete column.size;
+        if(!column.elements) delete column.elements;
+        const r=await tablesDbCall('tablesdb_create_column',{tableId,column});
+        out('tablesdb-columns-output',r.column || r);
+        setStatus(document.getElementById('tablesdb-status'),'Propriété ajoutée.','success');
+      } catch(e) { setStatus(document.getElementById('tablesdb-status'),e.message,'error'); }
+    });
+    document.getElementById('btn-tablesdb-delete-column')?.addEventListener('click', async () => {
+      try {
+        const tableId=tablesDbValue('tablesdb-table-id'), key=tablesDbValue('tablesdb-delete-column-key');
+        if(!tableId || !key) throw new Error('ID de table et nom de propriété requis.');
+        if(!confirm('Supprimer définitivement cette propriété et ses données ?')) return;
+        await tablesDbCall('tablesdb_delete_column',{tableId,key});
+        setStatus(document.getElementById('tablesdb-status'),'Propriété supprimée.','success');
+      } catch(e) { setStatus(document.getElementById('tablesdb-status'),e.message,'error'); }
+    });
+    document.getElementById('btn-tablesdb-delete-table')?.addEventListener('click', async () => {
+      try {
+        const tableId=tablesDbValue('tablesdb-table-id'); if(!tableId) throw new Error('ID de table requis.');
+        if(!confirm('Supprimer définitivement la table et toutes ses lignes ?')) return;
+        await tablesDbCall('tablesdb_delete_table',{tableId});
+        out('tablesdb-columns-output','Table supprimée.');
+        setStatus(document.getElementById('tablesdb-status'),'Table supprimée.','success');
+      } catch(e) { setStatus(document.getElementById('tablesdb-status'),e.message,'error'); }
+    });
     // Storage
     document.getElementById('btn-load-buckets')?.addEventListener('click',async()=>{
       try { const r=await adminCall('storage_buckets'); out('buckets-output',r.buckets || r); setStatus(document.getElementById('storage-status'),'Buckets chargés.','success'); }
@@ -1823,7 +2027,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         if(!content || (!userId && !topicId)) throw new Error('Contenu et destinataire (ID utilisateur ou topic) requis.');
         if(!confirm('Confirmer l’envoi de ce message ?')) return;
         const r=await adminCall('message_send',{channel,userId,topicId,subject,content});
-        out('messaging-output',r); setStatus(document.getElementById('messaging-status'),'Message transmis à Appwrite Messaging.','success');
+        out('messaging-output',r); setStatus(document.getElementById('messaging-status'),r.acceptedByAppwrite ? 'Message accepté par Appwrite. ID : '+(r.messageId || 'inconnu')+' — la livraison dépend du fournisseur et du destinataire.' : 'Réponse reçue du service de messagerie.','success');
       } catch(e){setStatus(document.getElementById('messaging-status'),e.message,'error');}
     });
 
@@ -1852,6 +2056,11 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       out(prefix+'-groq-output', p.groq || (p.errors?.groq ? 'Indisponible : '+p.errors.groq : 'Aucun résultat Groq demandé.'));
       out(prefix==='analysis'?'analysis-output':'assistant-output', p.combined || r?.report || r?.answer || 'Aucune synthèse commune retournée.');
     };
+    const savedAdminPrefs = JSON.parse(localStorage.getItem('novanod_admin_preferences') || '{}');
+    if (savedAdminPrefs.provider) {
+      document.getElementById('analysis-provider').value = savedAdminPrefs.provider;
+      document.getElementById('assistant-provider').value = savedAdminPrefs.provider;
+    }
     document.querySelectorAll('[data-analysis]').forEach(btn=>btn.addEventListener('click',async()=>{
       const kind=btn.dataset.analysis, status=document.getElementById('analysis-status');
       const providerMode=document.getElementById('analysis-provider')?.value || 'both';
