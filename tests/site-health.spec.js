@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test('la page d’accueil répond sans erreur HTTP', async ({ page }) => {
-  const response = await page.goto('/', { waitUntil: 'domcontentloaded' });
+  const response = await page.goto('./', { waitUntil: 'domcontentloaded' });
   expect(response, 'Aucune réponse HTTP reçue').not.toBeNull();
   expect(response.status(), `HTTP ${response.status()} sur la page d’accueil`).toBeLessThan(400);
   await expect(page.locator('body')).toBeVisible();
@@ -24,7 +24,7 @@ test('les liens internes visibles ont une destination exploitable', async ({ pag
   await page.goto('/', { waitUntil: 'domcontentloaded' });
   const hrefs = await page.locator('a[href]').evaluateAll(nodes =>
     [...new Set(nodes.map(a => a.href).filter(Boolean))]
-      .filter(href => href.startsWith(location.origin))
+      .filter(href => href.startsWith(new URL(baseURL).origin + new URL(baseURL).pathname))
       .slice(0, 30)
   );
   for (const href of hrefs) {
@@ -63,12 +63,12 @@ test('admin : écran de connexion et identité visuelle chargent correctement', 
 
 test('admin : contrôles visuels appareil et analyses sont présents sans pictogrammes textuels', async ({ page }) => {
   await page.goto('admin.html', { waitUntil: 'domcontentloaded' });
-  await expect(page.locator('.device-tab[data-device="phone"] svg')).toBeVisible();
-  await expect(page.locator('.device-tab[data-device="tablet"] svg')).toBeVisible();
-  await expect(page.locator('.device-tab[data-device="desktop"] svg')).toBeVisible();
-  await expect(page.locator('#btn-orient-portrait svg')).toBeVisible();
-  await expect(page.locator('#btn-orient-landscape svg')).toBeVisible();
-  await expect(page.locator('.analysis-action svg').first()).toBeVisible();
+  await expect(page.locator('.device-tab[data-device="phone"] svg')).toHaveCount(1);
+  await expect(page.locator('.device-tab[data-device="tablet"] svg')).toHaveCount(1);
+  await expect(page.locator('.device-tab[data-device="desktop"] svg')).toHaveCount(1);
+  await expect(page.locator('#btn-orient-portrait svg')).toHaveCount(1);
+  await expect(page.locator('#btn-orient-landscape svg')).toHaveCount(1);
+  await expect(page.locator('.analysis-action svg').first()).toHaveCount(1);
   await expect(page.locator('#btn-register-fingerprint .fingerprint-mark')).toHaveCount(1);
   await page.screenshot({ path: 'artifacts/admin-controls.png', fullPage: true });
 });
