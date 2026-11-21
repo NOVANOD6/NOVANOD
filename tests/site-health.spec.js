@@ -8,7 +8,7 @@ test('la page d’accueil répond sans erreur HTTP', async ({ page }) => {
 });
 
 test('la page ne déborde pas horizontalement sur le viewport testé', async ({ page }) => {
-  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
   await page.waitForTimeout(500);
   const dimensions = await page.evaluate(() => ({
     viewport: document.documentElement.clientWidth,
@@ -22,7 +22,7 @@ test('la page ne déborde pas horizontalement sur le viewport testé', async ({ 
 
 test('les liens internes visibles ont une destination exploitable', async ({ page, request }) => {
   await page.goto('/', { waitUntil: 'domcontentloaded' });
-  const sitePrefix = new URL('/', page.url()).href;
+  const sitePrefix = new URL('./', page.url()).href;
   const hrefs = await page.locator('a[href]').evaluateAll((nodes, prefix) =>
     [...new Set(nodes.map(a => a.href).filter(Boolean))]
       .filter(href => href.startsWith(prefix))
