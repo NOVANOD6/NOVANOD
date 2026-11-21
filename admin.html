@@ -1056,6 +1056,13 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           <button id="btn-register-fingerprint" class="btn-3d btn-dark hidden"><svg class="fingerprint-mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 7c-9 0-16 7-16 16M24 13c-6 0-11 5-11 11 0 7-1 12-4 16M24 19c-3 0-5 2-5 5 0 9-1 14-4 18M24 25c0 9-1 15-3 19M30 9c6 2 10 8 10 14 0 8-1 14-4 19M30 16c3 2 5 5 5 9 0 5 0 9-2 13"/></svg><span>Enregistrer l'empreinte de ce téléphone</span></button>
           <button id="btn-refresh-passkeys" class="admin-action">Actualiser la liste</button>
         </div>
+        <div class="glass-card">
+          <h3 class="card-title">Alertes de sécurité</h3>
+          <div class="hint">Incidents reçus et enregistrés par le serveur. Les statuts indiquent si Appwrite a accepté le Push et l’e-mail ; ils ne garantissent pas la livraison sur l’appareil.</div>
+          <div id="security-events-status" class="status-msg" role="status" aria-live="polite"></div>
+          <button id="btn-refresh-security-events" class="admin-action">Actualiser les alertes</button>
+          <div id="security-events-list" class="user-list" aria-live="polite"><div class="hint">Chargement des alertes…</div></div>
+        </div>
       </div>
 
       <!-- ===== ONGLET : UTILISATEURS ===== -->
@@ -1517,6 +1524,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           if (!reportsLoadedOnce || prefs.autoRefreshReports !== false) refreshReports();
         }
         if (tab.dataset.pane === 'pane-settings') populateSettings();
+        if (tab.dataset.pane === 'pane-security') refreshSecurityEvents();
         if (tab.dataset.pane === 'pane-preview' && typeof applyPreviewSize === 'function') applyPreviewSize();
       });
     });
@@ -1807,6 +1815,39 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, c => ({
       '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
     }[c]));
+    const securityEventsStatus = document.getElementById('security-events-status');
+    const securityEventsList = document.getElementById('security-events-list');
+    async function refreshSecurityEvents() {
+      if (!securityEventsList) return;
+      setStatus(securityEventsStatus, 'Chargement des alertes de sécurité…', 'info');
+      try {
+        const result = await adminCall('list_security_events');
+        const events = Array.isArray(result.events) ? result.events : [];
+        if (!events.length) {
+          securityEventsList.innerHTML = '<div class="hint">Aucune alerte enregistrée pour le moment.</div>';
+        } else {
+          securityEventsList.innerHTML = events.map(item => {
+            const event = item.event || {};
+            const channels = item.notifications || {};
+            const push = channels.push?.acceptedByAppwrite ? 'Push accepté' : 'Push non accepté';
+            const email = channels.email?.acceptedByAppwrite ? 'E-mail accepté' : 'E-mail non accepté';
+            const severity = event.severityLabel || event.severity || 'Inconnue';
+            return '<div class="user-row">' +
+              '<div class="u-name">' + escapeHtml(severity) + ' · ' + escapeHtml(event.event || 'Incident') + '</div>' +
+              '<div style="white-space:pre-wrap;margin-top:4px">' + escapeHtml(event.summary || '') + '</div>' +
+              '<div class="hint" style="margin-top:6px">' + escapeHtml(event.source || 'NOVANOD') + ' · ' + escapeHtml(formatDate(event.occurredAt || item.receivedAt || item.$createdAt)) + '</div>' +
+              '<div class="hint">' + escapeHtml(push) + ' · ' + escapeHtml(email) + '</div>' +
+              (event.details ? '<details><summary>Détails techniques</summary><div style="white-space:pre-wrap;margin-top:6px">' + escapeHtml(event.details) + '</div></details>' : '') +
+            '</div>';
+          }).join('');
+        }
+        setStatus(securityEventsStatus, events.length + ' alerte(s) chargée(s).', 'success');
+      } catch (e) {
+        setStatus(securityEventsStatus, e.message, 'error');
+        securityEventsList.textContent = 'Impossible de charger les alertes.';
+      }
+    }
+    document.getElementById('btn-refresh-security-events')?.addEventListener('click', refreshSecurityEvents);
     let cachedUsers = [];
 
     async function refreshUsers() {
