@@ -1050,7 +1050,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
             <input id="new-user-phone" class="input-field" placeholder="Téléphone (facultatif)">
           </div>
           <button id="btn-create-user" class="btn-3d">＋ Créer le compte</button>
-          <div class="hint">La création est effectuée côté serveur. Le mot de passe n'est jamais affiché dans la liste.</div>
+          <div class="hint">La création est effectuée côté serveur. Le mot de passe n'est jamais affiché dans la liste. Si Appwrite renvoie HTTP 401/403, vérifie que la clé serveur de la fonction possède le scope <b>users.write</b>. Sans validation d'e-mail, le site public demandera à l'utilisateur de confirmer son adresse avant l'accès.</div>
         </div>
         <div class="glass-card">
           <h3 class="card-title">Acheteurs et visiteurs</h3>
@@ -1175,7 +1175,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
 
         <div class="glass-card">
           <h3 class="card-title">TablesDB · Tables et propriétés</h3>
-          <div class="admin-note">TablesDB est différent de DocumentsDB. Sélectionne une base de type TablesDB. Ne saisis pas l'ID de la base DocumentsDB nova_db si elle n'apparaît pas dans la liste.</div>
+          <div class="admin-note">TablesDB est différent de DocumentsDB. Sélectionne une base de type TablesDB. Ne saisis pas l'ID de la base DocumentsDB nova_db si elle n'apparaît pas dans la liste. Les opérations de création nécessitent les scopes serveur <b>databases.read</b> et <b>databases.write</b>.</div>
           <button id="btn-tablesdb-load-databases" class="btn-3d btn-secondary">Lister les bases TablesDB</button>
           <div id="tablesdb-status" class="status-msg"></div>
           <div id="tablesdb-databases-output" class="admin-output">Les bases TablesDB apparaîtront ici.</div>
