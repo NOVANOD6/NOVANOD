@@ -1606,14 +1606,14 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         const result = await callNovaFunction({ action: 'webauthn_register_verify', credential });
         if (result.error) throw new Error(result.error);
         setStatus(fingerprintStatus, "Passkey enregistrée sur cet appareil.", "success");
-        await refreshPasskeys();
       } catch (e) {
         const message = /not allowed|timed out|NotAllowedError/i.test(e.message)
           ? "Enregistrement annulé ou expiré. Vérifie qu'un verrouillage d'écran et une empreinte/option biométrique sont configurés sur Android, puis réessaie."
           : e.message;
         setStatus(fingerprintStatus, message, "error");
       } finally {
-        btnRegisterFingerprint.disabled = false;
+        // Recalculer la limite même après un succès : ne pas réactiver la 6e passkey.
+        await refreshPasskeys();
       }
     });
     btnLoginFingerprint.addEventListener('click', async () => {
