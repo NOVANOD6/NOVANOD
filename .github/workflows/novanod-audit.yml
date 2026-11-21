@@ -2,6 +2,8 @@ name: NOVANOD - Tests Playwright, audit Lighthouse et sécurité
 
 on:
   workflow_dispatch:
+  pull_request:
+    branches: [main]
   push:
     branches: [main, master]
   schedule:
@@ -33,7 +35,7 @@ jobs:
         if: always()
         run: npm audit --json > artifacts/npm-audit.json || true
       - name: Envoyer une alerte Appwrite si vulnérabilité élevée ou critique
-        if: always() && hashFiles('artifacts/npm-audit.json') != ''
+        if: always() && github.event_name != 'pull_request' && hashFiles('artifacts/npm-audit.json') != ''
         env:
           APPWRITE_ENDPOINT: ${{ secrets.APPWRITE_ENDPOINT }}
           APPWRITE_PROJECT_ID: ${{ secrets.APPWRITE_PROJECT_ID }}
@@ -65,7 +67,7 @@ jobs:
         if: always()
         run: node scripts/build-audit-summary.mjs
       - name: Envoyer le rapport à Appwrite
-        if: always() && hashFiles('artifacts/audit-summary.json') != ''
+        if: always() && github.event_name != 'pull_request' && hashFiles('artifacts/audit-summary.json') != ''
         env:
           APPWRITE_ENDPOINT: ${{ secrets.APPWRITE_ENDPOINT }}
           APPWRITE_PROJECT_ID: ${{ secrets.APPWRITE_PROJECT_ID }}
@@ -74,7 +76,7 @@ jobs:
           NOVA_AUDIT_TOKEN: ${{ secrets.NOVA_AUDIT_TOKEN }}
         run: node scripts/post-audit.mjs
       - name: Transférer les captures Playwright vers le bucket privé Appwrite
-        if: always() && hashFiles('artifacts/test-results/**/*.png', 'artifacts/test-results/**/*.jpg', 'artifacts/test-results/**/*.jpeg', 'artifacts/test-results/**/*.webp') != ''
+        if: always() && github.event_name != 'pull_request' && hashFiles('artifacts/test-results/**/*.png', 'artifacts/test-results/**/*.jpg', 'artifacts/test-results/**/*.jpeg', 'artifacts/test-results/**/*.webp') != ''
         env:
           APPWRITE_ENDPOINT: ${{ secrets.APPWRITE_ENDPOINT }}
           APPWRITE_PROJECT_ID: ${{ secrets.APPWRITE_PROJECT_ID }}
