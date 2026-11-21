@@ -18,7 +18,7 @@ export default defineConfig({
   },
   projects: [
     { name: 'chromium-mobile', use: { ...devices['Pixel 7'] } },
-    { name: 'chromium-tablet', use: { ...devices['iPad Mini'] } },
+    { name: 'chromium-tablet', use: { ...devices['iPad Mini'], defaultBrowserType: 'chromium', browserName: 'chromium' } },
     { name: 'chromium-desktop', use: { ...devices['Desktop Chrome'] } },
   ],
   outputDir: 'artifacts/test-results',
