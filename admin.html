@@ -909,7 +909,24 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid rgba(230,74,56,.45);outline-offset:2px}
     @media(max-width:620px){.device-tab{flex:1 1 100px;padding:9px 8px;gap:6px}.orientation-button{min-height:54px;padding:8px}.analysis-action{min-height:60px}}
 
-  </style>
+
+    /* NOVANOD analytics: readable AI output and data-backed charts */
+    #assistant-gemini-output,#assistant-groq-output,#assistant-output {
+      font-family: Tahoma, Arial, sans-serif;
+      line-height: 1.65;
+      white-space: pre-wrap;
+    }
+    .analysis-chart-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}
+    .analysis-chart-card{min-width:0;padding:14px;border:1px solid rgba(59,20,32,.13);border-radius:8px;background:#fffef5}
+    .analysis-chart-card h5{margin:0 0 8px;color:#3B1420;font-size:12px;font-weight:800}
+    .analysis-chart-card p{font-size:11px;line-height:1.5;color:#79545a}
+    .analysis-chart-svg{display:block;width:100%;height:auto;min-height:180px;overflow:visible}
+    .analysis-chart-svg text{font-family:Tahoma,Arial,sans-serif;font-size:10px;fill:#79545a}
+    .analysis-geo-table{width:100%;border-collapse:collapse;font-size:11px}
+    .analysis-geo-table th,.analysis-geo-table td{padding:7px;text-align:left;border-bottom:1px solid rgba(59,20,32,.1);overflow-wrap:anywhere}
+    .analysis-geo-table th{color:#3B1420}
+    @media(max-width:760px){.analysis-chart-grid{grid-template-columns:1fr}}
+\n  </style>
 </head>
 <body>
 
@@ -1296,6 +1313,14 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           <div id="analysis-groq-output" class="admin-output">En attente du rapport Groq.</div>
           <h4>Synthèse commune des deux IA</h4>
           <div id="analysis-output" class="admin-output">Choisis un audit pour générer les rapports détaillés et la synthèse.</div>
+          <section id="analysis-charts" class="analysis-chart-grid" aria-live="polite">
+            <article class="analysis-chart-card"><h5>Courbe statistique X/Y</h5><p>En attente de coordonnées numériques structurées renvoyées par l'analyse.</p></article>
+            <article class="analysis-chart-card"><h5>Indicateurs</h5><p>En attente de mesures numériques réelles renvoyées par l'analyse.</p></article>
+          </section>
+          <section id="analysis-geo-coordinates" class="analysis-chart-card" style="margin-top:12px">
+            <h5>Coordonnées géographiques des événements</h5>
+            <p>Aucune coordonnée géographique exploitable n'a encore été renvoyée par le backend.</p>
+          </section>
         </div>
         <div class="glass-card">
           <h3 class="card-title">Historique des rapports</h3>
@@ -2056,7 +2081,76 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       out(prefix+'-groq-output', p.groq || (p.errors?.groq ? 'Indisponible : '+p.errors.groq : 'Aucun résultat Groq demandé.'));
       out(prefix==='analysis'?'analysis-output':'assistant-output', p.combined || r?.report || r?.answer || 'Aucune synthèse commune retournée.');
     };
-    const savedAdminPrefs = JSON.parse(localStorage.getItem('novanod_admin_preferences') || '{}');
+
+    // Charts use only structured numeric data returned by the trusted backend.
+    // AI prose is never mined for guessed values or fabricated coordinates.
+    function renderAnalysisCharts(result) {
+      const host=document.getElementById('analysis-charts');
+      const geoHost=document.getElementById('analysis-geo-coordinates');
+      if(!host || !geoHost) return;
+      host.replaceChildren();
+      const chartData=result?.chartData || result?.statistics?.chartData || {};
+      const xyRaw=Array.isArray(chartData.points)?chartData.points:
+        Array.isArray(result?.coordinates)?result.coordinates:[];
+      const xy=xyRaw.map((p)=>({x:Number(p?.x),y:Number(p?.y),label:String(p?.label ?? p?.x ?? '')}))
+        .filter(p=>Number.isFinite(p.x)&&Number.isFinite(p.y));
+      const metricRaw=Array.isArray(chartData.metrics)?chartData.metrics:
+        Array.isArray(result?.metrics)?result.metrics:[];
+      const metrics=metricRaw.map((m)=>({label:String(m?.label ?? m?.name ?? m?.key ?? 'Mesure'),
+        value:Number(m?.value ?? m?.count ?? m?.total)}))
+        .filter(m=>Number.isFinite(m.value));
+      const makeCard=(title)=>{const card=document.createElement('article');card.className='analysis-chart-card';
+        const h=document.createElement('h5');h.textContent=title;card.append(h);return card;};
+      const makeSvg=()=>{const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+        svg.setAttribute('viewBox','0 0 520 220');svg.setAttribute('role','img');svg.classList.add('analysis-chart-svg');return svg;};
+      const lineCard=makeCard('Courbe statistique X/Y');
+      if(xy.length>=2){
+        const svg=makeSvg(), xs=xy.map(p=>p.x),ys=xy.map(p=>p.y);
+        const minX=Math.min(...xs),maxX=Math.max(...xs),minY=Math.min(...ys),maxY=Math.max(...ys);
+        const px=x=>42+(x-minX)/(maxX-minX||1)*450, py=y=>184-(y-minY)/(maxY-minY||1)*155;
+        const axis=document.createElementNS(svg.namespaceURI,'path');
+        axis.setAttribute('d','M42 18V184H500');axis.setAttribute('fill','none');axis.setAttribute('stroke','#b9a6a4');svg.append(axis);
+        const path=document.createElementNS(svg.namespaceURI,'polyline');
+        path.setAttribute('points',xy.map(p=>px(p.x)+','+py(p.y)).join(' '));
+        path.setAttribute('fill','none');path.setAttribute('stroke','#E64A38');path.setAttribute('stroke-width','3');path.setAttribute('stroke-linejoin','round');svg.append(path);
+        xy.forEach(p=>{const dot=document.createElementNS(svg.namespaceURI,'circle');dot.setAttribute('cx',px(p.x));dot.setAttribute('cy',py(p.y));dot.setAttribute('r','4');dot.setAttribute('fill','#3B1420');svg.append(dot);});
+        const xLabel=document.createElementNS(svg.namespaceURI,'text');xLabel.setAttribute('x','270');xLabel.setAttribute('y','211');xLabel.setAttribute('text-anchor','middle');xLabel.textContent='X';svg.append(xLabel);
+        const yLabel=document.createElementNS(svg.namespaceURI,'text');yLabel.setAttribute('x','12');yLabel.setAttribute('y','16');yLabel.textContent='Y';svg.append(yLabel);
+        lineCard.append(svg);
+        const note=document.createElement('p');note.textContent=xy.length+' points numériques fournis par le backend.';lineCard.append(note);
+      } else {const p=document.createElement('p');p.textContent='Pas assez de points X/Y numériques structurés (minimum 2). Aucune courbe n’a été inventée.';lineCard.append(p);}
+      host.append(lineCard);
+      const metricCard=makeCard('Indicateurs statistiques');
+      if(metrics.length){
+        const svg=makeSvg(),max=Math.max(1,...metrics.map(m=>Math.abs(m.value)));
+        const slot=450/metrics.length,barW=Math.max(8,Math.min(34,slot*.55));
+        metrics.slice(0,12).forEach((m,i)=>{const h=Math.abs(m.value)/max*145,x=48+i*slot+slot/2-barW/2;
+          const rect=document.createElementNS(svg.namespaceURI,'rect');rect.setAttribute('x',x);rect.setAttribute('y',184-h);rect.setAttribute('width',barW);rect.setAttribute('height',h);rect.setAttribute('rx','3');rect.setAttribute('fill','#E64A38');svg.append(rect);
+          const val=document.createElementNS(svg.namespaceURI,'text');val.setAttribute('x',x+barW/2);val.setAttribute('y',Math.max(12,178-h));val.setAttribute('text-anchor','middle');val.textContent=String(m.value);svg.append(val);
+          const lab=document.createElementNS(svg.namespaceURI,'text');lab.setAttribute('x',x+barW/2);lab.setAttribute('y','201');lab.setAttribute('text-anchor','middle');lab.textContent=m.label.slice(0,12);svg.append(lab);
+        });metricCard.append(svg);
+        const note=document.createElement('p');note.textContent=metrics.length+' mesures numériques reçues.';metricCard.append(note);
+      } else {const p=document.createElement('p');p.textContent='Aucune mesure numérique structurée disponible dans cette réponse.';metricCard.append(p);}
+      host.append(metricCard);
+      geoHost.replaceChildren();
+      const geoTitle=document.createElement('h5');geoTitle.textContent='Coordonnées géographiques des événements';geoHost.append(geoTitle);
+      const events=Array.isArray(result?.geoCoordinates)?result.geoCoordinates:
+        Array.isArray(result?.securityEvents)?result.securityEvents.filter(e=>e?.location?.latitude!=null&&e?.location?.longitude!=null):[];
+      const rows=events.map(e=>({label:String(e.label??e.event??e.type??'Événement'),
+        lat:Number(e.latitude??e.location?.latitude),lon:Number(e.longitude??e.location?.longitude),
+        accuracy:String(e.accuracy??e.location?.accuracy??'Non précisée')}))
+        .filter(e=>Number.isFinite(e.lat)&&Number.isFinite(e.lon)&&Math.abs(e.lat)<=90&&Math.abs(e.lon)<=180);
+      if(rows.length){
+        const table=document.createElement('table');table.className='analysis-geo-table';
+        const thead=document.createElement('thead'),tr=document.createElement('tr');
+        ['Événement','Latitude','Longitude','Précision'].forEach(label=>{const th=document.createElement('th');th.textContent=label;tr.append(th);});
+        thead.append(tr);table.append(thead);const tbody=document.createElement('tbody');
+        rows.slice(0,50).forEach(e=>{const tr=document.createElement('tr');[e.label,e.lat.toFixed(4),e.lon.toFixed(4),e.accuracy].forEach(v=>{const td=document.createElement('td');td.textContent=v;tr.append(td);});tbody.append(tr);});
+        table.append(tbody);geoHost.append(table);
+        const note=document.createElement('p');note.textContent='Localisations approximatives uniquement si elles proviennent des journaux réseau/IP. Elles ne représentent pas une position GPS.';geoHost.append(note);
+      } else {const p=document.createElement('p');p.textContent='Aucune coordonnée géographique structurée fournie. Le backend de sécurité doit fournir latitude/longitude et leur source avant affichage.';geoHost.append(p);}
+    }
+\n    const savedAdminPrefs = JSON.parse(localStorage.getItem('novanod_admin_preferences') || '{}');
     if (savedAdminPrefs.provider) {
       document.getElementById('analysis-provider').value = savedAdminPrefs.provider;
       document.getElementById('assistant-provider').value = savedAdminPrefs.provider;
@@ -2071,7 +2165,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         const r=await adminCall('run_analysis',{analysisType:kind,providerMode});
         const text=aiResultText(r);
         if (!text || text.startsWith('Le serveur n’a renvoyé')) throw new Error(text);
-        renderProviderOutputs('analysis',r);
+        renderProviderOutputs('analysis',r);\n        renderAnalysisCharts(r);
         const partial = r.providers?.errors && Object.keys(r.providers.errors).length;
         setStatus(status,partial?'Rapport partiel enregistré : un fournisseur ou la synthèse est indisponible.':'Rapports Gemini, Groq et synthèse enregistrés.','success');
         const h=await adminCall('list_reports');
