@@ -2245,7 +2245,8 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         const providers=r.providers||{};
         out('github-audit-gemini',providers.gemini || ('Indisponible : '+(providers.errors?.gemini||'aucun résultat')));
         out('github-audit-groq',providers.groq || ('Indisponible : '+(providers.errors?.groq||'aucun résultat')));
-        out('github-audit-combined',providers.combined || r.report || 'Aucune synthèse retournée.');\n        renderAnalysisCharts(r);
+        out('github-audit-combined',providers.combined || r.report || 'Aucune synthèse retournée.');
+        renderAnalysisCharts(r);
         const partial=providers.errors && Object.keys(providers.errors).length;
         setStatus(status,partial?'Rapport partiel : un fournisseur ou la synthèse est indisponible.':'Audit analysé et rapport enregistré dans Appwrite.','success');
       } catch(e) { setStatus(status,e.message,'error'); out('github-audit-combined','Erreur : '+e.message); }
