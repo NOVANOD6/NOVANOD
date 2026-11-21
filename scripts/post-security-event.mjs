@@ -46,4 +46,7 @@ if (Number(execution.responseStatusCode) < 200 || Number(execution.responseStatu
 let result = {};
 try { result = JSON.parse(execution.responseBody || '{}'); } catch {}
 if (!result.persisted || !result.eventId) throw new Error('Appwrite n’a pas confirmé l’enregistrement de l’incident.');
-console.log(`Alerte de sécurité enregistrée : ${result.eventId}. Push accepté=${!!result.channels?.push?.acceptedByAppwrite}; e-mail accepté=${!!result.channels?.email?.acceptedByAppwrite}.`);
+const pushAccepted = !!result.channels?.push?.acceptedByAppwrite;
+const emailAccepted = !!result.channels?.email?.acceptedByAppwrite;
+console.log(`Alerte de sécurité enregistrée : ${result.eventId}. Push accepté=${pushAccepted}; e-mail accepté=${emailAccepted}.`);
+if (!pushAccepted || !emailAccepted) throw new Error('Incident enregistré, mais Appwrite n’a pas accepté les deux canaux Push et e-mail. Vérifie les fournisseurs Messaging.');
