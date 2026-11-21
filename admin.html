@@ -1553,10 +1553,11 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         if (result.error) throw new Error(result.error);
         const items = Array.isArray(result.credentials) ? result.credentials : [];
         count.textContent = items.length + ' / 5 passkey(s) enregistrée(s) pour ce compte administrateur.';
+        const safeText = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
         list.innerHTML = items.length ? items.map((item, index) =>
           '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--border-color,#ddd)">' +
-          '<span><b>Passkey ' + (index + 1) + '</b><br><small>Ajoutée le ' + escapeHtml(item.createdAt || 'Date inconnue') + '</small></span>' +
-          '<button class="admin-action danger" data-passkey-delete="' + escapeHtml(item.id) + '">Supprimer</button></div>'
+          '<span><b>Passkey ' + (index + 1) + '</b><br><small>Ajoutée le ' + safeText(item.createdAt || 'Date inconnue') + '</small></span>' +
+          '<button class="admin-action danger" data-passkey-delete="' + safeText(item.id) + '">Supprimer</button></div>'
         ).join('') : '<div class="hint">Aucune passkey enregistrée pour ce compte.</div>';
         btnRegisterFingerprint.disabled = items.length >= 5;
         btnRegisterFingerprint.querySelector('span').textContent = items.length >= 5 ? 'Limite de cinq passkeys atteinte' : '◎ Ajouter une passkey (' + items.length + '/5)';
