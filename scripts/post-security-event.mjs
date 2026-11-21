@@ -4,7 +4,10 @@ const reportPath = 'artifacts/npm-audit.json';
 let report;
 try { report = JSON.parse(await fs.readFile(reportPath, 'utf8')); }
 catch (error) { throw new Error(`Rapport npm audit absent ou illisible : ${error.message}`); }
-const counts = report.metadata?.vulnerabilities || {};
+if (!report.metadata?.vulnerabilities || typeof report.metadata.vulnerabilities !== 'object') {
+  throw new Error('npm audit n’a pas fourni de résultats de sécurité valides ; le contrôle ne peut pas être déclaré réussi.');
+}
+const counts = report.metadata.vulnerabilities;
 const high = Number(counts.high || 0);
 const critical = Number(counts.critical || 0);
 if (high + critical === 0) {
