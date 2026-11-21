@@ -1610,7 +1610,7 @@
     function renderPushHistory() {
       const host = document.getElementById('push-notification-list');
       if (!host) return;
-      const items = JSON.parse(localStorage.getItem('novanod_push_history') || '[]');
+      const items = JSON.parse(sessionStorage.getItem('novanod_push_history') || '[]');
       if (!items.length) {
         host.innerHTML = '<p style="font-size:12px;opacity:.7;">Aucun message reçu pour le moment.</p>';
         return;
@@ -1658,10 +1658,10 @@
             body:notification.body || payload.body || payload.message || 'Vous avez reçu une notification.',
             receivedAt:new Date().toISOString()
           };
-          const history = JSON.parse(localStorage.getItem('novanod_push_history') || '[]');
+          const history = JSON.parse(sessionStorage.getItem('novanod_push_history') || '[]');
           if (!history.some(existing => existing.id === item.id)) {
             history.unshift(item);
-            localStorage.setItem('novanod_push_history', JSON.stringify(history.slice(0,20)));
+            sessionStorage.setItem('novanod_push_history', JSON.stringify(history.slice(0,20)));
           }
           renderPushHistory();
           showPushToast(item.title, item.body);
