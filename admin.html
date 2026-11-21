@@ -1586,9 +1586,21 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       setStatus(fingerprintStatus, "Préparation de l'enregistrement sécurisé…", "info");
       btnRegisterFingerprint.disabled = true;
       try {
-        const options = await callNovaFunction({ action: 'webauthn_register_options' });
-        if (options.error) throw new Error(options.error);
+        const rawOptions = await callNovaFunction({ action: 'webauthn_register_options' });
+        if (rawOptions?.error) throw new Error(String(rawOptions.error));
+        // Certaines couches d'exécution peuvent encapsuler le JSON retourné.
+        const options = rawOptions?.optionsJSON || rawOptions?.options || rawOptions?.data || rawOptions;
+        if (!options || typeof options !== 'object' || typeof options.challenge !== 'string' || !options.challenge.trim()) {
+          const keys = options && typeof options === 'object' ? Object.keys(options).join(', ') : typeof options;
+          throw new Error("Réponse WebAuthn invalide : le défi (challenge) est absent. Champs reçus : " + (keys || "aucun") + ". Vérifie la réponse de la fonction Appwrite.");
+        }
+        if (!options.rp || typeof options.rp.id !== 'string' || !options.rp.id.trim()) {
+          throw new Error("Réponse WebAuthn invalide : l'identifiant du site (rp.id) est absent.");
+        }
         const credential = await startRegistration({ optionsJSON: options });
+        if (!credential || typeof credential !== 'object' || !credential.id || !credential.response) {
+          throw new Error("Android n'a pas renvoyé une passkey valide. Vérifie le verrouillage sécurisé de l'appareil puis réessaie.");
+        }
         const result = await callNovaFunction({ action: 'webauthn_register_verify', credential });
         if (result.error) throw new Error(result.error);
         setStatus(fingerprintStatus, "Passkey enregistrée sur cet appareil.", "success");
