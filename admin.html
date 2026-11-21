@@ -2209,7 +2209,8 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         const note=document.createElement('p');note.textContent='Localisations approximatives uniquement si elles proviennent des journaux réseau/IP. Elles ne représentent pas une position GPS.';geoHost.append(note);
       } else {const p=document.createElement('p');p.textContent='Aucune coordonnée géographique structurée fournie. Le backend de sécurité doit fournir latitude/longitude et leur source avant affichage.';geoHost.append(p);}
     }
-\n    const savedAdminPrefs = JSON.parse(localStorage.getItem('novanod_admin_preferences') || '{}');
+
+    const savedAdminPrefs = JSON.parse(localStorage.getItem('novanod_admin_preferences') || '{}');
     if (savedAdminPrefs.provider) {
       document.getElementById('analysis-provider').value = savedAdminPrefs.provider;
       document.getElementById('assistant-provider').value = savedAdminPrefs.provider;
@@ -2224,7 +2225,8 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         const r=await adminCall('run_analysis',{analysisType:kind,providerMode});
         const text=aiResultText(r);
         if (!text || text.startsWith('Le serveur n’a renvoyé')) throw new Error(text);
-        renderProviderOutputs('analysis',r);\n        renderAnalysisCharts(r);
+        renderProviderOutputs('analysis',r);
+        renderAnalysisCharts(r);
         const partial = r.providers?.errors && Object.keys(r.providers.errors).length;
         setStatus(status,partial?'Rapport partiel enregistré : un fournisseur ou la synthèse est indisponible.':'Rapports Gemini, Groq et synthèse enregistrés.','success');
         const h=await adminCall('list_reports');
