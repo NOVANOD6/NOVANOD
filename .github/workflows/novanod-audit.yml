@@ -76,7 +76,7 @@ jobs:
           NOVA_AUDIT_TOKEN: ${{ secrets.NOVA_AUDIT_TOKEN }}
         run: node scripts/post-audit.mjs
       - name: Transférer les captures Playwright vers le bucket privé Appwrite
-        if: always() && github.event_name != 'pull_request' && hashFiles('artifacts/test-results/**/*.png', 'artifacts/test-results/**/*.jpg', 'artifacts/test-results/**/*.jpeg', 'artifacts/test-results/**/*.webp') != ''
+        if: always() && github.event_name != 'pull_request' && hashFiles('artifacts/**/*.png', 'artifacts/**/*.jpg', 'artifacts/**/*.jpeg', 'artifacts/**/*.webp') != ''
         env:
           APPWRITE_ENDPOINT: ${{ secrets.APPWRITE_ENDPOINT }}
           APPWRITE_PROJECT_ID: ${{ secrets.APPWRITE_PROJECT_ID }}
@@ -94,4 +94,8 @@ jobs:
           retention-days: 30
       - name: Échouer le workflow si les tests ou audits ont échoué
         if: steps.playwright.outcome == 'failure' || steps.lighthouse_mobile.outcome == 'failure' || steps.lighthouse_desktop.outcome == 'failure'
-        run: exit 1
+        run: |
+          echo "Playwright: ${{ steps.playwright.outcome }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "Lighthouse mobile: ${{ steps.lighthouse_mobile.outcome }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "Lighthouse ordinateur: ${{ steps.lighthouse_desktop.outcome }}" >> "$GITHUB_STEP_SUMMARY"
+          exit 1
