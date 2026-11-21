@@ -18,8 +18,8 @@ Exemple de forme attendue pour les graphiques (les valeurs ci-dessous sont ficti
 {
   "chartData": {
     "points": [
-      { "x": "2026-11-20", "y": 12 },
-      { "x": "2026-11-21", "y": 18 }
+      { "x": 1, "y": 12 },
+      { "x": 2, "y": 18 }
     ],
     "metrics": [
       { "label": "Erreurs", "value": 12 },
