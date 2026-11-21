@@ -8,7 +8,7 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   workers: process.env.CI ? 2 : undefined,
-  reporter: [['list'], ['json', { outputFile: 'artifacts/playwright-results.json' }]],
+  reporter: [\n    ['list'],\n    ['json', { outputFile: 'artifacts/playwright-results.json' }],\n    ['html', { outputFolder: 'artifacts/playwright-report', open: 'never' }],\n  ],
   use: {
     baseURL,
     trace: 'retain-on-failure',
