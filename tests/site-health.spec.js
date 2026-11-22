@@ -93,3 +93,54 @@ test('site public : captures des formats téléphone, tablette et ordinateur', a
   }));
   expect(size.document).toBeLessThanOrEqual(size.viewport + 2);
 });
+
+test('admin : aucun avertissement Passkey prématuré avant interaction', async ({ page }) => {
+  await page.goto('admin.html', { waitUntil: 'domcontentloaded' });
+  await page.waitForTimeout(300);
+  const messages = await page.evaluate(() => [
+    document.querySelector('#login-status')?.textContent || '',
+    document.querySelector('#fingerprint-status')?.textContent || '',
+    document.querySelector('#passkey-list')?.textContent || '',
+  ].join(' '));
+  expect(messages).not.toMatch(/aucune (empreinte|passkey)/i);
+});
+
+test('admin : les cinq profils IA spécialisés sont disponibles', async ({ page }) => {
+  await page.goto('admin.html', { waitUntil: 'domcontentloaded' });
+  const roles = page.locator('#assistant-role option');
+  await expect(roles).toHaveCount(6);
+  await expect(page.locator('#assistant-role')).toContainText('Expert Appwrite');
+  await expect(page.locator('#assistant-role')).toContainText('Expert Performance');
+  await expect(page.locator('#assistant-role')).toContainText('Expert Accessibilité');
+  await expect(page.locator('#assistant-role')).toContainText('Expert SEO');
+  await expect(page.locator('#assistant-role')).toContainText('Expert DevOps');
+});
+
+test('admin : les rapports tabulaires restent lisibles sur un écran mobile', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('admin.html', { waitUntil: 'domcontentloaded' });
+  const metrics = await page.evaluate(() => {
+    const probe = document.createElement('div');
+    probe.className = 'report-document';
+    probe.style.width = '100%';
+    probe.innerHTML = '<div class="report-table-scroll"><table class="report-structured-table"><thead><tr><th>Rubrique</th><th>Constat</th></tr></thead><tbody><tr><th>Performance mobile</th><td>Le temps de chargement doit être amélioré sans couper les mots ni faire déborder la page.</td></tr><tr><th>Accessibilité</th><td>Les contrôles doivent conserver un contraste suffisant et rester utilisables au clavier.</td></tr></tbody></table></div>';
+    document.body.appendChild(probe);
+    const table = probe.querySelector('table');
+    const cell = probe.querySelector('td');
+    const result = {
+      viewport: document.documentElement.clientWidth,
+      document: document.documentElement.scrollWidth,
+      report: probe.scrollWidth,
+      reportClient: probe.clientWidth,
+      display: getComputedStyle(table).display,
+      wordBreak: getComputedStyle(cell).wordBreak,
+      overflowWrap: getComputedStyle(cell).overflowWrap,
+    };
+    probe.remove();
+    return result;
+  });
+  expect(metrics.document, JSON.stringify(metrics)).toBeLessThanOrEqual(metrics.viewport + 2);
+  expect(metrics.report, JSON.stringify(metrics)).toBeLessThanOrEqual(metrics.reportClient + 2);
+  expect(metrics.wordBreak).toBe('normal');
+  expect(metrics.overflowWrap).toBe('break-word');
+});
