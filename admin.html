@@ -967,6 +967,30 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     .input-field,select.input-field,textarea.input-field{border-radius:12px!important;min-height:44px}.btn-3d{border-radius:12px!important}.admin-note{background:rgba(59,20,32,.045)!important;border:1px solid rgba(59,20,32,.1)!important;border-radius:13px!important}.user-list{max-height:var(--admin-list-max-height,480px)!important}.nova-reduced-motion *,.nova-reduced-motion *::before,.nova-reduced-motion *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
     @media(max-width:760px){.admin-brand-header .brand-logo{width:58px!important;height:58px!important}.stats-row{grid-template-columns:repeat(2,minmax(0,1fr))!important}.stats-row .stat-box:first-child{grid-column:span 2}.analysis-action svg{width:58px!important;height:58px!important}}
     @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+  
+    /* NOVANOD 2.5.20 — en-tête compact, centré et sans débordement mobile */
+    .header-brand.admin-brand-header{
+      width:100%!important;max-width:100%!important;min-width:0!important;
+      display:flex!important;flex-direction:column!important;align-items:center!important;
+      justify-content:center!important;gap:9px!important;text-align:center!important;
+      margin:0 auto 18px!important;padding:18px 14px!important;overflow:hidden!important;
+      border-radius:20px!important;
+    }
+    .admin-brand-header .brand-logo{flex:0 0 auto!important;width:66px!important;height:66px!important;max-width:100%!important}
+    .admin-brand-header .admin-title{display:block!important;max-width:100%!important;text-align:center!important;overflow-wrap:anywhere!important}
+    .admin-brand-header .admin-brand-subtitle{
+      display:inline-flex!important;align-items:center!important;justify-content:center!important;
+      width:max-content!important;max-width:100%!important;min-width:0!important;
+      margin:0 auto!important;padding:7px 13px!important;white-space:normal!important;
+      overflow-wrap:anywhere!important;text-align:center!important;line-height:1.35!important;
+      letter-spacing:2px!important;box-sizing:border-box!important;
+    }
+    .analysis-donut-legend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:10px}
+    .analysis-donut-legend span{font-size:11px;display:flex;justify-content:space-between;gap:8px;padding:7px 9px;border-radius:9px;background:rgba(59,20,32,.045)}
+    .analysis-donut-wrap{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap}
+    .analysis-donut-wrap svg{width:min(220px,100%);height:auto}
+    @media(max-width:600px){.header-brand.admin-brand-header{padding:16px 12px!important}.admin-brand-header .admin-brand-subtitle{font-size:10px!important}.analysis-donut-legend{grid-template-columns:1fr}}
+
   </style>
 </head>
 <body>
@@ -1045,6 +1069,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         <button class="dash-tab" data-pane="pane-teams"><svg class="nav-illustration" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx='8' cy='8' r='3'/><circle cx='17' cy='9' r='2.5'/><path d='M2.5 20a5.5 5.5 0 0 1 11 0M14 16a4.5 4.5 0 0 1 7 3'/></svg><span class="dash-label">Équipes</span></button>
         <button class="dash-tab" data-pane="pane-database"><svg class="nav-illustration" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx='12' cy='5' rx='8' ry='3'/><path d='M4 5v7c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12v7c0 1.7 3.6 3 8 3s8-1.3 8-3v-7'/></svg><span class="dash-label">Base de données</span></button>
         <button class="dash-tab" data-pane="pane-storage"><svg class="nav-illustration" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d='M3 7h18v13H3zM3 7l3-4h12l3 4'/><path d='M8 12h8M8 16h5'/></svg><span class="dash-label">Stockage</span></button>
+        <button class="dash-tab" data-pane="pane-functions"><svg class="nav-illustration" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 9h8M8 13h5M8 17h8"/></svg><span class="dash-label">Fonctions</span></button>
         <button class="dash-tab" data-pane="pane-messaging"><svg class="nav-illustration" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x='3' y='5' width='18' height='14' rx='3'/><path d='m4 7 8 6 8-6'/></svg><span class="dash-label">Messagerie</span></button>
         <button class="dash-tab" data-pane="pane-analytics"><svg class="nav-illustration" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d='M4 19V5M4 19h17'/><path d='m7 15 4-4 3 2 6-7'/><circle cx='20' cy='6' r='1'/></svg><span class="dash-label">Analyses IA</span></button>
         <button class="dash-tab" data-pane="pane-assistant"><svg class="nav-illustration" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d='M12 3v3M5.6 5.6l2.1 2.1M3 12h3M18 12h3M16.3 7.7l2.1-2.1'/><rect x='5' y='10' width='14' height='10' rx='3'/><path d='M9 14h.01M15 14h.01M9 17h6'/></svg><span class="dash-label">Assistant</span></button>
@@ -1298,8 +1323,24 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
             <button id="btn-tablesdb-delete-table" class="btn-3d btn-secondary">Supprimer la table</button>
           </div>
         </div>
-      </div>
 
+        <div class="glass-card">
+          <h3 class="card-title">TablesDB · gestion des lignes</h3>
+          <div class="admin-note">Consulte et modifie les lignes de tes tables. Les nouvelles lignes sont privées et lisibles uniquement par les administrateurs autorisés.</div>
+          <div class="admin-form-grid">
+            <input id="tablesdb-row-id" class="input-field" placeholder="ID de ligne (laisser vide pour créer)">
+            <input id="tablesdb-row-table-id" class="input-field" placeholder="ID de la table (ex. nova_reports)">
+          </div>
+          <textarea id="tablesdb-row-data" class="input-field" placeholder='Données JSON, ex. {"createdAt":"2026-11-22T12:00:00.000Z","analysisType":"manual"}'></textarea>
+          <div class="admin-toolbar">
+            <button id="btn-tablesdb-list-rows" class="btn-3d btn-secondary">Lister les lignes</button>
+            <button id="btn-tablesdb-create-row" class="btn-3d">Créer une ligne</button>
+            <button id="btn-tablesdb-update-row" class="btn-3d btn-secondary">Modifier la ligne</button>
+            <button id="btn-tablesdb-delete-row" class="btn-3d btn-secondary">Supprimer la ligne</button>
+          </div>
+          <div id="tablesdb-rows-output" class="admin-output">Les lignes apparaîtront ici.</div>
+        </div>
+      </div>
       <!-- ===== STOCKAGE ===== -->
       <div id="pane-storage" class="dash-pane">
         <div class="glass-card">
@@ -1332,6 +1373,27 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           <div id="messaging-status" class="status-msg"></div>
           <div id="messaging-output" class="admin-output">Les réponses du service de messagerie apparaîtront ici.</div>
           <div class="admin-note">Pour PUSH : configure un fournisseur Appwrite Push dans Appwrite → Messaging → Providers et active l'abonnement Push dans le site public. Un message accepté par l'API n'est pas une preuve de livraison. Pour e-mail/SMS, configure un fournisseur adapté et vérifie que le compte destinataire possède une cible e-mail/téléphone valide. Les topics doivent avoir des abonnés autorisés.</div>
+        </div>
+      </div>
+
+      <!-- ===== FONCTIONS APPWRITE ===== -->
+      <div id="pane-functions" class="dash-pane">
+        <div class="glass-card">
+          <h3 class="card-title">Surveillance des fonctions Appwrite</h3>
+          <div class="admin-note">Visualise les fonctions du projet, leurs exécutions récentes, statuts, durées et erreurs. Ce module n'expose jamais les secrets ni les variables d'environnement.</div>
+          <div class="admin-toolbar">
+            <button id="btn-functions-list" class="btn-3d btn-secondary">Lister les fonctions</button>
+            <button id="btn-function-executions" class="btn-3d">Voir les dernières exécutions</button>
+          </div>
+          <input id="monitor-function-id" class="input-field" value="6af9c951003622f41d2a" placeholder="ID de la fonction Appwrite">
+          <div id="functions-monitor-status" class="status-msg"></div>
+          <div id="functions-list-output" class="admin-output">Les fonctions Appwrite apparaîtront ici.</div>
+          <div id="function-executions-output" class="admin-output">Les exécutions récentes apparaîtront ici.</div>
+          <div class="admin-toolbar">
+            <input id="monitor-execution-id" class="input-field" placeholder="ID d'exécution pour voir les détails">
+            <button id="btn-function-execution-details" class="btn-3d btn-secondary">Détails de l'exécution</button>
+          </div>
+          <div id="function-execution-details" class="admin-output">Les détails de l'exécution apparaîtront ici.</div>
         </div>
       </div>
 
@@ -1648,11 +1710,20 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     document.getElementById('btn-run-analysis').addEventListener('click', async () => {
       const btn = document.getElementById('btn-run-analysis');
       btn.disabled = true;
-      setStatus(reportsStatus, 'nova.ai analyse le site (ça peut prendre quelques secondes)...', 'info');
+      setStatus(reportsStatus, 'Récupération du dernier audit GitHub puis analyse Gemini + Groq…', 'info');
       try {
-        const result = await callNovaFunction({ action: 'run_analysis' });
+        const result = await callNovaFunction({ action: 'analyze_github_audit', providerMode: 'both' });
         if (result.error) throw new Error(result.error);
-        setStatus(reportsStatus, 'Analyse terminée !', 'success');
+        const providers = result.providers || {};
+        const parts = [];
+        if (providers.gemini) parts.push('GEMINI\n' + providers.gemini);
+        else if (providers.errors?.gemini) parts.push('Gemini indisponible : ' + providers.errors.gemini);
+        if (providers.groq) parts.push('GROQ\n' + providers.groq);
+        else if (providers.errors?.groq) parts.push('Groq indisponible : ' + providers.errors.groq);
+        if (providers.combined) parts.push('SYNTHÈSE\n' + providers.combined);
+        if (!parts.length) throw new Error('Aucun résultat IA exploitable. Vérifie les journaux Appwrite et les variables Gemini/Groq.');
+        setStatus(reportsStatus, 'Audit GitHub analysé. Rapports IA enregistrés dans TablesDB.', 'success');
+        renderAnalysisCharts(result);
         await refreshReports();
       } catch (e) {
         setStatus(reportsStatus, 'Erreur : ' + e.message, 'error');
@@ -2222,6 +2293,48 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         setStatus(document.getElementById('tablesdb-status'),'Table supprimée.','success');
       } catch(e) { setStatus(document.getElementById('tablesdb-status'),e.message,'error'); }
     });
+    // TablesDB rows: CRUD sécurisé côté serveur.
+    const rowPayload = () => {
+      const databaseId=tablesDbValue('tablesdb-database-id');
+      const tableId=tablesDbValue('tablesdb-row-table-id') || tablesDbValue('tablesdb-table-id');
+      const rowId=tablesDbValue('tablesdb-row-id');
+      const raw=document.getElementById('tablesdb-row-data').value.trim();
+      if(!databaseId || !tableId) throw new Error('ID de base TablesDB et ID de table requis.');
+      let data={}; if(raw) data=JSON.parse(raw);
+      return {databaseId,tableId,rowId,data};
+    };
+    document.getElementById('btn-tablesdb-list-rows')?.addEventListener('click',async()=>{
+      try { const p=rowPayload(); const r=await adminCall('tablesdb_list_rows',p); out('tablesdb-rows-output',r.rows||r); }
+      catch(e){out('tablesdb-rows-output','Erreur : '+e.message);}
+    });
+    document.getElementById('btn-tablesdb-create-row')?.addEventListener('click',async()=>{
+      try { const p=rowPayload(); if(!Object.keys(p.data).length) throw new Error('Les données JSON sont requises.'); const r=await adminCall('tablesdb_create_row',p); out('tablesdb-rows-output',r.row||r); }
+      catch(e){out('tablesdb-rows-output','Erreur : '+e.message);}
+    });
+    document.getElementById('btn-tablesdb-update-row')?.addEventListener('click',async()=>{
+      try { const p=rowPayload(); if(!p.rowId) throw new Error('ID de ligne requis.'); if(!Object.keys(p.data).length) throw new Error('Les données JSON sont requises.'); const r=await adminCall('tablesdb_update_row',p); out('tablesdb-rows-output',r.row||r); }
+      catch(e){out('tablesdb-rows-output','Erreur : '+e.message);}
+    });
+    document.getElementById('btn-tablesdb-delete-row')?.addEventListener('click',async()=>{
+      try { const p=rowPayload(); if(!p.rowId) throw new Error('ID de ligne requis.'); if(!confirm('Supprimer définitivement cette ligne ?')) return; const r=await adminCall('tablesdb_delete_row',p); out('tablesdb-rows-output',r); }
+      catch(e){out('tablesdb-rows-output','Erreur : '+e.message);}
+    });
+
+    // Appwrite Functions: surveillance sans exposition des variables secrètes.
+    const monitorFunctionId=()=>document.getElementById('monitor-function-id')?.value.trim()||'';
+    document.getElementById('btn-functions-list')?.addEventListener('click',async()=>{
+      try { setStatus(document.getElementById('functions-monitor-status'),'Chargement des fonctions Appwrite…','info'); const r=await adminCall('functions_list'); out('functions-list-output',r.functions||r); setStatus(document.getElementById('functions-monitor-status'),(r.functions||[]).length+' fonction(s) trouvée(s).','success'); }
+      catch(e){setStatus(document.getElementById('functions-monitor-status'),e.message,'error');}
+    });
+    document.getElementById('btn-function-executions')?.addEventListener('click',async()=>{
+      try { const functionId=monitorFunctionId(); if(!functionId) throw new Error('ID de fonction requis.'); setStatus(document.getElementById('functions-monitor-status'),'Chargement des exécutions…','info'); const r=await adminCall('function_executions',{functionId}); out('function-executions-output',r.executions||r); setStatus(document.getElementById('functions-monitor-status'),(r.executions||[]).length+' exécution(s) chargée(s).','success'); }
+      catch(e){setStatus(document.getElementById('functions-monitor-status'),e.message,'error');}
+    });
+    document.getElementById('btn-function-execution-details')?.addEventListener('click',async()=>{
+      try { const functionId=monitorFunctionId(),executionId=document.getElementById('monitor-execution-id').value.trim(); if(!functionId||!executionId) throw new Error('ID de fonction et ID d’exécution requis.'); const r=await adminCall('function_execution_get',{functionId,executionId}); out('function-execution-details',r.execution||r); }
+      catch(e){out('function-execution-details','Erreur : '+e.message);}
+    });
+
     // Storage
     document.getElementById('btn-load-buckets')?.addEventListener('click',async()=>{
       try { const r=await adminCall('storage_buckets'); out('buckets-output',r.buckets || r); setStatus(document.getElementById('storage-status'),'Buckets chargés.','success'); }
@@ -2239,19 +2352,6 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     });
 
     // Messaging
-    document.getElementById('btn-test-admin-push')?.addEventListener('click', async () => {
-      const button = document.getElementById('btn-test-admin-push');
-      const status = document.getElementById('admin-push-status');
-      if (!currentAdminUserId) return setStatus(status, 'Connecte-toi à ton compte administrateur avant le test.', 'error');
-      button.disabled = true; setStatus(status, 'Envoi du test Push vers ton compte Appwrite…', 'info');
-      try {
-        const result = await adminCall('message_send', { channel:'push', userId:currentAdminUserId, subject:'NOVANOD — Test de notification', content:'Test de notification NOVANOD. Si tu reçois ce message, la connexion Push est active sur cet appareil.' });
-        setStatus(status, result.acceptedByAppwrite ? 'Appwrite a accepté le message (' + (result.messageId || 'ID non retourné') + '). Vérifie la réception sur un appareil connecté au Push.' : 'Le serveur n’a pas confirmé l’acceptation du message.', result.acceptedByAppwrite ? 'success' : 'error');
-        out('messaging-output', result);
-      } catch (error) { setStatus(status, 'Échec du test Push : ' + error.message, 'error'); }
-      finally { button.disabled = false; }
-    });
-
     document.getElementById('btn-test-admin-push')?.addEventListener('click', async () => {
       const button = document.getElementById('btn-test-admin-push');
       const status = document.getElementById('admin-push-status');
@@ -2355,6 +2455,66 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         const note=document.createElement('p');note.textContent=metrics.length+' mesures numériques reçues.';metricCard.append(note);
       } else {const p=document.createElement('p');p.textContent='Aucune mesure numérique structurée disponible dans cette réponse.';metricCard.append(p);}
       host.append(metricCard);
+
+      // Donut segmenté : chaque quadrant représente un critère Lighthouse réel /100.
+      const performance=result?.chartData?.performance;
+      const scoreItems=[
+        ['Performance',performance?.mobile?.performance,performance?.desktop?.performance],
+        ['Accessibilité',performance?.mobile?.accessibility,performance?.desktop?.accessibility],
+        ['Bonnes pratiques',performance?.mobile?.bestPractices,performance?.desktop?.bestPractices],
+        ['SEO',performance?.mobile?.seo,performance?.desktop?.seo]
+      ].map(([label,mobile,desktop])=>({label,mobile:mobile==null?NaN:Number(mobile),desktop:desktop==null?NaN:Number(desktop)}))
+       .filter(x=>Number.isFinite(x.mobile)||Number.isFinite(x.desktop));
+      if(scoreItems.length){
+        const card=makeCard('Performance du site · critères en pourcentage');
+        const wrap=document.createElement('div');wrap.className='analysis-donut-wrap';
+        const svg=makeSvg();svg.setAttribute('viewBox','0 0 220 220');svg.style.maxWidth='220px';
+        const circumference=2*Math.PI*68,segment=circumference/4;
+        scoreItems.forEach((item,index)=>{
+          const score=Number.isFinite(item.mobile)&&Number.isFinite(item.desktop)?(item.mobile+item.desktop)/2:(item.mobile??item.desktop);
+          const track=document.createElementNS(svg.namespaceURI,'circle');
+          track.setAttribute('cx','110');track.setAttribute('cy','110');track.setAttribute('r','68');
+          track.setAttribute('fill','none');track.setAttribute('stroke','#eadfd5');track.setAttribute('stroke-width','19');
+          track.setAttribute('stroke-dasharray',segment+' '+(circumference-segment));
+          track.setAttribute('stroke-dashoffset',String(-index*segment));track.setAttribute('transform','rotate(-90 110 110)');svg.append(track);
+          const arc=document.createElementNS(svg.namespaceURI,'circle');
+          arc.setAttribute('cx','110');arc.setAttribute('cy','110');arc.setAttribute('r','68');
+          arc.setAttribute('fill','none');arc.setAttribute('stroke',['#E64A38','#3B1420','#D69A38','#269b62'][index%4]);
+          arc.setAttribute('stroke-width','19');arc.setAttribute('stroke-linecap','butt');
+          arc.setAttribute('stroke-dasharray',(segment*Math.max(0,Math.min(100,score))/100)+' '+(circumference-segment*Math.max(0,Math.min(100,score))/100));
+          arc.setAttribute('stroke-dashoffset',String(-index*segment));arc.setAttribute('transform','rotate(-90 110 110)');svg.append(arc);
+        });
+        const center=document.createElementNS(svg.namespaceURI,'text');center.setAttribute('x','110');center.setAttribute('y','105');center.setAttribute('text-anchor','middle');center.setAttribute('font-size','26');center.setAttribute('font-weight','800');center.setAttribute('fill','#3B1420');
+        const allScores=scoreItems.flatMap(x=>[x.mobile,x.desktop].filter(Number.isFinite));
+        center.textContent=Math.round(allScores.reduce((a,b)=>a+b,0)/allScores.length)+'%';svg.append(center);
+        const centerLabel=document.createElementNS(svg.namespaceURI,'text');centerLabel.setAttribute('x','110');centerLabel.setAttribute('y','124');centerLabel.setAttribute('text-anchor','middle');centerLabel.textContent='score moyen';svg.append(centerLabel);
+        wrap.append(svg);card.append(wrap);
+        const legend=document.createElement('div');legend.className='analysis-donut-legend';
+        scoreItems.forEach(item=>{
+          const row=document.createElement('span');const label=document.createElement('b');label.textContent=item.label;
+          const value=document.createElement('strong');
+          value.textContent=[Number.isFinite(item.mobile)?'Mobile '+item.mobile+'%':null,Number.isFinite(item.desktop)?'PC '+item.desktop+'%':null].filter(Boolean).join(' · ');
+          row.append(label,value);legend.append(row);
+        });
+        card.append(legend);host.append(card);
+      }
+
+      const testStats=performance?.playwright;
+      if(testStats && Number(testStats.total)>0){
+        const card=makeCard('Tests Playwright · répartition réelle');
+        const total=Number(testStats.total),passed=Number(testStats.passed||0),failed=Number(testStats.failed||0),skipped=Number(testStats.skipped||0);
+        const values=[{label:'Réussis',value:passed,color:'#269b62'},{label:'Échoués',value:failed,color:'#E64A38'},{label:'Ignorés',value:skipped,color:'#D69A38'}].filter(x=>x.value>0);
+        const wrap=document.createElement('div');wrap.className='analysis-donut-wrap';
+        const svg=makeSvg();svg.setAttribute('viewBox','0 0 220 220');svg.style.maxWidth='190px';
+        const circumference=2*Math.PI*68;let offset=0;
+        values.forEach(item=>{const circle=document.createElementNS(svg.namespaceURI,'circle');circle.setAttribute('cx','110');circle.setAttribute('cy','110');circle.setAttribute('r','68');circle.setAttribute('fill','none');circle.setAttribute('stroke',item.color);circle.setAttribute('stroke-width','22');circle.setAttribute('stroke-dasharray',(circumference*item.value/total)+' '+circumference);circle.setAttribute('stroke-dashoffset',String(-offset));circle.setAttribute('transform','rotate(-90 110 110)');svg.append(circle);offset+=circumference*item.value/total;});
+        const label=document.createElementNS(svg.namespaceURI,'text');label.setAttribute('x','110');label.setAttribute('y','105');label.setAttribute('text-anchor','middle');label.setAttribute('font-size','26');label.setAttribute('font-weight','800');label.setAttribute('fill','#3B1420');label.textContent=total;svg.append(label);
+        const sub=document.createElementNS(svg.namespaceURI,'text');sub.setAttribute('x','110');sub.setAttribute('y','124');sub.setAttribute('text-anchor','middle');sub.textContent='tests';svg.append(sub);
+        wrap.append(svg);card.append(wrap);
+        const legend=document.createElement('div');legend.className='analysis-donut-legend';
+        values.forEach(item=>{const row=document.createElement('span');const name=document.createElement('b');name.textContent=item.label;const percent=document.createElement('strong');percent.textContent=item.value+' · '+Math.round(item.value/total*100)+'%';row.append(name,percent);legend.append(row);});
+        card.append(legend);host.append(card);
+      }
       geoHost.replaceChildren();
       const geoTitle=document.createElement('h5');geoTitle.textContent='Coordonnées géographiques des événements';geoHost.append(geoTitle);
       const events=Array.isArray(result?.geoCoordinates)?result.geoCoordinates:
