@@ -1178,8 +1178,9 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           <div id="settings-status" class="status-msg" role="status" aria-live="polite"></div>
           <div class="divider"></div>
           <h3 class="card-title">Notifications Appwrite</h3>
-          <p class="hint">Test de l’envoi Push vers ton compte administrateur. L’acceptation par Appwrite ne garantit pas la livraison sur le téléphone.</p>
+          <p class="hint">La console se connecte au broker Appwrite Push avec ton compte. Les messages reçus pendant que cette page reste ouverte s’affichent ci-dessous. Sur navigateur mobile, l’affichage système en arrière-plan n’est pas garanti ; un fournisseur FCM/PWA est nécessaire pour une vraie notification native persistante.</p>
           <div id="admin-push-status" class="status-msg" role="status" aria-live="polite"></div>
+          <div id="admin-push-inbox" class="user-list" aria-live="polite"><div class="hint">Les notifications reçues pendant que cette console est ouverte apparaîtront ici.</div></div>
           <button id="btn-test-admin-push" class="btn-3d btn-secondary" type="button">Envoyer une notification test à mon compte</button>
           <button class="btn-3d btn-dark" id="btn-logout" type="button">Se déconnecter de NOVANOD</button>
           <div class="admin-note">La déconnexion est volontairement regroupée ici : ce bouton est l'unique bouton de déconnexion de la console administrateur.</div>
@@ -1420,6 +1421,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
 
   <script type="module">
     import { startRegistration, startAuthentication } from 'https://cdn.jsdelivr.net/npm/@simplewebauthn/browser@9/+esm';
+    import { Client as AppwritePushClient, Push as AppwritePush } from 'https://cdn.jsdelivr.net/npm/appwrite@29.0.0/+esm';
 
     const APPWRITE_ENDPOINT = 'https://fra.cloud.appwrite.io/v1';
     const APPWRITE_PROJECT_ID = '6ad4bd7b0036d37d3561';
@@ -1434,6 +1436,42 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     const client = new Appwrite.Client().setEndpoint(APPWRITE_ENDPOINT).setProject(APPWRITE_PROJECT_ID);
     const account = new Appwrite.Account(client);
     const functions = new Appwrite.Functions(client);
+    const adminPushClient = new AppwritePushClient().setEndpoint(APPWRITE_ENDPOINT).setProject(APPWRITE_PROJECT_ID);
+    let adminPush = null;
+    let adminPushStarting = false;
+    const adminPushStatus = document.getElementById('admin-push-status');
+    const adminPushInbox = document.getElementById('admin-push-inbox');
+    async function startAdminPush() {
+      if (adminPush || adminPushStarting) return;
+      adminPushStarting = true;
+      try {
+        let pushClientId = localStorage.getItem('novanod_push_client_id');
+        if (!pushClientId) { pushClientId = crypto.randomUUID(); localStorage.setItem('novanod_push_client_id', pushClientId); }
+        adminPushClient.setPushClientId(pushClientId);
+        adminPush = new AppwritePush(adminPushClient);
+        adminPush.onOpen(() => setStatus(adminPushStatus, 'Connexion Appwrite Push active sur cette console.', 'success'));
+        adminPush.onClose(() => setStatus(adminPushStatus, 'Connexion Push interrompue. Réessaie en actualisant la console.', 'info'));
+        adminPush.onError(error => setStatus(adminPushStatus, 'Erreur Push : ' + (error?.message || error), 'error'));
+        await adminPush.subscribe(message => {
+          let payload = {};
+          try { payload = JSON.parse(message.data || '{}'); } catch { payload = { body:message.data || '' }; }
+          const notification = payload.notification || {};
+          const card = document.createElement('article'); card.className = 'user-row';
+          const title = document.createElement('strong'); title.className = 'u-name'; title.textContent = notification.title || 'Notification NOVANOD';
+          const body = document.createElement('p'); body.style.whiteSpace = 'pre-wrap'; body.textContent = notification.body || payload.body || payload.message || 'Message reçu.';
+          const time = document.createElement('small'); time.className = 'hint'; time.textContent = new Date().toLocaleString('fr-FR');
+          card.append(title, body, time); adminPushInbox.prepend(card);
+          while (adminPushInbox.children.length > 20) adminPushInbox.lastElementChild.remove();
+          setStatus(adminPushStatus, 'Notification reçue sur cette console.', 'success');
+        });
+        setStatus(adminPushStatus, 'Abonnement Push connecté. Les messages adressés à ton compte apparaîtront ici tant que cette console reste ouverte.', 'success');
+      } catch (error) {
+        try { adminPush?.close(); } catch {}
+        adminPush = null;
+        setStatus(adminPushStatus, 'Connexion Push impossible : ' + (error?.message || error) + '. Vérifie le fournisseur Appwrite Push et la session du compte.', 'error');
+      } finally { adminPushStarting = false; }
+    }
+    function stopAdminPush() { try { adminPush?.close(); } catch {} adminPush = null; }
 
     const screenLogin = document.getElementById('screen-login');
     const screenAdmin = document.getElementById('screen-admin');
@@ -1516,6 +1554,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           document.getElementById('admin-welcome').textContent = user.name || user.email;
           screenLogin.classList.add('hidden');
           screenAdmin.classList.remove('hidden');
+          await startAdminPush();
           // Charger les passkeys uniquement après authentification administrateur.
           await refreshPasskeys();
         } else {
@@ -1543,6 +1582,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     });
 
     document.getElementById('btn-logout').addEventListener('click', async () => {
+      stopAdminPush();
       try { await account.deleteSession('current'); } catch (e) {}
       screenAdmin.classList.add('hidden');
       screenLogin.classList.remove('hidden');
