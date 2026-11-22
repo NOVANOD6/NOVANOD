@@ -2531,35 +2531,68 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       catch(e){out('tablesdb-rows-output','Erreur : '+e.message);}
     });
 
-    // Appwrite Functions: surveillance sans exposition des variables secrètes.
+    // Appwrite Functions: réponses validées, erreurs explicites, aucune exposition des secrets.
     const monitorFunctionId=()=>document.getElementById('monitor-function-id')?.value.trim()||'';
     document.getElementById('btn-functions-list')?.addEventListener('click',async()=>{
-      try { setStatus(document.getElementById('functions-monitor-status'),'Chargement des fonctions Appwrite…','info'); const r=await adminCall('functions_list'); out('functions-list-output',r.functions||r); setStatus(document.getElementById('functions-monitor-status'),(r.functions||[]).length+' fonction(s) trouvée(s).','success'); }
-      catch(e){setStatus(document.getElementById('functions-monitor-status'),e.message,'error');}
+      const status=document.getElementById('functions-monitor-status');
+      try {
+        setStatus(status,'Chargement des fonctions Appwrite…','info');
+        const r=await adminCall('functions_list');
+        if(!Array.isArray(r.functions)) throw new Error('Réponse Appwrite invalide : la liste des fonctions est absente.');
+        out('functions-list-output',r.functions);
+        setStatus(status,r.functions.length+' fonction(s) trouvée(s).','success');
+      } catch(e){setStatus(status,e.message,'error');out('functions-list-output','Erreur : '+e.message);}
     });
     document.getElementById('btn-function-executions')?.addEventListener('click',async()=>{
-      try { const functionId=monitorFunctionId(); if(!functionId) throw new Error('ID de fonction requis.'); setStatus(document.getElementById('functions-monitor-status'),'Chargement des exécutions…','info'); const r=await adminCall('function_executions',{functionId}); out('function-executions-output',r.executions||r); setStatus(document.getElementById('functions-monitor-status'),(r.executions||[]).length+' exécution(s) chargée(s).','success'); }
-      catch(e){setStatus(document.getElementById('functions-monitor-status'),e.message,'error');}
+      const status=document.getElementById('functions-monitor-status');
+      try {
+        const functionId=monitorFunctionId();
+        if(!functionId) throw new Error('ID de fonction requis.');
+        setStatus(status,'Chargement des exécutions…','info');
+        const r=await adminCall('function_executions',{functionId});
+        if(!Array.isArray(r.executions)) throw new Error('Réponse Appwrite invalide : les exécutions ne sont pas disponibles.');
+        out('function-executions-output',r.executions);
+        setStatus(status,r.executions.length+' exécution(s) chargée(s).','success');
+      } catch(e){setStatus(status,e.message,'error');out('function-executions-output','Erreur : '+e.message);}
     });
     document.getElementById('btn-function-execution-details')?.addEventListener('click',async()=>{
-      try { const functionId=monitorFunctionId(),executionId=document.getElementById('monitor-execution-id').value.trim(); if(!functionId||!executionId) throw new Error('ID de fonction et ID d’exécution requis.'); const r=await adminCall('function_execution_get',{functionId,executionId}); out('function-execution-details',r.execution||r); }
-      catch(e){out('function-execution-details','Erreur : '+e.message);}
+      try {
+        const functionId=monitorFunctionId(),executionId=document.getElementById('monitor-execution-id').value.trim();
+        if(!functionId||!executionId) throw new Error('ID de fonction et ID d’exécution requis.');
+        const r=await adminCall('function_execution_get',{functionId,executionId});
+        if(!r.execution) throw new Error('Appwrite n’a retourné aucun détail pour cette exécution.');
+        out('function-execution-details',r.execution);
+      } catch(e){out('function-execution-details','Erreur : '+e.message);}
     });
 
     // Storage
     document.getElementById('btn-load-buckets')?.addEventListener('click',async()=>{
-      try { const r=await adminCall('storage_buckets'); out('buckets-output',r.buckets || r); setStatus(document.getElementById('storage-status'),'Buckets chargés.','success'); }
-      catch(e){setStatus(document.getElementById('storage-status'),e.message,'error');}
+      try {
+        const r=await adminCall('storage_buckets');
+        if(!Array.isArray(r.buckets)) throw new Error('Réponse Appwrite invalide : la liste des buckets est absente.');
+        out('buckets-output',r.buckets);
+        setStatus(document.getElementById('storage-status'),r.buckets.length+' bucket(s) chargé(s).','success');
+      } catch(e){setStatus(document.getElementById('storage-status'),e.message,'error');out('buckets-output','Erreur : '+e.message);}
     });
     document.getElementById('btn-list-files')?.addEventListener('click',async()=>{
-      try { const bucketId=document.getElementById('storage-bucket-id').value.trim(); const r=await adminCall('storage_files',{bucketId}); out('files-output',r.files || r); }
-      catch(e){out('files-output','Erreur : '+e.message);}
+      try {
+        const bucketId=document.getElementById('storage-bucket-id').value.trim();
+        if(!bucketId) throw new Error('Renseigne l’ID du bucket Appwrite avant de lister les fichiers.');
+        const r=await adminCall('storage_files',{bucketId});
+        if(!Array.isArray(r.files)) throw new Error('Réponse Appwrite invalide : la liste des fichiers est absente.');
+        out('files-output',r.files);
+      } catch(e){out('files-output','Erreur : '+e.message);}
     });
     document.getElementById('btn-delete-file')?.addEventListener('click',async()=>{
-      try { const bucketId=document.getElementById('storage-bucket-id').value.trim(),fileId=document.getElementById('storage-file-id').value.trim();
+      try {
+        const bucketId=document.getElementById('storage-bucket-id').value.trim();
+        const fileId=document.getElementById('storage-file-id').value.trim();
+        if(!bucketId||!fileId) throw new Error('Renseigne l’ID du bucket et l’ID du fichier à supprimer.');
         if(!confirm('Supprimer définitivement ce fichier ?')) return;
-        const r=await adminCall('storage_file_delete',{bucketId,fileId}); out('files-output',r);
-      } catch(e){out('files-output','Erreur : '+e.message);}
+        const r=await adminCall('storage_file_delete',{bucketId,fileId});
+        out('files-output',r);
+        setStatus(document.getElementById('storage-status'),'La demande de suppression a été acceptée par Appwrite.','success');
+      } catch(e){out('files-output','Erreur : '+e.message);setStatus(document.getElementById('storage-status'),e.message,'error');}
     });
 
     // Messaging
