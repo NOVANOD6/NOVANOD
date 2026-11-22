@@ -2166,7 +2166,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       return '<div class="report-document">'+(parts.join('')||'<p>Aucun contenu disponible.</p>')+'</div>';
     }
     function renderEvidenceHtml(items = []) {
-      if (!Array.isArray(items) || !items.length) return '<p class="hint">Aucune capture visuelle n’a été transmise. Vérifie la configuration du bucket privé Appwrite et relance un audit pour associer des images aux constats.</p>';
+      if (!Array.isArray(items) || !items.length) return '<p class="hint">Aucune capture visuelle n’a été transférée vers Appwrite. Vérifie que la fonction nova.ai possède la variable NOVA_AUDIT_STORAGE_BUCKET_ID avec l’ID du bucket privé d’audit, puis redéploie la fonction et relance un audit.</p>';
       return items.map(item => {
         const metadata = item.metadata && typeof item.metadata === 'object' ? item.metadata : {};
         const bucketId = item.bucketId || metadata.bucketId || '';
