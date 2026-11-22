@@ -945,14 +945,37 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       .header-brand.admin-brand-header{margin-bottom:15px;padding:5px 0 10px}
       .admin-brand-header .brand-logo{width:44px;height:44px}
     }
-\n  </style>
+\n    /* NOVANOD ADMIN V3 — identité premium et tuiles 3D pleines */
+    .header-brand.admin-brand-header{min-height:0!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:7px!important;text-align:center!important;margin:0 auto 18px!important;padding:12px 0 8px!important;border:0!important;background:transparent!important;box-shadow:none!important}
+    .admin-brand-header .brand-logo{width:72px!important;height:72px!important;border-radius:50%!important;object-fit:contain!important;background:transparent!important;border:0!important;box-shadow:0 10px 24px rgba(59,20,32,.18),0 2px 0 rgba(255,255,255,.9)!important;margin:0!important}
+    .admin-brand-header .admin-title{color:var(--nova-burgundy)!important;font-size:clamp(18px,2.5vw,25px)!important;font-weight:900!important;letter-spacing:1.2px!important;line-height:1.15!important}
+    .admin-brand-subtitle{color:var(--nova-red);font-size:10px;font-weight:900;letter-spacing:2.8px;text-transform:uppercase;padding:5px 13px;border-radius:999px;background:rgba(230,74,56,.11);box-shadow:inset 0 1px 0 rgba(255,255,255,.9)}
+    .dashboard-header{min-height:0!important;margin:0 0 15px!important;padding:0 2px 10px!important;background:transparent!important;color:var(--nova-burgundy)!important;border:0!important;border-bottom:1px solid rgba(59,20,32,.13)!important;border-radius:0!important;box-shadow:none!important}
+    .dashboard-header .user-badge{color:var(--nova-burgundy)!important}.status-dot{background:#269b62!important;box-shadow:0 0 0 4px rgba(38,155,98,.13)!important}
+    .glass-card{border:1px solid rgba(59,20,32,.11)!important;border-radius:20px!important;background:linear-gradient(145deg,#fffef2 0%,#fffbd0 100%)!important;box-shadow:0 12px 30px rgba(59,20,32,.075),inset 0 1px 0 rgba(255,255,255,.9)!important}
+    .dash-tab{border:1px solid rgba(59,20,32,.12)!important;border-radius:17px!important;background:linear-gradient(145deg,#fffef4,#fff5c5)!important;box-shadow:0 5px 0 rgba(59,20,32,.15),0 9px 18px rgba(59,20,32,.07)!important;transition:transform .2s,box-shadow .2s!important}
+    .dash-tab:hover{transform:translateY(-3px)!important;box-shadow:0 8px 0 rgba(59,20,32,.13),0 14px 22px rgba(59,20,32,.1)!important}
+    .dash-tab.active{background:linear-gradient(145deg,#ff8068 0%,#E64A38 48%,#b92f25 100%)!important;color:#fffbd0!important;border-color:#3B1420!important;box-shadow:0 5px 0 #3B1420,0 12px 20px rgba(230,74,56,.22)!important}
+    .nav-illustration,.device-tab svg,.orientation-button svg{width:38px!important;height:38px!important;padding:8px!important;border:0!important;border-radius:13px!important;color:#fff8df!important;stroke:#fff8df!important;background:linear-gradient(145deg,#ff987b 0%,#E64A38 48%,#3B1420 100%)!important;box-shadow:inset 0 2px 3px rgba(255,255,255,.45),inset 0 -4px 6px rgba(59,20,32,.2),0 5px 0 rgba(59,20,32,.18),0 10px 16px rgba(59,20,32,.16)!important;filter:none!important;transform:perspective(500px) rotateX(8deg) rotateY(-5deg)!important}
+    .dash-tab.active .nav-illustration{background:linear-gradient(145deg,#fff1c8,#ffd6a3 55%,#b9362a)!important;color:#3B1420!important;stroke:#3B1420!important}
+    .analysis-action{min-height:104px!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:10px!important;border-radius:17px!important}
+    .analysis-action svg{width:66px!important;height:66px!important;padding:13px!important;border:0!important;border-radius:19px!important;stroke:#fff7dc!important;stroke-width:2.2!important;background:radial-gradient(circle at 28% 18%,rgba(255,255,255,.55),transparent 38%),linear-gradient(145deg,#ff9b7c 0%,#E64A38 44%,#3B1420 100%)!important;box-shadow:inset 0 2px 3px rgba(255,255,255,.45),inset 0 -5px 8px rgba(59,20,32,.22),0 6px 0 rgba(59,20,32,.2),0 13px 20px rgba(59,20,32,.18)!important;filter:none!important;transform:perspective(600px) rotateX(9deg) rotateY(-7deg) translateZ(4px)!important}
+    .analysis-action:hover svg{transform:perspective(600px) rotateX(0) rotateY(0) translateY(-4px) scale(1.04)!important}.analysis-action span{font-weight:850!important}
+    .fingerprint-mark{width:38px!important;height:38px!important;padding:5px!important;border-radius:12px!important;color:#fff8df!important;background:linear-gradient(145deg,#ff987b,#E64A38 50%,#3B1420)!important;filter:drop-shadow(0 4px 5px rgba(59,20,32,.2))!important}
+    .stats-row{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:10px!important}.stat-box{border:1px solid rgba(59,20,32,.1)!important;border-radius:16px!important;background:linear-gradient(145deg,#fffef3,#fff5c7)!important;box-shadow:0 5px 14px rgba(59,20,32,.06)!important}.stat-box .num{font-size:clamp(20px,2.4vw,28px)!important}
+    .admin-table-wrap{border:1px solid rgba(59,20,32,.12)!important;border-radius:15px!important;box-shadow:0 6px 16px rgba(59,20,32,.045)!important}.admin-table th{background:#3B1420!important;color:#FFFBD0!important}.admin-table tbody tr:nth-child(even){background:rgba(230,74,56,.035)}
+    .input-field,select.input-field,textarea.input-field{border-radius:12px!important;min-height:44px}.btn-3d{border-radius:12px!important}.admin-note{background:rgba(59,20,32,.045)!important;border:1px solid rgba(59,20,32,.1)!important;border-radius:13px!important}.user-list{max-height:var(--admin-list-max-height,480px)!important}.nova-reduced-motion *,.nova-reduced-motion *::before,.nova-reduced-motion *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+    @media(max-width:760px){.admin-brand-header .brand-logo{width:58px!important;height:58px!important}.stats-row{grid-template-columns:repeat(2,minmax(0,1fr))!important}.stats-row .stat-box:first-child{grid-column:span 2}.analysis-action svg{width:58px!important;height:58px!important}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+  </style>
 </head>
 <body>
 
   <div class="admin-wrapper">
     <div class="header-brand admin-brand-header">
-      <img src="logo.png?v=7" alt="Logo NOVANOD" class="brand-logo">
-      <div class="admin-title">ADMINISTRATEUR</div>
+      <img src="logo.png?v=8" alt="Logo NOVANOD" class="brand-logo">
+      <div class="admin-title">WELCOME TO NOVANOD</div>
+      <div class="admin-brand-subtitle">ESPACE ADMINISTRATEUR</div>
     </div>
 
     <!-- ÉCRAN AUTHENTIFICATION -->
@@ -1072,10 +1095,14 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
             <div class="stat-box"><div class="num" id="stat-total">—</div><div class="lbl">Comptes</div></div>
             <div class="stat-box"><div class="num" id="stat-buyers">—</div><div class="lbl">Acheteurs</div></div>
             <div class="stat-box"><div class="num" id="stat-visitors">—</div><div class="lbl">Visiteurs</div></div>
+            <div class="stat-box"><div class="num" id="stat-regular">—</div><div class="lbl">Réguliers</div></div>
+            <div class="stat-box"><div class="num" id="stat-unclassified">—</div><div class="lbl">À classifier</div></div>
           </div>
           <div id="users-status" class="status-msg"></div>
           <div class="admin-toolbar">
             <input id="user-search" class="input-field" placeholder="Rechercher nom, e-mail ou ID…">
+            <select id="user-type-filter" class="input-field" aria-label="Filtrer par type de compte"><option value="all">Tous les profils</option><option value="buyer">Acheteurs</option><option value="visitor">Visiteurs sociaux</option><option value="unknown">À classifier</option></select>
+            <select id="user-regular-filter" class="input-field" aria-label="Filtrer par fidélité"><option value="all">Tous les niveaux</option><option value="regular">Clients réguliers</option><option value="new">Nouveaux / occasionnels</option></select>
             <button id="btn-refresh-users" class="btn-3d btn-secondary" style="width:auto;padding:0 18px;">↻ Actualiser</button>
           </div>
         </div>
@@ -1095,7 +1122,8 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           <div class="hint">La création est effectuée côté serveur. Le mot de passe n'est jamais affiché dans la liste. Si Appwrite renvoie HTTP 401/403, vérifie que la clé serveur de la fonction possède le scope <b>users.write</b>. Sans validation d'e-mail, le site public demandera à l'utilisateur de confirmer son adresse avant l'accès.</div>
         </div>
         <div class="glass-card">
-          <h3 class="card-title">Acheteurs et visiteurs</h3>
+          <h3 class="card-title">Acheteurs, visiteurs et fidélité</h3>
+          <div class="admin-note">Acheteur : inscription ou connexion e-mail/mot de passe NOVANOD. Visiteur : connexion sociale Google, Facebook ou TikTok. Un client est marqué régulier après au moins 5 jours actifs distincts sur les 30 derniers jours. Cet indicateur mesure les visites, pas les commandes. Les anciens comptes sans historique restent « À classifier » jusqu’à leur prochaine connexion.</div>
           <div id="users-table" class="admin-table-wrap"><div class="hint">Clique sur « Actualiser » pour charger les comptes.</div></div>
           <div class="admin-note">Les actions de blocage, modification, suppression et révocation de sessions sont sensibles. Elles sont protégées côté fonction et doivent être réservées aux administrateurs autorisés.</div>
         </div>
@@ -1143,8 +1171,18 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           <label class="hint" style="display:flex;gap:8px;align-items:center;">
             <input id="settings-auto-refresh" type="checkbox"> Actualiser l'historique des rapports à l'ouverture
           </label>
+          <div class="admin-form-grid">
+            <div><label class="form-label" for="settings-list-height">Hauteur des listes</label><select id="settings-list-height" class="input-field"><option value="320px">Courte</option><option value="480px">Confortable</option><option value="640px">Étendue</option></select></div>
+            <div><label class="form-label" for="settings-motion">Animations</label><select id="settings-motion" class="input-field"><option value="full">Normales</option><option value="reduced">Réduites</option></select></div>
+          </div>
           <button id="btn-save-settings" class="btn-3d">Enregistrer les paramètres</button>
           <div id="settings-status" class="status-msg" role="status" aria-live="polite"></div>
+          <div class="divider"></div>
+          <h3 class="card-title">Notifications Appwrite</h3>
+          <p class="hint">La console se connecte au broker Appwrite Push avec ton compte. Les messages reçus pendant que cette page reste ouverte s’affichent ci-dessous. Sur navigateur mobile, l’affichage système en arrière-plan n’est pas garanti ; un fournisseur FCM/PWA est nécessaire pour une vraie notification native persistante.</p>
+          <div id="admin-push-status" class="status-msg" role="status" aria-live="polite"></div>
+          <div id="admin-push-inbox" class="user-list" aria-live="polite"><div class="hint">Les notifications reçues pendant que cette console est ouverte apparaîtront ici.</div></div>
+          <button id="btn-test-admin-push" class="btn-3d btn-secondary" type="button">Envoyer une notification test à mon compte</button>
           <button class="btn-3d btn-dark" id="btn-logout" type="button">Se déconnecter de NOVANOD</button>
           <div class="admin-note">La déconnexion est volontairement regroupée ici : ce bouton est l'unique bouton de déconnexion de la console administrateur.</div>
         </div>
@@ -1384,6 +1422,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
 
   <script type="module">
     import { startRegistration, startAuthentication } from 'https://cdn.jsdelivr.net/npm/@simplewebauthn/browser@9/+esm';
+    import { Client as AppwritePushClient, Push as AppwritePush } from 'https://cdn.jsdelivr.net/npm/appwrite@29.0.0/+esm';
 
     const APPWRITE_ENDPOINT = 'https://fra.cloud.appwrite.io/v1';
     const APPWRITE_PROJECT_ID = '6ad4bd7b0036d37d3561';
@@ -1398,6 +1437,42 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     const client = new Appwrite.Client().setEndpoint(APPWRITE_ENDPOINT).setProject(APPWRITE_PROJECT_ID);
     const account = new Appwrite.Account(client);
     const functions = new Appwrite.Functions(client);
+    const adminPushClient = new AppwritePushClient().setEndpoint(APPWRITE_ENDPOINT).setProject(APPWRITE_PROJECT_ID);
+    let adminPush = null;
+    let adminPushStarting = false;
+    const adminPushStatus = document.getElementById('admin-push-status');
+    const adminPushInbox = document.getElementById('admin-push-inbox');
+    async function startAdminPush() {
+      if (adminPush || adminPushStarting) return;
+      adminPushStarting = true;
+      try {
+        let pushClientId = localStorage.getItem('novanod_push_client_id');
+        if (!pushClientId) { pushClientId = crypto.randomUUID(); localStorage.setItem('novanod_push_client_id', pushClientId); }
+        adminPushClient.setPushClientId(pushClientId);
+        adminPush = new AppwritePush(adminPushClient);
+        adminPush.onOpen(() => setStatus(adminPushStatus, 'Connexion Appwrite Push active sur cette console.', 'success'));
+        adminPush.onClose(() => setStatus(adminPushStatus, 'Connexion Push interrompue. Réessaie en actualisant la console.', 'info'));
+        adminPush.onError(error => setStatus(adminPushStatus, 'Erreur Push : ' + (error?.message || error), 'error'));
+        await adminPush.subscribe(message => {
+          let payload = {};
+          try { payload = JSON.parse(message.data || '{}'); } catch { payload = { body:message.data || '' }; }
+          const notification = payload.notification || {};
+          const card = document.createElement('article'); card.className = 'user-row';
+          const title = document.createElement('strong'); title.className = 'u-name'; title.textContent = notification.title || 'Notification NOVANOD';
+          const body = document.createElement('p'); body.style.whiteSpace = 'pre-wrap'; body.textContent = notification.body || payload.body || payload.message || 'Message reçu.';
+          const time = document.createElement('small'); time.className = 'hint'; time.textContent = new Date().toLocaleString('fr-FR');
+          card.append(title, body, time); adminPushInbox.prepend(card);
+          while (adminPushInbox.children.length > 20) adminPushInbox.lastElementChild.remove();
+          setStatus(adminPushStatus, 'Notification reçue sur cette console.', 'success');
+        });
+        setStatus(adminPushStatus, 'Abonnement Push connecté. Les messages adressés à ton compte apparaîtront ici tant que cette console reste ouverte.', 'success');
+      } catch (error) {
+        try { adminPush?.close(); } catch {}
+        adminPush = null;
+        setStatus(adminPushStatus, 'Connexion Push impossible : ' + (error?.message || error) + '. Vérifie le fournisseur Appwrite Push et la session du compte.', 'error');
+      } finally { adminPushStarting = false; }
+    }
+    function stopAdminPush() { try { adminPush?.close(); } catch {} adminPush = null; }
 
     const screenLogin = document.getElementById('screen-login');
     const screenAdmin = document.getElementById('screen-admin');
@@ -1471,13 +1546,16 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       tabLogin.click();
     });
 
+    let currentAdminUserId = '';
     async function checkAdminSession() {
       try {
         const user = await account.get();
         if (ADMIN_USER_IDS.includes(user.$id)) {
+          currentAdminUserId = user.$id;
           document.getElementById('admin-welcome').textContent = user.name || user.email;
           screenLogin.classList.add('hidden');
           screenAdmin.classList.remove('hidden');
+          await startAdminPush();
           // Charger les passkeys uniquement après authentification administrateur.
           await refreshPasskeys();
         } else {
@@ -1505,6 +1583,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     });
 
     document.getElementById('btn-logout').addEventListener('click', async () => {
+      stopAdminPush();
       try { await account.deleteSession('current'); } catch (e) {}
       screenAdmin.classList.add('hidden');
       screenLogin.classList.remove('hidden');
@@ -1678,29 +1757,47 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       document.getElementById('settings-ai-provider').value = prefs.provider || 'both';
       document.getElementById('settings-density').value = prefs.density || 'comfortable';
       document.getElementById('settings-auto-refresh').checked = prefs.autoRefreshReports !== false;
+      const listHeight = document.getElementById('settings-list-height');
+      const motion = document.getElementById('settings-motion');
+      if (listHeight) listHeight.value = prefs.listHeight || '480px';
+      if (motion) motion.value = prefs.motion || 'full';
       document.body.classList.toggle('admin-compact', prefs.density === 'compact');
+      document.documentElement.classList.toggle('nova-reduced-motion', prefs.motion === 'reduced');
+      document.documentElement.style.setProperty('--admin-list-max-height', prefs.listHeight || '480px');
     }
     document.getElementById('btn-save-settings')?.addEventListener('click', () => {
       const prefs = {
         provider:document.getElementById('settings-ai-provider').value,
         density:document.getElementById('settings-density').value,
-        autoRefreshReports:document.getElementById('settings-auto-refresh').checked
+        autoRefreshReports:document.getElementById('settings-auto-refresh').checked,
+        listHeight:document.getElementById('settings-list-height')?.value || '480px',
+        motion:document.getElementById('settings-motion')?.value || 'full'
       };
       localStorage.setItem('novanod_admin_preferences', JSON.stringify(prefs));
       document.getElementById('analysis-provider').value = prefs.provider;
       document.getElementById('assistant-provider').value = prefs.provider;
       document.body.classList.toggle('admin-compact', prefs.density === 'compact');
-      setStatus(document.getElementById('settings-status'), 'Paramètres enregistrés sur cet appareil.', 'success');
+      document.documentElement.classList.toggle('nova-reduced-motion', prefs.motion === 'reduced');
+      document.documentElement.style.setProperty('--admin-list-max-height', prefs.listHeight || '480px');
+      setStatus(document.getElementById('settings-status'), 'Préférences enregistrées sur cet appareil.', 'success');
     });
 
     const fingerprintStatus = document.getElementById('fingerprint-status');
     const btnRegisterFingerprint = document.getElementById('btn-register-fingerprint');
     const btnLoginFingerprint = document.getElementById('btn-login-fingerprint');
-
-    if (window.PublicKeyCredential) {
-      btnRegisterFingerprint.classList.remove('hidden');
-      btnLoginFingerprint.classList.remove('hidden');
+    let platformAuthenticatorAvailable = false;
+    async function detectPlatformAuthenticator() {
+      const supported = !!(window.isSecureContext && window.PublicKeyCredential && typeof PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable === 'function');
+      if (!supported) { btnRegisterFingerprint.classList.add('hidden'); btnLoginFingerprint.classList.add('hidden'); setStatus(fingerprintStatus, 'Biométrie indisponible dans ce navigateur ou contexte non sécurisé. Utilise HTTPS et le verrouillage sécurisé du téléphone.', 'info'); return false; }
+      try {
+        platformAuthenticatorAvailable = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+        btnRegisterFingerprint.classList.toggle('hidden', !platformAuthenticatorAvailable);
+        btnLoginFingerprint.classList.toggle('hidden', !platformAuthenticatorAvailable);
+        if (!platformAuthenticatorAvailable) setStatus(fingerprintStatus, 'Aucun authentificateur biométrique de plateforme détecté. Active le verrouillage sécurisé et l’empreinte dans Android.', 'info');
+        return platformAuthenticatorAvailable;
+      } catch (error) { setStatus(fingerprintStatus, 'Impossible de vérifier la biométrie : ' + (error.message || error), 'error'); return false; }
     }
+    detectPlatformAuthenticator();
 
     async function callNovaFunction(payload) {
       if (!NOVA_FUNCTION_ID || NOVA_FUNCTION_ID === 'COLLE_ICI_LE_FUNCTION_ID') throw new Error('Identifiant de fonction NOVANOD non configuré.');
@@ -1789,9 +1886,12 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     btnLoginFingerprint.addEventListener('click', async () => {
       setStatus(loginStatus, "Lecture biométrique...", "info");
       try {
+        if (!(await detectPlatformAuthenticator())) throw new Error("L’authentificateur biométrique de ce téléphone n’est pas disponible.");
         const options = await callNovaFunction({ action: 'webauthn_login_options' });
         if (options.error) throw new Error(options.error);
-        const credential = await startAuthentication({ optionsJSON: options });
+        const optionsJSON = options.optionsJSON || options.options || options.data || options;
+        if (!optionsJSON || typeof optionsJSON.challenge !== 'string') throw new Error("Le serveur n’a pas fourni un défi WebAuthn valide.");
+        const credential = await startAuthentication({ optionsJSON: { ...optionsJSON, userVerification: 'required' } });
         const result = await callNovaFunction({ action: 'webauthn_login_verify', credential });
         if (result.error) throw new Error(result.error);
         await account.createSession(result.userId, result.secret);
@@ -1850,37 +1950,75 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     document.getElementById('btn-refresh-security-events')?.addEventListener('click', refreshSecurityEvents);
     let cachedUsers = [];
 
+    function normalizeUserRecord(user) {
+      const prefs = user.prefs || {};
+      const rawType = user.accountType || user.novanodAccountType || prefs.novanodAccountType || 'unknown';
+      const visitDays = Array.isArray(user.visitDays) ? user.visitDays : (Array.isArray(prefs.novanodVisitDates) ? prefs.novanodVisitDates : []);
+      const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
+      const recentVisitDays = visitDays.filter(day => {
+        const time = Date.parse(String(day).length === 10 ? day + 'T00:00:00Z' : day);
+        return Number.isFinite(time) && time >= cutoff;
+      }).length;
+      return { ...user, accountType: ['buyer','visitor'].includes(rawType) ? rawType : 'unknown',
+        authProvider: user.authProvider || prefs.novanodAuthProvider || 'Non renseigné',
+        visitDays, recentVisitDays,
+        isRegular: typeof user.isRegular === 'boolean' ? user.isRegular : recentVisitDays >= 5,
+        lastVisitAt: user.lastVisitAt || prefs.novanodLastVisitAt || user.accessedAt || '' };
+    }
+
     async function refreshUsers() {
       usersLoadedOnce = true;
       setStatus(usersStatus, 'Chargement des comptes...', 'info');
       try {
         const result = await adminCall('list_users');
-        cachedUsers = [...(result.buyers || []), ...(result.visitors || [])];
+        const sourceUsers = Array.isArray(result.users) ? result.users : [...(result.buyers || []), ...(result.visitors || []), ...(result.unclassified || [])];
+        cachedUsers = sourceUsers.map(normalizeUserRecord);
+        const buyers = cachedUsers.filter(user => user.accountType === 'buyer').length;
+        const visitors = cachedUsers.filter(user => user.accountType === 'visitor').length;
+        const regular = cachedUsers.filter(user => user.isRegular).length;
+        const unknown = cachedUsers.filter(user => user.accountType === 'unknown').length;
         document.getElementById('stat-total').textContent = result.totalCount ?? cachedUsers.length;
-        document.getElementById('stat-buyers').textContent = result.buyerCount ?? (result.buyers || []).length;
-        document.getElementById('stat-visitors').textContent = result.visitorCount ?? (result.visitors || []).length;
+        document.getElementById('stat-buyers').textContent = buyers;
+        document.getElementById('stat-visitors').textContent = visitors;
+        document.getElementById('stat-regular').textContent = regular;
+        document.getElementById('stat-unclassified').textContent = unknown;
         renderUsersTable();
         setStatus(usersStatus, '', 'info');
       } catch (e) { setStatus(usersStatus, 'Erreur : ' + e.message, 'error'); }
     }
     function renderUsersTable() {
       const q = (document.getElementById('user-search')?.value || '').toLowerCase();
-      const rows = cachedUsers.filter(u => [u.name,u.email,u.id,u.phone].join(' ').toLowerCase().includes(q));
+      const typeFilter = document.getElementById('user-type-filter')?.value || 'all';
+      const regularFilter = document.getElementById('user-regular-filter')?.value || 'all';
+      const rows = cachedUsers.filter(u => {
+        const textMatch = [u.name,u.email,u.id,u.phone,u.authProvider].join(' ').toLowerCase().includes(q);
+        const typeMatch = typeFilter === 'all' || u.accountType === typeFilter;
+        const regularMatch = regularFilter === 'all' || (regularFilter === 'regular' ? u.isRegular : !u.isRegular);
+        return textMatch && typeMatch && regularMatch;
+      });
       const host = document.getElementById('users-table');
       if (!rows.length) { host.innerHTML = '<div class="hint">Aucun utilisateur correspondant.</div>'; return; }
-      host.innerHTML = `<table class="admin-table"><thead><tr><th>Utilisateur</th><th>Statut</th><th>Inscription</th><th>Actions</th></tr></thead><tbody>${
-        rows.map(u => `<tr><td><b>${escapeHtml(u.name || '(sans nom)')}</b><br>${escapeHtml(u.email || '')}<br><small>${escapeHtml(u.id)}</small></td>
-        <td>${u.verified ? 'Vérifié' : 'Non vérifié'} · ${u.status === false ? 'Bloqué' : 'Actif'}<br><small>${escapeHtml((u.labels || []).join(', '))}</small></td>
-        <td>${escapeHtml(formatDate(u.registeredAt))}</td><td>
-        <button class="admin-action" data-user-action="sessions" data-id="${escapeHtml(u.id)}">Sessions</button>
-        <button class="admin-action" data-user-action="edit" data-id="${escapeHtml(u.id)}">Modifier</button>
-        <button class="admin-action" data-user-action="labels" data-id="${escapeHtml(u.id)}">Labels</button>
-        <button class="admin-action" data-user-action="${u.status === false ? 'unblock' : 'block'}" data-id="${escapeHtml(u.id)}">${u.status === false ? 'Débloquer' : 'Bloquer'}</button>
-        <button class="admin-action danger" data-user-action="delete" data-id="${escapeHtml(u.id)}">Supprimer</button>
-        </td></tr>`).join('')
-      }</tbody></table>`;
+      const htmlRows = rows.map(u => {
+        const typeLabel = u.accountType === 'buyer' ? 'Acheteur' : u.accountType === 'visitor' ? 'Visiteur social' : 'À classifier';
+        const loyaltyLabel = u.isRegular ? 'Régulier' : 'Occasionnel';
+        const activity = u.recentVisitDays + ' jour(s) actif(s) / 30';
+        return '<tr><td><b>' + escapeHtml(u.name || '(sans nom)') + '</b><br>' + escapeHtml(u.email || '') + '<br><small>' + escapeHtml(u.id) + '</small></td>' +
+          '<td>' + typeLabel + '<br><small>' + escapeHtml(u.authProvider) + '</small></td>' +
+          '<td><b>' + loyaltyLabel + '</b><br><small>' + escapeHtml(activity) + '</small></td>' +
+          '<td>' + escapeHtml(formatDate(u.lastVisitAt) || 'Non renseignée') + '</td>' +
+          '<td>' + (u.verified ? 'Vérifié' : 'Non vérifié') + ' · ' + (u.status === false ? 'Bloqué' : 'Actif') + '<br><small>' + escapeHtml((u.labels || []).join(', ')) + '</small></td>' +
+          '<td>' + escapeHtml(formatDate(u.registeredAt)) + '</td><td>' +
+          '<button class="admin-action" data-user-action="sessions" data-id="' + escapeHtml(u.id) + '">Sessions</button>' +
+          '<button class="admin-action" data-user-action="edit" data-id="' + escapeHtml(u.id) + '">Modifier</button>' +
+          '<button class="admin-action" data-user-action="labels" data-id="' + escapeHtml(u.id) + '">Labels</button>' +
+          '<button class="admin-action" data-user-action="' + (u.status === false ? 'unblock' : 'block') + '" data-id="' + escapeHtml(u.id) + '">' + (u.status === false ? 'Débloquer' : 'Bloquer') + '</button>' +
+          '<button class="admin-action danger" data-user-action="delete" data-id="' + escapeHtml(u.id) + '">Supprimer</button></td></tr>';
+      }).join('');
+      host.innerHTML = '<table class="admin-table"><thead><tr><th>Utilisateur</th><th>Profil / origine</th><th>Fidélité</th><th>Activité</th><th>Statut</th><th>Inscription</th><th>Actions</th></tr></thead><tbody>' + htmlRows + '</tbody></table>';
     }
     document.getElementById('user-search')?.addEventListener('input', renderUsersTable);
+    document.getElementById('user-type-filter')?.addEventListener('change', renderUsersTable);
+    document.getElementById('user-regular-filter')?.addEventListener('change', renderUsersTable);
     document.getElementById('users-table')?.addEventListener('click', async ev => {
       const b = ev.target.closest('[data-user-action]');
       if (!b) return;
@@ -2101,6 +2239,32 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     });
 
     // Messaging
+    document.getElementById('btn-test-admin-push')?.addEventListener('click', async () => {
+      const button = document.getElementById('btn-test-admin-push');
+      const status = document.getElementById('admin-push-status');
+      if (!currentAdminUserId) return setStatus(status, 'Connecte-toi à ton compte administrateur avant le test.', 'error');
+      button.disabled = true; setStatus(status, 'Envoi du test Push vers ton compte Appwrite…', 'info');
+      try {
+        const result = await adminCall('message_send', { channel:'push', userId:currentAdminUserId, subject:'NOVANOD — Test de notification', content:'Test de notification NOVANOD. Si tu reçois ce message, la connexion Push est active sur cet appareil.' });
+        setStatus(status, result.acceptedByAppwrite ? 'Appwrite a accepté le message (' + (result.messageId || 'ID non retourné') + '). Vérifie la réception sur un appareil connecté au Push.' : 'Le serveur n’a pas confirmé l’acceptation du message.', result.acceptedByAppwrite ? 'success' : 'error');
+        out('messaging-output', result);
+      } catch (error) { setStatus(status, 'Échec du test Push : ' + error.message, 'error'); }
+      finally { button.disabled = false; }
+    });
+
+    document.getElementById('btn-test-admin-push')?.addEventListener('click', async () => {
+      const button = document.getElementById('btn-test-admin-push');
+      const status = document.getElementById('admin-push-status');
+      if (!currentAdminUserId) return setStatus(status, 'Connecte-toi à ton compte administrateur avant le test.', 'error');
+      button.disabled = true; setStatus(status, 'Envoi du test Push vers ton compte Appwrite…', 'info');
+      try {
+        const result = await adminCall('message_send', { channel:'push', userId:currentAdminUserId, subject:'NOVANOD — Test de notification', content:'Test de notification NOVANOD. Si tu reçois ce message, la connexion Push est active sur cet appareil.' });
+        setStatus(status, result.acceptedByAppwrite ? 'Appwrite a accepté le message (' + (result.messageId || 'ID non retourné') + '). Vérifie la réception sur un appareil connecté au Push.' : 'Le serveur n’a pas confirmé l’acceptation du message.', result.acceptedByAppwrite ? 'success' : 'error');
+        out('messaging-output', result);
+      } catch (error) { setStatus(status, 'Échec du test Push : ' + error.message, 'error'); }
+      finally { button.disabled = false; }
+    });
+
     document.getElementById('btn-send-message')?.addEventListener('click',async()=>{
       try {
         const channel=document.getElementById('message-channel').value;
