@@ -1548,6 +1548,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     const client = new Appwrite.Client().setEndpoint(APPWRITE_ENDPOINT).setProject(APPWRITE_PROJECT_ID);
     const account = new Appwrite.Account(client);
     const functions = new Appwrite.Functions(client);
+    const storage = new Appwrite.Storage(client);
     const adminPushClient = new AppwritePushClient().setEndpoint(APPWRITE_ENDPOINT).setProject(APPWRITE_PROJECT_ID);
     let adminPush = null;
     let adminPushStarting = false;
@@ -1734,7 +1735,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       reportsList.innerHTML=reports.map((r,i)=>{
         const id=escapeHtml(r.$id||r.$rowId||r.id||''), title=escapeHtml(r.analysisType||'Analyse');
         const date=escapeHtml(formatDate(r.createdAt||r.$createdAt));
-        return '<article class="report-card"><div class="report-card-head"><span>Rapport '+(i+1)+' · '+title+'</span><span>'+date+'</span></div><div class="report-toolbar"><button type="button" data-report-pdf="'+id+'" data-report-title="'+title+'" data-report-date="'+date+'">Exporter PDF</button><button type="button" class="admin-action danger" data-report-delete="'+id+'">Supprimer</button></div>'+renderReportHtml(r.report||'')+'</article>';
+        return '<article class="report-card"><div class="report-card-head"><span>Rapport '+(i+1)+' · '+title+'</span><span>'+date+'</span></div><div class="report-toolbar"><button type="button" data-report-pdf="'+id+'" data-report-title="'+title+'" data-report-date="'+date+'">Exporter PDF</button><button type="button" class="admin-action danger" data-report-delete="'+id+'">Supprimer</button></div>'+renderReportHtml(r.report||'',reportViewMode)+'<h4>Preuves visuelles</h4><div class="report-evidence">'+renderEvidenceHtml(r.chartData?.evidence||[])+'</div></article>';
       }).join('');
     }
     async function refreshReports() {
@@ -1751,15 +1752,25 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     }
 
 
+    let lastReportHistory = [];
     function renderReportHistory(reports) {
       const host=document.getElementById('analysis-history'); if(!host)return;
-      if(!reports || !reports.length){host.innerHTML='<p class="hint">Aucun rapport dans l’historique.</p>';return;}
-      host.innerHTML=reports.map((r,i)=>{
+      lastReportHistory = Array.isArray(reports) ? reports : [];
+      if(!lastReportHistory.length){host.innerHTML='<p class="hint">Aucun rapport dans l’historique.</p>';return;}
+      host.innerHTML=lastReportHistory.map((r,i)=>{
         const id=escapeHtml(r.$id||r.$rowId||r.id||''),title=escapeHtml(r.analysisType||'Analyse'),date=escapeHtml(formatDate(r.createdAt||r.$createdAt));
-        return '<article class="report-card"><div class="report-card-head"><span>Rapport '+(i+1)+' · '+title+'</span><span>'+date+'</span></div><div class="report-toolbar"><button type="button" data-report-pdf="'+id+'" data-report-title="'+title+'" data-report-date="'+date+'">Télécharger PDF</button><button type="button" class="admin-action danger" data-report-delete="'+id+'">Supprimer</button></div>'+renderReportHtml(r.report||'')+'</article>';
+        return '<article class="report-card"><div class="report-card-head"><span>Rapport '+(i+1)+' · '+title+'</span><span>'+date+'</span></div><div class="report-toolbar"><button type="button" data-report-pdf="'+id+'" data-report-title="'+title+'" data-report-date="'+date+'">Télécharger PDF</button><button type="button" class="admin-action danger" data-report-delete="'+id+'">Supprimer</button></div>'+renderReportHtml(r.report||'',reportViewMode)+'<h4>Preuves visuelles</h4><div class="report-evidence">'+renderEvidenceHtml(r.chartData?.evidence||[])+'</div></article>';
       }).join('');
     }
     async function reloadReportHistory(){const result=await adminCall('list_reports');renderReportHistory(result.reports||[]);}
+    document.getElementById('report-view-mode')?.addEventListener('change',event=>{
+      reportViewMode=event.target.value==='table'?'table':'written';
+      if(reportsList && reportsLoadedOnce) refreshReports();
+      renderReportHistory(lastReportHistory);
+      ['github-audit-gemini','github-audit-groq','github-audit-combined','analysis-gemini-output','analysis-groq-output','analysis-output'].forEach(id=>{
+        const el=document.getElementById(id);if(el?.dataset.rawReport)el.innerHTML=renderReportHtml(el.dataset.rawReport,reportViewMode);
+      });
+    });
     document.addEventListener('click',async ev=>{
       const pdf=ev.target.closest('[data-report-pdf]');
       if(pdf){const card=pdf.closest('.report-card');const content=card?.querySelector('.report-document')?.innerText||'';exportReportPdf('Rapport NOVANOD — '+(pdf.dataset.reportTitle||'Analyse'),content,pdf.dataset.reportDate||'');return;}
@@ -1923,17 +1934,26 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     const btnRegisterFingerprint = document.getElementById('btn-register-fingerprint');
     const btnLoginFingerprint = document.getElementById('btn-login-fingerprint');
     let platformAuthenticatorAvailable = false;
-    async function detectPlatformAuthenticator() {
+    async function detectPlatformAuthenticator(showFeedback = false) {
       const supported = !!(window.isSecureContext && window.PublicKeyCredential && typeof PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable === 'function');
-      if (!supported) { btnRegisterFingerprint.classList.add('hidden'); btnLoginFingerprint.classList.add('hidden'); setStatus(fingerprintStatus, 'Biométrie indisponible dans ce navigateur ou contexte non sécurisé. Utilise HTTPS et le verrouillage sécurisé du téléphone.', 'info'); return false; }
+      if (!supported) {
+        btnRegisterFingerprint.classList.add('hidden');
+        btnLoginFingerprint.classList.add('hidden');
+        if (showFeedback) setStatus(fingerprintStatus, 'La biométrie de plateforme n’est pas disponible dans ce navigateur ou ce contexte. Utilise le site en HTTPS et vérifie le verrouillage sécurisé Android.', 'info');
+        return false;
+      }
       try {
         platformAuthenticatorAvailable = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
         btnRegisterFingerprint.classList.toggle('hidden', !platformAuthenticatorAvailable);
         btnLoginFingerprint.classList.toggle('hidden', !platformAuthenticatorAvailable);
-        if (!platformAuthenticatorAvailable) setStatus(fingerprintStatus, 'Aucun authentificateur biométrique de plateforme détecté. Active le verrouillage sécurisé et l’empreinte dans Android.', 'info');
+        if (!platformAuthenticatorAvailable && showFeedback) setStatus(fingerprintStatus, 'Aucun authentificateur de plateforme compatible détecté. Vérifie le verrouillage sécurisé Android.', 'info');
         return platformAuthenticatorAvailable;
-      } catch (error) { setStatus(fingerprintStatus, 'Impossible de vérifier la biométrie : ' + (error.message || error), 'error'); return false; }
+      } catch (error) {
+        if (showFeedback) setStatus(fingerprintStatus, 'Vérification biométrique impossible : ' + (error.message || error), 'error');
+        return false;
+      }
     }
+    // Détection silencieuse : aucun avertissement n'est affiché avant une action de l'utilisateur.
     detectPlatformAuthenticator();
 
     async function callNovaFunction(payload) {
@@ -1992,9 +2012,9 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       setStatus(fingerprintStatus, "Préparation de l'enregistrement sécurisé…", "info");
       btnRegisterFingerprint.disabled = true;
       try {
+        if (!(await detectPlatformAuthenticator(true))) throw new Error('Aucun authentificateur de plateforme disponible. Vérifie le verrouillage sécurisé Android.');
         const rawOptions = await callNovaFunction({ action: 'webauthn_register_options' });
         if (rawOptions?.error) throw new Error(String(rawOptions.error));
-        if (!(await detectPlatformAuthenticator())) throw new Error('Aucun authentificateur de plateforme disponible. Vérifie le verrouillage sécurisé et la biométrie Android.');
         const options = normalizeWebAuthnOptions(rawOptions, 'register');
         const credential = await startRegistration({ optionsJSON: options });
         if (!credential || typeof credential !== 'object' || !credential.id || !credential.response) {
@@ -2018,6 +2038,10 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       try {
         if (!(await detectPlatformAuthenticator())) throw new Error("L’authentificateur biométrique de ce téléphone n’est pas disponible.");
         const rawOptions = await callNovaFunction({ action: 'webauthn_login_options' });
+        if (rawOptions?.noCredentials || rawOptions?.available === false) {
+          setStatus(loginStatus, rawOptions.message || 'Aucune passkey enregistrée. Connecte-toi avec ton mot de passe puis enregistre une passkey dans Sécurité.', 'info');
+          return;
+        }
         if (rawOptions?.error) throw new Error(rawOptions.error);
         const optionsJSON = normalizeWebAuthnOptions(rawOptions, 'login');
         const credential = await startAuthentication({ optionsJSON: { ...optionsJSON, userVerification: 'required' } });
@@ -2068,11 +2092,27 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       }
       return options;
     }
-    function renderReportHtml(value) {
-      const lines=String(value||'').replace(/\x60{3}[a-z]*|\x60{3}/gi,'').split(/\r?\n/), parts=[];
-      let list=[], listTag='', table=[];
+    let reportViewMode = 'written';
+    function renderReportHtml(value, mode = reportViewMode) {
+      const lines=String(value||'').replace(/\x60{3}[a-z]*|\x60{3}/gi,'').split(/\r?\n/);
+      if (mode === 'table') {
+        let section = 'Synthèse';
+        const rows = [];
+        for (const raw of lines) {
+          const line = raw.trim();
+          if (!line || /^[-_=═─]{3,}$/.test(line)) continue;
+          const heading = line.match(/^#{1,3}\s*(.+)$/) || line.match(/^\*\*(.{3,100})\*\*$/);
+          if (heading) { section = heading[1].replace(/\*\*/g,'').trim(); continue; }
+          const bullet = line.match(/^(?:[-*•▪]|\d+[.)])\s+(.+)$/);
+          const content = (bullet ? bullet[1] : line).replace(/\*\*/g,'').trim();
+          if (content) rows.push({ section, content });
+        }
+        const body = rows.map(row => '<tr><th>'+escapeHtml(row.section)+'</th><td>'+escapeHtml(row.content)+'</td></tr>').join('');
+        return '<div class="report-document"><div class="report-table-scroll"><table class="report-structured-table"><thead><tr><th>Rubrique</th><th>Constat, analyse et recommandation</th></tr></thead><tbody>'+(body||'<tr><td colspan="2">Aucun contenu disponible.</td></tr>')+'</tbody></table></div></div>';
+      }
+      const parts=[]; let list=[], listTag='', table=[];
       const flushList=()=>{if(list.length){parts.push('<'+listTag+'>'+list.map(x=>'<li>'+escapeHtml(x)+'</li>').join('')+'</'+listTag+'>');list=[];listTag='';}};
-      const flushTable=()=>{if(table.length){parts.push('<table><tbody>'+table.map((r,i)=>'<tr>'+r.map(x=>i===0?'<th>'+escapeHtml(x)+'</th>':'<td>'+escapeHtml(x)+'</td>').join('')+'</tr>').join('')+'</tbody></table>');table=[];}};
+      const flushTable=()=>{if(table.length){parts.push('<div class="report-table-scroll"><table><tbody>'+table.map((r,i)=>'<tr>'+r.map(x=>i===0?'<th>'+escapeHtml(x)+'</th>':'<td>'+escapeHtml(x)+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>');table=[];}};
       for(const raw of lines){
         const line=raw.trim(); if(!line || /^[-_=═─]{3,}$/.test(line)){flushList();flushTable();continue;}
         if(line.includes('|') && line.split('|').length>2){flushList();const cells=line.replace(/^\||\|$/g,'').split('|').map(x=>x.trim().replace(/^\*\*|\*\*$/g,''));if(!cells.every(x=>/^:?-{2,}:?$/.test(x)))table.push(cells);continue;}
@@ -2086,7 +2126,16 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       flushList();flushTable();
       return '<div class="report-document">'+(parts.join('')||'<p>Aucun contenu disponible.</p>')+'</div>';
     }
-    function renderProfessionalReport(id,value){const el=document.getElementById(id);if(el)el.innerHTML=renderReportHtml(value);}
+    function renderEvidenceHtml(items = []) {
+      if (!Array.isArray(items) || !items.length) return '<p class="hint">Aucune capture visuelle n’a été transmise pour cet audit.</p>';
+      return items.map(item => {
+        let src = '';
+        try { src = String(storage.getFileView(item.bucketId, item.fileId)); } catch {}
+        const caption = [item.testTitle || item.relativePath || item.fileName || 'Capture de contrôle', item.project || '', item.mimeType || ''].filter(Boolean).join(' · ');
+        return '<figure><a href="'+escapeHtml(src)+'" target="_blank" rel="noopener"><img loading="lazy" src="'+escapeHtml(src)+'" alt="'+escapeHtml(caption)+'"></a><figcaption>'+escapeHtml(caption)+'</figcaption></figure>';
+      }).join('');
+    }
+    function renderProfessionalReport(id,value){const el=document.getElementById(id);if(el)el.innerHTML=renderReportHtml(value,reportViewMode);}
     function exportReportPdf(title,value,dateText){
       const w=window.open('','_blank');if(!w){setStatus(document.getElementById('analysis-status'),'Autorise les fenêtres contextuelles pour exporter le PDF.','error');return;}
       const safeTitle=escapeHtml(title),safeDate=escapeHtml(dateText||new Date().toLocaleString('fr-FR'));
