@@ -989,7 +989,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     .analysis-donut-legend span{font-size:11px;display:flex;justify-content:space-between;gap:8px;padding:7px 9px;border-radius:9px;background:rgba(59,20,32,.045)}
     .analysis-donut-wrap{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap}
     .analysis-donut-wrap svg{width:min(220px,100%);height:auto}
-    @media(max-width:600px){.header-brand.admin-brand-header{padding:16px 12px!important}.admin-brand-header .admin-brand-subtitle{font-size:10px!important}.analysis-donut-legend{grid-template-columns:1fr}}
+    @media(max-width:600px){.header-brand.admin-brand-header{padding:16px 12px!important}.admin-brand-header .admin-brand-subtitle{font-size:10px!important}.admin-brand-header{min-width:0;flex-wrap:wrap}.admin-brand-header .admin-badge{max-width:100%;white-space:normal;overflow-wrap:anywhere}.analysis-donut-legend{grid-template-columns:1fr}}
 
   
     .report-document{font-family:'Plus Jakarta Sans',Arial,sans-serif;color:#35131f;background:#fffef7;border:1px solid #e8dcc5;border-radius:14px;padding:18px;line-height:1.72;font-size:13px;overflow-wrap:anywhere}
@@ -1695,7 +1695,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       reportsList.innerHTML=reports.map((r,i)=>{
         const id=escapeHtml(r.$id||r.$rowId||r.id||''), title=escapeHtml(r.analysisType||'Analyse');
         const date=escapeHtml(formatDate(r.createdAt||r.$createdAt));
-        return '<article class="report-card"><div class="report-card-head"><span>Rapport '+(i+1)+' · '+title+'</span><span>'+date+'</span></div><div class="report-toolbar"><button type="button" data-report-pdf="'+id+'" data-report-title="'+title+'">Exporter PDF</button><button type="button" class="admin-action danger" data-report-delete="'+id+'">Supprimer</button></div>'+renderReportHtml(r.report||'')+'</article>';
+        return '<article class="report-card"><div class="report-card-head"><span>Rapport '+(i+1)+' · '+title+'</span><span>'+date+'</span></div><div class="report-toolbar"><button type="button" data-report-pdf="'+id+'" data-report-title="'+title+'" data-report-date="'+date+'">Exporter PDF</button><button type="button" class="admin-action danger" data-report-delete="'+id+'">Supprimer</button></div>'+renderReportHtml(r.report||'')+'</article>';
       }).join('');
     }
     async function refreshReports() {
@@ -1717,13 +1717,13 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       if(!reports || !reports.length){host.innerHTML='<p class="hint">Aucun rapport dans l’historique.</p>';return;}
       host.innerHTML=reports.map((r,i)=>{
         const id=escapeHtml(r.$id||r.$rowId||r.id||''),title=escapeHtml(r.analysisType||'Analyse'),date=escapeHtml(formatDate(r.createdAt||r.$createdAt));
-        return '<article class="report-card"><div class="report-card-head"><span>Rapport '+(i+1)+' · '+title+'</span><span>'+date+'</span></div><div class="report-toolbar"><button type="button" data-report-pdf="'+id+'" data-report-title="'+title+'">Télécharger PDF</button><button type="button" class="admin-action danger" data-report-delete="'+id+'">Supprimer</button></div>'+renderReportHtml(r.report||'')+'</article>';
+        return '<article class="report-card"><div class="report-card-head"><span>Rapport '+(i+1)+' · '+title+'</span><span>'+date+'</span></div><div class="report-toolbar"><button type="button" data-report-pdf="'+id+'" data-report-title="'+title+'" data-report-date="'+date+'">Télécharger PDF</button><button type="button" class="admin-action danger" data-report-delete="'+id+'">Supprimer</button></div>'+renderReportHtml(r.report||'')+'</article>';
       }).join('');
     }
     async function reloadReportHistory(){const result=await adminCall('list_reports');renderReportHistory(result.reports||[]);}
     document.addEventListener('click',async ev=>{
       const pdf=ev.target.closest('[data-report-pdf]');
-      if(pdf){try{const all=await adminCall('list_reports');const item=(all.reports||[]).find(x=>(x.$id||x.$rowId||x.id)===pdf.dataset.reportPdf);if(!item)throw new Error('Rapport introuvable.');exportReportPdf('Rapport NOVANOD — '+(item.analysisType||'Analyse'),item.report,formatDate(item.createdAt||item.$createdAt));}catch(e){setStatus(document.getElementById('analysis-status'),e.message,'error');}return;}
+      if(pdf){const card=pdf.closest('.report-card');const content=card?.querySelector('.report-document')?.innerText||'';exportReportPdf('Rapport NOVANOD — '+(pdf.dataset.reportTitle||'Analyse'),content,pdf.dataset.reportDate||'');return;}
       const del=ev.target.closest('[data-report-delete]');
       if(del){if(!confirm('Supprimer définitivement ce rapport ?'))return;del.disabled=true;try{await adminCall('delete_report',{reportId:del.dataset.reportDelete});await refreshReports();await reloadReportHistory();setStatus(document.getElementById('analysis-status'),'Rapport supprimé.','success');}catch(e){del.disabled=false;setStatus(document.getElementById('analysis-status'),e.message,'error');}}
     });
