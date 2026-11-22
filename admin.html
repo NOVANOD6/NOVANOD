@@ -2129,12 +2129,21 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       return '<div class="report-document">'+(parts.join('')||'<p>Aucun contenu disponible.</p>')+'</div>';
     }
     function renderEvidenceHtml(items = []) {
-      if (!Array.isArray(items) || !items.length) return '<p class="hint">Aucune capture visuelle n’a été transmise pour cet audit.</p>';
+      if (!Array.isArray(items) || !items.length) return '<p class="hint">Aucune capture visuelle n’a été transmise pour cet audit. Vérifie le bucket privé et relance un audit si nécessaire.</p>';
       return items.map(item => {
+        const metadata = item.metadata && typeof item.metadata === 'object' ? item.metadata : {};
+        const bucketId = item.bucketId || metadata.bucketId || '';
+        const fileId = item.fileId || metadata.fileId || '';
+        const fileName = item.fileName || metadata.fileName || '';
+        if (!bucketId || !fileId) {
+          const caption = [item.testTitle || item.relativePath || fileName || 'Capture de contrôle', item.project || '', 'Référence de stockage incomplète'].filter(Boolean).join(' · ');
+          return '<figure><figcaption>'+escapeHtml(caption)+'</figcaption></figure>';
+        }
         let src = '';
-        try { src = String(storage.getFileView(item.bucketId, item.fileId)); } catch {}
-        const caption = [item.testTitle || item.relativePath || item.fileName || 'Capture de contrôle', item.project || '', item.mimeType || ''].filter(Boolean).join(' · ');
-        return '<figure><a href="'+escapeHtml(src)+'" target="_blank" rel="noopener"><img loading="lazy" src="'+escapeHtml(src)+'" alt="'+escapeHtml(caption)+'"></a><figcaption>'+escapeHtml(caption)+'</figcaption></figure>';
+        try { src = String(storage.getFileView(bucketId, fileId)); } catch {}
+        const caption = [item.testTitle || item.relativePath || fileName || 'Capture de contrôle', item.project || '', item.mimeType || metadata.mimeType || ''].filter(Boolean).join(' · ');
+        if (!src) return '<figure><figcaption>'+escapeHtml(caption)+' · Aperçu indisponible pour ce compte.</figcaption></figure>';
+        return '<figure><a href="'+escapeHtml(src)+'" target="_blank" rel="noopener"><img loading="lazy" src="'+escapeHtml(src)+'" alt="'+escapeHtml(caption)+'" onerror="this.closest(\'figure\').classList.add(\'evidence-unavailable\');this.remove()"></a><figcaption>'+escapeHtml(caption)+'</figcaption></figure>';
       }).join('');
     }
     function renderProfessionalReport(id,value){const el=document.getElementById(id);if(el){el.dataset.rawReport=String(value||'');el.innerHTML=renderReportHtml(value,reportViewMode);}}
