@@ -1505,6 +1505,8 @@
       try {
         await account.deleteSession('current').catch(() => {});
         await account.create(Appwrite.ID.unique(), email, password, username);
+        localStorage.setItem('novanod_pending_role', 'buyer');
+        localStorage.setItem('novanod_pending_provider', 'email');
         await account.createEmailPasswordSession(email, password);
         const signedUpUser = await account.get();
         await syncNovaNodProfile(signedUpUser, 'buyer', 'email');
@@ -1580,6 +1582,8 @@
 
       try {
         await account.deleteSession('current').catch(() => {});
+        localStorage.setItem('novanod_pending_role', 'buyer');
+        localStorage.setItem('novanod_pending_provider', 'email');
         await account.createEmailPasswordSession(identifier, password);
 
         const user = await account.get();
