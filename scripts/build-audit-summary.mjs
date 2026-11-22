@@ -15,6 +15,21 @@ const metrics = report => {
 const pw = readJson('artifacts/playwright-results.json');
 const lhMobile = readJson('artifacts/lighthouse-mobile.json');
 const lhDesktop = readJson('artifacts/lighthouse-desktop.json');
+
+function saveFinalScreenshot(report, fileName) {
+  const data = report?.audits?.['final-screenshot']?.details?.data;
+  const match = typeof data === 'string' ? data.match(/^data:image\/(png|jpeg|webp);base64,([A-Za-z0-9+/=]+)$/) : null;
+  if (!match) return null;
+  const extension = match[1] === 'jpeg' ? 'jpg' : match[1];
+  const output = `artifacts/${fileName}.${extension}`;
+  fs.mkdirSync('artifacts', { recursive:true });
+  fs.writeFileSync(output, Buffer.from(match[2], 'base64'));
+  return output;
+}
+const lighthouseScreenshots = [
+  saveFinalScreenshot(lhMobile, 'lighthouse-mobile-final'),
+  saveFinalScreenshot(lhDesktop, 'lighthouse-desktop-final'),
+].filter(Boolean);
 const tests = [];
 function walk(suites = []) {
   for (const suite of suites) {
@@ -32,6 +47,7 @@ const summary = {
   branch: process.env.GITHUB_REF_NAME || '',
   siteUrl: process.env.SITE_URL || 'https://novanod6.github.io/NOVANOD/',
   generatedAt: new Date().toISOString(),
+  lighthouseScreenshots,
   playwright: {
     total: tests.length,
     passed: tests.filter(t => t.status === 'passed').length,
