@@ -2,13 +2,13 @@
 
 ## Portée préparée
 
-Cette branche ajoute à la console administrateur :
+La version 2.5.20 de la console administrateur comprend désormais :
 - une courbe X/Y construite uniquement à partir de points numériques structurés renvoyés par le backend ;
 - un histogramme construit uniquement à partir de mesures numériques structurées ;
 - un emplacement pour les coordonnées géographiques des événements, avec validation des limites latitude/longitude ;
 - la police Tahoma pour les réponses de Gemini, Groq et la synthèse de l'assistant.
 
-Le rendu ne tente pas d'extraire des chiffres dans du texte libre généré par une IA. Si le backend ne renvoie pas de données structurées, l'interface affiche explicitement qu'il n'y a pas assez de données.
+Les scores Lighthouse et les résultats Playwright alimentent les courbes et graphiques circulaires à partir des résultats réels du workflow. Les coordonnées géographiques sont facultatives, validées et conservées uniquement si un événement fournit latitude, longitude et source. Le rendu n'extrait jamais de chiffres depuis le texte libre de l'IA.
 
 ## Contrat de données attendu par le tableau de bord
 
@@ -29,13 +29,13 @@ Exemple de forme attendue pour les graphiques (les valeurs ci-dessous sont ficti
 }
 ```
 
-Pour les coordonnées géographiques, le backend peut renvoyer `geoCoordinates` avec `label`, `latitude`, `longitude` et `accuracy`, ou `securityEvents` avec `location.latitude` et `location.longitude`.
+Pour les coordonnées géographiques, le backend renvoie `geoCoordinates` avec `label`, `type`, `source`, `latitude`, `longitude`, `accuracy`, `city`, `region` et `country` à partir des événements privés de sécurité.
 
 **Important :** une localisation déduite d'une adresse IP est approximative et ne doit jamais être présentée comme une position GPS précise. Il faut conserver la source, l'incertitude et une durée de rétention limitée. Ne pas collecter de géolocalisation précise des visiteurs sans nécessité, information claire et base légale appropriée.
 
 ## Architecture de surveillance requise avant activation des alertes
 
-Le dépôt contient l'identifiant de la fonction Appwrite existante, mais la source complète de cette fonction n'est pas présente dans les fichiers inspectés de la branche. Le collecteur ne doit donc pas être remplacé ou modifié à l'aveugle.
+La fonction Appwrite NOVANOD 2.5.20 est livrée séparément sous forme d'archive TAR.GZ. Elle conserve les actions existantes et stocke les événements dans la table privée TablesDB `nova_security_events`. Le dépôt GitHub contient la console et les workflows ; le code serveur doit être déployé depuis l'archive correspondante.
 
 L'intégration backend devra :
 1. lire les journaux/audits Appwrite accessibles pour Authentication, Databases, Storage et Functions ;
