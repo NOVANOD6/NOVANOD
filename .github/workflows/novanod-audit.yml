@@ -52,6 +52,17 @@ jobs:
       - name: Construire le rapport consolidé
         if: always()
         run: node scripts/build-audit-summary.mjs
+      - name: Transférer les captures de preuve vers Appwrite Storage
+        if: always() && hashFiles('artifacts/audit-summary.json') != ''
+        continue-on-error: true
+        env:
+          APPWRITE_ENDPOINT: ${{ secrets.APPWRITE_ENDPOINT }}
+          APPWRITE_PROJECT_ID: ${{ secrets.APPWRITE_PROJECT_ID }}
+          APPWRITE_FUNCTION_ID: ${{ secrets.APPWRITE_FUNCTION_ID }}
+          APPWRITE_API_KEY: ${{ secrets.APPWRITE_API_KEY }}
+          NOVA_AUDIT_TOKEN: ${{ secrets.NOVA_AUDIT_TOKEN }}
+        run: node scripts/post-audit-artifacts.mjs
+
       - name: Envoyer le rapport à Appwrite
         if: always() && hashFiles('artifacts/audit-summary.json') != ''
         env:
