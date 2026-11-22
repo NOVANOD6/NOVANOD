@@ -54,7 +54,6 @@ jobs:
         run: node scripts/build-audit-summary.mjs
       - name: Transférer les captures de preuve vers Appwrite Storage
         if: always() && hashFiles('artifacts/audit-summary.json') != ''
-        continue-on-error: true
         env:
           APPWRITE_ENDPOINT: ${{ secrets.APPWRITE_ENDPOINT }}
           APPWRITE_PROJECT_ID: ${{ secrets.APPWRITE_PROJECT_ID }}
@@ -72,7 +71,13 @@ jobs:
           APPWRITE_API_KEY: ${{ secrets.APPWRITE_API_KEY }}
           NOVA_AUDIT_TOKEN: ${{ secrets.NOVA_AUDIT_TOKEN }}
         run: node scripts/post-audit.mjs
-      - name: Publier les rapports et captures Playwright
+      - name: Construire l’archive de livraison NOVANOD 2.5.23
+        if: always()
+        run: |
+          mkdir -p artifacts
+          tar -czf artifacts/NOVANOD-2.5.23-admin-five-instructions.tar.gz --exclude='./.git' --exclude='./node_modules' --exclude='./artifacts' --exclude='./playwright-report' --exclude='./test-results' .
+          test -s artifacts/NOVANOD-2.5.23-admin-five-instructions.tar.gz
+      - name: Publier les rapports, captures et archive de livraison
         if: always()
         uses: actions/upload-artifact@v4
         with:
