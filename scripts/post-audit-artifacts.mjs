@@ -67,6 +67,7 @@ for (const file of files) {
     if (!result.success || !result.fileId) throw new Error('Appwrite n’a pas confirmé le stockage privé.');
     evidence.push({
       fileId:result.fileId,
+      bucketId:result.metadata?.bucketId || '',
       fileName:result.metadata?.fileName || path.basename(file),
       mimeType:extensions.get(path.extname(file).toLowerCase()),
       relativePath,
