@@ -1024,6 +1024,33 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     .appwrite-health-item strong{display:block;margin-bottom:4px}
     @media(max-width:600px){.report-structured-table{width:760px!important}.report-evidence{grid-template-columns:1fr}.report-view-control select{width:100%;max-width:none}}
 
+    /* NOVANOD 2.5.23 — rapports mobiles sans découpe des mots ni débordement de page */
+    .report-table-scroll{width:100%;max-width:100%;min-width:0;overflow-x:auto;overscroll-behavior-x:contain}
+    .report-structured-table{width:100%!important;min-width:0!important;max-width:100%!important;table-layout:fixed!important;display:table!important;overflow:visible!important}
+    .report-structured-table th:first-child{width:clamp(88px,25%,220px)!important}
+    .report-structured-table th,.report-structured-table td{white-space:normal!important;word-break:normal!important;overflow-wrap:break-word!important;hyphens:none!important;min-width:0}
+    .report-document,.report-document p,.report-document li,.report-document th,.report-document td{word-break:normal!important;overflow-wrap:break-word!important;hyphens:none!important}
+    .evidence-figure{position:relative;min-width:0;border:1px solid #e5d8c8;border-radius:12px;background:#fff;padding:10px;overflow:hidden}
+    .evidence-image-wrap{position:relative}
+    .evidence-image-wrap img{display:block;width:100%;height:auto;max-height:380px;object-fit:contain;border-radius:8px;background:#f6f2e8}
+    .evidence-severity{display:inline-flex;align-items:center;max-width:100%;margin:0 0 8px;padding:5px 9px;border-radius:7px;font-size:10px;font-weight:850;letter-spacing:.3px;background:#eee8dc;color:#3b1420}
+    .evidence-severity-critical{background:#fde7e4;color:#a52219}
+    .evidence-severity-medium{background:#fff1d6;color:#805000}
+    .evidence-severity-low{background:#e7f4ec;color:#17633c}
+    .evidence-figure figcaption{display:grid;gap:5px;margin-top:9px;font-size:12px;line-height:1.5;overflow-wrap:break-word}
+    .evidence-figure figcaption small{color:#79545a;overflow-wrap:break-word}
+    @media(max-width:760px){
+      .report-structured-table{width:100%!important;min-width:0!important}
+      .report-structured-table thead{display:none!important}
+      .report-structured-table,.report-structured-table tbody,.report-structured-table tr,.report-structured-table th,.report-structured-table td{display:block!important;width:100%!important;max-width:100%!important}
+      .report-structured-table tr{margin:0 0 10px;border:1px solid #e5d8c8;border-radius:10px;overflow:hidden}
+      .report-structured-table tbody th{padding:9px 11px!important;text-align:left;background:#3b1420;color:#fffbd0}
+      .report-structured-table tbody td{padding:11px!important;line-height:1.55}
+      .report-table-scroll{overflow-x:hidden!important}
+      .report-view-control{align-items:stretch}
+      .report-view-control label{width:100%}
+      .report-view-control select{width:100%;max-width:none}
+    }
   </style>
 </head>
 <body>
@@ -1508,7 +1535,16 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       <div id="pane-assistant" class="dash-pane">
         <div class="glass-card">
           <h3 class="card-title">Assistant NOVANOD</h3>
-          <div class="hint">Assistant réservé aux administrateurs : synthèse des alertes et préparation de recommandations. Les actions sensibles nécessitent toujours une validation humaine.</div>
+          <div class="hint">Assistant réservé aux administrateurs : synthèse des alertes et préparation de recommandations. Choisis un profil spécialisé pour adapter l'analyse. Les actions sensibles nécessitent toujours une validation humaine.</div>
+          <label class="hint" for="assistant-role">Profil spécialisé de l'assistant</label>
+          <select id="assistant-role" class="input-field">
+            <option value="general" selected>Assistant général NOVANOD</option>
+            <option value="appwrite">Expert Appwrite · administration et TablesDB</option>
+            <option value="performance">Expert Performance · rapidité et Core Web Vitals</option>
+            <option value="accessibility">Expert Accessibilité · WCAG et ergonomie</option>
+            <option value="seo">Expert SEO · indexation et visibilité</option>
+            <option value="devops">Expert DevOps · GitHub Actions et déploiement</option>
+          </select>
           <textarea id="assistant-question" class="input-field" placeholder="Ex. Résume les risques prioritaires et propose un plan d'action…"></textarea>
           <label class="hint" for="assistant-provider">Fournisseur de l'assistant</label>
           <select id="assistant-provider" class="input-field">
@@ -1979,7 +2015,8 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       try {
         const result = await callNovaFunction({ action: 'webauthn_list_credentials' });
         if (result.error) throw new Error(result.error);
-        const items = Array.isArray(result.credentials) ? result.credentials : [];
+        if (!Array.isArray(result.credentials)) throw new Error('Réponse invalide du serveur : la liste des passkeys n’a pas été confirmée.');
+        const items = result.credentials;
         count.textContent = items.length + ' / 5 passkey(s) enregistrée(s) pour ce compte administrateur.';
         const safeText = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
         list.innerHTML = items.length ? items.map((item, index) =>
@@ -1988,7 +2025,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           '<button class="admin-action danger" data-passkey-delete="' + safeText(item.id) + '">Supprimer</button></div>'
         ).join('') : '<div class="hint">Aucune passkey enregistrée pour ce compte.</div>';
         btnRegisterFingerprint.disabled = items.length >= 5;
-        btnRegisterFingerprint.querySelector('span').textContent = items.length >= 5 ? 'Limite de cinq passkeys atteinte' : '◎ Ajouter une passkey (' + items.length + '/5)';
+        btnRegisterFingerprint.querySelector('span').textContent = items.length >= 5 ? 'Limite de cinq passkeys atteinte' : 'Ajouter une passkey (' + items.length + '/5)';
       } catch (e) {
         count.textContent = 'Impossible de charger les passkeys.';
         list.textContent = e.message;
@@ -2129,21 +2166,27 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       return '<div class="report-document">'+(parts.join('')||'<p>Aucun contenu disponible.</p>')+'</div>';
     }
     function renderEvidenceHtml(items = []) {
-      if (!Array.isArray(items) || !items.length) return '<p class="hint">Aucune capture visuelle n’a été transmise pour cet audit. Vérifie le bucket privé et relance un audit si nécessaire.</p>';
+      if (!Array.isArray(items) || !items.length) return '<p class="hint">Aucune capture visuelle n’a été transmise. Vérifie la configuration du bucket privé Appwrite et relance un audit pour associer des images aux constats.</p>';
       return items.map(item => {
         const metadata = item.metadata && typeof item.metadata === 'object' ? item.metadata : {};
         const bucketId = item.bucketId || metadata.bucketId || '';
         const fileId = item.fileId || metadata.fileId || '';
         const fileName = item.fileName || metadata.fileName || '';
+        const issueTitle = item.issueTitle || item.problem || item.finding || item.issue || item.testTitle || item.relativePath || fileName || 'Preuve de contrôle';
+        const issueDetails = item.description || item.details || item.message || item.annotation || metadata.description || '';
+        const severity = item.severityLabel || item.severity || metadata.severity || '';
+        const severityText = String(severity).toLowerCase();
+        const severityClass = /crit|high|élev|haut/.test(severityText) ? 'critical' : /medium|moyen|modér/.test(severityText) ? 'medium' : /low|faible|bas/.test(severityText) ? 'low' : 'neutral';
+        const badge = severity ? '<span class="evidence-severity evidence-severity-'+severityClass+'">'+escapeHtml(severity)+'</span>' : '<span class="evidence-severity evidence-severity-neutral">Preuve visuelle</span>';
         if (!bucketId || !fileId) {
-          const caption = [item.testTitle || item.relativePath || fileName || 'Capture de contrôle', item.project || '', 'Référence de stockage incomplète'].filter(Boolean).join(' · ');
-          return '<figure><figcaption>'+escapeHtml(caption)+'</figcaption></figure>';
+          const caption = [issueTitle, item.project || '', 'Référence de stockage incomplète'].filter(Boolean).join(' · ');
+          return '<figure class="evidence-figure">'+badge+'<figcaption><strong>'+escapeHtml(caption)+'</strong>'+(issueDetails?'<span>'+escapeHtml(issueDetails)+'</span>':'')+'</figcaption></figure>';
         }
         let src = '';
         try { src = String(storage.getFileView(bucketId, fileId)); } catch {}
-        const caption = [item.testTitle || item.relativePath || fileName || 'Capture de contrôle', item.project || '', item.mimeType || metadata.mimeType || ''].filter(Boolean).join(' · ');
-        if (!src) return '<figure><figcaption>'+escapeHtml(caption)+' · Aperçu indisponible pour ce compte.</figcaption></figure>';
-        return '<figure><a href="'+escapeHtml(src)+'" target="_blank" rel="noopener"><img loading="lazy" src="'+escapeHtml(src)+'" alt="'+escapeHtml(caption)+'" onerror="this.closest(\'figure\').classList.add(\'evidence-unavailable\');this.remove()"></a><figcaption>'+escapeHtml(caption)+'</figcaption></figure>';
+        if (!src) return '<figure class="evidence-figure">'+badge+'<figcaption><strong>'+escapeHtml(issueTitle)+'</strong><span>Aperçu indisponible pour ce compte.</span></figcaption></figure>';
+        const caption = [item.project || '', fileName, item.relativePath || ''].filter(Boolean).join(' · ');
+        return '<figure class="evidence-figure"><div class="evidence-image-wrap">'+badge+'<a href="'+escapeHtml(src)+'" target="_blank" rel="noopener"><img loading="lazy" src="'+escapeHtml(src)+'" alt="'+escapeHtml('Preuve visuelle associée à : '+issueTitle)+'" onerror="this.closest(\'figure\').classList.add(\'evidence-unavailable\');this.remove()"></a></div><figcaption><strong>'+escapeHtml(issueTitle)+'</strong>'+(issueDetails?'<span>'+escapeHtml(issueDetails)+'</span>':'')+(caption?'<small>'+escapeHtml(caption)+'</small>':'')+'</figcaption></figure>';
       }).join('');
     }
     function renderProfessionalReport(id,value){const el=document.getElementById(id);if(el){el.dataset.rawReport=String(value||'');el.innerHTML=renderReportHtml(value,reportViewMode);}}
@@ -2834,21 +2877,33 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       finally{button.disabled=false;}
     });
 
+    const NOVANOD_AI_ROLE_PROMPTS = {
+      general: '',
+      appwrite: 'PROFIL EXPERT APPWRITE : agis comme un ingénieur Appwrite senior. Analyse Auth, Teams, Users, TablesDB, Storage, Functions, Messaging et permissions. Vérifie les limites et les dépendances avant de proposer une action. Ne révèle jamais de secrets et ne prétends pas avoir exécuté une opération non confirmée.',
+      performance: 'PROFIL EXPERT PERFORMANCE : agis comme un ingénieur web spécialisé en performance. Priorise Core Web Vitals (LCP, INP, CLS), poids des ressources, réseau mobile, cache et rendu. Donne des mesures vérifiables et distingue les constats des hypothèses.',
+      accessibility: 'PROFIL EXPERT ACCESSIBILITÉ : agis comme un auditeur WCAG 2.2 AA. Analyse clavier, focus, contrastes, noms accessibles, formulaires, lecteurs d’écran et responsive. Propose des corrections testables sans dégrader le design.',
+      seo: 'PROFIL EXPERT SEO : agis comme un consultant SEO technique. Analyse indexation, métadonnées, structure sémantique, liens, données structurées, performance et contenu. N’invente aucune donnée de Search Console.',
+      devops: 'PROFIL EXPERT DEVOPS : agis comme un ingénieur CI/CD. Analyse GitHub Actions, secrets, permissions minimales, artefacts, journaux, tests, déploiements et reprise après échec. Ne prétends jamais qu’un workflow a réussi sans preuve de son statut.'
+    };
     document.getElementById('btn-assistant-ask')?.addEventListener('click',async()=>{
       const question=document.getElementById('assistant-question').value.trim();
       const providerMode=document.getElementById('assistant-provider')?.value || 'both';
+      const role=document.getElementById('assistant-role')?.value || 'general';
+      const rolePrompt=NOVANOD_AI_ROLE_PROMPTS[role] || NOVANOD_AI_ROLE_PROMPTS.general;
+      const roleLabel=document.getElementById('assistant-role')?.selectedOptions?.[0]?.textContent || 'Assistant général';
       if(!question) return setStatus(document.getElementById('assistant-status'),'Écris une demande.','error');
       const btn=document.getElementById('btn-assistant-ask');
       btn.disabled=true;
-      setStatus(document.getElementById('assistant-status'),'Gemini et Groq préparent leurs réponses…','info');
+      setStatus(document.getElementById('assistant-status'),'Profil '+roleLabel+' : Gemini et Groq préparent leurs réponses…','info');
       out('assistant-output','Réponse en cours…');
       try {
-        const r=await adminCall('assistant',{question,providerMode});
+        const scopedQuestion=rolePrompt ? rolePrompt+'\n\nDEMANDE DE L’ADMINISTRATEUR :\n'+question : question;
+        const r=await adminCall('assistant',{question:scopedQuestion,providerMode,role});
         const answer=aiResultText(r);
         if (!answer || answer.startsWith('Le serveur n’a renvoyé')) throw new Error(answer);
         renderProviderOutputs('assistant',r);
         const partial = r.providers?.errors && Object.keys(r.providers.errors).length;
-        setStatus(document.getElementById('assistant-status'),partial?'Réponse partielle : un fournisseur est indisponible.':'Réponses séparées et synthèse prêtes.','success');
+        setStatus(document.getElementById('assistant-status'),partial?'Réponse partielle : un fournisseur est indisponible.':'Réponses du profil '+roleLabel+' prêtes.','success');
       } catch(e){
         setStatus(document.getElementById('assistant-status'),e.message,'error');
         out('assistant-output','Erreur : '+e.message);
