@@ -1444,9 +1444,11 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           <div class="hint">Lance ici le workflow GitHub Actions. NOVANOD suit Playwright et Lighthouse, récupère le rapport et ses captures, puis propose l’analyse Gemini + Groq.</div>
           <div class="workflow-actions">
             <button id="btn-run-github-audit" class="btn-3d" type="button">▶ Exécuter un audit GitHub</button>
+            <button id="btn-refresh-github-audit" class="btn-3d btn-secondary" type="button">Actualiser le statut</button>
             <button id="btn-analyze-github-audit" class="btn-3d btn-secondary" type="button">Analyser le dernier audit terminé</button>
           </div>
-          <div id="github-audit-status" class="status-msg">En attente du premier rapport GitHub Actions.</div>
+          <div id="github-audit-status" class="status-msg">Prêt. Lance un audit GitHub pour obtenir des résultats actualisés.</div>
+          <a id="github-audit-run-link" class="hidden" href="#" target="_blank" rel="noopener">Ouvrir l’exécution GitHub Actions</a>
           <h4>Résultat Gemini · audit automatisé</h4>
           <div id="github-audit-gemini" class="admin-output">En attente.</div>
           <h4>Résultat Groq · audit automatisé</h4>
@@ -2135,7 +2137,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         return '<figure><a href="'+escapeHtml(src)+'" target="_blank" rel="noopener"><img loading="lazy" src="'+escapeHtml(src)+'" alt="'+escapeHtml(caption)+'"></a><figcaption>'+escapeHtml(caption)+'</figcaption></figure>';
       }).join('');
     }
-    function renderProfessionalReport(id,value){const el=document.getElementById(id);if(el)el.innerHTML=renderReportHtml(value,reportViewMode);}
+    function renderProfessionalReport(id,value){const el=document.getElementById(id);if(el){el.dataset.rawReport=String(value||'');el.innerHTML=renderReportHtml(value,reportViewMode);}}
     function exportReportPdf(title,value,dateText){
       const w=window.open('','_blank');if(!w){setStatus(document.getElementById('analysis-status'),'Autorise les fenêtres contextuelles pour exporter le PDF.','error');return;}
       const safeTitle=escapeHtml(title),safeDate=escapeHtml(dateText||new Date().toLocaleString('fr-FR'));
@@ -2725,11 +2727,9 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       } catch(e){setStatus(status,e.message,'error');out('analysis-output','Erreur : '+e.message);}
       finally { btn.disabled=false; }
     }));
-    document.getElementById('btn-analyze-github-audit')?.addEventListener('click',async()=>{
-      const btn=document.getElementById('btn-analyze-github-audit');
+    async function analyzeLatestGithubAudit() {
       const status=document.getElementById('github-audit-status');
-      btn.disabled=true;
-      setStatus(status,'Récupération du dernier audit GitHub et analyse par Gemini + Groq…','info');
+      setStatus(status,'Analyse du dernier audit terminé avec Gemini et Groq…','info');
       out('github-audit-combined','Analyse en cours…');
       try {
         const r=await adminCall('analyze_github_audit',{providerMode:'both'});
@@ -2737,12 +2737,92 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         renderProfessionalReport('github-audit-gemini',providers.gemini || ('Gemini temporairement indisponible. '+(providers.errors?.gemini||'')));
         renderProfessionalReport('github-audit-groq',providers.groq || ('Groq temporairement indisponible. '+(providers.errors?.groq||'')));
         renderProfessionalReport('github-audit-combined',providers.combined || providers.groq || providers.gemini || r.report || 'Aucune synthèse retournée.');
+        const evidenceHost=document.getElementById('github-audit-evidence');
+        if(evidenceHost)evidenceHost.innerHTML=renderEvidenceHtml(r.evidence||r.chartData?.evidence||[]);
         renderAnalysisCharts(r);
         const history=await adminCall('list_reports');renderReportHistory(history.reports||[]);
         const partial=providers.errors && Object.keys(providers.errors).length;
-        setStatus(status,partial?'Rapport partiel : un fournisseur ou la synthèse est indisponible.':'Audit analysé et rapport enregistré dans Appwrite.','success');
-      } catch(e) { setStatus(status,e.message,'error'); out('github-audit-combined','Erreur : '+e.message); }
-      finally { btn.disabled=false; }
+        setStatus(status,partial?'Rapport partiel : un fournisseur IA est indisponible.':'Audit analysé. Le rapport et les preuves sont enregistrés dans Appwrite.','success');
+        return r;
+      } catch(e) { setStatus(status,e.message,'error'); out('github-audit-combined','Erreur : '+e.message); throw e; }
+    }
+    document.getElementById('btn-analyze-github-audit')?.addEventListener('click',async()=>{
+      const btn=document.getElementById('btn-analyze-github-audit');btn.disabled=true;
+      try { await analyzeLatestGithubAudit(); } catch {} finally { btn.disabled=false; }
+    });
+    let activeGithubAuditStartedAt = '';
+    async function refreshGithubAuditStatus() {
+      const status=document.getElementById('github-audit-status');
+      const result=await adminCall('github_audit_status',{startedAfter:activeGithubAuditStartedAt});
+      if(!result.run){setStatus(status,'Workflow déclenché. GitHub prépare encore son exécution…','info');return null;}
+      const run=result.run;
+      const label=run.status==='completed' ? (run.conclusion==='success'?'Audit terminé avec succès.':'Audit terminé avec le statut : '+(run.conclusion||'inconnu')+'.') : 'Audit GitHub : '+(run.status==='in_progress'?'tests et mesures en cours…':'mise en file d’attente…');
+      setStatus(status,label,'info');
+      const link=document.getElementById('github-audit-run-link');
+      if(link){link.href=run.htmlUrl||'#';link.classList.toggle('hidden',!run.htmlUrl);}
+      return run;
+    }
+    document.getElementById('btn-refresh-github-audit')?.addEventListener('click',async()=>{
+      const button=document.getElementById('btn-refresh-github-audit');button.disabled=true;
+      try { const run=await refreshGithubAuditStatus(); if(run?.status==='completed' && run.conclusion==='success') await analyzeLatestGithubAudit(); }
+      catch(e){setStatus(document.getElementById('github-audit-status'),e.message,'error');}
+      finally{button.disabled=false;}
+    });
+    document.getElementById('btn-run-github-audit')?.addEventListener('click',async()=>{
+      const button=document.getElementById('btn-run-github-audit');
+      const refresh=document.getElementById('btn-refresh-github-audit');
+      button.disabled=true;if(refresh)refresh.disabled=true;
+      try {
+        const started=await adminCall('trigger_github_audit');
+        activeGithubAuditStartedAt=started.startedAt||started.run?.createdAt||new Date().toISOString();
+        setStatus(document.getElementById('github-audit-status'),started.alreadyRunning?'Un audit est déjà en cours. Suivi de son exécution…':'Demande envoyée à GitHub Actions. Attente des tests Playwright et Lighthouse…','info');
+        const link=document.getElementById('github-audit-run-link');
+        if(link){link.href=started.run?.htmlUrl||'#';link.classList.toggle('hidden',!started.run?.htmlUrl);}
+        let completed=null;
+        for(let attempt=0;attempt<36;attempt++){
+          await new Promise(resolve=>setTimeout(resolve,8000));
+          completed=await refreshGithubAuditStatus();
+          if(completed?.status==='completed')break;
+        }
+        if(!completed || completed.status!=='completed'){
+          setStatus(document.getElementById('github-audit-status'),'L’audit continue peut-être sur GitHub. Utilise « Actualiser le statut » pour suivre son avancement.','info');
+          return;
+        }
+        if(completed.conclusion!=='success')throw new Error('Le workflow GitHub est terminé avec le statut '+(completed.conclusion||'inconnu')+'. Ouvre son exécution pour consulter les journaux.');
+        await analyzeLatestGithubAudit();
+      } catch(e){setStatus(document.getElementById('github-audit-status'),e.message,'error');}
+      finally{button.disabled=false;if(refresh)refresh.disabled=false;}
+    });
+    document.getElementById('btn-appwrite-health-check')?.addEventListener('click',async()=>{
+      const button=document.getElementById('btn-appwrite-health-check');
+      const status=document.getElementById('appwrite-health-status');
+      const host=document.getElementById('appwrite-health-output');
+      const checks=[
+        ['Comptes Appwrite','list_users'],
+        ['Équipes','teams_list'],
+        ['Bases TablesDB','tablesdb_list_databases'],
+        ['Stockage','storage_buckets'],
+        ['Fonctions','functions_list'],
+        ['Alertes de sécurité','list_security_events']
+      ];
+      button.disabled=true;setStatus(status,'Diagnostic des services Appwrite en cours…','info');
+      try{
+        const results=await Promise.all(checks.map(async([label,action])=>{
+          try{const data=await adminCall(action);let count=null;
+            if(Array.isArray(data.users))count=data.users.length;
+            else if(Array.isArray(data.teams))count=data.teams.length;
+            else if(Array.isArray(data.databases))count=data.databases.length;
+            else if(Array.isArray(data.buckets))count=data.buckets.length;
+            else if(Array.isArray(data.functions))count=data.functions.length;
+            else if(Array.isArray(data.events))count=data.events.length;
+            return {label,ok:true,count};
+          }catch(error){return {label,ok:false,error:error.message};}
+        }));
+        host.innerHTML=results.map(item=>'<div class="appwrite-health-item"><strong>'+(item.ok?'✓ ':'! ')+escapeHtml(item.label)+'</strong><span>'+escapeHtml(item.ok?(item.count===null?'Service accessible':item.count+' élément(s) détecté(s)'):item.error)+'</span></div>').join('');
+        const failures=results.filter(item=>!item.ok).length;
+        setStatus(status,failures?failures+' service(s) n’ont pas pu être vérifiés. Consulte les détails.':'Tous les services testés répondent correctement.','success');
+      }catch(error){setStatus(status,error.message,'error');}
+      finally{button.disabled=false;}
     });
 
     document.getElementById('btn-assistant-ask')?.addEventListener('click',async()=>{
