@@ -1170,8 +1170,17 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           <label class="hint" style="display:flex;gap:8px;align-items:center;">
             <input id="settings-auto-refresh" type="checkbox"> Actualiser l'historique des rapports à l'ouverture
           </label>
+          <div class="admin-form-grid">
+            <div><label class="form-label" for="settings-page-size">Lignes par page</label><select id="settings-page-size" class="input-field"><option value="10">10 lignes</option><option value="25">25 lignes</option><option value="50">50 lignes</option></select></div>
+            <div><label class="form-label" for="settings-motion">Animations</label><select id="settings-motion" class="input-field"><option value="full">Normales</option><option value="reduced">Réduites</option></select></div>
+          </div>
           <button id="btn-save-settings" class="btn-3d">Enregistrer les paramètres</button>
           <div id="settings-status" class="status-msg" role="status" aria-live="polite"></div>
+          <div class="divider"></div>
+          <h3 class="card-title">Notifications Appwrite</h3>
+          <p class="hint">Test de l’envoi Push vers ton compte administrateur. L’acceptation par Appwrite ne garantit pas la livraison sur le téléphone.</p>
+          <div id="admin-push-status" class="status-msg" role="status" aria-live="polite"></div>
+          <button id="btn-test-admin-push" class="btn-3d btn-secondary" type="button">Envoyer une notification test à mon compte</button>
           <button class="btn-3d btn-dark" id="btn-logout" type="button">Se déconnecter de NOVANOD</button>
           <div class="admin-note">La déconnexion est volontairement regroupée ici : ce bouton est l'unique bouton de déconnexion de la console administrateur.</div>
         </div>
@@ -1707,19 +1716,27 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       document.getElementById('settings-ai-provider').value = prefs.provider || 'both';
       document.getElementById('settings-density').value = prefs.density || 'comfortable';
       document.getElementById('settings-auto-refresh').checked = prefs.autoRefreshReports !== false;
+      const pageSize = document.getElementById('settings-page-size');
+      const motion = document.getElementById('settings-motion');
+      if (pageSize) pageSize.value = String(prefs.pageSize || 25);
+      if (motion) motion.value = prefs.motion || 'full';
       document.body.classList.toggle('admin-compact', prefs.density === 'compact');
+      document.documentElement.classList.toggle('nova-reduced-motion', prefs.motion === 'reduced');
     }
     document.getElementById('btn-save-settings')?.addEventListener('click', () => {
       const prefs = {
         provider:document.getElementById('settings-ai-provider').value,
         density:document.getElementById('settings-density').value,
-        autoRefreshReports:document.getElementById('settings-auto-refresh').checked
+        autoRefreshReports:document.getElementById('settings-auto-refresh').checked,
+        pageSize:Number(document.getElementById('settings-page-size')?.value || 25),
+        motion:document.getElementById('settings-motion')?.value || 'full'
       };
       localStorage.setItem('novanod_admin_preferences', JSON.stringify(prefs));
       document.getElementById('analysis-provider').value = prefs.provider;
       document.getElementById('assistant-provider').value = prefs.provider;
       document.body.classList.toggle('admin-compact', prefs.density === 'compact');
-      setStatus(document.getElementById('settings-status'), 'Paramètres enregistrés sur cet appareil.', 'success');
+      document.documentElement.classList.toggle('nova-reduced-motion', prefs.motion === 'reduced');
+      setStatus(document.getElementById('settings-status'), 'Préférences enregistrées sur cet appareil.', 'success');
     });
 
     const fingerprintStatus = document.getElementById('fingerprint-status');
@@ -1890,37 +1907,75 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     document.getElementById('btn-refresh-security-events')?.addEventListener('click', refreshSecurityEvents);
     let cachedUsers = [];
 
+    function normalizeUserRecord(user) {
+      const prefs = user.prefs || {};
+      const rawType = user.accountType || user.novanodAccountType || prefs.novanodAccountType || 'unknown';
+      const visitDays = Array.isArray(user.visitDays) ? user.visitDays : (Array.isArray(prefs.novanodVisitDates) ? prefs.novanodVisitDates : []);
+      const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
+      const recentVisitDays = visitDays.filter(day => {
+        const time = Date.parse(String(day).length === 10 ? day + 'T00:00:00Z' : day);
+        return Number.isFinite(time) && time >= cutoff;
+      }).length;
+      return { ...user, accountType: ['buyer','visitor'].includes(rawType) ? rawType : 'unknown',
+        authProvider: user.authProvider || prefs.novanodAuthProvider || 'Non renseigné',
+        visitDays, recentVisitDays,
+        isRegular: typeof user.isRegular === 'boolean' ? user.isRegular : recentVisitDays >= 5,
+        lastVisitAt: user.lastVisitAt || prefs.novanodLastVisitAt || user.accessedAt || '' };
+    }
+
     async function refreshUsers() {
       usersLoadedOnce = true;
       setStatus(usersStatus, 'Chargement des comptes...', 'info');
       try {
         const result = await adminCall('list_users');
-        cachedUsers = [...(result.buyers || []), ...(result.visitors || [])];
+        const sourceUsers = Array.isArray(result.users) ? result.users : [...(result.buyers || []), ...(result.visitors || []), ...(result.unclassified || [])];
+        cachedUsers = sourceUsers.map(normalizeUserRecord);
+        const buyers = cachedUsers.filter(user => user.accountType === 'buyer').length;
+        const visitors = cachedUsers.filter(user => user.accountType === 'visitor').length;
+        const regular = cachedUsers.filter(user => user.isRegular).length;
+        const unknown = cachedUsers.filter(user => user.accountType === 'unknown').length;
         document.getElementById('stat-total').textContent = result.totalCount ?? cachedUsers.length;
-        document.getElementById('stat-buyers').textContent = result.buyerCount ?? (result.buyers || []).length;
-        document.getElementById('stat-visitors').textContent = result.visitorCount ?? (result.visitors || []).length;
+        document.getElementById('stat-buyers').textContent = buyers;
+        document.getElementById('stat-visitors').textContent = visitors;
+        document.getElementById('stat-regular').textContent = regular;
+        document.getElementById('stat-unclassified').textContent = unknown;
         renderUsersTable();
         setStatus(usersStatus, '', 'info');
       } catch (e) { setStatus(usersStatus, 'Erreur : ' + e.message, 'error'); }
     }
     function renderUsersTable() {
       const q = (document.getElementById('user-search')?.value || '').toLowerCase();
-      const rows = cachedUsers.filter(u => [u.name,u.email,u.id,u.phone].join(' ').toLowerCase().includes(q));
+      const typeFilter = document.getElementById('user-type-filter')?.value || 'all';
+      const regularFilter = document.getElementById('user-regular-filter')?.value || 'all';
+      const rows = cachedUsers.filter(u => {
+        const textMatch = [u.name,u.email,u.id,u.phone,u.authProvider].join(' ').toLowerCase().includes(q);
+        const typeMatch = typeFilter === 'all' || u.accountType === typeFilter;
+        const regularMatch = regularFilter === 'all' || (regularFilter === 'regular' ? u.isRegular : !u.isRegular);
+        return textMatch && typeMatch && regularMatch;
+      });
       const host = document.getElementById('users-table');
       if (!rows.length) { host.innerHTML = '<div class="hint">Aucun utilisateur correspondant.</div>'; return; }
-      host.innerHTML = `<table class="admin-table"><thead><tr><th>Utilisateur</th><th>Statut</th><th>Inscription</th><th>Actions</th></tr></thead><tbody>${
-        rows.map(u => `<tr><td><b>${escapeHtml(u.name || '(sans nom)')}</b><br>${escapeHtml(u.email || '')}<br><small>${escapeHtml(u.id)}</small></td>
-        <td>${u.verified ? 'Vérifié' : 'Non vérifié'} · ${u.status === false ? 'Bloqué' : 'Actif'}<br><small>${escapeHtml((u.labels || []).join(', '))}</small></td>
-        <td>${escapeHtml(formatDate(u.registeredAt))}</td><td>
-        <button class="admin-action" data-user-action="sessions" data-id="${escapeHtml(u.id)}">Sessions</button>
-        <button class="admin-action" data-user-action="edit" data-id="${escapeHtml(u.id)}">Modifier</button>
-        <button class="admin-action" data-user-action="labels" data-id="${escapeHtml(u.id)}">Labels</button>
-        <button class="admin-action" data-user-action="${u.status === false ? 'unblock' : 'block'}" data-id="${escapeHtml(u.id)}">${u.status === false ? 'Débloquer' : 'Bloquer'}</button>
-        <button class="admin-action danger" data-user-action="delete" data-id="${escapeHtml(u.id)}">Supprimer</button>
-        </td></tr>`).join('')
-      }</tbody></table>`;
+      const htmlRows = rows.map(u => {
+        const typeLabel = u.accountType === 'buyer' ? 'Acheteur' : u.accountType === 'visitor' ? 'Visiteur social' : 'À classifier';
+        const loyaltyLabel = u.isRegular ? 'Régulier' : 'Occasionnel';
+        const activity = u.recentVisitDays + ' jour(s) actif(s) / 30';
+        return '<tr><td><b>' + escapeHtml(u.name || '(sans nom)') + '</b><br>' + escapeHtml(u.email || '') + '<br><small>' + escapeHtml(u.id) + '</small></td>' +
+          '<td>' + typeLabel + '<br><small>' + escapeHtml(u.authProvider) + '</small></td>' +
+          '<td><b>' + loyaltyLabel + '</b><br><small>' + escapeHtml(activity) + '</small></td>' +
+          '<td>' + escapeHtml(formatDate(u.lastVisitAt) || 'Non renseignée') + '</td>' +
+          '<td>' + (u.verified ? 'Vérifié' : 'Non vérifié') + ' · ' + (u.status === false ? 'Bloqué' : 'Actif') + '<br><small>' + escapeHtml((u.labels || []).join(', ')) + '</small></td>' +
+          '<td>' + escapeHtml(formatDate(u.registeredAt)) + '</td><td>' +
+          '<button class="admin-action" data-user-action="sessions" data-id="' + escapeHtml(u.id) + '">Sessions</button>' +
+          '<button class="admin-action" data-user-action="edit" data-id="' + escapeHtml(u.id) + '">Modifier</button>' +
+          '<button class="admin-action" data-user-action="labels" data-id="' + escapeHtml(u.id) + '">Labels</button>' +
+          '<button class="admin-action" data-user-action="' + (u.status === false ? 'unblock' : 'block') + '" data-id="' + escapeHtml(u.id) + '">' + (u.status === false ? 'Débloquer' : 'Bloquer') + '</button>' +
+          '<button class="admin-action danger" data-user-action="delete" data-id="' + escapeHtml(u.id) + '">Supprimer</button></td></tr>';
+      }).join('');
+      host.innerHTML = '<table class="admin-table"><thead><tr><th>Utilisateur</th><th>Profil / origine</th><th>Fidélité</th><th>Activité</th><th>Statut</th><th>Inscription</th><th>Actions</th></tr></thead><tbody>' + htmlRows + '</tbody></table>';
     }
     document.getElementById('user-search')?.addEventListener('input', renderUsersTable);
+    document.getElementById('user-type-filter')?.addEventListener('change', renderUsersTable);
+    document.getElementById('user-regular-filter')?.addEventListener('change', renderUsersTable);
     document.getElementById('users-table')?.addEventListener('click', async ev => {
       const b = ev.target.closest('[data-user-action]');
       if (!b) return;
@@ -2141,6 +2196,19 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     });
 
     // Messaging
+    document.getElementById('btn-test-admin-push')?.addEventListener('click', async () => {
+      const button = document.getElementById('btn-test-admin-push');
+      const status = document.getElementById('admin-push-status');
+      if (!currentAdminUserId) return setStatus(status, 'Connecte-toi à ton compte administrateur avant le test.', 'error');
+      button.disabled = true; setStatus(status, 'Envoi du test Push vers ton compte Appwrite…', 'info');
+      try {
+        const result = await adminCall('message_send', { channel:'push', userId:currentAdminUserId, subject:'NOVANOD — Test de notification', content:'Test de notification NOVANOD. Si tu reçois ce message, la connexion Push est active sur cet appareil.' });
+        setStatus(status, result.acceptedByAppwrite ? 'Appwrite a accepté le message (' + (result.messageId || 'ID non retourné') + '). Vérifie la réception sur un appareil connecté au Push.' : 'Le serveur n’a pas confirmé l’acceptation du message.', result.acceptedByAppwrite ? 'success' : 'error');
+        out('messaging-output', result);
+      } catch (error) { setStatus(status, 'Échec du test Push : ' + error.message, 'error'); }
+      finally { button.disabled = false; }
+    });
+
     document.getElementById('btn-test-admin-push')?.addEventListener('click', async () => {
       const button = document.getElementById('btn-test-admin-push');
       const status = document.getElementById('admin-push-status');
