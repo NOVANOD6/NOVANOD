@@ -63,7 +63,7 @@ test('admin : écran de connexion et identité visuelle chargent correctement', 
   await page.screenshot({ path: 'artifacts/admin-login.png', fullPage: true });
 });
 
-test('admin : contrôles visuels appareil et analyses sont présents sans pictogrammes textuels', async ({ page }) => {
+test('admin : contrôles visuels et panneaux Appwrite/IA sont présents', async ({ page }) => {
   await page.goto('admin.html', { waitUntil: 'domcontentloaded' });
   await expect(page.locator('.device-tab[data-device="phone"] svg')).toHaveCount(1);
   await expect(page.locator('.device-tab[data-device="tablet"] svg')).toHaveCount(1);
@@ -72,7 +72,24 @@ test('admin : contrôles visuels appareil et analyses sont présents sans pictog
   await expect(page.locator('#btn-orient-landscape svg')).toHaveCount(1);
   await expect(page.locator('.analysis-action svg').first()).toHaveCount(1);
   await expect(page.locator('#btn-register-fingerprint .fingerprint-mark')).toHaveCount(1);
+  const revealPane = async paneId => page.evaluate(id => {
+    document.getElementById('screen-login')?.classList.add('hidden');
+    document.getElementById('screen-admin')?.classList.remove('hidden');
+    document.querySelectorAll('.dash-pane').forEach(pane => pane.classList.remove('active'));
+    document.querySelectorAll('.dash-tabs .dash-tab[data-pane]').forEach(tab => tab.classList.remove('active'));
+    document.getElementById(id)?.classList.add('active');
+    document.querySelector('.dash-tabs .dash-tab[data-pane="'+id+'"]')?.classList.add('active');
+  }, paneId);
+  await revealPane('pane-preview');
   await page.screenshot({ path: 'artifacts/admin-controls.png', fullPage: true });
+  await revealPane('pane-analytics');
+  await page.screenshot({ path: 'artifacts/admin-analytics.png', fullPage: true });
+  await revealPane('pane-functions');
+  await page.screenshot({ path: 'artifacts/admin-appwrite.png', fullPage: true });
+  await revealPane('pane-assistant');
+  await page.screenshot({ path: 'artifacts/admin-assistant.png', fullPage: true });
+  await revealPane('pane-reports');
+  await page.screenshot({ path: 'artifacts/admin-reports.png', fullPage: true });
 });
 
 test('admin : le JavaScript ne contient pas d’erreur au chargement', async ({ page }) => {
@@ -143,4 +160,15 @@ test('admin : les rapports tabulaires restent lisibles sur un écran mobile', as
   expect(metrics.report, JSON.stringify(metrics)).toBeLessThanOrEqual(metrics.reportClient + 2);
   expect(metrics.wordBreak).toBe('normal');
   expect(metrics.overflowWrap).toBe('break-word');
+  await page.evaluate(() => {
+    document.getElementById('screen-login')?.classList.add('hidden');
+    document.getElementById('screen-admin')?.classList.remove('hidden');
+    document.querySelectorAll('.dash-pane').forEach(pane => pane.classList.remove('active'));
+    document.querySelectorAll('.dash-tabs .dash-tab[data-pane]').forEach(tab => tab.classList.remove('active'));
+    document.getElementById('pane-reports')?.classList.add('active');
+    document.querySelector('.dash-tabs .dash-tab[data-pane="pane-reports"]')?.classList.add('active');
+    const host = document.getElementById('analysis-history');
+    if (host) host.innerHTML = '<article class="report-card"><div class="report-card-head">Rapport mobile · preuve d’affichage</div><div class="report-document"><div class="report-table-scroll"><table class="report-structured-table"><thead><tr><th>Rubrique</th><th>Constat</th></tr></thead><tbody><tr><th>Performance mobile</th><td>Le temps de chargement doit être amélioré sans couper les mots ni faire déborder la page.</td></tr><tr><th>Accessibilité</th><td>Les contrôles doivent conserver un contraste suffisant et rester utilisables au clavier.</td></tr></tbody></table></div></div></article>';
+  });
+  await page.screenshot({ path: 'artifacts/admin-reports-mobile.png', fullPage: true });
 });
