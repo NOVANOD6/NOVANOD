@@ -1641,7 +1641,7 @@
     function renderPushHistory() {
       const host = document.getElementById('push-notification-list');
       if (!host) return;
-      const items = JSON.parse(sessionStorage.getItem('novanod_push_history') || '[]');
+      const items = JSON.parse(localStorage.getItem('novanod_push_history') || '[]');
       if (!items.length) {
         host.innerHTML = '<p style="font-size:12px;opacity:.7;">Aucun message reçu pour le moment.</p>';
         return;
@@ -1679,6 +1679,9 @@
       const status = document.getElementById('push-connection-status');
       try {
         push = new Push(pushClient);
+        push.onOpen(() => { if (status) status.textContent = 'Connexion Appwrite Push active sur cet appareil.'; });
+        push.onClose(() => { active = false; if (status) status.textContent = 'Connexion Push interrompue. Elle sera rétablie à la prochaine ouverture du site.'; });
+        push.onError((error) => { if (status) status.textContent = 'Erreur de connexion Push : ' + (error?.message || error); });
         await push.subscribe((message) => {
           let payload = {};
           try { payload = JSON.parse(message.data || '{}'); } catch { payload = { notification:{ body:message.data || '' } }; }
@@ -1689,10 +1692,10 @@
             body:notification.body || payload.body || payload.message || 'Vous avez reçu une notification.',
             receivedAt:new Date().toISOString()
           };
-          const history = JSON.parse(sessionStorage.getItem('novanod_push_history') || '[]');
+          const history = JSON.parse(localStorage.getItem('novanod_push_history') || '[]');
           if (!history.some(existing => existing.id === item.id)) {
             history.unshift(item);
-            sessionStorage.setItem('novanod_push_history', JSON.stringify(history.slice(0,20)));
+            localStorage.setItem('novanod_push_history', JSON.stringify(history.slice(0,20)));
           }
           renderPushHistory();
           showPushToast(item.title, item.body);
@@ -1722,7 +1725,8 @@
     document.getElementById('btn-enable-push')?.addEventListener('click', startPush);
     window.addEventListener('novanod:authenticated', () => {
       const status = document.getElementById('push-connection-status');
-      if (status && !active) status.textContent = 'Compte connecté. Appuie sur le bouton pour activer les notifications sur cet appareil.';
+      if (status && !active) status.textContent = 'Compte connecté. Connexion au service de notifications…';
+      startPush().catch(error => { if (status) status.textContent = 'Notifications non connectées : ' + (error?.message || error); });
     });
     renderPushHistory();
   </script>
