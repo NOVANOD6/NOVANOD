@@ -1122,7 +1122,8 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           <div class="hint">La création est effectuée côté serveur. Le mot de passe n'est jamais affiché dans la liste. Si Appwrite renvoie HTTP 401/403, vérifie que la clé serveur de la fonction possède le scope <b>users.write</b>. Sans validation d'e-mail, le site public demandera à l'utilisateur de confirmer son adresse avant l'accès.</div>
         </div>
         <div class="glass-card">
-          <h3 class="card-title">Acheteurs et visiteurs</h3>
+          <h3 class="card-title">Acheteurs, visiteurs et fidélité</h3>
+          <div class="admin-note">Acheteur : inscription ou connexion e-mail/mot de passe NOVANOD. Visiteur : connexion sociale Google, Facebook ou TikTok. Un client est marqué régulier après au moins 5 jours actifs distincts sur les 30 derniers jours. Cet indicateur mesure les visites, pas les commandes. Les anciens comptes sans historique restent « À classifier » jusqu’à leur prochaine connexion.</div>
           <div id="users-table" class="admin-table-wrap"><div class="hint">Clique sur « Actualiser » pour charger les comptes.</div></div>
           <div class="admin-note">Les actions de blocage, modification, suppression et révocation de sessions sont sensibles. Elles sont protégées côté fonction et doivent être réservées aux administrateurs autorisés.</div>
         </div>
