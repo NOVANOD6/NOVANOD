@@ -2285,19 +2285,6 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       finally { button.disabled = false; }
     });
 
-    document.getElementById('btn-test-admin-push')?.addEventListener('click', async () => {
-      const button = document.getElementById('btn-test-admin-push');
-      const status = document.getElementById('admin-push-status');
-      if (!currentAdminUserId) return setStatus(status, 'Connecte-toi à ton compte administrateur avant le test.', 'error');
-      button.disabled = true; setStatus(status, 'Envoi du test Push vers ton compte Appwrite…', 'info');
-      try {
-        const result = await adminCall('message_send', { channel:'push', userId:currentAdminUserId, subject:'NOVANOD — Test de notification', content:'Test de notification NOVANOD. Si tu reçois ce message, la connexion Push est active sur cet appareil.' });
-        setStatus(status, result.acceptedByAppwrite ? 'Appwrite a accepté le message (' + (result.messageId || 'ID non retourné') + '). Vérifie la réception sur un appareil connecté au Push.' : 'Le serveur n’a pas confirmé l’acceptation du message.', result.acceptedByAppwrite ? 'success' : 'error');
-        out('messaging-output', result);
-      } catch (error) { setStatus(status, 'Échec du test Push : ' + error.message, 'error'); }
-      finally { button.disabled = false; }
-    });
-
     document.getElementById('btn-send-message')?.addEventListener('click',async()=>{
       try {
         const channel=document.getElementById('message-channel').value;
@@ -2396,7 +2383,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         ['Accessibilité',performance?.mobile?.accessibility,performance?.desktop?.accessibility],
         ['Bonnes pratiques',performance?.mobile?.bestPractices,performance?.desktop?.bestPractices],
         ['SEO',performance?.mobile?.seo,performance?.desktop?.seo]
-      ].map(([label,mobile,desktop])=>({label,mobile:Number(mobile),desktop:Number(desktop)}))
+      ].map(([label,mobile,desktop])=>({label,mobile:mobile==null?NaN:Number(mobile),desktop:desktop==null?NaN:Number(desktop)}))
        .filter(x=>Number.isFinite(x.mobile)||Number.isFinite(x.desktop));
       if(scoreItems.length){
         const card=makeCard('Performance du site · critères en pourcentage');
