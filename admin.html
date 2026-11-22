@@ -435,12 +435,14 @@
       border-radius: 14px;
       overflow: hidden;
       margin: 0 auto 10px;
-      background: #000;
+      background: #FFFBD0;
       box-shadow: 0 6px 0 var(--dark-brown);
     }
     .preview-frame-wrapper iframe {
       border: none;
       display: block;
+      background: #FFFBD0;
+      color-scheme: light;
       transform-origin: top left;
     }
 
@@ -989,7 +991,18 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     .analysis-donut-legend span{font-size:11px;display:flex;justify-content:space-between;gap:8px;padding:7px 9px;border-radius:9px;background:rgba(59,20,32,.045)}
     .analysis-donut-wrap{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap}
     .analysis-donut-wrap svg{width:min(220px,100%);height:auto}
-    @media(max-width:600px){.header-brand.admin-brand-header{padding:16px 12px!important}.admin-brand-header .admin-brand-subtitle{font-size:10px!important}.analysis-donut-legend{grid-template-columns:1fr}}
+    @media(max-width:600px){.header-brand.admin-brand-header{padding:16px 12px!important}.admin-brand-header .admin-brand-subtitle{font-size:10px!important}.admin-brand-header{min-width:0;flex-wrap:wrap}.admin-brand-header .admin-badge{max-width:100%;white-space:normal;overflow-wrap:anywhere}.analysis-donut-legend{grid-template-columns:1fr}}
+
+  
+    .report-document{font-family:'Plus Jakarta Sans',Arial,sans-serif;color:#35131f;background:#fffef7;border:1px solid #e8dcc5;border-radius:14px;padding:18px;line-height:1.72;font-size:13px;overflow-wrap:anywhere}
+    .report-document h2{font-size:18px;font-weight:850;color:#b9362a;margin:18px 0 8px;border-bottom:1px solid #ead9c8;padding-bottom:6px}
+    .report-document p{margin:7px 0}.report-document ul,.report-document ol{padding-left:22px;margin:7px 0}.report-document li{margin:4px 0}
+    .report-document table{width:100%;border-collapse:collapse;margin:10px 0;font-size:11px}.report-document th{background:#3b1420;color:#fffbd0;text-align:left}
+    .report-document th,.report-document td{padding:7px;border:1px solid #e5d8c8;vertical-align:top}
+    .report-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.report-toolbar button{border:1px solid #3b1420;border-radius:9px;padding:8px 12px;font-weight:800;background:#fffbd0;color:#3b1420}
+    .report-card{border:1px solid rgba(59,20,32,.16);border-radius:13px;background:#fffef7;padding:14px;margin:10px 0}
+    .report-card-head{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;font-weight:800}
+    @media print{body{background:#fff!important;padding:0!important}.report-document{border:0!important;padding:0!important;font-size:11pt!important}}
 
   </style>
 </head>
@@ -1448,8 +1461,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           </section>
         </div>
         <div class="glass-card">
-          <h3 class="card-title">Historique des rapports</h3>
-          <div id="analysis-history" class="admin-output">Les rapports seront enregistrés dans la collection de rapports configurée.</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap"><h3 class="card-title">Historique des rapports</h3><button id="btn-delete-all-reports" class="admin-action danger" type="button">Supprimer tout l’historique</button></div><p class="hint">Chaque rapport peut être exporté en PDF ou supprimé individuellement. Dans la fenêtre d’impression, sélectionne « Enregistrer au format PDF ».</p><div id="analysis-history" class="admin-output">Les rapports seront enregistrés dans la table configurée.</div>
         </div>
       </div>
 
@@ -1681,19 +1693,13 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     }
 
     function renderReports(reports) {
-      if (!reports || reports.length === 0) {
-        reportsList.innerHTML = '<div class="hint">Aucun rapport pour l\'instant.</div>';
-        return;
-      }
-      reportsList.innerHTML = reports.map(r => `
-        <div class="user-row">
-          <div class="u-name">${formatDate(r.createdAt || r.$createdAt)}</div>
-          <div style="white-space: pre-wrap; margin-top:4px;">${(r.report || '').replace(/</g, '&lt;')}</div>
-          <div class="hint" style="margin-top:6px; margin-bottom:0;">${(r.statsSummary || '').replace(/</g, '&lt;').replace(/\n/g, ' · ')}</div>
-        </div>
-      `).join('');
+      if (!reports || !reports.length) { reportsList.innerHTML='<div class="hint">Aucun rapport enregistré.</div>'; return; }
+      reportsList.innerHTML=reports.map((r,i)=>{
+        const id=escapeHtml(r.$id||r.$rowId||r.id||''), title=escapeHtml(r.analysisType||'Analyse');
+        const date=escapeHtml(formatDate(r.createdAt||r.$createdAt));
+        return '<article class="report-card"><div class="report-card-head"><span>Rapport '+(i+1)+' · '+title+'</span><span>'+date+'</span></div><div class="report-toolbar"><button type="button" data-report-pdf="'+id+'" data-report-title="'+title+'" data-report-date="'+date+'">Exporter PDF</button><button type="button" class="admin-action danger" data-report-delete="'+id+'">Supprimer</button></div>'+renderReportHtml(r.report||'')+'</article>';
+      }).join('');
     }
-
     async function refreshReports() {
       reportsLoadedOnce = true;
       setStatus(reportsStatus, 'Chargement des rapports...', 'info');
@@ -1706,6 +1712,29 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         setStatus(reportsStatus, 'Erreur : ' + e.message, 'error');
       }
     }
+
+
+    function renderReportHistory(reports) {
+      const host=document.getElementById('analysis-history'); if(!host)return;
+      if(!reports || !reports.length){host.innerHTML='<p class="hint">Aucun rapport dans l’historique.</p>';return;}
+      host.innerHTML=reports.map((r,i)=>{
+        const id=escapeHtml(r.$id||r.$rowId||r.id||''),title=escapeHtml(r.analysisType||'Analyse'),date=escapeHtml(formatDate(r.createdAt||r.$createdAt));
+        return '<article class="report-card"><div class="report-card-head"><span>Rapport '+(i+1)+' · '+title+'</span><span>'+date+'</span></div><div class="report-toolbar"><button type="button" data-report-pdf="'+id+'" data-report-title="'+title+'" data-report-date="'+date+'">Télécharger PDF</button><button type="button" class="admin-action danger" data-report-delete="'+id+'">Supprimer</button></div>'+renderReportHtml(r.report||'')+'</article>';
+      }).join('');
+    }
+    async function reloadReportHistory(){const result=await adminCall('list_reports');renderReportHistory(result.reports||[]);}
+    document.addEventListener('click',async ev=>{
+      const pdf=ev.target.closest('[data-report-pdf]');
+      if(pdf){const card=pdf.closest('.report-card');const content=card?.querySelector('.report-document')?.innerText||'';exportReportPdf('Rapport NOVANOD — '+(pdf.dataset.reportTitle||'Analyse'),content,pdf.dataset.reportDate||'');return;}
+      const del=ev.target.closest('[data-report-delete]');
+      if(del){if(!confirm('Supprimer définitivement ce rapport ?'))return;del.disabled=true;try{await adminCall('delete_report',{reportId:del.dataset.reportDelete});await refreshReports();await reloadReportHistory();setStatus(document.getElementById('analysis-status'),'Rapport supprimé.','success');}catch(e){del.disabled=false;setStatus(document.getElementById('analysis-status'),e.message,'error');}}
+    });
+    document.getElementById('btn-delete-all-reports')?.addEventListener('click',async()=>{
+      if(!confirm('Supprimer définitivement tout l’historique des rapports ? Cette action est irréversible.'))return;
+      const button=document.getElementById('btn-delete-all-reports');button.disabled=true;
+      try{const result=await adminCall('delete_all_reports');await refreshReports();renderReportHistory([]);setStatus(document.getElementById('analysis-status'),(result.deleted||0)+' rapport(s) supprimé(s).','success');}
+      catch(e){setStatus(document.getElementById('analysis-status'),e.message,'error');}finally{button.disabled=false;}
+    });
 
     document.getElementById('btn-run-analysis').addEventListener('click', async () => {
       const btn = document.getElementById('btn-run-analysis');
@@ -1928,15 +1957,8 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       try {
         const rawOptions = await callNovaFunction({ action: 'webauthn_register_options' });
         if (rawOptions?.error) throw new Error(String(rawOptions.error));
-        // Certaines couches d'exécution peuvent encapsuler le JSON retourné.
-        const options = rawOptions?.optionsJSON || rawOptions?.options || rawOptions?.data || rawOptions;
-        if (!options || typeof options !== 'object' || typeof options.challenge !== 'string' || !options.challenge.trim()) {
-          const keys = options && typeof options === 'object' ? Object.keys(options).join(', ') : typeof options;
-          throw new Error("Réponse WebAuthn invalide : le défi (challenge) est absent. Champs reçus : " + (keys || "aucun") + ". Vérifie la réponse de la fonction Appwrite.");
-        }
-        if (!options.rp || typeof options.rp.id !== 'string' || !options.rp.id.trim()) {
-          throw new Error("Réponse WebAuthn invalide : l'identifiant du site (rp.id) est absent.");
-        }
+        if (!(await detectPlatformAuthenticator())) throw new Error('Aucun authentificateur de plateforme disponible. Vérifie le verrouillage sécurisé et la biométrie Android.');
+        const options = normalizeWebAuthnOptions(rawOptions, 'register');
         const credential = await startRegistration({ optionsJSON: options });
         if (!credential || typeof credential !== 'object' || !credential.id || !credential.response) {
           throw new Error("Android n'a pas renvoyé une passkey valide. Vérifie le verrouillage sécurisé de l'appareil puis réessaie.");
@@ -1958,10 +1980,9 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       setStatus(loginStatus, "Lecture biométrique...", "info");
       try {
         if (!(await detectPlatformAuthenticator())) throw new Error("L’authentificateur biométrique de ce téléphone n’est pas disponible.");
-        const options = await callNovaFunction({ action: 'webauthn_login_options' });
-        if (options.error) throw new Error(options.error);
-        const optionsJSON = options.optionsJSON || options.options || options.data || options;
-        if (!optionsJSON || typeof optionsJSON.challenge !== 'string') throw new Error("Le serveur n’a pas fourni un défi WebAuthn valide.");
+        const rawOptions = await callNovaFunction({ action: 'webauthn_login_options' });
+        if (rawOptions?.error) throw new Error(rawOptions.error);
+        const optionsJSON = normalizeWebAuthnOptions(rawOptions, 'login');
         const credential = await startAuthentication({ optionsJSON: { ...optionsJSON, userVerification: 'required' } });
         const result = await callNovaFunction({ action: 'webauthn_login_verify', credential });
         if (result.error) throw new Error(result.error);
@@ -1986,6 +2007,56 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, c => ({
       '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
     }[c]));
+
+    const toBase64Url = value => {
+      if (typeof value === 'string' && value.trim()) return value;
+      let bytes = null;
+      if (value instanceof ArrayBuffer) bytes = new Uint8Array(value);
+      else if (ArrayBuffer.isView(value)) bytes = new Uint8Array(value.buffer,value.byteOffset,value.byteLength);
+      else if (value && typeof value === 'object' && Array.isArray(value.data)) bytes = new Uint8Array(value.data);
+      if (!bytes) return '';
+      let binary=''; bytes.forEach(b=>binary+=String.fromCharCode(b));
+      return btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+    };
+    function normalizeWebAuthnOptions(raw, mode) {
+      const source=raw && (raw.optionsJSON || raw.options || raw.data || raw);
+      if(!source || typeof source!=='object') throw new Error('Options WebAuthn absentes.');
+      const options={...source,challenge:toBase64Url(source.challenge)};
+      if(!options.challenge) throw new Error('Le défi WebAuthn est absent ou invalide.');
+      if(mode==='register'){
+        options.user={...(source.user||{}),id:toBase64Url(source.user && source.user.id)};
+        if(!options.user.id) throw new Error('Identifiant WebAuthn utilisateur absent. Recharge la page puis réessaie.');
+        if(!source.rp || !source.rp.id) throw new Error('Identifiant du site WebAuthn absent. Vérifie WEBAUTHN_RP_ID.');
+        options.excludeCredentials=(source.excludeCredentials||[]).map(x=>({...x,id:toBase64Url(x.id)})).filter(x=>x.id);
+      }
+      return options;
+    }
+    function renderReportHtml(value) {
+      const lines=String(value||'').replace(/\x60{3}[a-z]*|\x60{3}/gi,'').split(/\r?\n/), parts=[];
+      let list=[], listTag='', table=[];
+      const flushList=()=>{if(list.length){parts.push('<'+listTag+'>'+list.map(x=>'<li>'+escapeHtml(x)+'</li>').join('')+'</'+listTag+'>');list=[];listTag='';}};
+      const flushTable=()=>{if(table.length){parts.push('<table><tbody>'+table.map((r,i)=>'<tr>'+r.map(x=>i===0?'<th>'+escapeHtml(x)+'</th>':'<td>'+escapeHtml(x)+'</td>').join('')+'</tr>').join('')+'</tbody></table>');table=[];}};
+      for(const raw of lines){
+        const line=raw.trim(); if(!line || /^[-_=═─]{3,}$/.test(line)){flushList();flushTable();continue;}
+        if(line.includes('|') && line.split('|').length>2){flushList();const cells=line.replace(/^\||\|$/g,'').split('|').map(x=>x.trim().replace(/^\*\*|\*\*$/g,''));if(!cells.every(x=>/^:?-{2,}:?$/.test(x)))table.push(cells);continue;}
+        flushTable();
+        const heading=line.match(/^#{1,3}\s*(.+)$/)||line.match(/^\*\*(.{3,100})\*\*$/);
+        if(heading){flushList();parts.push('<h2>'+escapeHtml(heading[1].replace(/\*\*/g,''))+'</h2>');continue;}
+        const bullet=line.match(/^(?:[-*•▪]|\d+[.)])\s+(.+)$/);
+        if(bullet){const tag=/^\d/.test(line)?'ol':'ul';if(listTag && listTag!==tag)flushList();listTag=tag;list.push(bullet[1].replace(/\*\*/g,''));continue;}
+        flushList();parts.push('<p>'+escapeHtml(line.replace(/\*\*/g,''))+'</p>');
+      }
+      flushList();flushTable();
+      return '<div class="report-document">'+(parts.join('')||'<p>Aucun contenu disponible.</p>')+'</div>';
+    }
+    function renderProfessionalReport(id,value){const el=document.getElementById(id);if(el)el.innerHTML=renderReportHtml(value);}
+    function exportReportPdf(title,value,dateText){
+      const w=window.open('','_blank');if(!w){setStatus(document.getElementById('analysis-status'),'Autorise les fenêtres contextuelles pour exporter le PDF.','error');return;}
+      const safeTitle=escapeHtml(title),safeDate=escapeHtml(dateText||new Date().toLocaleString('fr-FR'));
+      w.document.open();
+      w.document.write('<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>'+safeTitle+'</title><style>@page{size:A4;margin:18mm}body{font:11pt/1.65 Arial,sans-serif;color:#35131f}.brand{font-size:18pt;font-weight:800;color:#b9362a;border-bottom:3px solid #b9362a;padding-bottom:10px}.meta{font-size:9pt;color:#71545a}.report-document h2{font-size:14pt;color:#b9362a;margin:18px 0 6px;border-bottom:1px solid #ead9c8}.report-document table{width:100%;border-collapse:collapse;font-size:9pt}.report-document th{background:#3b1420;color:#fffbd0}.report-document th,.report-document td{border:1px solid #ddcfbd;padding:6px;text-align:left}.footer{border-top:1px solid #ddcfbd;margin-top:24px;padding-top:8px;font-size:8pt;color:#79545a}</style></head><body><div class="brand">NOVANOD</div><h1>'+safeTitle+'</h1><p class="meta">Rapport administratif · Généré le '+safeDate+'</p>'+renderReportHtml(value)+'<div class="footer">Document confidentiel — NOVANOD. Rapport établi à partir des données disponibles au moment de l’analyse.</div><script>window.onload=()=>setTimeout(()=>window.print(),350)<\/script></body></html>');
+      w.document.close();
+    }
     const securityEventsStatus = document.getElementById('security-events-status');
     const securityEventsList = document.getElementById('security-events-list');
     async function refreshSecurityEvents() {
@@ -2400,9 +2471,9 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     };
     const renderProviderOutputs = (prefix, r) => {
       const p = r?.providers || {};
-      out(prefix+'-gemini-output', p.gemini || (p.errors?.gemini ? 'Indisponible : '+p.errors.gemini : 'Aucun résultat Gemini demandé.'));
-      out(prefix+'-groq-output', p.groq || (p.errors?.groq ? 'Indisponible : '+p.errors.groq : 'Aucun résultat Groq demandé.'));
-      out(prefix==='analysis'?'analysis-output':'assistant-output', p.combined || r?.report || r?.answer || 'Aucune synthèse commune retournée.');
+      renderProfessionalReport(prefix+'-gemini-output', p.gemini || (p.errors?.gemini ? 'Gemini temporairement indisponible. '+p.errors.gemini : 'Aucun rapport Gemini disponible.'));
+      renderProfessionalReport(prefix+'-groq-output', p.groq || (p.errors?.groq ? 'Groq temporairement indisponible. '+p.errors.groq : 'Aucun rapport Groq disponible.'));
+      renderProfessionalReport(prefix==='analysis'?'analysis-output':'assistant-output', p.combined || p.groq || p.gemini || r?.report || r?.answer || 'Aucune synthèse disponible.');
     };
 
     // Charts use only structured numeric data returned by the trusted backend.
@@ -2564,7 +2635,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         const partial = r.providers?.errors && Object.keys(r.providers.errors).length;
         setStatus(status,partial?'Rapport partiel enregistré : un fournisseur ou la synthèse est indisponible.':'Rapports Gemini, Groq et synthèse enregistrés.','success');
         const h=await adminCall('list_reports');
-        out('analysis-history',(h.reports||[]).map(x=>`${formatDate(x.createdAt||x.$createdAt)} · ${x.analysisType||'audit'}\n${x.report||'Rapport sans texte enregistré.'}`).join('\n\n') || 'Aucun rapport.');
+        renderReportHistory(h.reports || []);
       } catch(e){setStatus(status,e.message,'error');out('analysis-output','Erreur : '+e.message);}
       finally { btn.disabled=false; }
     }));
@@ -2577,10 +2648,11 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       try {
         const r=await adminCall('analyze_github_audit',{providerMode:'both'});
         const providers=r.providers||{};
-        out('github-audit-gemini',providers.gemini || ('Indisponible : '+(providers.errors?.gemini||'aucun résultat')));
-        out('github-audit-groq',providers.groq || ('Indisponible : '+(providers.errors?.groq||'aucun résultat')));
-        out('github-audit-combined',providers.combined || r.report || 'Aucune synthèse retournée.');
+        renderProfessionalReport('github-audit-gemini',providers.gemini || ('Gemini temporairement indisponible. '+(providers.errors?.gemini||'')));
+        renderProfessionalReport('github-audit-groq',providers.groq || ('Groq temporairement indisponible. '+(providers.errors?.groq||'')));
+        renderProfessionalReport('github-audit-combined',providers.combined || providers.groq || providers.gemini || r.report || 'Aucune synthèse retournée.');
         renderAnalysisCharts(r);
+        const history=await adminCall('list_reports');renderReportHistory(history.reports||[]);
         const partial=providers.errors && Object.keys(providers.errors).length;
         setStatus(status,partial?'Rapport partiel : un fournisseur ou la synthèse est indisponible.':'Audit analysé et rapport enregistré dans Appwrite.','success');
       } catch(e) { setStatus(status,e.message,'error'); out('github-audit-combined','Erreur : '+e.message); }
