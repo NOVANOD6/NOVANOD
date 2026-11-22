@@ -1459,8 +1459,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           </section>
         </div>
         <div class="glass-card">
-          <h3 class="card-title">Historique des rapports</h3>
-          <div id="analysis-history" class="admin-output">Les rapports seront enregistrés dans la collection de rapports configurée.</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap"><h3 class="card-title">Historique des rapports</h3><button id="btn-delete-all-reports" class="admin-action danger" type="button">Supprimer tout l’historique</button></div><p class="hint">Chaque rapport peut être exporté en PDF ou supprimé individuellement. Dans la fenêtre d’impression, sélectionne « Enregistrer au format PDF ».</p><div id="analysis-history" class="admin-output">Les rapports seront enregistrés dans la table configurée.</div>
         </div>
       </div>
 
@@ -1692,19 +1691,13 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     }
 
     function renderReports(reports) {
-      if (!reports || reports.length === 0) {
-        reportsList.innerHTML = '<div class="hint">Aucun rapport pour l\'instant.</div>';
-        return;
-      }
-      reportsList.innerHTML = reports.map(r => `
-        <div class="user-row">
-          <div class="u-name">${formatDate(r.createdAt || r.$createdAt)}</div>
-          <div style="white-space: pre-wrap; margin-top:4px;">${(r.report || '').replace(/</g, '&lt;')}</div>
-          <div class="hint" style="margin-top:6px; margin-bottom:0;">${(r.statsSummary || '').replace(/</g, '&lt;').replace(/\n/g, ' · ')}</div>
-        </div>
-      `).join('');
+      if (!reports || !reports.length) { reportsList.innerHTML='<div class="hint">Aucun rapport enregistré.</div>'; return; }
+      reportsList.innerHTML=reports.map((r,i)=>{
+        const id=escapeHtml(r.$id||r.$rowId||r.id||''), title=escapeHtml(r.analysisType||'Analyse');
+        const date=escapeHtml(formatDate(r.createdAt||r.$createdAt));
+        return '<article class="report-card"><div class="report-card-head"><span>Rapport '+(i+1)+' · '+title+'</span><span>'+date+'</span></div><div class="report-toolbar"><button type="button" data-report-pdf="'+id+'" data-report-title="'+title+'">Exporter PDF</button><button type="button" class="admin-action danger" data-report-delete="'+id+'">Supprimer</button></div>'+renderReportHtml(r.report||'')+'</article>';
+      }).join('');
     }
-
     async function refreshReports() {
       reportsLoadedOnce = true;
       setStatus(reportsStatus, 'Chargement des rapports...', 'info');
@@ -1717,6 +1710,29 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         setStatus(reportsStatus, 'Erreur : ' + e.message, 'error');
       }
     }
+
+
+    function renderReportHistory(reports) {
+      const host=document.getElementById('analysis-history'); if(!host)return;
+      if(!reports || !reports.length){host.innerHTML='<p class="hint">Aucun rapport dans l’historique.</p>';return;}
+      host.innerHTML=reports.map((r,i)=>{
+        const id=escapeHtml(r.$id||r.$rowId||r.id||''),title=escapeHtml(r.analysisType||'Analyse'),date=escapeHtml(formatDate(r.createdAt||r.$createdAt));
+        return '<article class="report-card"><div class="report-card-head"><span>Rapport '+(i+1)+' · '+title+'</span><span>'+date+'</span></div><div class="report-toolbar"><button type="button" data-report-pdf="'+id+'" data-report-title="'+title+'">Télécharger PDF</button><button type="button" class="admin-action danger" data-report-delete="'+id+'">Supprimer</button></div>'+renderReportHtml(r.report||'')+'</article>';
+      }).join('');
+    }
+    async function reloadReportHistory(){const result=await adminCall('list_reports');renderReportHistory(result.reports||[]);}
+    document.addEventListener('click',async ev=>{
+      const pdf=ev.target.closest('[data-report-pdf]');
+      if(pdf){try{const all=await adminCall('list_reports');const item=(all.reports||[]).find(x=>(x.$id||x.$rowId||x.id)===pdf.dataset.reportPdf);if(!item)throw new Error('Rapport introuvable.');exportReportPdf('Rapport NOVANOD — '+(item.analysisType||'Analyse'),item.report,formatDate(item.createdAt||item.$createdAt));}catch(e){setStatus(document.getElementById('analysis-status'),e.message,'error');}return;}
+      const del=ev.target.closest('[data-report-delete]');
+      if(del){if(!confirm('Supprimer définitivement ce rapport ?'))return;del.disabled=true;try{await adminCall('delete_report',{reportId:del.dataset.reportDelete});await refreshReports();await reloadReportHistory();setStatus(document.getElementById('analysis-status'),'Rapport supprimé.','success');}catch(e){del.disabled=false;setStatus(document.getElementById('analysis-status'),e.message,'error');}}
+    });
+    document.getElementById('btn-delete-all-reports')?.addEventListener('click',async()=>{
+      if(!confirm('Supprimer définitivement tout l’historique des rapports ? Cette action est irréversible.'))return;
+      const button=document.getElementById('btn-delete-all-reports');button.disabled=true;
+      try{const result=await adminCall('delete_all_reports');await refreshReports();renderReportHistory([]);setStatus(document.getElementById('analysis-status'),(result.deleted||0)+' rapport(s) supprimé(s).','success');}
+      catch(e){setStatus(document.getElementById('analysis-status'),e.message,'error');}finally{button.disabled=false;}
+    });
 
     document.getElementById('btn-run-analysis').addEventListener('click', async () => {
       const btn = document.getElementById('btn-run-analysis');
@@ -2617,7 +2633,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         const partial = r.providers?.errors && Object.keys(r.providers.errors).length;
         setStatus(status,partial?'Rapport partiel enregistré : un fournisseur ou la synthèse est indisponible.':'Rapports Gemini, Groq et synthèse enregistrés.','success');
         const h=await adminCall('list_reports');
-        out('analysis-history',(h.reports||[]).map(x=>`${formatDate(x.createdAt||x.$createdAt)} · ${x.analysisType||'audit'}\n${x.report||'Rapport sans texte enregistré.'}`).join('\n\n') || 'Aucun rapport.');
+        renderReportHistory(h.reports || []);
       } catch(e){setStatus(status,e.message,'error');out('analysis-output','Erreur : '+e.message);}
       finally { btn.disabled=false; }
     }));
@@ -2630,10 +2646,11 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       try {
         const r=await adminCall('analyze_github_audit',{providerMode:'both'});
         const providers=r.providers||{};
-        out('github-audit-gemini',providers.gemini || ('Indisponible : '+(providers.errors?.gemini||'aucun résultat')));
-        out('github-audit-groq',providers.groq || ('Indisponible : '+(providers.errors?.groq||'aucun résultat')));
-        out('github-audit-combined',providers.combined || r.report || 'Aucune synthèse retournée.');
+        renderProfessionalReport('github-audit-gemini',providers.gemini || ('Gemini temporairement indisponible. '+(providers.errors?.gemini||'')));
+        renderProfessionalReport('github-audit-groq',providers.groq || ('Groq temporairement indisponible. '+(providers.errors?.groq||'')));
+        renderProfessionalReport('github-audit-combined',providers.combined || providers.groq || providers.gemini || r.report || 'Aucune synthèse retournée.');
         renderAnalysisCharts(r);
+        const history=await adminCall('list_reports');renderReportHistory(history.reports||[]);
         const partial=providers.errors && Object.keys(providers.errors).length;
         setStatus(status,partial?'Rapport partiel : un fournisseur ou la synthèse est indisponible.':'Audit analysé et rapport enregistré dans Appwrite.','success');
       } catch(e) { setStatus(status,e.message,'error'); out('github-audit-combined','Erreur : '+e.message); }
