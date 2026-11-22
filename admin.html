@@ -1069,6 +1069,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         <button class="dash-tab" data-pane="pane-teams"><svg class="nav-illustration" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx='8' cy='8' r='3'/><circle cx='17' cy='9' r='2.5'/><path d='M2.5 20a5.5 5.5 0 0 1 11 0M14 16a4.5 4.5 0 0 1 7 3'/></svg><span class="dash-label">Équipes</span></button>
         <button class="dash-tab" data-pane="pane-database"><svg class="nav-illustration" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx='12' cy='5' rx='8' ry='3'/><path d='M4 5v7c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12v7c0 1.7 3.6 3 8 3s8-1.3 8-3v-7'/></svg><span class="dash-label">Base de données</span></button>
         <button class="dash-tab" data-pane="pane-storage"><svg class="nav-illustration" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d='M3 7h18v13H3zM3 7l3-4h12l3 4'/><path d='M8 12h8M8 16h5'/></svg><span class="dash-label">Stockage</span></button>
+        <button class="dash-tab" data-pane="pane-functions"><svg class="nav-illustration" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 9h8M8 13h5M8 17h8"/></svg><span class="dash-label">Fonctions</span></button>
         <button class="dash-tab" data-pane="pane-messaging"><svg class="nav-illustration" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x='3' y='5' width='18' height='14' rx='3'/><path d='m4 7 8 6 8-6'/></svg><span class="dash-label">Messagerie</span></button>
         <button class="dash-tab" data-pane="pane-analytics"><svg class="nav-illustration" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d='M4 19V5M4 19h17'/><path d='m7 15 4-4 3 2 6-7'/><circle cx='20' cy='6' r='1'/></svg><span class="dash-label">Analyses IA</span></button>
         <button class="dash-tab" data-pane="pane-assistant"><svg class="nav-illustration" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d='M12 3v3M5.6 5.6l2.1 2.1M3 12h3M18 12h3M16.3 7.7l2.1-2.1'/><rect x='5' y='10' width='14' height='10' rx='3'/><path d='M9 14h.01M15 14h.01M9 17h6'/></svg><span class="dash-label">Assistant</span></button>
@@ -1324,6 +1325,22 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         </div>
       </div>
 
+        <div class="glass-card">
+          <h3 class="card-title">TablesDB · gestion des lignes</h3>
+          <div class="admin-note">Consulte et modifie les lignes de tes tables. Les nouvelles lignes sont privées et lisibles uniquement par les administrateurs autorisés.</div>
+          <div class="admin-form-grid">
+            <input id="tablesdb-row-id" class="input-field" placeholder="ID de ligne (laisser vide pour créer)">
+            <input id="tablesdb-row-table-id" class="input-field" placeholder="ID de la table (ex. nova_reports)">
+          </div>
+          <textarea id="tablesdb-row-data" class="input-field" placeholder='Données JSON, ex. {"createdAt":"2026-11-22T12:00:00.000Z","analysisType":"manual"}'></textarea>
+          <div class="admin-toolbar">
+            <button id="btn-tablesdb-list-rows" class="btn-3d btn-secondary">Lister les lignes</button>
+            <button id="btn-tablesdb-create-row" class="btn-3d">Créer une ligne</button>
+            <button id="btn-tablesdb-update-row" class="btn-3d btn-secondary">Modifier la ligne</button>
+            <button id="btn-tablesdb-delete-row" class="btn-3d btn-secondary">Supprimer la ligne</button>
+          </div>
+          <div id="tablesdb-rows-output" class="admin-output">Les lignes apparaîtront ici.</div>
+        </div>
       <!-- ===== STOCKAGE ===== -->
       <div id="pane-storage" class="dash-pane">
         <div class="glass-card">
@@ -1356,6 +1373,27 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           <div id="messaging-status" class="status-msg"></div>
           <div id="messaging-output" class="admin-output">Les réponses du service de messagerie apparaîtront ici.</div>
           <div class="admin-note">Pour PUSH : configure un fournisseur Appwrite Push dans Appwrite → Messaging → Providers et active l'abonnement Push dans le site public. Un message accepté par l'API n'est pas une preuve de livraison. Pour e-mail/SMS, configure un fournisseur adapté et vérifie que le compte destinataire possède une cible e-mail/téléphone valide. Les topics doivent avoir des abonnés autorisés.</div>
+        </div>
+      </div>
+
+      <!-- ===== FONCTIONS APPWRITE ===== -->
+      <div id="pane-functions" class="dash-pane">
+        <div class="glass-card">
+          <h3 class="card-title">Surveillance des fonctions Appwrite</h3>
+          <div class="admin-note">Visualise les fonctions du projet, leurs exécutions récentes, statuts, durées et erreurs. Ce module n'expose jamais les secrets ni les variables d'environnement.</div>
+          <div class="admin-toolbar">
+            <button id="btn-functions-list" class="btn-3d btn-secondary">Lister les fonctions</button>
+            <button id="btn-function-executions" class="btn-3d">Voir les dernières exécutions</button>
+          </div>
+          <input id="monitor-function-id" class="input-field" value="6af9c951003622f41d2a" placeholder="ID de la fonction Appwrite">
+          <div id="functions-monitor-status" class="status-msg"></div>
+          <div id="functions-list-output" class="admin-output">Les fonctions Appwrite apparaîtront ici.</div>
+          <div id="function-executions-output" class="admin-output">Les exécutions récentes apparaîtront ici.</div>
+          <div class="admin-toolbar">
+            <input id="monitor-execution-id" class="input-field" placeholder="ID d'exécution pour voir les détails">
+            <button id="btn-function-execution-details" class="btn-3d btn-secondary">Détails de l'exécution</button>
+          </div>
+          <div id="function-execution-details" class="admin-output">Les détails de l'exécution apparaîtront ici.</div>
         </div>
       </div>
 
@@ -2255,6 +2293,48 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         setStatus(document.getElementById('tablesdb-status'),'Table supprimée.','success');
       } catch(e) { setStatus(document.getElementById('tablesdb-status'),e.message,'error'); }
     });
+    // TablesDB rows: CRUD sécurisé côté serveur.
+    const rowPayload = () => {
+      const databaseId=tablesDbValue('tablesdb-database-id');
+      const tableId=tablesDbValue('tablesdb-row-table-id') || tablesDbValue('tablesdb-table-id');
+      const rowId=tablesDbValue('tablesdb-row-id');
+      const raw=document.getElementById('tablesdb-row-data').value.trim();
+      if(!databaseId || !tableId) throw new Error('ID de base TablesDB et ID de table requis.');
+      let data={}; if(raw) data=JSON.parse(raw);
+      return {databaseId,tableId,rowId,data};
+    };
+    document.getElementById('btn-tablesdb-list-rows')?.addEventListener('click',async()=>{
+      try { const p=rowPayload(); const r=await adminCall('tablesdb_list_rows',p); out('tablesdb-rows-output',r.rows||r); }
+      catch(e){out('tablesdb-rows-output','Erreur : '+e.message);}
+    });
+    document.getElementById('btn-tablesdb-create-row')?.addEventListener('click',async()=>{
+      try { const p=rowPayload(); if(!Object.keys(p.data).length) throw new Error('Les données JSON sont requises.'); const r=await adminCall('tablesdb_create_row',p); out('tablesdb-rows-output',r.row||r); }
+      catch(e){out('tablesdb-rows-output','Erreur : '+e.message);}
+    });
+    document.getElementById('btn-tablesdb-update-row')?.addEventListener('click',async()=>{
+      try { const p=rowPayload(); if(!p.rowId) throw new Error('ID de ligne requis.'); if(!Object.keys(p.data).length) throw new Error('Les données JSON sont requises.'); const r=await adminCall('tablesdb_update_row',p); out('tablesdb-rows-output',r.row||r); }
+      catch(e){out('tablesdb-rows-output','Erreur : '+e.message);}
+    });
+    document.getElementById('btn-tablesdb-delete-row')?.addEventListener('click',async()=>{
+      try { const p=rowPayload(); if(!p.rowId) throw new Error('ID de ligne requis.'); if(!confirm('Supprimer définitivement cette ligne ?')) return; const r=await adminCall('tablesdb_delete_row',p); out('tablesdb-rows-output',r); }
+      catch(e){out('tablesdb-rows-output','Erreur : '+e.message);}
+    });
+
+    // Appwrite Functions: surveillance sans exposition des variables secrètes.
+    const monitorFunctionId=()=>document.getElementById('monitor-function-id')?.value.trim()||'';
+    document.getElementById('btn-functions-list')?.addEventListener('click',async()=>{
+      try { setStatus(document.getElementById('functions-monitor-status'),'Chargement des fonctions Appwrite…','info'); const r=await adminCall('functions_list'); out('functions-list-output',r.functions||r); setStatus(document.getElementById('functions-monitor-status'),(r.functions||[]).length+' fonction(s) trouvée(s).','success'); }
+      catch(e){setStatus(document.getElementById('functions-monitor-status'),e.message,'error');}
+    });
+    document.getElementById('btn-function-executions')?.addEventListener('click',async()=>{
+      try { const functionId=monitorFunctionId(); if(!functionId) throw new Error('ID de fonction requis.'); setStatus(document.getElementById('functions-monitor-status'),'Chargement des exécutions…','info'); const r=await adminCall('function_executions',{functionId}); out('function-executions-output',r.executions||r); setStatus(document.getElementById('functions-monitor-status'),(r.executions||[]).length+' exécution(s) chargée(s).','success'); }
+      catch(e){setStatus(document.getElementById('functions-monitor-status'),e.message,'error');}
+    });
+    document.getElementById('btn-function-execution-details')?.addEventListener('click',async()=>{
+      try { const functionId=monitorFunctionId(),executionId=document.getElementById('monitor-execution-id').value.trim(); if(!functionId||!executionId) throw new Error('ID de fonction et ID d’exécution requis.'); const r=await adminCall('function_execution_get',{functionId,executionId}); out('function-execution-details',r.execution||r); }
+      catch(e){out('function-execution-details','Erreur : '+e.message);}
+    });
+
     // Storage
     document.getElementById('btn-load-buckets')?.addEventListener('click',async()=>{
       try { const r=await adminCall('storage_buckets'); out('buckets-output',r.buckets || r); setStatus(document.getElementById('storage-status'),'Buckets chargés.','success'); }
