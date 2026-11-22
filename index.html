@@ -1361,6 +1361,31 @@
       }
     }
 
+    async function syncNovaNodProfile(user, fallbackRole = '', fallbackProvider = '') {
+      const pendingRole = localStorage.getItem('novanod_pending_role') || fallbackRole;
+      const pendingProvider = localStorage.getItem('novanod_pending_provider') || fallbackProvider;
+      const role = pendingRole || user?.prefs?.novanodAccountType || '';
+      if (!role) return;
+      const now = new Date();
+      const today = now.toISOString().slice(0, 10);
+      const priorDays = Array.isArray(user?.prefs?.novanodVisitDates) ? user.prefs.novanodVisitDates : [];
+      const visitDays = Array.from(new Set([...priorDays, today])).slice(-30);
+      try {
+        await account.updatePrefs({
+          ...(user.prefs || {}),
+          novanodAccountType: role,
+          novanodAuthProvider: pendingProvider || user?.prefs?.novanodAuthProvider || 'unknown',
+          novanodVisitDates: visitDays,
+          novanodLastVisitAt: now.toISOString()
+        });
+        localStorage.removeItem('novanod_pending_role');
+        localStorage.removeItem('novanod_pending_provider');
+      } catch (error) {
+        console.warn('NOVANOD profil utilisateur non synchronisé :', error);
+        showToast('Connexion réussie, mais le profil client n’a pas pu être synchronisé. Réessaie plus tard.');
+      }
+    }
+
     async function checkSession() {
       if (!account) return;
       try {
@@ -1393,6 +1418,7 @@
           showToast("Veuillez d'abord vérifier votre e-mail via le lien reçu dans votre boîte de réception.");
           return;
         }
+        await syncNovaNodProfile(user);
         displayUserData(user);
         navigateTo('screen-profile');
         window.dispatchEvent(new CustomEvent('novanod:authenticated', { detail:{ userId:user.$id } }));
@@ -1426,6 +1452,8 @@
     function loginSocial(provider) {
       if (!account) return;
       try {
+        localStorage.setItem('novanod_pending_role', 'visitor');
+        localStorage.setItem('novanod_pending_provider', String(provider).toLowerCase());
         account.createOAuth2Session(provider, REDIRECT_URL, REDIRECT_URL);
       } catch (error) {
         showToast("Erreur lors de la connexion via " + provider);
@@ -1478,6 +1506,8 @@
         await account.deleteSession('current').catch(() => {});
         await account.create(Appwrite.ID.unique(), email, password, username);
         await account.createEmailPasswordSession(email, password);
+        const signedUpUser = await account.get();
+        await syncNovaNodProfile(signedUpUser, 'buyer', 'email');
 
         const verificationUrl = REDIRECT_URL + (REDIRECT_URL.includes('?') ? '&' : '?') + 'action=verify';
         await account.createVerification(verificationUrl);
@@ -1559,6 +1589,7 @@
           return;
         }
 
+        await syncNovaNodProfile(user, 'buyer', 'email');
         showToast("Connexion réussie !");
         await checkSession();
       } catch (error) {
