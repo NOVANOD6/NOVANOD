@@ -19,19 +19,18 @@ async function walk(dir) {
 
 const files = (await walk(root)).filter(file => extensions.has(path.extname(file).toLowerCase()));
 const evidence = [];
+const failures = [];
 const output = 'artifacts/audit-evidence.json';
 await fs.mkdir(root, { recursive:true });
 if (!files.length) {
   await fs.writeFile(output, JSON.stringify({ evidence }, null, 2));
-  console.log('Aucune capture Playwright ou Lighthouse disponible.');
-  process.exit(0);
+  throw new Error('Aucune capture Playwright ou Lighthouse n’a été générée : les preuves visuelles ne peuvent pas être validées.');
 }
 const required = ['APPWRITE_ENDPOINT','APPWRITE_PROJECT_ID','APPWRITE_FUNCTION_ID','APPWRITE_API_KEY','NOVA_AUDIT_TOKEN'];
 const missing = required.filter(key => !process.env[key]);
 if (missing.length) {
-  console.warn('Captures non transférées : variables GitHub absentes : ' + missing.join(', '));
   await fs.writeFile(output, JSON.stringify({ evidence }, null, 2));
-  process.exit(0);
+  throw new Error('Captures non transférées : variables GitHub absentes : ' + missing.join(', '));
 }
 const endpoint = process.env.APPWRITE_ENDPOINT.replace(/\/$/,'');
 const executionUrl = `${endpoint}/functions/${encodeURIComponent(process.env.APPWRITE_FUNCTION_ID)}/executions`;
@@ -77,8 +76,12 @@ for (const file of files) {
     });
     console.log('Capture stockée en privé dans Appwrite Storage : ' + result.fileId);
   } catch (error) {
+    failures.push({ relativePath, message:error.message });
     console.warn(`Capture non transférée (${relativePath}) : ${error.message}`);
   }
 }
-await fs.writeFile(output, JSON.stringify({ evidence }, null, 2));
+await fs.writeFile(output, JSON.stringify({ evidence, failures }, null, 2));
 console.log(`Preuves visuelles transférées : ${evidence.length}/${files.length}.`);
+if (failures.length || evidence.length !== files.length) {
+  throw new Error(`Stockage des preuves incomplet : ${evidence.length}/${files.length}. Vérifie notamment la variable NOVA_AUDIT_STORAGE_BUCKET_ID dans les variables d’environnement de la fonction Appwrite.`);
+}
