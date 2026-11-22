@@ -88,7 +88,7 @@ test('admin : contrôles visuels et panneaux Appwrite/IA sont présents', async 
   await page.screenshot({ path: 'artifacts/admin-appwrite.png', fullPage: true });
   await revealPane('pane-assistant');
   await page.screenshot({ path: 'artifacts/admin-assistant.png', fullPage: true });
-  await revealPane('pane-reports');
+  await revealPane('pane-analytics');
   await page.screenshot({ path: 'artifacts/admin-reports.png', fullPage: true });
 });
 
@@ -165,7 +165,7 @@ test('admin : les rapports tabulaires restent lisibles sur un écran mobile', as
     document.getElementById('screen-admin')?.classList.remove('hidden');
     document.querySelectorAll('.dash-pane').forEach(pane => pane.classList.remove('active'));
     document.querySelectorAll('.dash-tabs .dash-tab[data-pane]').forEach(tab => tab.classList.remove('active'));
-    document.getElementById('pane-reports')?.classList.add('active');
+    document.getElementById('pane-analytics')?.classList.add('active');
     document.querySelector('.dash-tabs .dash-tab[data-pane="pane-reports"]')?.classList.add('active');
     const host = document.getElementById('analysis-history');
     if (host) host.innerHTML = '<article class="report-card"><div class="report-card-head">Rapport mobile · preuve d’affichage</div><div class="report-document"><div class="report-table-scroll"><table class="report-structured-table"><thead><tr><th>Rubrique</th><th>Constat</th></tr></thead><tbody><tr><th>Performance mobile</th><td>Le temps de chargement doit être amélioré sans couper les mots ni faire déborder la page.</td></tr><tr><th>Accessibilité</th><td>Les contrôles doivent conserver un contraste suffisant et rester utilisables au clavier.</td></tr></tbody></table></div></div></article>';
