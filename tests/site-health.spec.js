@@ -23,7 +23,7 @@ test('la page ne déborde pas horizontalement sur le viewport testé', async ({ 
 test('les liens internes visibles ont une destination exploitable', async ({ page, request }) => {
   await page.goto('/', { waitUntil: 'domcontentloaded' });
   // GitHub Pages project sites live under /NOVANOD/, not at the origin root.
-  const sitePrefix = new URL('./', page.url()).href;
+  const sitePrefix = new URL(process.env.SITE_URL || 'https://novanod6.github.io/NOVANOD/').href;
   const hrefs = await page.locator('a[href]').evaluateAll((nodes, prefix) =>
     [...new Set(nodes.map(a => a.href).filter(Boolean))]
       .filter(href => href.startsWith(prefix))
