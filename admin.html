@@ -945,14 +945,37 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       .header-brand.admin-brand-header{margin-bottom:15px;padding:5px 0 10px}
       .admin-brand-header .brand-logo{width:44px;height:44px}
     }
-\n  </style>
+\n    /* NOVANOD ADMIN V3 — identité premium et tuiles 3D pleines */
+    .header-brand.admin-brand-header{min-height:0!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:7px!important;text-align:center!important;margin:0 auto 18px!important;padding:12px 0 8px!important;border:0!important;background:transparent!important;box-shadow:none!important}
+    .admin-brand-header .brand-logo{width:72px!important;height:72px!important;border-radius:50%!important;object-fit:contain!important;background:transparent!important;border:0!important;box-shadow:0 10px 24px rgba(59,20,32,.18),0 2px 0 rgba(255,255,255,.9)!important;margin:0!important}
+    .admin-brand-header .admin-title{color:var(--nova-burgundy)!important;font-size:clamp(18px,2.5vw,25px)!important;font-weight:900!important;letter-spacing:1.2px!important;line-height:1.15!important}
+    .admin-brand-subtitle{color:var(--nova-red);font-size:10px;font-weight:900;letter-spacing:2.8px;text-transform:uppercase;padding:5px 13px;border-radius:999px;background:rgba(230,74,56,.11);box-shadow:inset 0 1px 0 rgba(255,255,255,.9)}
+    .dashboard-header{min-height:0!important;margin:0 0 15px!important;padding:0 2px 10px!important;background:transparent!important;color:var(--nova-burgundy)!important;border:0!important;border-bottom:1px solid rgba(59,20,32,.13)!important;border-radius:0!important;box-shadow:none!important}
+    .dashboard-header .user-badge{color:var(--nova-burgundy)!important}.status-dot{background:#269b62!important;box-shadow:0 0 0 4px rgba(38,155,98,.13)!important}
+    .glass-card{border:1px solid rgba(59,20,32,.11)!important;border-radius:20px!important;background:linear-gradient(145deg,#fffef2 0%,#fffbd0 100%)!important;box-shadow:0 12px 30px rgba(59,20,32,.075),inset 0 1px 0 rgba(255,255,255,.9)!important}
+    .dash-tab{border:1px solid rgba(59,20,32,.12)!important;border-radius:17px!important;background:linear-gradient(145deg,#fffef4,#fff5c5)!important;box-shadow:0 5px 0 rgba(59,20,32,.15),0 9px 18px rgba(59,20,32,.07)!important;transition:transform .2s,box-shadow .2s!important}
+    .dash-tab:hover{transform:translateY(-3px)!important;box-shadow:0 8px 0 rgba(59,20,32,.13),0 14px 22px rgba(59,20,32,.1)!important}
+    .dash-tab.active{background:linear-gradient(145deg,#ff8068 0%,#E64A38 48%,#b92f25 100%)!important;color:#fffbd0!important;border-color:#3B1420!important;box-shadow:0 5px 0 #3B1420,0 12px 20px rgba(230,74,56,.22)!important}
+    .nav-illustration,.device-tab svg,.orientation-button svg{width:38px!important;height:38px!important;padding:8px!important;border:0!important;border-radius:13px!important;color:#fff8df!important;stroke:#fff8df!important;background:linear-gradient(145deg,#ff987b 0%,#E64A38 48%,#3B1420 100%)!important;box-shadow:inset 0 2px 3px rgba(255,255,255,.45),inset 0 -4px 6px rgba(59,20,32,.2),0 5px 0 rgba(59,20,32,.18),0 10px 16px rgba(59,20,32,.16)!important;filter:none!important;transform:perspective(500px) rotateX(8deg) rotateY(-5deg)!important}
+    .dash-tab.active .nav-illustration{background:linear-gradient(145deg,#fff1c8,#ffd6a3 55%,#b9362a)!important;color:#3B1420!important;stroke:#3B1420!important}
+    .analysis-action{min-height:104px!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:10px!important;border-radius:17px!important}
+    .analysis-action svg{width:66px!important;height:66px!important;padding:13px!important;border:0!important;border-radius:19px!important;stroke:#fff7dc!important;stroke-width:2.2!important;background:radial-gradient(circle at 28% 18%,rgba(255,255,255,.55),transparent 38%),linear-gradient(145deg,#ff9b7c 0%,#E64A38 44%,#3B1420 100%)!important;box-shadow:inset 0 2px 3px rgba(255,255,255,.45),inset 0 -5px 8px rgba(59,20,32,.22),0 6px 0 rgba(59,20,32,.2),0 13px 20px rgba(59,20,32,.18)!important;filter:none!important;transform:perspective(600px) rotateX(9deg) rotateY(-7deg) translateZ(4px)!important}
+    .analysis-action:hover svg{transform:perspective(600px) rotateX(0) rotateY(0) translateY(-4px) scale(1.04)!important}.analysis-action span{font-weight:850!important}
+    .fingerprint-mark{width:38px!important;height:38px!important;padding:5px!important;border-radius:12px!important;color:#fff8df!important;background:linear-gradient(145deg,#ff987b,#E64A38 50%,#3B1420)!important;filter:drop-shadow(0 4px 5px rgba(59,20,32,.2))!important}
+    .stats-row{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:10px!important}.stat-box{border:1px solid rgba(59,20,32,.1)!important;border-radius:16px!important;background:linear-gradient(145deg,#fffef3,#fff5c7)!important;box-shadow:0 5px 14px rgba(59,20,32,.06)!important}.stat-box .num{font-size:clamp(20px,2.4vw,28px)!important}
+    .admin-table-wrap{border:1px solid rgba(59,20,32,.12)!important;border-radius:15px!important;box-shadow:0 6px 16px rgba(59,20,32,.045)!important}.admin-table th{background:#3B1420!important;color:#FFFBD0!important}.admin-table tbody tr:nth-child(even){background:rgba(230,74,56,.035)}
+    .input-field,select.input-field,textarea.input-field{border-radius:12px!important;min-height:44px}.btn-3d{border-radius:12px!important}.admin-note{background:rgba(59,20,32,.045)!important;border:1px solid rgba(59,20,32,.1)!important;border-radius:13px!important}
+    @media(max-width:760px){.admin-brand-header .brand-logo{width:58px!important;height:58px!important}.stats-row{grid-template-columns:repeat(2,minmax(0,1fr))!important}.stats-row .stat-box:first-child{grid-column:span 2}.analysis-action svg{width:58px!important;height:58px!important}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+  </style>
 </head>
 <body>
 
   <div class="admin-wrapper">
     <div class="header-brand admin-brand-header">
-      <img src="logo.png?v=7" alt="Logo NOVANOD" class="brand-logo">
-      <div class="admin-title">ADMINISTRATEUR</div>
+      <img src="logo.png?v=8" alt="Logo NOVANOD" class="brand-logo">
+      <div class="admin-title">WELCOME TO NOVANOD</div>
+      <div class="admin-brand-subtitle">ESPACE ADMINISTRATEUR</div>
     </div>
 
     <!-- ÉCRAN AUTHENTIFICATION -->
@@ -1072,10 +1095,14 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
             <div class="stat-box"><div class="num" id="stat-total">—</div><div class="lbl">Comptes</div></div>
             <div class="stat-box"><div class="num" id="stat-buyers">—</div><div class="lbl">Acheteurs</div></div>
             <div class="stat-box"><div class="num" id="stat-visitors">—</div><div class="lbl">Visiteurs</div></div>
+            <div class="stat-box"><div class="num" id="stat-regular">—</div><div class="lbl">Réguliers</div></div>
+            <div class="stat-box"><div class="num" id="stat-unclassified">—</div><div class="lbl">À classifier</div></div>
           </div>
           <div id="users-status" class="status-msg"></div>
           <div class="admin-toolbar">
             <input id="user-search" class="input-field" placeholder="Rechercher nom, e-mail ou ID…">
+            <select id="user-type-filter" class="input-field" aria-label="Filtrer par type de compte"><option value="all">Tous les profils</option><option value="buyer">Acheteurs</option><option value="visitor">Visiteurs sociaux</option><option value="unknown">À classifier</option></select>
+            <select id="user-regular-filter" class="input-field" aria-label="Filtrer par fidélité"><option value="all">Tous les niveaux</option><option value="regular">Clients réguliers</option><option value="new">Nouveaux / occasionnels</option></select>
             <button id="btn-refresh-users" class="btn-3d btn-secondary" style="width:auto;padding:0 18px;">↻ Actualiser</button>
           </div>
         </div>
@@ -1471,10 +1498,12 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       tabLogin.click();
     });
 
+    let currentAdminUserId = '';
     async function checkAdminSession() {
       try {
         const user = await account.get();
         if (ADMIN_USER_IDS.includes(user.$id)) {
+          currentAdminUserId = user.$id;
           document.getElementById('admin-welcome').textContent = user.name || user.email;
           screenLogin.classList.add('hidden');
           screenAdmin.classList.remove('hidden');
@@ -1696,11 +1725,19 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     const fingerprintStatus = document.getElementById('fingerprint-status');
     const btnRegisterFingerprint = document.getElementById('btn-register-fingerprint');
     const btnLoginFingerprint = document.getElementById('btn-login-fingerprint');
-
-    if (window.PublicKeyCredential) {
-      btnRegisterFingerprint.classList.remove('hidden');
-      btnLoginFingerprint.classList.remove('hidden');
+    let platformAuthenticatorAvailable = false;
+    async function detectPlatformAuthenticator() {
+      const supported = !!(window.isSecureContext && window.PublicKeyCredential && typeof PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable === 'function');
+      if (!supported) { btnRegisterFingerprint.classList.add('hidden'); btnLoginFingerprint.classList.add('hidden'); setStatus(fingerprintStatus, 'Biométrie indisponible dans ce navigateur ou contexte non sécurisé. Utilise HTTPS et le verrouillage sécurisé du téléphone.', 'info'); return false; }
+      try {
+        platformAuthenticatorAvailable = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+        btnRegisterFingerprint.classList.toggle('hidden', !platformAuthenticatorAvailable);
+        btnLoginFingerprint.classList.toggle('hidden', !platformAuthenticatorAvailable);
+        if (!platformAuthenticatorAvailable) setStatus(fingerprintStatus, 'Aucun authentificateur biométrique de plateforme détecté. Active le verrouillage sécurisé et l’empreinte dans Android.', 'info');
+        return platformAuthenticatorAvailable;
+      } catch (error) { setStatus(fingerprintStatus, 'Impossible de vérifier la biométrie : ' + (error.message || error), 'error'); return false; }
     }
+    detectPlatformAuthenticator();
 
     async function callNovaFunction(payload) {
       if (!NOVA_FUNCTION_ID || NOVA_FUNCTION_ID === 'COLLE_ICI_LE_FUNCTION_ID') throw new Error('Identifiant de fonction NOVANOD non configuré.');
@@ -1789,9 +1826,12 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     btnLoginFingerprint.addEventListener('click', async () => {
       setStatus(loginStatus, "Lecture biométrique...", "info");
       try {
+        if (!(await detectPlatformAuthenticator())) throw new Error("L’authentificateur biométrique de ce téléphone n’est pas disponible.");
         const options = await callNovaFunction({ action: 'webauthn_login_options' });
         if (options.error) throw new Error(options.error);
-        const credential = await startAuthentication({ optionsJSON: options });
+        const optionsJSON = options.optionsJSON || options.options || options.data || options;
+        if (!optionsJSON || typeof optionsJSON.challenge !== 'string') throw new Error("Le serveur n’a pas fourni un défi WebAuthn valide.");
+        const credential = await startAuthentication({ optionsJSON: { ...optionsJSON, userVerification: 'required' } });
         const result = await callNovaFunction({ action: 'webauthn_login_verify', credential });
         if (result.error) throw new Error(result.error);
         await account.createSession(result.userId, result.secret);
@@ -2101,6 +2141,19 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     });
 
     // Messaging
+    document.getElementById('btn-test-admin-push')?.addEventListener('click', async () => {
+      const button = document.getElementById('btn-test-admin-push');
+      const status = document.getElementById('admin-push-status');
+      if (!currentAdminUserId) return setStatus(status, 'Connecte-toi à ton compte administrateur avant le test.', 'error');
+      button.disabled = true; setStatus(status, 'Envoi du test Push vers ton compte Appwrite…', 'info');
+      try {
+        const result = await adminCall('message_send', { channel:'push', userId:currentAdminUserId, subject:'NOVANOD — Test de notification', content:'Test de notification NOVANOD. Si tu reçois ce message, la connexion Push est active sur cet appareil.' });
+        setStatus(status, result.acceptedByAppwrite ? 'Appwrite a accepté le message (' + (result.messageId || 'ID non retourné') + '). Vérifie la réception sur un appareil connecté au Push.' : 'Le serveur n’a pas confirmé l’acceptation du message.', result.acceptedByAppwrite ? 'success' : 'error');
+        out('messaging-output', result);
+      } catch (error) { setStatus(status, 'Échec du test Push : ' + error.message, 'error'); }
+      finally { button.disabled = false; }
+    });
+
     document.getElementById('btn-send-message')?.addEventListener('click',async()=>{
       try {
         const channel=document.getElementById('message-channel').value;
