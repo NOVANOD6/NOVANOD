@@ -964,7 +964,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     .fingerprint-mark{width:38px!important;height:38px!important;padding:5px!important;border-radius:12px!important;color:#fff8df!important;background:linear-gradient(145deg,#ff987b,#E64A38 50%,#3B1420)!important;filter:drop-shadow(0 4px 5px rgba(59,20,32,.2))!important}
     .stats-row{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:10px!important}.stat-box{border:1px solid rgba(59,20,32,.1)!important;border-radius:16px!important;background:linear-gradient(145deg,#fffef3,#fff5c7)!important;box-shadow:0 5px 14px rgba(59,20,32,.06)!important}.stat-box .num{font-size:clamp(20px,2.4vw,28px)!important}
     .admin-table-wrap{border:1px solid rgba(59,20,32,.12)!important;border-radius:15px!important;box-shadow:0 6px 16px rgba(59,20,32,.045)!important}.admin-table th{background:#3B1420!important;color:#FFFBD0!important}.admin-table tbody tr:nth-child(even){background:rgba(230,74,56,.035)}
-    .input-field,select.input-field,textarea.input-field{border-radius:12px!important;min-height:44px}.btn-3d{border-radius:12px!important}.admin-note{background:rgba(59,20,32,.045)!important;border:1px solid rgba(59,20,32,.1)!important;border-radius:13px!important}
+    .input-field,select.input-field,textarea.input-field{border-radius:12px!important;min-height:44px}.btn-3d{border-radius:12px!important}.admin-note{background:rgba(59,20,32,.045)!important;border:1px solid rgba(59,20,32,.1)!important;border-radius:13px!important}.user-list{max-height:var(--admin-list-max-height,480px)!important}.nova-reduced-motion *,.nova-reduced-motion *::before,.nova-reduced-motion *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
     @media(max-width:760px){.admin-brand-header .brand-logo{width:58px!important;height:58px!important}.stats-row{grid-template-columns:repeat(2,minmax(0,1fr))!important}.stats-row .stat-box:first-child{grid-column:span 2}.analysis-action svg{width:58px!important;height:58px!important}}
     @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
   </style>
@@ -1171,7 +1171,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
             <input id="settings-auto-refresh" type="checkbox"> Actualiser l'historique des rapports à l'ouverture
           </label>
           <div class="admin-form-grid">
-            <div><label class="form-label" for="settings-page-size">Lignes par page</label><select id="settings-page-size" class="input-field"><option value="10">10 lignes</option><option value="25">25 lignes</option><option value="50">50 lignes</option></select></div>
+            <div><label class="form-label" for="settings-list-height">Hauteur des listes</label><select id="settings-list-height" class="input-field"><option value="320px">Courte</option><option value="480px">Confortable</option><option value="640px">Étendue</option></select></div>
             <div><label class="form-label" for="settings-motion">Animations</label><select id="settings-motion" class="input-field"><option value="full">Normales</option><option value="reduced">Réduites</option></select></div>
           </div>
           <button id="btn-save-settings" class="btn-3d">Enregistrer les paramètres</button>
@@ -1716,19 +1716,20 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       document.getElementById('settings-ai-provider').value = prefs.provider || 'both';
       document.getElementById('settings-density').value = prefs.density || 'comfortable';
       document.getElementById('settings-auto-refresh').checked = prefs.autoRefreshReports !== false;
-      const pageSize = document.getElementById('settings-page-size');
+      const listHeight = document.getElementById('settings-list-height');
       const motion = document.getElementById('settings-motion');
-      if (pageSize) pageSize.value = String(prefs.pageSize || 25);
+      if (listHeight) listHeight.value = prefs.listHeight || '480px';
       if (motion) motion.value = prefs.motion || 'full';
       document.body.classList.toggle('admin-compact', prefs.density === 'compact');
       document.documentElement.classList.toggle('nova-reduced-motion', prefs.motion === 'reduced');
+      document.documentElement.style.setProperty('--admin-list-max-height', prefs.listHeight || '480px');
     }
     document.getElementById('btn-save-settings')?.addEventListener('click', () => {
       const prefs = {
         provider:document.getElementById('settings-ai-provider').value,
         density:document.getElementById('settings-density').value,
         autoRefreshReports:document.getElementById('settings-auto-refresh').checked,
-        pageSize:Number(document.getElementById('settings-page-size')?.value || 25),
+        listHeight:document.getElementById('settings-list-height')?.value || '480px',
         motion:document.getElementById('settings-motion')?.value || 'full'
       };
       localStorage.setItem('novanod_admin_preferences', JSON.stringify(prefs));
@@ -1736,6 +1737,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       document.getElementById('assistant-provider').value = prefs.provider;
       document.body.classList.toggle('admin-compact', prefs.density === 'compact');
       document.documentElement.classList.toggle('nova-reduced-motion', prefs.motion === 'reduced');
+      document.documentElement.style.setProperty('--admin-list-max-height', prefs.listHeight || '480px');
       setStatus(document.getElementById('settings-status'), 'Préférences enregistrées sur cet appareil.', 'success');
     });
 
