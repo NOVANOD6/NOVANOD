@@ -2520,18 +2520,28 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       const events=Array.isArray(result?.geoCoordinates)?result.geoCoordinates:
         Array.isArray(result?.securityEvents)?result.securityEvents.filter(e=>e?.location?.latitude!=null&&e?.location?.longitude!=null):[];
       const rows=events.map(e=>({label:String(e.label??e.event??e.type??'Événement'),
+        type:String(e.type??e.severity??'Non précisée'),source:String(e.source??e.location?.source??'Non précisée'),
+        place:[e.city??e.location?.city,e.region??e.location?.region,e.country??e.location?.country].filter(Boolean).join(', ')||'Non précisé',
         lat:Number(e.latitude??e.location?.latitude),lon:Number(e.longitude??e.location?.longitude),
         accuracy:String(e.accuracy??e.location?.accuracy??'Non précisée')}))
         .filter(e=>Number.isFinite(e.lat)&&Number.isFinite(e.lon)&&Math.abs(e.lat)<=90&&Math.abs(e.lon)<=180);
       if(rows.length){
+        const svg=makeSvg(),xs=rows.map(e=>e.lon),ys=rows.map(e=>e.lat);
+        const minX=Math.min(...xs),maxX=Math.max(...xs),minY=Math.min(...ys),maxY=Math.max(...ys);
+        const px=x=>42+(x-minX)/(maxX-minX||1)*450,py=y=>184-(y-minY)/(maxY-minY||1)*155;
+        const axis=document.createElementNS(svg.namespaceURI,'path');axis.setAttribute('d','M42 18V184H500');axis.setAttribute('fill','none');axis.setAttribute('stroke','#b9a6a4');svg.append(axis);
+        rows.slice(0,100).forEach((e,i)=>{const dot=document.createElementNS(svg.namespaceURI,'circle');dot.setAttribute('cx',px(e.lon));dot.setAttribute('cy',py(e.lat));dot.setAttribute('r','5');dot.setAttribute('fill',e.type==='critical'?'#b42318':e.type==='high'?'#E64A38':e.type==='medium'?'#D69A38':'#269b62');dot.setAttribute('stroke','#fff');dot.setAttribute('stroke-width','1.5');svg.append(dot);});
+        const xLabel=document.createElementNS(svg.namespaceURI,'text');xLabel.setAttribute('x','270');xLabel.setAttribute('y','211');xLabel.setAttribute('text-anchor','middle');xLabel.textContent='Longitude';svg.append(xLabel);
+        const yLabel=document.createElementNS(svg.namespaceURI,'text');yLabel.setAttribute('x','10');yLabel.setAttribute('y','15');yLabel.textContent='Latitude';svg.append(yLabel);
+        const plotCard=makeCard('Répartition des coordonnées · latitude / longitude');plotCard.append(svg);geoHost.append(plotCard);
         const table=document.createElement('table');table.className='analysis-geo-table';
         const thead=document.createElement('thead'),tr=document.createElement('tr');
-        ['Événement','Latitude','Longitude','Précision'].forEach(label=>{const th=document.createElement('th');th.textContent=label;tr.append(th);});
+        ['Événement','Gravité','Zone','Latitude','Longitude','Précision','Source'].forEach(label=>{const th=document.createElement('th');th.textContent=label;tr.append(th);});
         thead.append(tr);table.append(thead);const tbody=document.createElement('tbody');
-        rows.slice(0,50).forEach(e=>{const tr=document.createElement('tr');[e.label,e.lat.toFixed(4),e.lon.toFixed(4),e.accuracy].forEach(v=>{const td=document.createElement('td');td.textContent=v;tr.append(td);});tbody.append(tr);});
+        rows.slice(0,100).forEach(e=>{const tr=document.createElement('tr');[e.label,e.type,e.place,e.lat.toFixed(4),e.lon.toFixed(4),e.accuracy,e.source].forEach(v=>{const td=document.createElement('td');td.textContent=v;tr.append(td);});tbody.append(tr);});
         table.append(tbody);geoHost.append(table);
-        const note=document.createElement('p');note.textContent='Localisations approximatives uniquement si elles proviennent des journaux réseau/IP. Elles ne représentent pas une position GPS.';geoHost.append(note);
-      } else {const p=document.createElement('p');p.textContent='Aucune coordonnée géographique structurée fournie. Le backend de sécurité doit fournir latitude/longitude et leur source avant affichage.';geoHost.append(p);}
+        const note=document.createElement('p');note.textContent='Coordonnées affichées uniquement lorsqu’un événement fournit latitude/longitude valides et une source déclarée. Une adresse IP seule ne constitue pas une position GPS.';geoHost.append(note);
+      } else {const p=document.createElement('p');p.textContent='Aucune coordonnée géographique structurée fournie. Les événements doivent inclure latitude, longitude et source de localisation avant affichage.';geoHost.append(p);}
     }
 
     const savedAdminPrefs = JSON.parse(localStorage.getItem('novanod_admin_preferences') || '{}');
