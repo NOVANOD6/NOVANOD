@@ -967,6 +967,30 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     .input-field,select.input-field,textarea.input-field{border-radius:12px!important;min-height:44px}.btn-3d{border-radius:12px!important}.admin-note{background:rgba(59,20,32,.045)!important;border:1px solid rgba(59,20,32,.1)!important;border-radius:13px!important}.user-list{max-height:var(--admin-list-max-height,480px)!important}.nova-reduced-motion *,.nova-reduced-motion *::before,.nova-reduced-motion *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
     @media(max-width:760px){.admin-brand-header .brand-logo{width:58px!important;height:58px!important}.stats-row{grid-template-columns:repeat(2,minmax(0,1fr))!important}.stats-row .stat-box:first-child{grid-column:span 2}.analysis-action svg{width:58px!important;height:58px!important}}
     @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+  
+    /* NOVANOD 2.5.20 — en-tête compact, centré et sans débordement mobile */
+    .header-brand.admin-brand-header{
+      width:100%!important;max-width:100%!important;min-width:0!important;
+      display:flex!important;flex-direction:column!important;align-items:center!important;
+      justify-content:center!important;gap:9px!important;text-align:center!important;
+      margin:0 auto 18px!important;padding:18px 14px!important;overflow:hidden!important;
+      border-radius:20px!important;
+    }
+    .admin-brand-header .brand-logo{flex:0 0 auto!important;width:66px!important;height:66px!important;max-width:100%!important}
+    .admin-brand-header .admin-title{display:block!important;max-width:100%!important;text-align:center!important;overflow-wrap:anywhere!important}
+    .admin-brand-header .admin-brand-subtitle{
+      display:inline-flex!important;align-items:center!important;justify-content:center!important;
+      width:max-content!important;max-width:100%!important;min-width:0!important;
+      margin:0 auto!important;padding:7px 13px!important;white-space:normal!important;
+      overflow-wrap:anywhere!important;text-align:center!important;line-height:1.35!important;
+      letter-spacing:2px!important;box-sizing:border-box!important;
+    }
+    .analysis-donut-legend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:10px}
+    .analysis-donut-legend span{font-size:11px;display:flex;justify-content:space-between;gap:8px;padding:7px 9px;border-radius:9px;background:rgba(59,20,32,.045)}
+    .analysis-donut-wrap{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap}
+    .analysis-donut-wrap svg{width:min(220px,100%);height:auto}
+    @media(max-width:600px){.header-brand.admin-brand-header{padding:16px 12px!important}.admin-brand-header .admin-brand-subtitle{font-size:10px!important}.analysis-donut-legend{grid-template-columns:1fr}}
+
   </style>
 </head>
 <body>
@@ -1648,11 +1672,20 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     document.getElementById('btn-run-analysis').addEventListener('click', async () => {
       const btn = document.getElementById('btn-run-analysis');
       btn.disabled = true;
-      setStatus(reportsStatus, 'nova.ai analyse le site (ça peut prendre quelques secondes)...', 'info');
+      setStatus(reportsStatus, 'Récupération du dernier audit GitHub puis analyse Gemini + Groq…', 'info');
       try {
-        const result = await callNovaFunction({ action: 'run_analysis' });
+        const result = await callNovaFunction({ action: 'analyze_github_audit', providerMode: 'both' });
         if (result.error) throw new Error(result.error);
-        setStatus(reportsStatus, 'Analyse terminée !', 'success');
+        const providers = result.providers || {};
+        const parts = [];
+        if (providers.gemini) parts.push('GEMINI\n' + providers.gemini);
+        else if (providers.errors?.gemini) parts.push('Gemini indisponible : ' + providers.errors.gemini);
+        if (providers.groq) parts.push('GROQ\n' + providers.groq);
+        else if (providers.errors?.groq) parts.push('Groq indisponible : ' + providers.errors.groq);
+        if (providers.combined) parts.push('SYNTHÈSE\n' + providers.combined);
+        if (!parts.length) throw new Error('Aucun résultat IA exploitable. Vérifie les journaux Appwrite et les variables Gemini/Groq.');
+        setStatus(reportsStatus, 'Audit GitHub analysé. Rapports IA enregistrés dans TablesDB.', 'success');
+        renderAnalysisCharts(result);
         await refreshReports();
       } catch (e) {
         setStatus(reportsStatus, 'Erreur : ' + e.message, 'error');
@@ -2355,6 +2388,66 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         const note=document.createElement('p');note.textContent=metrics.length+' mesures numériques reçues.';metricCard.append(note);
       } else {const p=document.createElement('p');p.textContent='Aucune mesure numérique structurée disponible dans cette réponse.';metricCard.append(p);}
       host.append(metricCard);
+
+      // Donut segmenté : chaque quadrant représente un critère Lighthouse réel /100.
+      const performance=result?.chartData?.performance;
+      const scoreItems=[
+        ['Performance',performance?.mobile?.performance,performance?.desktop?.performance],
+        ['Accessibilité',performance?.mobile?.accessibility,performance?.desktop?.accessibility],
+        ['Bonnes pratiques',performance?.mobile?.bestPractices,performance?.desktop?.bestPractices],
+        ['SEO',performance?.mobile?.seo,performance?.desktop?.seo]
+      ].map(([label,mobile,desktop])=>({label,mobile:Number(mobile),desktop:Number(desktop)}))
+       .filter(x=>Number.isFinite(x.mobile)||Number.isFinite(x.desktop));
+      if(scoreItems.length){
+        const card=makeCard('Performance du site · critères en pourcentage');
+        const wrap=document.createElement('div');wrap.className='analysis-donut-wrap';
+        const svg=makeSvg();svg.setAttribute('viewBox','0 0 220 220');svg.style.maxWidth='220px';
+        const circumference=2*Math.PI*68,segment=circumference/4;
+        scoreItems.forEach((item,index)=>{
+          const score=Number.isFinite(item.mobile)&&Number.isFinite(item.desktop)?(item.mobile+item.desktop)/2:(item.mobile??item.desktop);
+          const track=document.createElementNS(svg.namespaceURI,'circle');
+          track.setAttribute('cx','110');track.setAttribute('cy','110');track.setAttribute('r','68');
+          track.setAttribute('fill','none');track.setAttribute('stroke','#eadfd5');track.setAttribute('stroke-width','19');
+          track.setAttribute('stroke-dasharray',segment+' '+(circumference-segment));
+          track.setAttribute('stroke-dashoffset',String(-index*segment));track.setAttribute('transform','rotate(-90 110 110)');svg.append(track);
+          const arc=document.createElementNS(svg.namespaceURI,'circle');
+          arc.setAttribute('cx','110');arc.setAttribute('cy','110');arc.setAttribute('r','68');
+          arc.setAttribute('fill','none');arc.setAttribute('stroke',['#E64A38','#3B1420','#D69A38','#269b62'][index%4]);
+          arc.setAttribute('stroke-width','19');arc.setAttribute('stroke-linecap','butt');
+          arc.setAttribute('stroke-dasharray',(segment*Math.max(0,Math.min(100,score))/100)+' '+(circumference-segment*Math.max(0,Math.min(100,score))/100));
+          arc.setAttribute('stroke-dashoffset',String(-index*segment));arc.setAttribute('transform','rotate(-90 110 110)');svg.append(arc);
+        });
+        const center=document.createElementNS(svg.namespaceURI,'text');center.setAttribute('x','110');center.setAttribute('y','105');center.setAttribute('text-anchor','middle');center.setAttribute('font-size','26');center.setAttribute('font-weight','800');center.setAttribute('fill','#3B1420');
+        const allScores=scoreItems.flatMap(x=>[x.mobile,x.desktop].filter(Number.isFinite));
+        center.textContent=Math.round(allScores.reduce((a,b)=>a+b,0)/allScores.length)+'%';svg.append(center);
+        const centerLabel=document.createElementNS(svg.namespaceURI,'text');centerLabel.setAttribute('x','110');centerLabel.setAttribute('y','124');centerLabel.setAttribute('text-anchor','middle');centerLabel.textContent='score moyen';svg.append(centerLabel);
+        wrap.append(svg);card.append(wrap);
+        const legend=document.createElement('div');legend.className='analysis-donut-legend';
+        scoreItems.forEach(item=>{
+          const row=document.createElement('span');const label=document.createElement('b');label.textContent=item.label;
+          const value=document.createElement('strong');
+          value.textContent=[Number.isFinite(item.mobile)?'Mobile '+item.mobile+'%':null,Number.isFinite(item.desktop)?'PC '+item.desktop+'%':null].filter(Boolean).join(' · ');
+          row.append(label,value);legend.append(row);
+        });
+        card.append(legend);host.append(card);
+      }
+
+      const testStats=performance?.playwright;
+      if(testStats && Number(testStats.total)>0){
+        const card=makeCard('Tests Playwright · répartition réelle');
+        const total=Number(testStats.total),passed=Number(testStats.passed||0),failed=Number(testStats.failed||0),skipped=Number(testStats.skipped||0);
+        const values=[{label:'Réussis',value:passed,color:'#269b62'},{label:'Échoués',value:failed,color:'#E64A38'},{label:'Ignorés',value:skipped,color:'#D69A38'}].filter(x=>x.value>0);
+        const wrap=document.createElement('div');wrap.className='analysis-donut-wrap';
+        const svg=makeSvg();svg.setAttribute('viewBox','0 0 220 220');svg.style.maxWidth='190px';
+        const circumference=2*Math.PI*68;let offset=0;
+        values.forEach(item=>{const circle=document.createElementNS(svg.namespaceURI,'circle');circle.setAttribute('cx','110');circle.setAttribute('cy','110');circle.setAttribute('r','68');circle.setAttribute('fill','none');circle.setAttribute('stroke',item.color);circle.setAttribute('stroke-width','22');circle.setAttribute('stroke-dasharray',(circumference*item.value/total)+' '+circumference);circle.setAttribute('stroke-dashoffset',String(-offset));circle.setAttribute('transform','rotate(-90 110 110)');svg.append(circle);offset+=circumference*item.value/total;});
+        const label=document.createElementNS(svg.namespaceURI,'text');label.setAttribute('x','110');label.setAttribute('y','105');label.setAttribute('text-anchor','middle');label.setAttribute('font-size','26');label.setAttribute('font-weight','800');label.setAttribute('fill','#3B1420');label.textContent=total;svg.append(label);
+        const sub=document.createElementNS(svg.namespaceURI,'text');sub.setAttribute('x','110');sub.setAttribute('y','124');sub.setAttribute('text-anchor','middle');sub.textContent='tests';svg.append(sub);
+        wrap.append(svg);card.append(wrap);
+        const legend=document.createElement('div');legend.className='analysis-donut-legend';
+        values.forEach(item=>{const row=document.createElement('span');const name=document.createElement('b');name.textContent=item.label;const percent=document.createElement('strong');percent.textContent=item.value+' · '+Math.round(item.value/total*100)+'%';row.append(name,percent);legend.append(row);});
+        card.append(legend);host.append(card);
+      }
       geoHost.replaceChildren();
       const geoTitle=document.createElement('h5');geoTitle.textContent='Coordonnées géographiques des événements';geoHost.append(geoTitle);
       const events=Array.isArray(result?.geoCoordinates)?result.geoCoordinates:
