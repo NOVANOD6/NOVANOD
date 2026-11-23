@@ -15,6 +15,20 @@ const metrics = report => {
 const pw = readJson('artifacts/playwright-results.json');
 const lhMobile = readJson('artifacts/lighthouse-mobile.json');
 const lhDesktop = readJson('artifacts/lighthouse-desktop.json');
+const pageReports = {
+  privacy: {
+    mobile: readJson('artifacts/lighthouse-privacy-mobile.json'),
+    desktop: readJson('artifacts/lighthouse-privacy-desktop.json'),
+  },
+  terms: {
+    mobile: readJson('artifacts/lighthouse-terms-mobile.json'),
+    desktop: readJson('artifacts/lighthouse-terms-desktop.json'),
+  },
+};
+const pageSummary = report => report ? {
+  scores: { performance: score(report,'performance'), accessibility: score(report,'accessibility'), bestPractices: score(report,'best-practices'), seo: score(report,'seo') },
+  metrics: metrics(report), url: report.finalDisplayedUrl,
+} : null;
 
 function saveFinalScreenshot(report, fileName) {
   const data = report?.audits?.['final-screenshot']?.details?.data;
@@ -29,6 +43,10 @@ function saveFinalScreenshot(report, fileName) {
 const lighthouseScreenshots = [
   saveFinalScreenshot(lhMobile, 'lighthouse-mobile-final'),
   saveFinalScreenshot(lhDesktop, 'lighthouse-desktop-final'),
+  saveFinalScreenshot(pageReports.privacy.mobile, 'lighthouse-privacy-mobile-final'),
+  saveFinalScreenshot(pageReports.privacy.desktop, 'lighthouse-privacy-desktop-final'),
+  saveFinalScreenshot(pageReports.terms.mobile, 'lighthouse-terms-mobile-final'),
+  saveFinalScreenshot(pageReports.terms.desktop, 'lighthouse-terms-desktop-final'),
 ].filter(Boolean);
 const tests = [];
 function walk(suites = []) {
@@ -58,6 +76,10 @@ const summary = {
   lighthouse: {
     mobile: lhMobile ? { scores: { performance: score(lhMobile,'performance'), accessibility: score(lhMobile,'accessibility'), bestPractices: score(lhMobile,'best-practices'), seo: score(lhMobile,'seo') }, metrics: metrics(lhMobile), url: lhMobile.finalDisplayedUrl } : null,
     desktop: lhDesktop ? { scores: { performance: score(lhDesktop,'performance'), accessibility: score(lhDesktop,'accessibility'), bestPractices: score(lhDesktop,'best-practices'), seo: score(lhDesktop,'seo') }, metrics: metrics(lhDesktop), url: lhDesktop.finalDisplayedUrl } : null,
+    pages: {
+      privacy: { mobile: pageSummary(pageReports.privacy.mobile), desktop: pageSummary(pageReports.privacy.desktop) },
+      terms: { mobile: pageSummary(pageReports.terms.mobile), desktop: pageSummary(pageReports.terms.desktop) },
+    },
   },
 };
 summary.summary = `Playwright: ${summary.playwright.passed}/${summary.playwright.total} réussis, ${summary.playwright.failed} échec(s). Lighthouse mobile: ${JSON.stringify(summary.lighthouse.mobile?.scores || 'indisponible')}. Lighthouse desktop: ${JSON.stringify(summary.lighthouse.desktop?.scores || 'indisponible')}.`;
