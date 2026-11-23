@@ -172,3 +172,47 @@ test('admin : les rapports tabulaires restent lisibles sur un écran mobile', as
   });
   await page.screenshot({ path: 'artifacts/admin-reports-mobile.png', fullPage: true });
 });
+
+
+test('pages confidentialité et conditions répondent et ne débordent pas sur mobile', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  for (const path of ['privacy.html', 'terms.html']) {
+    const response = await page.goto(path, { waitUntil: 'domcontentloaded' });
+    expect(response, 'Aucune réponse HTTP pour '+path).not.toBeNull();
+    expect(response.status(), 'HTTP '+response.status()+' sur '+path).toBeLessThan(400);
+    await expect(page.locator('body')).toBeVisible();
+    const size = await page.evaluate(() => ({
+      viewport: document.documentElement.clientWidth,
+      document: document.documentElement.scrollWidth
+    }));
+    expect(size.document, 'Débordement mobile sur '+path+': '+JSON.stringify(size))
+      .toBeLessThanOrEqual(size.viewport + 2);
+  }
+});
+
+test('admin mobile : boutons et champs restent de taille raisonnable', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('admin.html', { waitUntil: 'domcontentloaded' });
+  const sizes = await page.evaluate(() => {
+    const button = document.querySelector('#btn-login');
+    const input = document.querySelector('#admin-email');
+    return {
+      buttonHeight: button?.getBoundingClientRect().height || 0,
+      inputHeight: input?.getBoundingClientRect().height || 0,
+      viewport: document.documentElement.clientWidth,
+      document: document.documentElement.scrollWidth
+    };
+  });
+  expect(sizes.buttonHeight, JSON.stringify(sizes)).toBeLessThanOrEqual(70);
+  expect(sizes.inputHeight, JSON.stringify(sizes)).toBeLessThanOrEqual(65);
+  expect(sizes.document, JSON.stringify(sizes)).toBeLessThanOrEqual(sizes.viewport + 2);
+});
+
+test('admin : outils de maintenance et liens des pages légales sont présents', async ({ page }) => {
+  await page.goto('admin.html', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#btn-admin-export-diagnostics')).toHaveCount(1);
+  await expect(page.locator('#btn-admin-copy-checklist')).toHaveCount(1);
+  await expect(page.locator('#btn-admin-check-pages')).toHaveCount(1);
+  await expect(page.locator('a[href="./privacy.html"]')).toHaveCount(1);
+  await expect(page.locator('a[href="./terms.html"]')).toHaveCount(1);
+});
