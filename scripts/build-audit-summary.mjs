@@ -82,6 +82,6 @@ const summary = {
     },
   },
 };
-summary.summary = `Playwright: ${summary.playwright.passed}/${summary.playwright.total} réussis, ${summary.playwright.failed} échec(s). Lighthouse mobile: ${JSON.stringify(summary.lighthouse.mobile?.scores || 'indisponible')}. Lighthouse desktop: ${JSON.stringify(summary.lighthouse.desktop?.scores || 'indisponible')}.`;
+summary.summary = `Playwright: ${summary.playwright.passed}/${summary.playwright.total} réussis, ${summary.playwright.failed} échec(s). Accueil mobile: ${JSON.stringify(summary.lighthouse.mobile?.scores || 'indisponible')}. Confidentialité mobile: ${JSON.stringify(summary.lighthouse.pages.privacy.mobile?.scores || 'indisponible')}. Conditions mobile: ${JSON.stringify(summary.lighthouse.pages.terms.mobile?.scores || 'indisponible')}.`;
 fs.writeFileSync('artifacts/audit-summary.json', JSON.stringify(summary, null, 2));
 console.log(summary.summary);
