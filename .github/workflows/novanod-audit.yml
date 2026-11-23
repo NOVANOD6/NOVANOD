@@ -102,5 +102,5 @@ jobs:
           if-no-files-found: warn
           retention-days: 30
       - name: Échouer le workflow si les tests ou audits ont échoué
-        if: steps.playwright.outcome == 'failure' || steps.lighthouse_mobile.outcome == 'failure' || steps.lighthouse_desktop.outcome == 'failure'
+        if: steps.playwright.outcome == 'failure' || steps.lighthouse_mobile.outcome == 'failure' || steps.lighthouse_desktop.outcome == 'failure' || steps.lighthouse_privacy_mobile.outcome == 'failure' || steps.lighthouse_privacy_desktop.outcome == 'failure' || steps.lighthouse_terms_mobile.outcome == 'failure' || steps.lighthouse_terms_desktop.outcome == 'failure'
         run: exit 1
