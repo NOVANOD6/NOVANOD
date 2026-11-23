@@ -49,6 +49,22 @@ jobs:
         id: lighthouse_desktop
         continue-on-error: true
         run: npx lighthouse "$SITE_URL" --preset=desktop --only-categories=performance,accessibility,best-practices,seo --output=json --output-path=artifacts/lighthouse-desktop.json --chrome-path="$CHROME_PATH" --chrome-flags="--headless --no-sandbox"
+      - name: Audit Lighthouse mobile — confidentialité
+        id: lighthouse_privacy_mobile
+        continue-on-error: true
+        run: npx lighthouse "${SITE_URL}privacy.html" --only-categories=performance,accessibility,best-practices,seo --output=json --output-path=artifacts/lighthouse-privacy-mobile.json --chrome-path="$CHROME_PATH" --chrome-flags="--headless --no-sandbox"
+      - name: Audit Lighthouse ordinateur — confidentialité
+        id: lighthouse_privacy_desktop
+        continue-on-error: true
+        run: npx lighthouse "${SITE_URL}privacy.html" --preset=desktop --only-categories=performance,accessibility,best-practices,seo --output=json --output-path=artifacts/lighthouse-privacy-desktop.json --chrome-path="$CHROME_PATH" --chrome-flags="--headless --no-sandbox"
+      - name: Audit Lighthouse mobile — conditions d’utilisation
+        id: lighthouse_terms_mobile
+        continue-on-error: true
+        run: npx lighthouse "${SITE_URL}terms.html" --only-categories=performance,accessibility,best-practices,seo --output=json --output-path=artifacts/lighthouse-terms-mobile.json --chrome-path="$CHROME_PATH" --chrome-flags="--headless --no-sandbox"
+      - name: Audit Lighthouse ordinateur — conditions d’utilisation
+        id: lighthouse_terms_desktop
+        continue-on-error: true
+        run: npx lighthouse "${SITE_URL}terms.html" --preset=desktop --only-categories=performance,accessibility,best-practices,seo --output=json --output-path=artifacts/lighthouse-terms-desktop.json --chrome-path="$CHROME_PATH" --chrome-flags="--headless --no-sandbox"
       - name: Construire le rapport consolidé
         if: always()
         run: node scripts/build-audit-summary.mjs
