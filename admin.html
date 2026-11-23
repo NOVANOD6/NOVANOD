@@ -1051,6 +1051,35 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       .report-view-control label{width:100%}
       .report-view-control select{width:100%;max-width:none}
     }
+  
+    /* Correctifs mobile NOVANOD : contrôles compacts, sans champs géants */
+    .input-field, select.input-field, input.input-field {
+      display:block; width:100%; min-width:0; height:50px; min-height:46px;
+      max-height:58px; padding:11px 14px; margin-bottom:12px; font-size:14px;
+    }
+    textarea.input-field { height:auto; min-height:120px; max-height:none; }
+    .btn-3d {
+      width:100%; min-width:0; height:auto; min-height:48px; max-height:60px;
+      padding:12px 16px; line-height:1.35; white-space:normal; overflow-wrap:anywhere;
+      box-shadow:0 3px 0 var(--dark-brown); margin-bottom:9px;
+    }
+    .admin-toolbar > button, .workflow-actions > button { flex:1 1 190px; min-height:46px; max-height:58px; }
+    .admin-toolbar .input-field { height:48px; max-height:52px; }
+    .dash-pane, .glass-card, .admin-grid, .admin-form-grid, .workflow-actions { min-width:0; max-width:100%; }
+    .admin-output, .user-list, .admin-table-wrap { max-width:100%; overflow-wrap:anywhere; }
+    .admin-form-grid select, .admin-form-grid input { height:48px; min-height:46px; }
+    .dash-tabs { gap:7px; }
+    .dash-tab { min-height:44px; }
+    @media(max-width:600px) {
+      body { padding:8px; }
+      .glass-card { padding:15px 12px; }
+      .btn-3d { min-height:46px; max-height:56px; padding:10px 12px; font-size:13px; }
+      .workflow-actions { display:grid; grid-template-columns:1fr; gap:8px; }
+      .workflow-actions > button { width:100%; min-height:46px; }
+      .admin-form-grid { grid-template-columns:minmax(0,1fr); }
+      .input-field, select.input-field { height:48px; min-height:44px; }
+    }
+
   </style>
 </head>
 <body>
@@ -1276,7 +1305,20 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           <div class="info-row"><span class="k">Projet Appwrite</span><span class="v" id="info-project">—</span></div>
           <div class="info-row"><span class="k">Fonction nova.ai</span><span class="v" id="info-function">—</span></div>
           <div class="info-row"><span class="k">Comptes admin configurés</span><span class="v" id="info-admins">—</span></div>
-          <div class="info-row"><span class="k">Site public</span><span class="v"><a href="https://novanod6.github.io/NOVANOD/" target="_blank">novanod6.github.io/NOVANOD</a></span></div>
+          <div class="info-row"><span class="k">Site public</span><span class="v"><a href="https://novanod6.github.io/NOVANOD/" target="_blank" rel="noopener">novanod6.github.io/NOVANOD</a></span></div>
+        </div>
+        <div class="glass-card">
+          <h3 class="card-title">Centre de maintenance administrateur</h3>
+          <p class="hint">Outils locaux de diagnostic et de maintenance. Les exports excluent les mots de passe, clés API, jetons et valeurs secrètes.</p>
+          <div class="admin-toolbar">
+            <button id="btn-admin-export-diagnostics" class="btn-3d btn-secondary" type="button">Exporter le diagnostic JSON</button>
+            <button id="btn-admin-copy-checklist" class="btn-3d btn-secondary" type="button">Copier la checklist technique</button>
+            <button id="btn-admin-check-pages" class="btn-3d" type="button">Vérifier les pages du site</button>
+            <button id="btn-admin-reset-prefs" class="btn-3d btn-secondary" type="button">Réinitialiser mes préférences</button>
+          </div>
+          <div class="admin-note">Pages incluses : <a href="./" target="_blank" rel="noopener">Accueil</a> · <a href="./privacy.html" target="_blank" rel="noopener">Confidentialité</a> · <a href="./terms.html" target="_blank" rel="noopener">Conditions d’utilisation</a></div>
+          <div id="admin-maintenance-status" class="status-msg" role="status" aria-live="polite"></div>
+          <div id="admin-maintenance-output" class="admin-output">Les résultats des diagnostics apparaîtront ici.</div>
         </div>
       </div>
 
@@ -2123,11 +2165,24 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       if(!source || typeof source!=='object') throw new Error('Options WebAuthn absentes.');
       const options={...source,challenge:toBase64Url(source.challenge)};
       if(!options.challenge) throw new Error('Le défi WebAuthn est absent ou invalide.');
+      const normalizeCredentialList = (items, label) => {
+        if (items == null) return [];
+        if (!Array.isArray(items)) throw new Error('La liste '+label+' WebAuthn est invalide.');
+        return items.map(item => {
+          if (!item || typeof item !== 'object' || !item.id) return null;
+          const id = toBase64Url(item.id);
+          return id ? { ...item, id } : null;
+        }).filter(Boolean);
+      };
       if(mode==='register'){
-        options.user={...(source.user||{}),id:toBase64Url(source.user && source.user.id)};
-        if(!options.user.id) throw new Error('Identifiant WebAuthn utilisateur absent. Recharge la page puis réessaie.');
-        if(!source.rp || !source.rp.id) throw new Error('Identifiant du site WebAuthn absent. Vérifie WEBAUTHN_RP_ID.');
-        options.excludeCredentials=(source.excludeCredentials||[]).map(x=>({...x,id:toBase64Url(x.id)})).filter(x=>x.id);
+        const user = source.user && typeof source.user === 'object' ? source.user : {};
+        const userId = toBase64Url(user.id);
+        if(!userId) throw new Error('Identifiant WebAuthn utilisateur absent ou invalide. Recharge la page puis réessaie.');
+        options.user={...user,id:userId};
+        if(!source.rp || typeof source.rp.id !== 'string' || !source.rp.id.trim()) throw new Error('Identifiant du site WebAuthn absent. Vérifie WEBAUTHN_RP_ID.');
+        options.excludeCredentials=normalizeCredentialList(source.excludeCredentials,'excludeCredentials');
+      } else if (mode==='login') {
+        options.allowCredentials=normalizeCredentialList(source.allowCredentials,'allowCredentials');
       }
       return options;
     }
@@ -2875,7 +2930,13 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         }
         if(completed.conclusion!=='success')throw new Error('Le workflow GitHub est terminé avec le statut '+(completed.conclusion||'inconnu')+'. Ouvre son exécution pour consulter les journaux.');
         await analyzeLatestGithubAudit();
-      } catch(e){setStatus(document.getElementById('github-audit-status'),e.message,'error');}
+      } catch(e){
+        const message = String(e?.message || e);
+        const hint = /GITHUB_WORKFLOW_TOKEN|token.*absent|token.*invalide/i.test(message)
+          ? message + ' — Ajoute le secret GitHub côté serveur utilisé par nova.ai, avec les permissions Actions: write et Contents: read. Ne place jamais ce jeton dans admin.html.'
+          : message;
+        setStatus(document.getElementById('github-audit-status'),hint,'error');
+      }
       finally{button.disabled=false;if(refresh)refresh.disabled=false;}
     });
     document.getElementById('btn-appwrite-health-check')?.addEventListener('click',async()=>{
@@ -2972,6 +3033,62 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       previewObserver.observe(previewWrapper.parentElement);
     }
 
+
+    // Outils de maintenance sûrs : aucun secret ni contenu d'identifiant n'est exporté.
+    const maintenanceStatus = document.getElementById('admin-maintenance-status');
+    const maintenanceOutput = document.getElementById('admin-maintenance-output');
+    document.getElementById('btn-admin-export-diagnostics')?.addEventListener('click', () => {
+      const payload = {
+        product: 'NOVANOD admin diagnostics',
+        generatedAt: new Date().toISOString(),
+        page: location.href.split('?')[0].split('#')[0],
+        appwrite: { endpoint: APPWRITE_ENDPOINT, projectId: APPWRITE_PROJECT_ID, functionId: NOVA_FUNCTION_ID },
+        admin: { userId: currentAdmin?.$id || currentAdmin?.id || null },
+        browser: { userAgent: navigator.userAgent, language: navigator.language, online: navigator.onLine, secureContext: window.isSecureContext },
+        viewport: { width: innerWidth, height: innerHeight, pixelRatio: devicePixelRatio || 1 },
+        preferences: (() => { try { return JSON.parse(localStorage.getItem('novanod_admin_preferences') || '{}'); } catch { return {}; } })(),
+        storageKeys: Object.keys(localStorage).filter(key => !/token|secret|password|key|credential|session/i.test(key))
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a'); link.href = url; link.download = 'novanod-admin-diagnostic-' + new Date().toISOString().slice(0,10) + '.json';
+      document.body.append(link); link.click(); link.remove(); URL.revokeObjectURL(url);
+      setStatus(maintenanceStatus, 'Diagnostic JSON exporté. Vérifie son contenu avant de le partager.', 'success');
+      out('admin-maintenance-output', payload);
+    });
+    document.getElementById('btn-admin-copy-checklist')?.addEventListener('click', async () => {
+      const checklist = [
+        'NOVANOD — checklist de configuration (aucun secret à copier ici)',
+        '1. Appwrite : vérifier la fonction nova.ai, son déploiement et ses journaux.',
+        '2. Appwrite : vérifier les variables serveur requises sans afficher leurs valeurs.',
+        '3. GitHub : Settings > Secrets and variables > Actions : vérifier GITHUB_WORKFLOW_TOKEN ou le secret utilisé par le backend.',
+        '4. GitHub : Actions : vérifier les permissions du workflow et le dernier résultat Playwright/Lighthouse.',
+        '5. WebAuthn : vérifier WEBAUTHN_RP_ID, HTTPS et l’URL exacte du site.',
+        '6. Resend : conserver RESEND_API_KEY uniquement dans les variables serveur Appwrite; expéditeur de production = domaine vérifié.',
+        '7. Ne jamais coller de clé API, mot de passe ou jeton dans admin.html.'
+      ].join('\n');
+      try { await navigator.clipboard.writeText(checklist); setStatus(maintenanceStatus, 'Checklist copiée.', 'success'); }
+      catch { out('admin-maintenance-output', checklist); setStatus(maintenanceStatus, 'Copie automatique indisponible. Checklist affichée ci-dessous.', 'info'); }
+    });
+    document.getElementById('btn-admin-check-pages')?.addEventListener('click', async () => {
+      const button = document.getElementById('btn-admin-check-pages');
+      button.disabled = true; setStatus(maintenanceStatus, 'Vérification des pages publiques…', 'info');
+      try {
+        const pages = [{label:'Accueil',path:'./'},{label:'Confidentialité',path:'./privacy.html'},{label:'Conditions d’utilisation',path:'./terms.html'}];
+        const results = await Promise.all(pages.map(async page => {
+          try { const response = await fetch(page.path, { method:'HEAD', cache:'no-store' }); return { ...page, ok:response.ok, status:response.status }; }
+          catch (error) { return { ...page, ok:false, status:0, error:error.message }; }
+        }));
+        maintenanceOutput.textContent = results.map(item => (item.ok?'✓ ':'✕ ')+item.label+' — '+(item.status || item.error)).join('\n');
+        const failures = results.filter(item => !item.ok).length;
+        setStatus(maintenanceStatus, failures ? failures+' page(s) non accessibles. Vérifie leur publication GitHub Pages.' : 'Les trois pages publiques répondent correctement.', failures?'error':'success');
+      } finally { button.disabled = false; }
+    });
+    document.getElementById('btn-admin-reset-prefs')?.addEventListener('click', () => {
+      if (!confirm('Réinitialiser uniquement les préférences locales de cette console ?')) return;
+      localStorage.removeItem('novanod_admin_preferences');
+      location.reload();
+    });
 
     // Recherche dans les modules existants, sans altérer leurs actions.
     const moduleSearch = document.getElementById('admin-module-search');
