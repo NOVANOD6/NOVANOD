@@ -2102,7 +2102,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           headers: {
             'Content-Type': 'application/json',
             'X-Appwrite-Project': APPWRITE_PROJECT_ID,
-            ...(jwt ? { 'X-Appwrite-JWT': jwt } : {})
+            ...(jwt ? { 'X-Appwrite-User-JWT': jwt } : {})
           },
           body: JSON.stringify({
             body: JSON.stringify(payload),
