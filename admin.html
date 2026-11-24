@@ -1595,6 +1595,8 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
             <option value="groq">Groq uniquement</option>
           </select>
           <button id="btn-assistant-ask" class="btn-3d">Demander à nova.ai</button>
+          <button id="btn-system-diagnostics" class="btn-3d btn-secondary" type="button">Tester Appwrite, Gemini et Groq</button>
+          <div id="system-diagnostics-output" class="admin-output" role="status">Diagnostic non exécuté.</div>
           <div id="assistant-status" class="status-msg"></div>
           <h4>Réponse Gemini</h4>
           <div id="assistant-gemini-output" class="admin-output">En attente.</div>
@@ -2631,8 +2633,16 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     });
     document.getElementById('btn-list-files')?.addEventListener('click',async()=>{
       try {
-        const bucketId=document.getElementById('storage-bucket-id').value.trim();
-        if(!bucketId) throw new Error('Renseigne l’ID du bucket Appwrite avant de lister les fichiers.');
+        const bucketField=document.getElementById('storage-bucket-id');
+        let bucketId=bucketField.value.trim();
+        if(!bucketId) {
+          const listed=await adminCall('storage_buckets');
+          const buckets=Array.isArray(listed.buckets)?listed.buckets:[];
+          const preferred=buckets.find(bucket=>bucket.name==='NOVANOD Audit Evidence') || buckets.find(bucket=>bucket.$id==='6b0364630010962cc87f');
+          if(!preferred) throw new Error('Bucket NOVANOD Audit Evidence introuvable. Vérifie les droits Storage de la fonction.');
+          bucketId=preferred.$id;
+          bucketField.value=bucketId;
+        }
         const r=await adminCall('storage_files',{bucketId});
         if(!Array.isArray(r.files)) throw new Error('Réponse Appwrite invalide : la liste des fichiers est absente.');
         out('files-output',r.files);
@@ -2969,6 +2979,26 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         setStatus(status,failures?failures+' service(s) n’ont pas pu être vérifiés. Consulte les détails.':'Tous les services testés répondent correctement.','success');
       }catch(error){setStatus(status,error.message,'error');}
       finally{button.disabled=false;}
+    });
+
+    document.getElementById('btn-system-diagnostics')?.addEventListener('click', async () => {
+      const button=document.getElementById('btn-system-diagnostics');
+      const target=document.getElementById('system-diagnostics-output');
+      button.disabled=true;
+      target.textContent='Tests réels en cours : configuration serveur, Gemini et Groq…';
+      try {
+        const result=await adminCall('system_diagnostics',{testProviders:true});
+        const lines=[];
+        for (const [name,item] of Object.entries(result.diagnostics||{})) {
+          if(name==='webauthn') lines.push('WebAuthn : RP '+(item.rpId||'non défini')+' ; origine '+(item.origin||'non définie')+' ; tables '+(item.credentialsTableConfigured&&item.challengesTableConfigured?'configurées':'à vérifier'));
+          else if(name==='gemini'||name==='groq') lines.push(name.toUpperCase()+' : '+(item.configured?'clé présente':'clé absente')+' ; modèle '+(item.model||'non défini'));
+          else lines.push(name+' : '+(item.configured?'configuré':'configuration manquante'));
+        }
+        for (const [name,item] of Object.entries(result.checks||{})) lines.push(name.toUpperCase()+' : '+(item.ok?'OK':'ÉCHEC — '+item.error));
+        target.textContent=lines.join('\n') || 'Aucun résultat de diagnostic retourné.';
+      } catch(error) {
+        target.textContent='Échec du diagnostic : '+error.message;
+      } finally { button.disabled=false; }
     });
 
     const NOVANOD_AI_ROLE_PROMPTS = {
