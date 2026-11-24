@@ -2063,28 +2063,29 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         throw new Error('Identifiant de fonction NOVANOD non configuré.');
       }
 
-      // Vérifie la session réelle côté Appwrite : l'identifiant affiché dans l'interface
-      // ne suffit jamais à authentifier une exécution serveur.
-      let user;
-      try {
-        user = await account.get();
-      } catch (error) {
-        throw new Error('Session Appwrite expirée ou absente. Déconnecte-toi puis reconnecte-toi avant de relancer cette action.');
+      // Seules les deux étapes du démarrage d'une connexion passkey sont publiques :
+      // aucun compte Appwrite n'existe encore dans le navigateur à ce stade.
+      const publicWebAuthnAction = ['webauthn_login_options', 'webauthn_login_verify'].includes(payload?.action);
+      let jwt = '';
+      if (!publicWebAuthnAction) {
+        // Toutes les autres actions exigent une vraie session d'un administrateur autorisé.
+        let user;
+        try {
+          user = await account.get();
+        } catch (error) {
+          throw new Error('Session Appwrite expirée ou absente. Déconnecte-toi puis reconnecte-toi avant de relancer cette action.');
+        }
+        if (!user || !ADMIN_USER_IDS.includes(user.$id)) {
+          throw new Error('Accès refusé : ce compte Appwrite ne figure pas dans la liste des deux administrateurs autorisés.');
+        }
+        try {
+          const token = await account.createJWT();
+          jwt = token && token.jwt;
+        } catch (error) {
+          throw new Error('Impossible de créer le jeton temporaire Appwrite. Reconnecte-toi puis réessaie.');
+        }
+        if (!jwt) throw new Error('Appwrite n’a pas fourni de jeton de session temporaire.');
       }
-      if (!user || !ADMIN_USER_IDS.includes(user.$id)) {
-        throw new Error('Accès refusé : ce compte Appwrite ne figure pas dans la liste des deux administrateurs autorisés.');
-      }
-
-      // L'API d'exécution reçoit un JWT Appwrite explicite. Cela évite de dépendre
-      // de la transmission implicite du cookie de session par le navigateur/SDK.
-      let jwt;
-      try {
-        const token = await account.createJWT();
-        jwt = token && token.jwt;
-      } catch (error) {
-        throw new Error('Impossible de créer le jeton temporaire Appwrite. Reconnecte-toi puis réessaie.');
-      }
-      if (!jwt) throw new Error('Appwrite n’a pas fourni de jeton de session temporaire.');
 
       const endpoint = (APPWRITE_ENDPOINT.endsWith('/') ? APPWRITE_ENDPOINT.slice(0, -1) : APPWRITE_ENDPOINT) +
         '/functions/' + encodeURIComponent(NOVA_FUNCTION_ID) + '/executions';
@@ -2095,7 +2096,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           headers: {
             'Content-Type': 'application/json',
             'X-Appwrite-Project': APPWRITE_PROJECT_ID,
-            'X-Appwrite-JWT': jwt
+            ...(jwt ? { 'X-Appwrite-JWT': jwt } : {})
           },
           body: JSON.stringify({
             body: JSON.stringify(payload),
