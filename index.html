@@ -202,7 +202,8 @@
       font-family: var(--font-body);
       font-size: 13px;
       font-weight: 700;
-      color: var(--text-red);
+      color: #B83225;
+      text-shadow: none;
       line-height: 1.45;
       margin-bottom: 16px;
       padding: 0 10px;
@@ -488,7 +489,7 @@
 
     .footer-copy {
       font-size: 9.5px;
-      color: rgba(217, 68, 50, 0.95);
+      color: #B83225;
       margin-top: 6px;
       margin-bottom: 4px;
       letter-spacing: 0.2px;
@@ -997,7 +998,7 @@
           </span>
         </div>
 
-        <a class="forgot-link" onclick="navigateTo('screen-forgot')">mot de passe oublié ?</a>
+        <a class="forgot-link" href="#screen-forgot" onclick="event.preventDefault(); navigateTo('screen-forgot')">mot de passe oublié ?</a>
 
         <button type="submit" id="btn-submit-login" class="btn-3d btn-dark">
           <span class="btn-text">Se connecter</span>
