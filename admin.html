@@ -1108,7 +1108,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         <input type="password" id="admin-password" class="input-field" placeholder="••••••••" autocomplete="current-password">
         
         <button id="btn-login" class="btn-3d">Se connecter au Dashboard</button>
-        <button id="btn-login-fingerprint" class="btn-3d btn-secondary hidden"><svg class="fingerprint-mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 7c-9 0-16 7-16 16M24 13c-6 0-11 5-11 11 0 7-1 12-4 16M24 19c-3 0-5 2-5 5 0 9-1 14-4 18M24 25c0 9-1 15-3 19M30 9c6 2 10 8 10 14 0 8-1 14-4 19M30 16c3 2 5 5 5 9 0 5 0 9-2 13"/></svg><span>Déverrouiller avec l'empreinte du téléphone</span></button>
+        <button id="btn-login-fingerprint" class="btn-3d btn-secondary"><svg class="fingerprint-mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 7c-9 0-16 7-16 16M24 13c-6 0-11 5-11 11 0 7-1 12-4 16M24 19c-3 0-5 2-5 5 0 9-1 14-4 18M24 25c0 9-1 15-3 19M30 9c6 2 10 8 10 14 0 8-1 14-4 19M30 16c3 2 5 5 5 9 0 5 0 9-2 13"/></svg><span>Déverrouiller avec l'empreinte du téléphone</span></button>
       </div>
 
       <div id="pane-signup" class="hidden">
@@ -2040,20 +2040,24 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     let platformAuthenticatorAvailable = false;
     async function detectPlatformAuthenticator(showFeedback = false) {
       const supported = !!(window.isSecureContext && window.PublicKeyCredential && typeof PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable === 'function');
+      // Garder l'option visible sur l'écran de connexion : la détection ne doit
+      // jamais la faire disparaître silencieusement.
+      btnLoginFingerprint.classList.remove('hidden');
       if (!supported) {
+        platformAuthenticatorAvailable = false;
         btnRegisterFingerprint.classList.add('hidden');
-        btnLoginFingerprint.classList.add('hidden');
-        if (showFeedback) setStatus(fingerprintStatus, 'La biométrie de plateforme n’est pas disponible dans ce navigateur ou ce contexte. Utilise le site en HTTPS et vérifie le verrouillage sécurisé Android.', 'info');
+        if (showFeedback) setStatus(loginStatus, 'La connexion biométrique n’est pas prise en charge ici. Ouvre NOVANOD dans un navigateur compatible, en HTTPS, et vérifie le verrouillage sécurisé Android.', 'info');
         return false;
       }
       try {
         platformAuthenticatorAvailable = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
         btnRegisterFingerprint.classList.toggle('hidden', !platformAuthenticatorAvailable);
-        btnLoginFingerprint.classList.toggle('hidden', !platformAuthenticatorAvailable);
-        if (!platformAuthenticatorAvailable && showFeedback) setStatus(fingerprintStatus, 'Aucun authentificateur de plateforme compatible détecté. Vérifie le verrouillage sécurisé Android.', 'info');
+        if (!platformAuthenticatorAvailable && showFeedback) setStatus(loginStatus, 'Aucun authentificateur biométrique compatible n’est détecté. Connecte-toi avec ton mot de passe, puis enregistre une passkey dans Sécurité.', 'info');
         return platformAuthenticatorAvailable;
       } catch (error) {
-        if (showFeedback) setStatus(fingerprintStatus, 'Vérification biométrique impossible : ' + (error.message || error), 'error');
+        platformAuthenticatorAvailable = false;
+        btnRegisterFingerprint.classList.add('hidden');
+        if (showFeedback) setStatus(loginStatus, 'Vérification biométrique impossible : ' + (error.message || error), 'error');
         return false;
       }
     }
