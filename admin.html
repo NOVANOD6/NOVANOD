@@ -2345,7 +2345,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           const link = figure.querySelector('[data-evidence-open]');
           if (!bucket || !file || !image || !link) return;
           try {
-            const url = APPWRITE_ENDPOINT.replace(/\\/$/, '') + '/storage/buckets/' +
+            const url = APPWRITE_ENDPOINT.replace(/\/$/, '') + '/storage/buckets/' +
               encodeURIComponent(bucket) + '/files/' + encodeURIComponent(file) +
               '/view?project=' + encodeURIComponent(APPWRITE_PROJECT_ID);
             const response = await fetch(url, { headers: {
