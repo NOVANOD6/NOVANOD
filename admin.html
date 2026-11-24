@@ -2086,7 +2086,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       }
       if (!jwt) throw new Error('Appwrite n’a pas fourni de jeton de session temporaire.');
 
-      const endpoint = APPWRITE_ENDPOINT.replace(/\\/$/, '') +
+      const endpoint = APPWRITE_ENDPOINT.replace(/\\/+$/, '') +
         '/functions/' + encodeURIComponent(NOVA_FUNCTION_ID) + '/executions';
       let response;
       try {
