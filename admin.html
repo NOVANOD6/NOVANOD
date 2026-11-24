@@ -2059,16 +2059,73 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     detectPlatformAuthenticator();
 
     async function callNovaFunction(payload) {
-      if (!NOVA_FUNCTION_ID || NOVA_FUNCTION_ID === 'COLLE_ICI_LE_FUNCTION_ID') throw new Error('Identifiant de fonction NOVANOD non configuré.');
-      const execution = await functions.createExecution(NOVA_FUNCTION_ID, JSON.stringify(payload), false);
+      if (!NOVA_FUNCTION_ID || NOVA_FUNCTION_ID === 'COLLE_ICI_LE_FUNCTION_ID') {
+        throw new Error('Identifiant de fonction NOVANOD non configuré.');
+      }
+
+      // Vérifie la session réelle côté Appwrite : l'identifiant affiché dans l'interface
+      // ne suffit jamais à authentifier une exécution serveur.
+      let user;
+      try {
+        user = await account.get();
+      } catch (error) {
+        throw new Error('Session Appwrite expirée ou absente. Déconnecte-toi puis reconnecte-toi avant de relancer cette action.');
+      }
+      if (!user || !ADMIN_USER_IDS.includes(user.$id)) {
+        throw new Error('Accès refusé : ce compte Appwrite ne figure pas dans la liste des deux administrateurs autorisés.');
+      }
+
+      // L'API d'exécution reçoit un JWT Appwrite explicite. Cela évite de dépendre
+      // de la transmission implicite du cookie de session par le navigateur/SDK.
+      let jwt;
+      try {
+        const token = await account.createJWT();
+        jwt = token && token.jwt;
+      } catch (error) {
+        throw new Error('Impossible de créer le jeton temporaire Appwrite. Reconnecte-toi puis réessaie.');
+      }
+      if (!jwt) throw new Error('Appwrite n’a pas fourni de jeton de session temporaire.');
+
+      const endpoint = APPWRITE_ENDPOINT.replace(/\\/$/, '') +
+        '/functions/' + encodeURIComponent(NOVA_FUNCTION_ID) + '/executions';
+      let response;
+      try {
+        response = await fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Appwrite-Project': APPWRITE_PROJECT_ID,
+            'X-Appwrite-JWT': jwt
+          },
+          body: JSON.stringify({
+            body: JSON.stringify(payload),
+            async: false,
+            path: '/',
+            method: 'POST'
+          })
+        });
+      } catch (error) {
+        throw new Error('Impossible de joindre la fonction NOVANOD. Vérifie ta connexion Internet puis réessaie.');
+      }
+
+      let execution;
+      try { execution = await response.json(); }
+      catch { throw new Error('Appwrite a renvoyé une réponse illisible (HTTP ' + response.status + ').'); }
+
       const body = execution.responseBody || '';
       let result;
       try { result = body ? JSON.parse(body) : {}; }
-      catch { throw new Error('La fonction NOVANOD a renvoyé une réponse non JSON (HTTP ' + execution.responseStatusCode + ').'); }
-      if (execution.status === 'failed' || (execution.responseStatusCode && execution.responseStatusCode >= 400)) {
-        throw new Error(result.error || result.message || ('Échec de la fonction NOVANOD (HTTP ' + execution.responseStatusCode + ').'));
+      catch { throw new Error('La fonction NOVANOD a renvoyé une réponse non JSON (HTTP ' + (execution.responseStatusCode || response.status) + ').'); }
+
+      if (!response.ok || execution.status === 'failed' ||
+          (execution.responseStatusCode && execution.responseStatusCode >= 400)) {
+        throw new Error(result.error || result.message ||
+          execution.message || ('Échec de la fonction NOVANOD (HTTP ' +
+          (execution.responseStatusCode || response.status) + ').'));
       }
-      if (!result || typeof result !== 'object' || Array.isArray(result)) throw new Error('Format de réponse inattendu de la fonction NOVANOD.');
+      if (!result || typeof result !== 'object' || Array.isArray(result)) {
+        throw new Error('Format de réponse inattendu de la fonction NOVANOD.');
+      }
       return result;
     }
 
