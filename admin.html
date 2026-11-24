@@ -2241,28 +2241,36 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       return btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
     };
     function normalizeWebAuthnOptions(raw, mode) {
-      const source=raw && (raw.optionsJSON || raw.options || raw.data || raw);
-      if(!source || typeof source!=='object') throw new Error('Options WebAuthn absentes.');
-      const options={...source,challenge:toBase64Url(source.challenge)};
-      if(!options.challenge) throw new Error('Le défi WebAuthn est absent ou invalide.');
+      const source = raw && (raw.optionsJSON || raw.options || raw.data || raw);
+      if (!source || typeof source !== 'object' || Array.isArray(source)) {
+        throw new Error('Le serveur n’a pas renvoyé les options WebAuthn attendues.');
+      }
+      const binaryField = (value, label) => {
+        const encoded = toBase64Url(value);
+        if (!encoded || typeof encoded !== 'string' || !/^[A-Za-z0-9_-]+$/.test(encoded)) {
+          throw new Error('Le champ WebAuthn « ' + label + ' » est absent ou invalide. Recharge la page et réessaie.');
+        }
+        return encoded;
+      };
+      const options = { ...source, challenge: binaryField(source.challenge, 'challenge') };
       const normalizeCredentialList = (items, label) => {
         if (items == null) return [];
-        if (!Array.isArray(items)) throw new Error('La liste '+label+' WebAuthn est invalide.');
-        return items.map(item => {
-          if (!item || typeof item !== 'object' || !item.id) return null;
-          const id = toBase64Url(item.id);
-          return id ? { ...item, id } : null;
-        }).filter(Boolean);
+        if (!Array.isArray(items)) throw new Error('La liste ' + label + ' WebAuthn est invalide.');
+        return items.map((item, index) => {
+          if (!item || typeof item !== 'object') throw new Error('Identifiant manquant dans ' + label + ' à la position ' + (index + 1) + '.');
+          return { ...item, id: binaryField(item.id, label + '[' + index + '].id') };
+        });
       };
-      if(mode==='register'){
-        const user = source.user && typeof source.user === 'object' ? source.user : {};
-        const userId = toBase64Url(user.id);
-        if(!userId) throw new Error('Identifiant WebAuthn utilisateur absent ou invalide. Recharge la page puis réessaie.');
-        options.user={...user,id:userId};
-        if(!source.rp || typeof source.rp.id !== 'string' || !source.rp.id.trim()) throw new Error('Identifiant du site WebAuthn absent. Vérifie WEBAUTHN_RP_ID.');
-        options.excludeCredentials=normalizeCredentialList(source.excludeCredentials,'excludeCredentials');
-      } else if (mode==='login') {
-        options.allowCredentials=normalizeCredentialList(source.allowCredentials,'allowCredentials');
+      if (mode === 'register') {
+        const user = source.user && typeof source.user === 'object' ? source.user : null;
+        if (!user) throw new Error('Le serveur n’a pas fourni les informations utilisateur pour créer la passkey.');
+        options.user = { ...user, id: binaryField(user.id, 'user.id') };
+        if (!source.rp || typeof source.rp.id !== 'string' || !source.rp.id.trim()) {
+          throw new Error('Identifiant du site WebAuthn absent. Vérifie WEBAUTHN_RP_ID dans Appwrite.');
+        }
+        options.excludeCredentials = normalizeCredentialList(source.excludeCredentials, 'excludeCredentials');
+      } else if (mode === 'login') {
+        options.allowCredentials = normalizeCredentialList(source.allowCredentials, 'allowCredentials');
       }
       return options;
     }
@@ -2317,12 +2325,47 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           const caption = [issueTitle, item.project || '', 'Référence de stockage incomplète'].filter(Boolean).join(' · ');
           return '<figure class="evidence-figure">'+badge+'<figcaption><strong>'+escapeHtml(caption)+'</strong>'+(issueDetails?'<span>'+escapeHtml(issueDetails)+'</span>':'')+'</figcaption></figure>';
         }
-        let src = '';
-        try { src = String(storage.getFileView(bucketId, fileId)); } catch {}
-        if (!src) return '<figure class="evidence-figure">'+badge+'<figcaption><strong>'+escapeHtml(issueTitle)+'</strong><span>Aperçu indisponible pour ce compte.</span></figcaption></figure>';
         const caption = [item.project || '', fileName, item.relativePath || ''].filter(Boolean).join(' · ');
-        return '<figure class="evidence-figure"><div class="evidence-image-wrap">'+badge+'<a href="'+escapeHtml(src)+'" target="_blank" rel="noopener"><img loading="lazy" src="'+escapeHtml(src)+'" alt="'+escapeHtml('Preuve visuelle associée à : '+issueTitle)+'" onerror="this.closest(\'figure\').classList.add(\'evidence-unavailable\');this.remove()"></a></div><figcaption><strong>'+escapeHtml(issueTitle)+'</strong>'+(issueDetails?'<span>'+escapeHtml(issueDetails)+'</span>':'')+(caption?'<small>'+escapeHtml(caption)+'</small>':'')+'</figcaption></figure>';
+        return '<figure class="evidence-figure" data-evidence-file="'+escapeHtml(fileId)+'" data-evidence-bucket="'+escapeHtml(bucketId)+'"><div class="evidence-image-wrap">'+badge+'<a href="#" data-evidence-open="1" target="_blank" rel="noopener"><img loading="lazy" alt="'+escapeHtml('Preuve visuelle associée à : '+issueTitle)+'" data-evidence-image="1"></a></div><figcaption><strong>'+escapeHtml(issueTitle)+'</strong>'+(issueDetails?'<span>'+escapeHtml(issueDetails)+'</span>':'')+(caption?'<small>'+escapeHtml(caption)+'</small>':'')+'</figcaption></figure>';
       }).join('');
+    }
+    async function loadPrivateEvidenceImages(root) {
+      if (!root) return;
+      const figures = [...root.querySelectorAll('[data-evidence-file][data-evidence-bucket]')];
+      if (!figures.length) return;
+      try {
+        const session = await account.createJWT();
+        if (!session?.jwt) throw new Error('Jeton administrateur indisponible.');
+        await Promise.all(figures.map(async figure => {
+          const bucket = figure.dataset.evidenceBucket;
+          const file = figure.dataset.evidenceFile;
+          const image = figure.querySelector('[data-evidence-image]');
+          const link = figure.querySelector('[data-evidence-open]');
+          if (!bucket || !file || !image || !link) return;
+          try {
+            const url = APPWRITE_ENDPOINT.replace(/\\/$/, '') + '/storage/buckets/' +
+              encodeURIComponent(bucket) + '/files/' + encodeURIComponent(file) +
+              '/view?project=' + encodeURIComponent(APPWRITE_PROJECT_ID);
+            const response = await fetch(url, { headers: {
+              'X-Appwrite-Project': APPWRITE_PROJECT_ID,
+              'X-Appwrite-JWT': session.jwt
+            }});
+            if (!response.ok) throw new Error('HTTP ' + response.status);
+            const objectUrl = URL.createObjectURL(await response.blob());
+            image.src = objectUrl;
+            link.href = objectUrl;
+            link.removeAttribute('target');
+          } catch (error) {
+            const wrap = figure.querySelector('.evidence-image-wrap');
+            if (wrap) wrap.innerHTML = '<span class="hint">Image privée indisponible : vérifie les permissions Appwrite de ce fichier.</span>';
+          }
+        }));
+      } catch (error) {
+        figures.forEach(figure => {
+          const wrap = figure.querySelector('.evidence-image-wrap');
+          if (wrap) wrap.innerHTML = '<span class="hint">Connexion administrateur requise pour afficher cette capture.</span>';
+        });
+      }
     }
     function renderProfessionalReport(id,value){const el=document.getElementById(id);if(el){el.dataset.rawReport=String(value||'');el.innerHTML=renderReportHtml(value,reportViewMode);}}
     function exportReportPdf(title,value,dateText){
