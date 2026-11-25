@@ -2116,50 +2116,6 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
     }[c]));
 
-    const toBase64Url = value => {
-      if (typeof value === 'string' && value.trim()) return value;
-      let bytes = null;
-      if (value instanceof ArrayBuffer) bytes = new Uint8Array(value);
-      else if (ArrayBuffer.isView(value)) bytes = new Uint8Array(value.buffer,value.byteOffset,value.byteLength);
-      else if (value && typeof value === 'object' && Array.isArray(value.data)) bytes = new Uint8Array(value.data);
-      if (!bytes) return '';
-      let binary=''; bytes.forEach(b=>binary+=String.fromCharCode(b));
-      return btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
-    };
-    function normalizeWebAuthnOptions(raw, mode) {
-      const source = raw && (raw.optionsJSON || raw.options || raw.data || raw);
-      if (!source || typeof source !== 'object' || Array.isArray(source)) {
-        throw new Error('Le serveur n’a pas renvoyé les options WebAuthn attendues.');
-      }
-      const binaryField = (value, label) => {
-        const encoded = toBase64Url(value);
-        if (!encoded || typeof encoded !== 'string' || !/^[A-Za-z0-9_-]+$/.test(encoded)) {
-          throw new Error('Le champ WebAuthn « ' + label + ' » est absent ou invalide. Recharge la page et réessaie.');
-        }
-        return encoded;
-      };
-      const options = { ...source, challenge: binaryField(source.challenge, 'challenge') };
-      const normalizeCredentialList = (items, label) => {
-        if (items == null) return [];
-        if (!Array.isArray(items)) throw new Error('La liste ' + label + ' WebAuthn est invalide.');
-        return items.map((item, index) => {
-          if (!item || typeof item !== 'object') throw new Error('Identifiant manquant dans ' + label + ' à la position ' + (index + 1) + '.');
-          return { ...item, id: binaryField(item.id, label + '[' + index + '].id') };
-        });
-      };
-      if (mode === 'register') {
-        const user = source.user && typeof source.user === 'object' ? source.user : null;
-        if (!user) throw new Error('Le serveur n’a pas fourni les informations utilisateur pour créer la passkey.');
-        options.user = { ...user, id: binaryField(user.id, 'user.id') };
-        if (!source.rp || typeof source.rp.id !== 'string' || !source.rp.id.trim()) {
-          throw new Error('Identifiant du site WebAuthn absent. Vérifie WEBAUTHN_RP_ID dans Appwrite.');
-        }
-        options.excludeCredentials = normalizeCredentialList(source.excludeCredentials, 'excludeCredentials');
-      } else if (mode === 'login') {
-        options.allowCredentials = normalizeCredentialList(source.allowCredentials, 'allowCredentials');
-      }
-      return options;
-    }
     let reportViewMode = 'written';
     function renderReportHtml(value, mode = reportViewMode) {
       const lines=String(value||'').replace(/\x60{3}[a-z]*|\x60{3}/gi,'').split(/\r?\n/);
@@ -3054,7 +3010,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         const result=await adminCall('system_diagnostics',{testProviders:true});
         const lines=[];
         for (const [name,item] of Object.entries(result.diagnostics||{})) {
-          if(name==='webauthn') lines.push('WebAuthn : RP '+(item.rpId||'non défini')+' ; origine '+(item.origin||'non définie')+' ; tables '+(item.credentialsTableConfigured&&item.challengesTableConfigured?'configurées':'à vérifier'));
+  
           else if(name==='gemini'||name==='groq') lines.push(name.toUpperCase()+' : '+(item.configured?'clé présente':'clé absente')+' ; modèle '+(item.model||'non défini'));
           else lines.push(name+' : '+(item.configured?'configuré':'configuration manquante'));
         }
@@ -3157,7 +3113,6 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         '2. Appwrite : vérifier les variables serveur requises sans afficher leurs valeurs.',
         '3. GitHub : Settings > Secrets and variables > Actions : définir NOVA_AUDIT_TOKEN (ou GITHUB_AUDIT_TOKEN) avec la même valeur que NOVA_AUDIT_TOKEN côté fonction Appwrite.',
         '4. GitHub : Actions : vérifier les permissions du workflow et le dernier résultat Playwright/Lighthouse.',
-        '5. WebAuthn : vérifier WEBAUTHN_RP_ID, HTTPS et l’URL exacte du site.',
         '6. Resend : conserver RESEND_API_KEY uniquement dans les variables serveur Appwrite; expéditeur de production = domaine vérifié.',
         '7. Ne jamais coller de clé API, mot de passe ou jeton dans admin.html.'
       ].join('\n');
