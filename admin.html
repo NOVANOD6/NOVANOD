@@ -1080,6 +1080,31 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       .input-field, select.input-field { height:48px; min-height:44px; }
     }
 
+  
+    /* NOVANOD — finition compacte et cohérente avec l'identité de l'accueil */
+    .header-brand.admin-brand-header{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:7px!important;margin:0 auto 16px!important;padding:8px 0 12px!important;border:0!important;background:transparent!important;box-shadow:none!important;text-align:center!important}
+    .admin-brand-header .brand-logo{width:54px!important;height:54px!important;object-fit:contain!important;border:0!important;border-radius:50%!important;background:transparent!important;box-shadow:none!important}
+    .admin-brand-header .admin-title{font-size:clamp(17px,2.2vw,22px)!important;color:#3B1420!important;letter-spacing:.6px!important}
+    .admin-brand-header .admin-brand-subtitle{font-size:9px!important;letter-spacing:1.5px!important;padding:5px 10px!important}
+    .dashboard-header{min-height:0!important;padding:10px 14px!important;background:#3B1420!important;color:#FFFBD0!important;border:0!important;border-radius:9px!important;box-shadow:none!important}
+    .dashboard-header .user-badge{color:#FFFBD0!important}.dashboard-header .status-dot{background:#E64A38!important;box-shadow:none!important}
+    .glass-card{padding:16px 18px!important;border-radius:12px!important;box-shadow:0 3px 12px rgba(59,20,32,.055)!important}
+    .dash-tabs{display:flex!important;flex-wrap:wrap!important;gap:5px!important;position:static!important;padding:0 0 8px!important;background:transparent!important;border:0!important;border-bottom:1px solid rgba(59,20,32,.15)!important;border-radius:0!important;box-shadow:none!important}
+    .dash-tab{flex:0 1 auto!important;min-height:38px!important;padding:8px 11px!important;display:inline-flex!important;flex-direction:row!important;gap:6px!important;border:1px solid rgba(59,20,32,.13)!important;border-radius:7px!important;background:#fffef0!important;box-shadow:none!important;color:#3B1420!important;font-size:11px!important}
+    .dash-tab .nav-illustration{width:19px!important;height:19px!important;padding:0!important;background:transparent!important;box-shadow:none!important;filter:none!important;transform:none!important;color:#E64A38!important;stroke:#E64A38!important}
+    .dash-tab.active{background:#3B1420!important;color:#FFFBD0!important;border-color:#3B1420!important;box-shadow:none!important}
+    .dash-tab.active .nav-illustration{background:transparent!important;color:#FFFBD0!important;stroke:#FFFBD0!important}
+    .analysis-action{min-height:58px!important;height:auto!important;flex-direction:row!important;justify-content:flex-start!important;gap:9px!important;padding:9px 11px!important;border-radius:8px!important;text-align:left!important}
+    .analysis-action svg{width:30px!important;height:30px!important;padding:4px!important;border-radius:7px!important;transform:none!important;filter:none!important;box-shadow:none!important}
+    .analysis-action span{font-size:11px!important}
+    .btn-3d{width:auto!important;min-width:0!important;min-height:38px!important;max-height:none!important;height:auto!important;padding:9px 12px!important;margin:0 5px 7px 0!important;border-radius:7px!important;box-shadow:none!important;font-size:11px!important}
+    .admin-toolbar>.btn-3d,.workflow-actions>.btn-3d{flex:0 1 auto!important}
+    .nova-progress{height:5px;width:100%;margin:8px 0 14px;overflow:hidden;border-radius:99px;background:rgba(59,20,32,.12)}
+    .nova-progress span{display:block;width:35%;height:100%;border-radius:99px;background:#E64A38;animation:novaProgressSweep 1.25s ease-in-out infinite}
+    @keyframes novaProgressSweep{0%{transform:translateX(-110%)}100%{transform:translateX(310%)}}
+    .nova-progress.hidden{display:none!important}
+    @media(max-width:760px){.glass-card{padding:14px 12px!important}.dash-tabs{flex-wrap:nowrap!important;overflow-x:auto!important}.dash-tab{flex:0 0 auto!important;white-space:nowrap!important}.analysis-action{min-height:52px!important}.analysis-action svg{width:27px!important;height:27px!important}}
+
   </style>
 </head>
 <body>
@@ -1186,7 +1211,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       <div id="pane-security" class="dash-pane">
         <div class="glass-card">
           <h3 class="card-title" style="color:var(--dark-brown);">Sécurité biométrique</h3>
-          <div class="hint">Enregistre jusqu'à cinq passkeys sur ton téléphone. Android déclenchera l'authentification biométrique locale (empreinte si le capteur et le système la proposent, sinon le mécanisme sécurisé configuré sur l'appareil). NOVANOD ne reçoit et ne stocke jamais ton empreinte digitale.</div>
+          <div class="hint">Enregistre une seule passkey pour ce compte administrateur. Android déclenchera l’authentification biométrique locale (empreinte si disponible, sinon le mécanisme sécurisé configuré sur l’appareil). Android déclenchera l'authentification biométrique locale (empreinte si le capteur et le système la proposent, sinon le mécanisme sécurisé configuré sur l'appareil). NOVANOD ne reçoit et ne stocke jamais ton empreinte digitale.</div>
           <div id="fingerprint-status" class="status-msg" role="status" aria-live="polite"></div>
           <div id="passkey-count" class="hint">Chargement des passkeys…</div>
           <div id="passkey-list" class="user-list" aria-live="polite"></div>
@@ -1516,7 +1541,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
             <button id="btn-refresh-github-audit" class="btn-3d btn-secondary" type="button">Actualiser le statut</button>
             <button id="btn-analyze-github-audit" class="btn-3d btn-secondary" type="button">Analyser le dernier audit terminé</button>
           </div>
-          <div id="github-audit-status" class="status-msg">Prêt. Lance un audit GitHub pour obtenir des résultats actualisés.</div>
+          <div id="github-audit-status" class="status-msg" role="status" aria-live="polite">Prêt. Lance un audit GitHub pour obtenir des résultats actualisés.</div><div id="github-audit-progress" class="nova-progress hidden" aria-hidden="true"><span></span></div>
           <a id="github-audit-run-link" class="hidden" href="#" target="_blank" rel="noopener">Ouvrir l’exécution GitHub Actions</a>
           <h4>Résultat Gemini · audit automatisé</h4>
           <div id="github-audit-gemini" class="admin-output">En attente.</div>
@@ -1552,7 +1577,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
             <button class="btn-3d btn-secondary analysis-action" data-analysis="seo"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="17" cy="17" r="10"/><path d="m24 24 10 10M12 17h10M17 12v10"/></svg><span>Expert SEO</span></button>
             <button class="btn-3d btn-secondary analysis-action" data-analysis="devops"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M6 10h28v20H6zM12 17l5 3-5 3M20 23h8"/></svg><span>Expert DevOps</span></button>
           </div>
-          <div id="analysis-status" class="status-msg"></div>
+          <div id="analysis-status" class="status-msg" role="status" aria-live="polite"></div><div id="analysis-progress" class="nova-progress hidden" aria-hidden="true"><span></span></div>
           <h4>Résultat Gemini</h4>
           <div id="analysis-gemini-output" class="admin-output">En attente du rapport Gemini.</div>
           <h4>Résultat Groq</h4>
@@ -1673,6 +1698,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     const screenPending = document.getElementById('screen-pending');
     const loginStatus = document.getElementById('login-status');
 
+    function setNovaProgress(id, active) { const bar=document.getElementById(id); if(bar) bar.classList.toggle('hidden',!active); }
     function setStatus(el, msg, type = 'info') {
       el.textContent = msg || '';
       el.className = 'status-msg' + (msg ? ' ' + type : '');
@@ -2121,15 +2147,15 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         if (result.error) throw new Error(result.error);
         if (!Array.isArray(result.credentials)) throw new Error('Réponse invalide du serveur : la liste des passkeys n’a pas été confirmée.');
         const items = result.credentials;
-        count.textContent = items.length + ' / 5 passkey(s) enregistrée(s) pour ce compte administrateur.';
+        count.textContent = items.length + ' / 1 passkey enregistrée pour ce compte administrateur.';
         const safeText = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
         list.innerHTML = items.length ? items.map((item, index) =>
           '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--border-color,#ddd)">' +
           '<span><b>Passkey ' + (index + 1) + '</b><br><small>Ajoutée le ' + safeText(item.createdAt || 'Date inconnue') + '</small></span>' +
           '<button class="admin-action danger" data-passkey-delete="' + safeText(item.id) + '">Supprimer</button></div>'
         ).join('') : '<div class="hint">Aucune passkey enregistrée pour ce compte.</div>';
-        btnRegisterFingerprint.disabled = items.length >= 5;
-        btnRegisterFingerprint.querySelector('span').textContent = items.length >= 5 ? 'Limite de cinq passkeys atteinte' : 'Ajouter une passkey (' + items.length + '/5)';
+        btnRegisterFingerprint.disabled = items.length >= 1;
+        btnRegisterFingerprint.querySelector('span').textContent = items.length >= 1 ? 'Passkey déjà enregistrée' : 'Enregistrer une passkey (0/1)';
       } catch (e) {
         count.textContent = 'Impossible de charger les passkeys.';
         list.textContent = e.message;
@@ -2965,6 +2991,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       const kind=btn.dataset.analysis, status=document.getElementById('analysis-status');
       const providerMode=document.getElementById('analysis-provider')?.value || 'both';
       btn.disabled=true;
+      setNovaProgress('analysis-progress',true);
       setStatus(status,'Analyse « '+kind+' » en cours avec '+(providerMode==='both'?'Gemini et Groq':providerMode)+'…','info');
       out('analysis-output','Analyse en cours… Les deux modèles peuvent prendre un peu de temps.');
       try {
@@ -2978,7 +3005,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         const h=await adminCall('list_reports');
         renderReportHistory(h.reports || []);
       } catch(e){setStatus(status,e.message,'error');out('analysis-output','Erreur : '+e.message);}
-      finally { btn.disabled=false; }
+      finally { btn.disabled=false; setNovaProgress('analysis-progress',false); }
     }));
     async function analyzeLatestGithubAudit() {
       const status=document.getElementById('github-audit-status');
@@ -3028,6 +3055,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       const button=document.getElementById('btn-run-github-audit');
       const refresh=document.getElementById('btn-refresh-github-audit');
       button.disabled=true;if(refresh)refresh.disabled=true;
+      setNovaProgress('github-audit-progress',true);
       try {
         const started=await adminCall('trigger_github_audit');
         activeGithubAuditStartedAt=started.startedAt||started.run?.createdAt||new Date().toISOString();
@@ -3053,7 +3081,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           : message;
         setStatus(document.getElementById('github-audit-status'),hint,'error');
       }
-      finally{button.disabled=false;if(refresh)refresh.disabled=false;}
+      finally{button.disabled=false;if(refresh)refresh.disabled=false;setNovaProgress('github-audit-progress',false);}
     });
     document.getElementById('btn-appwrite-health-check')?.addEventListener('click',async()=>{
       const button=document.getElementById('btn-appwrite-health-check');
