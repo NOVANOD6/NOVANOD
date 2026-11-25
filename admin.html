@@ -493,12 +493,6 @@
       filter:drop-shadow(0 2px 0 rgba(255,255,255,.7)) drop-shadow(0 5px 4px rgba(59,20,32,.24));
       transform:perspective(260px) rotateX(7deg) translateZ(3px);
     }
-    .fingerprint-mark {
-      width:36px;height:36px;fill:none;stroke:currentColor;stroke-width:2.1;
-      stroke-linecap:round;stroke-linejoin:round;
-      filter:drop-shadow(0 2px 0 rgba(255,255,255,.7)) drop-shadow(0 6px 5px rgba(59,20,32,.28));
-      transform:perspective(300px) rotateY(-12deg) translateZ(5px);
-    }
     .divider {height:1px;background:rgba(59,20,32,.14);margin:14px 0;}
     body.admin-compact .glass-card { padding:14px 16px; margin-bottom:10px; }
     body.admin-compact .admin-output { min-height:48px; padding:8px; }
@@ -905,8 +899,6 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     .analysis-action{display:flex;align-items:center;justify-content:flex-start;gap:12px;text-align:left;min-height:66px}
     .analysis-action svg{width:38px;height:38px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
     .analysis-action span{line-height:1.3}
-    .fingerprint-mark{width:25px;height:25px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vertical-align:middle;margin-right:8px}
-    .btn-3d:has(.fingerprint-mark){display:inline-flex;align-items:center;justify-content:center;gap:8px}
     .orientation-toggle[hidden]{display:none!important}
     button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid rgba(230,74,56,.45);outline-offset:2px}
     @media(max-width:620px){.device-tab{flex:1 1 100px;padding:9px 8px;gap:6px}.orientation-button{min-height:54px;padding:8px}.analysis-action{min-height:60px}}
@@ -963,7 +955,6 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     .analysis-action{min-height:104px!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:10px!important;border-radius:17px!important}
     .analysis-action svg{width:66px!important;height:66px!important;padding:13px!important;border:0!important;border-radius:19px!important;stroke:#fff7dc!important;stroke-width:2.2!important;background:radial-gradient(circle at 28% 18%,rgba(255,255,255,.55),transparent 38%),linear-gradient(145deg,#ff9b7c 0%,#E64A38 44%,#3B1420 100%)!important;box-shadow:inset 0 2px 3px rgba(255,255,255,.45),inset 0 -5px 8px rgba(59,20,32,.22),0 6px 0 rgba(59,20,32,.2),0 13px 20px rgba(59,20,32,.18)!important;filter:none!important;transform:perspective(600px) rotateX(9deg) rotateY(-7deg) translateZ(4px)!important}
     .analysis-action:hover svg{transform:perspective(600px) rotateX(0) rotateY(0) translateY(-4px) scale(1.04)!important}.analysis-action span{font-weight:850!important}
-    .fingerprint-mark{width:38px!important;height:38px!important;padding:5px!important;border-radius:12px!important;color:#fff8df!important;background:linear-gradient(145deg,#ff987b,#E64A38 50%,#3B1420)!important;filter:drop-shadow(0 4px 5px rgba(59,20,32,.2))!important}
     .stats-row{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:10px!important}.stat-box{border:1px solid rgba(59,20,32,.1)!important;border-radius:16px!important;background:linear-gradient(145deg,#fffef3,#fff5c7)!important;box-shadow:0 5px 14px rgba(59,20,32,.06)!important}.stat-box .num{font-size:clamp(20px,2.4vw,28px)!important}
     .admin-table-wrap{border:1px solid rgba(59,20,32,.12)!important;border-radius:15px!important;box-shadow:0 6px 16px rgba(59,20,32,.045)!important}.admin-table th{background:#3B1420!important;color:#FFFBD0!important}.admin-table tbody tr:nth-child(even){background:rgba(230,74,56,.035)}
     .input-field,select.input-field,textarea.input-field{border-radius:12px!important;min-height:44px}.btn-3d{border-radius:12px!important}.admin-note{background:rgba(59,20,32,.045)!important;border:1px solid rgba(59,20,32,.1)!important;border-radius:13px!important}.user-list{max-height:var(--admin-list-max-height,480px)!important}.nova-reduced-motion *,.nova-reduced-motion *::before,.nova-reduced-motion *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
@@ -1309,7 +1300,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           <div class="divider"></div>
           <h3 class="card-title">Notifications Appwrite</h3>
           <p class="hint">La console se connecte au broker Appwrite Push avec ton compte. Les messages reçus pendant que cette page reste ouverte s’affichent ci-dessous. Sur navigateur mobile, l’affichage système en arrière-plan n’est pas garanti ; un fournisseur FCM/PWA est nécessaire pour une vraie notification native persistante.</p>
-          <div id="admin-push-status" class="status-msg" role="status" aria-live="polite"></div>
+          <div id="admin-push-status" class="status-msg" role="status" aria-live="polite"></div><div id="push-test-progress" class="nova-progress hidden" role="progressbar" aria-label="Progression du test de notification" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span><small>0%</small></div>
           <div id="admin-push-inbox" class="user-list" aria-live="polite"><div class="hint">Les notifications reçues pendant que cette console est ouverte apparaîtront ici.</div></div>
           <button id="btn-test-admin-push" class="btn-3d btn-secondary" type="button">Envoyer une notification test à mon compte</button>
           <button class="btn-3d btn-dark" id="btn-logout" type="button">Se déconnecter de NOVANOD</button>
@@ -2731,7 +2722,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       const button = document.getElementById('btn-test-admin-push');
       const status = document.getElementById('admin-push-status');
       if (!currentAdminUserId) return setStatus(status, 'Connecte-toi à ton compte administrateur avant le test.', 'error');
-      button.disabled = true; setStatus(status, 'Envoi du test Push vers ton compte Appwrite…', 'info');
+      button.disabled = true; setNovaProgress('push-test-progress',true,0); setStatus(status, 'Envoi du test Push vers ton compte Appwrite…', 'info');
       try {
         const result = await adminCall('message_send', { channel:'push', userId:currentAdminUserId, subject:'NOVANOD — Test de notification', content:'Test de notification NOVANOD. Si tu reçois ce message, la connexion Push est active sur cet appareil.' });
         setStatus(status, result.acceptedByAppwrite ? 'Appwrite a accepté le message (' + (result.messageId || 'ID non retourné') + '). Vérifie la réception sur un appareil connecté au Push.' : 'Le serveur n’a pas confirmé l’acceptation du message.', result.acceptedByAppwrite ? 'success' : 'error');
@@ -3185,7 +3176,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         maintenanceOutput.textContent = results.map(item => (item.ok?'✓ ':'✕ ')+item.label+' — '+(item.status || item.error)).join('\n');
         const failures = results.filter(item => !item.ok).length;
         setStatus(maintenanceStatus, failures ? failures+' page(s) non accessibles. Vérifie leur publication GitHub Pages.' : 'Les trois pages publiques répondent correctement.', failures?'error':'success');
-      } finally { button.disabled = false; }
+      } finally { setNovaProgress('push-test-progress',false); button.disabled = false; }
     });
     document.getElementById('btn-admin-reset-prefs')?.addEventListener('click', () => {
       if (!confirm('Réinitialiser uniquement les préférences locales de cette console ?')) return;
