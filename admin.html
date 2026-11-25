@@ -2141,7 +2141,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           headers: {
             'Content-Type': 'application/json',
             'X-Appwrite-Project': APPWRITE_PROJECT_ID,
-            ...(jwt ? { 'X-Appwrite-User-JWT': jwt } : {})
+            ...(jwt ? { 'X-Appwrite-JWT': jwt } : {})
           },
           body: JSON.stringify({
             body: JSON.stringify(payload),
@@ -2151,7 +2151,13 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           })
         });
       } catch (error) {
-        throw new Error('Impossible de joindre la fonction NOVANOD. Vérifie ta connexion Internet puis réessaie.');
+        const detail = String(error?.message || error || 'Erreur réseau inconnue');
+        const online = navigator.onLine ? 'navigateur en ligne' : 'navigateur hors ligne';
+        console.error('[NOVANOD_FUNCTION_FETCH]', { endpoint, online, errorName: error?.name || 'Error', message: detail });
+        if (/failed to fetch|networkerror|load failed/i.test(detail)) {
+          throw new Error('Connexion à Appwrite impossible (CORS, endpoint ou réseau). Vérifie les domaines autorisés dans Appwrite et l’URL de la fonction. Détail navigateur : ' + detail);
+        }
+        throw new Error('Échec de la requête vers Appwrite : ' + detail);
       }
 
       let execution;
