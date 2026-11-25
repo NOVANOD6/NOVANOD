@@ -1598,10 +1598,8 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.1"></script>
-
   <script type="module">
-    import { Client as AppwritePushClient, Push as AppwritePush } from 'https://cdn.jsdelivr.net/npm/appwrite@29.0.0/+esm';
+    import { Client, Account, Functions, Storage, ID } from 'https://cdn.jsdelivr.net/npm/appwrite@14.0.1/+esm';
 
     const APPWRITE_ENDPOINT = 'https://fra.cloud.appwrite.io/v1';
     const APPWRITE_PROJECT_ID = '6ad4bd7b0036d37d3561';
@@ -1613,11 +1611,11 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       '6af9a471001fa1cac5b9'
     ];
 
-    const client = new Appwrite.Client().setEndpoint(APPWRITE_ENDPOINT).setProject(APPWRITE_PROJECT_ID);
-    const account = new Appwrite.Account(client);
-    const functions = new Appwrite.Functions(client);
-    const storage = new Appwrite.Storage(client);
-    const adminPushClient = new AppwritePushClient().setEndpoint(APPWRITE_ENDPOINT).setProject(APPWRITE_PROJECT_ID);
+    const client = new Client().setEndpoint(APPWRITE_ENDPOINT).setProject(APPWRITE_PROJECT_ID);
+    const account = new Account(client);
+    const functions = new Functions(client);
+    const storage = new Storage(client);
+    let adminPushClient = null;
     let adminPush = null;
     let adminPushStarting = false;
     const adminPushStatus = document.getElementById('admin-push-status');
@@ -1626,6 +1624,8 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       if (adminPush || adminPushStarting) return;
       adminPushStarting = true;
       try {
+        const { Client: AppwritePushClient, Push: AppwritePush } = await import('https://cdn.jsdelivr.net/npm/appwrite@29.0.0/+esm');
+        adminPushClient = new AppwritePushClient().setEndpoint(APPWRITE_ENDPOINT).setProject(APPWRITE_PROJECT_ID);
         let pushClientId = localStorage.getItem('novanod_push_client_id');
         if (!pushClientId) { pushClientId = crypto.randomUUID(); localStorage.setItem('novanod_push_client_id', pushClientId); }
         adminPushClient.setPushClientId(pushClientId);
@@ -1718,7 +1718,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       setStatus(loginStatus, "Création du compte en cours...", "info");
       try {
         await account.deleteSession('current').catch(() => {});
-        const newUser = await account.create(Appwrite.ID.unique(), email, password);
+        const newUser = await account.create(ID.unique(), email, password);
         document.getElementById('pending-user-id').textContent = newUser.$id;
         screenLogin.classList.add('hidden');
         screenPending.classList.remove('hidden');
