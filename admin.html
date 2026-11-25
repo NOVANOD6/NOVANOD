@@ -1598,8 +1598,21 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.1"></script>
+
   <script type="module">
-    import { Client, Account, Functions, Storage, ID } from 'https://cdn.jsdelivr.net/npm/appwrite@14.0.1/+esm';
+    // Reprendre le chargement UMD Appwrite de la version de référence.
+    // Le SDK Push reste chargé dynamiquement après authentification.
+    const { Client, Account, Functions, Storage, ID } = window.Appwrite || {};
+
+    if (!Client || !Account || !Functions || !Storage || !ID) {
+      const status = document.getElementById('login-status');
+      if (status) {
+        status.textContent = "Impossible de charger le service de connexion. Actualise la page et réessaie.";
+        status.className = "status-msg error";
+      }
+      throw new Error("SDK Appwrite indisponible");
+    }
 
     const APPWRITE_ENDPOINT = 'https://fra.cloud.appwrite.io/v1';
     const APPWRITE_PROJECT_ID = '6ad4bd7b0036d37d3561';
