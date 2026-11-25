@@ -1629,7 +1629,6 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
   <script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.1"></script>
 
   <script type="module">
-    import { startRegistration, startAuthentication } from 'https://cdn.jsdelivr.net/npm/@simplewebauthn/browser@9/+esm';
     import { Client as AppwritePushClient, Push as AppwritePush } from 'https://cdn.jsdelivr.net/npm/appwrite@29.0.0/+esm';
 
     const APPWRITE_ENDPOINT = 'https://fra.cloud.appwrite.io/v1';
@@ -1766,8 +1765,6 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           screenLogin.classList.add('hidden');
           screenAdmin.classList.remove('hidden');
           await startAdminPush();
-          // Charger les passkeys uniquement après authentification administrateur.
-          await refreshPasskeys();
         } else {
           setStatus(loginStatus, `Accès refusé. Ton ID (${user.$id}) n'est pas autorisé dans ADMIN_USER_IDS.`, "error");
           await account.deleteSession('current').catch(() => {});
@@ -2030,60 +2027,29 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       setStatus(document.getElementById('settings-status'), 'Préférences enregistrées sur cet appareil.', 'success');
     });
 
-    const fingerprintStatus = document.getElementById('fingerprint-status');
-    const btnRegisterFingerprint = document.getElementById('btn-register-fingerprint');
-    const btnLoginFingerprint = document.getElementById('btn-login-fingerprint');
-    let platformAuthenticatorAvailable = false;
-    async function detectPlatformAuthenticator(showFeedback = false) {
-      const supported = !!(window.isSecureContext && window.PublicKeyCredential && typeof PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable === 'function');
-      if (!supported) {
-        btnRegisterFingerprint.classList.add('hidden');
-        btnLoginFingerprint.classList.add('hidden');
-        if (showFeedback) setStatus(fingerprintStatus, 'La biométrie de plateforme n’est pas disponible dans ce navigateur ou ce contexte. Utilise le site en HTTPS et vérifie le verrouillage sécurisé Android.', 'info');
-        return false;
-      }
-      try {
-        platformAuthenticatorAvailable = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
-        btnRegisterFingerprint.classList.toggle('hidden', !platformAuthenticatorAvailable);
-        btnLoginFingerprint.classList.toggle('hidden', !platformAuthenticatorAvailable);
-        if (!platformAuthenticatorAvailable && showFeedback) setStatus(fingerprintStatus, 'Aucun authentificateur de plateforme compatible détecté. Vérifie le verrouillage sécurisé Android.', 'info');
-        return platformAuthenticatorAvailable;
-      } catch (error) {
-        if (showFeedback) setStatus(fingerprintStatus, 'Vérification biométrique impossible : ' + (error.message || error), 'error');
-        return false;
-      }
-    }
-    // Détection silencieuse : aucun avertissement n'est affiché avant une action de l'utilisateur.
-    detectPlatformAuthenticator();
-
     async function callNovaFunction(payload) {
       if (!NOVA_FUNCTION_ID || NOVA_FUNCTION_ID === 'COLLE_ICI_LE_FUNCTION_ID') {
         throw new Error('Identifiant de fonction NOVANOD non configuré.');
       }
 
-      // Seules les deux étapes du démarrage d'une connexion passkey sont publiques :
-      // aucun compte Appwrite n'existe encore dans le navigateur à ce stade.
-      const publicWebAuthnAction = ['webauthn_login_options', 'webauthn_login_verify'].includes(payload?.action);
-      let jwt = '';
-      if (!publicWebAuthnAction) {
-        // Toutes les autres actions exigent une vraie session d'un administrateur autorisé.
-        let user;
-        try {
-          user = await account.get();
-        } catch (error) {
-          throw new Error('Session Appwrite expirée ou absente. Déconnecte-toi puis reconnecte-toi avant de relancer cette action.');
-        }
-        if (!user || !ADMIN_USER_IDS.includes(user.$id)) {
-          throw new Error('Accès refusé : ce compte Appwrite ne figure pas dans la liste des deux administrateurs autorisés.');
-        }
-        try {
-          const token = await account.createJWT();
-          jwt = token && token.jwt;
-        } catch (error) {
-          throw new Error('Impossible de créer le jeton temporaire Appwrite. Reconnecte-toi puis réessaie.');
-        }
-        if (!jwt) throw new Error('Appwrite n’a pas fourni de jeton de session temporaire.');
+      // Toutes les actions de la console exigent une session d'un administrateur autorisé.
+      let user;
+      try {
+        user = await account.get();
+      } catch (error) {
+        throw new Error('Session Appwrite expirée ou absente. Déconnecte-toi puis reconnecte-toi avant de relancer cette action.');
       }
+      if (!user || !ADMIN_USER_IDS.includes(user.$id)) {
+        throw new Error('Accès refusé : ce compte Appwrite ne figure pas dans la liste des deux administrateurs autorisés.');
+      }
+      let jwt = '';
+      try {
+        const token = await account.createJWT();
+        jwt = token && token.jwt;
+      } catch (error) {
+        throw new Error('Impossible de créer le jeton temporaire Appwrite. Reconnecte-toi puis réessaie.');
+      }
+      if (!jwt) throw new Error('Appwrite n’a pas fourni de jeton de session temporaire.');
 
       const endpoint = (APPWRITE_ENDPOINT.endsWith('/') ? APPWRITE_ENDPOINT.slice(0, -1) : APPWRITE_ENDPOINT) +
         '/functions/' + encodeURIComponent(NOVA_FUNCTION_ID) + '/executions';
@@ -2127,92 +2093,6 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       }
       return result;
     }
-
-    async function refreshPasskeys() {
-      const list = document.getElementById('passkey-list');
-      const count = document.getElementById('passkey-count');
-      if (!list || !count) return;
-      try {
-        const result = await callNovaFunction({ action: 'webauthn_list_credentials' });
-        if (result.error) throw new Error(result.error);
-        if (!Array.isArray(result.credentials)) throw new Error('Réponse invalide du serveur : la liste des passkeys n’a pas été confirmée.');
-        const items = result.credentials;
-        count.textContent = items.length + ' / 1 passkey enregistrée pour ce compte administrateur.';
-        const safeText = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-        list.innerHTML = items.length ? items.map((item, index) =>
-          '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--border-color,#ddd)">' +
-          '<span><b>Passkey ' + (index + 1) + '</b><br><small>Ajoutée le ' + safeText(item.createdAt || 'Date inconnue') + '</small></span>' +
-          '<button class="admin-action danger" data-passkey-delete="' + safeText(item.id) + '">Supprimer</button></div>'
-        ).join('') : '<div class="hint">Aucune passkey enregistrée pour ce compte.</div>';
-        btnRegisterFingerprint.disabled = items.length >= 1;
-        btnRegisterFingerprint.querySelector('span').textContent = items.length >= 1 ? 'Passkey déjà enregistrée' : 'Enregistrer une passkey (0/1)';
-      } catch (e) {
-        count.textContent = 'Impossible de charger les passkeys.';
-        list.textContent = e.message;
-      }
-    }
-    document.getElementById('btn-refresh-passkeys')?.addEventListener('click', refreshPasskeys);
-    document.getElementById('passkey-list')?.addEventListener('click', async ev => {
-      const button = ev.target.closest('[data-passkey-delete]');
-      if (!button) return;
-      if (!confirm('Supprimer cette passkey de ce compte administrateur ?')) return;
-      button.disabled = true;
-      try {
-        const result = await callNovaFunction({ action: 'webauthn_delete_credential', credentialRecordId: button.dataset.passkeyDelete });
-        if (result.error) throw new Error(result.error);
-        setStatus(fingerprintStatus, 'Passkey supprimée.', 'success');
-        await refreshPasskeys();
-      } catch (e) {
-        button.disabled = false;
-        setStatus(fingerprintStatus, e.message, 'error');
-      }
-    });
-    btnRegisterFingerprint.addEventListener('click', async () => {
-      setStatus(fingerprintStatus, "Préparation de l'enregistrement sécurisé…", "info");
-      btnRegisterFingerprint.disabled = true;
-      try {
-        if (!(await detectPlatformAuthenticator(true))) throw new Error('Aucun authentificateur de plateforme disponible. Vérifie le verrouillage sécurisé Android.');
-        const rawOptions = await callNovaFunction({ action: 'webauthn_register_options' });
-        if (rawOptions?.error) throw new Error(String(rawOptions.error));
-        const options = normalizeWebAuthnOptions(rawOptions, 'register');
-        const credential = await startRegistration({ optionsJSON: options });
-        if (!credential || typeof credential !== 'object' || !credential.id || !credential.response) {
-          throw new Error("Android n'a pas renvoyé une passkey valide. Vérifie le verrouillage sécurisé de l'appareil puis réessaie.");
-        }
-        const result = await callNovaFunction({ action: 'webauthn_register_verify', credential });
-        if (result.error) throw new Error(result.error);
-        setStatus(fingerprintStatus, "Passkey enregistrée sur cet appareil.", "success");
-      } catch (e) {
-        const message = /not allowed|timed out|NotAllowedError/i.test(e.message)
-          ? "Enregistrement annulé ou expiré. Vérifie qu'un verrouillage d'écran et une empreinte/option biométrique sont configurés sur Android, puis réessaie."
-          : e.message;
-        setStatus(fingerprintStatus, message, "error");
-      } finally {
-        // Recalculer la limite même après un succès : ne pas réactiver la 6e passkey.
-        await refreshPasskeys();
-      }
-    });
-    btnLoginFingerprint.addEventListener('click', async () => {
-      setStatus(loginStatus, "Lecture biométrique...", "info");
-      try {
-        if (!(await detectPlatformAuthenticator())) throw new Error("L’authentificateur biométrique de ce téléphone n’est pas disponible.");
-        const rawOptions = await callNovaFunction({ action: 'webauthn_login_options' });
-        if (rawOptions?.noCredentials || rawOptions?.available === false) {
-          setStatus(loginStatus, rawOptions.message || 'Aucune passkey enregistrée. Connecte-toi avec ton mot de passe puis enregistre une passkey dans Sécurité.', 'info');
-          return;
-        }
-        if (rawOptions?.error) throw new Error(rawOptions.error);
-        const optionsJSON = normalizeWebAuthnOptions(rawOptions, 'login');
-        const credential = await startAuthentication({ optionsJSON: { ...optionsJSON, userVerification: 'required' } });
-        const result = await callNovaFunction({ action: 'webauthn_login_verify', credential });
-        if (result.error) throw new Error(result.error);
-        await account.createSession(result.userId, result.secret);
-        await checkAdminSession();
-      } catch (e) {
-        setStatus(loginStatus, e.message, "error");
-      }
-    });
-
 
     // ===================== MODULES ADMIN NOVANOD =====================
     const adminCall = async (action, extra = {}) => {
