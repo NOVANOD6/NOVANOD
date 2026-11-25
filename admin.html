@@ -1741,22 +1741,42 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     });
 
     let currentAdminUserId = '';
+    const normalizeAdminUserId = value => String(value || '').trim();
+    const isAuthorizedAdmin = userId => ADMIN_USER_IDS.includes(normalizeAdminUserId(userId));
+
+    async function getAdminIdentity() {
+      const user = await account.get();
+      const userId = normalizeAdminUserId(user?.$id);
+      if (!userId) throw new Error('Appwrite a renvoyé une session sans identifiant utilisateur.');
+      return { user, userId, authorized: isAuthorizedAdmin(userId) };
+    }
+
     async function checkAdminSession() {
       try {
-        const user = await account.get();
-        if (ADMIN_USER_IDS.includes(user.$id)) {
-          currentAdminUserId = user.$id;
-          document.getElementById('admin-welcome').textContent = user.name || user.email;
+        const identity = await getAdminIdentity();
+        console.info('[NOVANOD_ADMIN_UI] session_check', {
+          userId: identity.userId,
+          authorized: identity.authorized,
+          projectId: APPWRITE_PROJECT_ID,
+          functionId: NOVA_FUNCTION_ID
+        });
+        if (identity.authorized) {
+          currentAdminUserId = identity.userId;
+          document.getElementById('admin-welcome').textContent = identity.user.name || identity.user.email || identity.userId;
           screenLogin.classList.add('hidden');
           screenAdmin.classList.remove('hidden');
           await startAdminPush();
-          // Charger les passkeys uniquement après authentification administrateur.
           await refreshPasskeys();
         } else {
-          setStatus(loginStatus, `Accès refusé. Ton ID (${user.$id}) n'est pas autorisé dans ADMIN_USER_IDS.`, "error");
-          await account.deleteSession('current').catch(() => {});
+          currentAdminUserId = '';
+          screenAdmin.classList.add('hidden');
+          screenLogin.classList.remove('hidden');
+          setStatus(loginStatus, `Accès refusé : Appwrite confirme que la session active appartient à l'ID ${identity.userId}, qui ne fait pas partie des deux administrateurs autorisés. Déconnecte cette session et reconnecte-toi avec le compte administrateur correct. Aucun accès n'a été accordé.`, 'error');
         }
-      } catch (e) { setStatus(loginStatus, 'Session non restaurée : ' + (e.message || 'aucune session active.'), 'info'); }
+      } catch (e) {
+        currentAdminUserId = '';
+        setStatus(loginStatus, 'Session non restaurée : ' + (e.message || 'aucune session active.'), 'info');
+      }
     }
 
     document.getElementById('btn-login').addEventListener('click', async () => {
@@ -2075,22 +2095,41 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       let jwt = '';
       if (!publicWebAuthnAction) {
         // Toutes les autres actions exigent une vraie session d'un administrateur autorisé.
-        let user;
+        let identity;
         try {
-          user = await account.get();
+          identity = await getAdminIdentity();
         } catch (error) {
-          throw new Error('Session Appwrite expirée ou absente. Déconnecte-toi puis reconnecte-toi avant de relancer cette action.');
+          throw new Error('Impossible de vérifier la session Appwrite : ' + (error?.message || 'session absente ou expirée.'));
         }
-        if (!user || !ADMIN_USER_IDS.includes(user.$id)) {
-          throw new Error('Accès refusé : ce compte Appwrite ne figure pas dans la liste des deux administrateurs autorisés.');
+        if (!identity.authorized) {
+          console.warn('[NOVANOD_ADMIN_UI] action_blocked', {
+            action: payload?.action || 'unknown',
+            userId: identity.userId,
+            authorized: false
+          });
+          throw new Error(`Accès refusé avant appel serveur : le compte Appwrite actif (${identity.userId}) n'est pas l'un des deux administrateurs autorisés. Vérifie le compte connecté.`);
         }
         try {
           const token = await account.createJWT();
           jwt = token && token.jwt;
         } catch (error) {
-          throw new Error('Impossible de créer le jeton temporaire Appwrite. Reconnecte-toi puis réessaie.');
+          throw new Error('Impossible de créer le JWT Appwrite : ' + (error?.message || 'erreur inconnue.'));
         }
-        if (!jwt) throw new Error('Appwrite n’a pas fourni de jeton de session temporaire.');
+        if (!jwt) throw new Error('Appwrite n’a pas fourni de JWT de session temporaire.');
+        // Relecture après création du JWT : évite d'envoyer un jeton si la session a changé entre-temps.
+        const identityAfterJwt = await getAdminIdentity().catch(error => {
+          throw new Error('Impossible de revérifier la session après création du JWT : ' + (error?.message || 'erreur inconnue.'));
+        });
+        if (!identityAfterJwt.authorized || identityAfterJwt.userId !== identity.userId) {
+          throw new Error('La session Appwrite a changé pendant la création du JWT. Action annulée par sécurité ; reconnecte-toi.');
+        }
+        console.info('[NOVANOD_ADMIN_UI] jwt_ready', {
+          action: payload?.action || 'unknown',
+          userId: identity.userId,
+          recheckedUserId: identityAfterJwt.userId,
+          authorized: true,
+          jwtPresent: true
+        });
       }
 
       const endpoint = (APPWRITE_ENDPOINT.endsWith('/') ? APPWRITE_ENDPOINT.slice(0, -1) : APPWRITE_ENDPOINT) +
