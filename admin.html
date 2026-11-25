@@ -1285,7 +1285,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       <div id="pane-security" class="dash-pane">
         <div class="glass-card">
           <h3 class="card-title" style="color:var(--dark-brown);">Sécurité biométrique</h3>
-          <div class="hint">Enregistre jusqu'à cinq passkeys sur ton téléphone. Android déclenchera l'authentification biométrique locale (empreinte si le capteur et le système la proposent, sinon le mécanisme sécurisé configuré sur l'appareil). NOVANOD ne reçoit et ne stocke jamais ton empreinte digitale.</div>
+          <div class="hint">Enregistre une seule Passkey sur ce compte administrateur. Android utilisera la vérification locale disponible (empreinte, visage ou code PIN sécurisé). NOVANOD ne reçoit et ne stocke jamais ton empreinte digitale. Android déclenchera l'authentification biométrique locale (empreinte si le capteur et le système la proposent, sinon le mécanisme sécurisé configuré sur l'appareil). NOVANOD ne reçoit et ne stocke jamais ton empreinte digitale.</div>
           <div id="fingerprint-status" class="status-msg" role="status" aria-live="polite"></div>
           <div id="passkey-count" class="hint">Chargement des passkeys…</div>
           <div id="passkey-list" class="user-list" aria-live="polite"></div>
@@ -2289,15 +2289,15 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         if (result.error) throw new Error(result.error);
         if (!Array.isArray(result.credentials)) throw new Error('Réponse invalide du serveur : la liste des passkeys n’a pas été confirmée.');
         const items = result.credentials;
-        count.textContent = items.length + ' / 5 passkey(s) enregistrée(s) pour ce compte administrateur.';
+        count.textContent = items.length + ' / 1 Passkey enregistrée pour ce compte administrateur.';
         const safeText = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
         list.innerHTML = items.length ? items.map((item, index) =>
           '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--border-color,#ddd)">' +
           '<span><b>Passkey ' + (index + 1) + '</b><br><small>Ajoutée le ' + safeText(item.createdAt || 'Date inconnue') + '</small></span>' +
           '<button class="admin-action danger" data-passkey-delete="' + safeText(item.id) + '">Supprimer</button></div>'
         ).join('') : '<div class="hint">Aucune passkey enregistrée pour ce compte.</div>';
-        btnRegisterFingerprint.disabled = items.length >= 5;
-        btnRegisterFingerprint.querySelector('span').textContent = items.length >= 5 ? 'Limite de cinq passkeys atteinte' : 'Ajouter une passkey (' + items.length + '/5)';
+        btnRegisterFingerprint.disabled = items.length >= 1;
+        btnRegisterFingerprint.querySelector('span').textContent = items.length >= 1 ? 'Une Passkey est déjà enregistrée' : 'Enregistrer une Passkey (0/1)';
       } catch (e) {
         count.textContent = 'Impossible de charger les passkeys.';
         list.textContent = e.message;
@@ -2340,7 +2340,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           : e.message;
         setStatus(fingerprintStatus, message, "error");
       } finally {
-        // Recalculer la limite même après un succès : ne pas réactiver la 6e passkey.
+        // Recharger le compteur après chaque tentative : une seule Passkey est autorisée.
         await refreshPasskeys();
       }
     });
