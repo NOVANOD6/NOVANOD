@@ -2599,38 +2599,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
 #screen-admin .admin-table th{background:var(--admin-wine);color:var(--admin-paper)}
 #screen-admin .admin-table td{border-bottom:1px solid var(--admin-line)}
 @media(max-width:700px){#screen-admin .glass-card{padding:12px 11px;margin-bottom:9px}#screen-admin .admin-grid{grid-template-columns:minmax(0,1fr)}#screen-admin .btn-3d{font-size:11px;padding:8px 9px}#screen-admin .workflow-actions{display:flex;flex-wrap:wrap;gap:5px}#screen-admin .stats-row{flex-wrap:wrap}#screen-admin .stat-box{min-width:28%}}
-</style></head><body><div class="brand">NOVANOD</div><h1>'+safeTitle+'</h1><p class="meta">Rapport administratif · Généré le '+safeDate+'</p>'+renderReportHtml(value)+'<div class="footer">Document confidentiel — NOVANOD. Rapport établi à partir des données disponibles au moment de l’analyse.</div><script>window.onload=()=>setTimeout(()=>window.print(),350)<\/script>  <script>
-    (function () {
-      const button = document.getElementById('btn-login');
-      if (!button) return;
-      button.addEventListener('click', async function () {
-        if (button.dataset.moduleReady === '1' || button.dataset.fallbackBusy === '1') return;
-        const status = document.getElementById('login-status');
-        const show = (message, type) => { if (status) { status.textContent = message; status.className = 'status-msg ' + type; } };
-        const email = document.getElementById('admin-email')?.value.trim();
-        const password = document.getElementById('admin-password')?.value || '';
-        if (!email || !password) { show('Veuillez saisir votre e-mail et votre mot de passe.', 'error'); return; }
-        if (!window.Appwrite) { show('Le SDK Appwrite ne s’est pas chargé. Actualise la page et réessaie.', 'error'); return; }
-        button.dataset.fallbackBusy = '1'; button.disabled = true; show('Vérification de la connexion…', 'info');
-        try {
-          const client = new Appwrite.Client().setEndpoint('https://fra.cloud.appwrite.io/v1').setProject('6ad4bd7b0036d37d3561');
-          const account = new Appwrite.Account(client);
-          try { await account.deleteSession('current'); } catch (_) {}
-          await account.createEmailPasswordSession(email, password);
-          const user = await account.get();
-          if (!['6af9b373003931cb00bd', '6af9a471001fa1cac5b9'].includes(String(user.$id || ''))) {
-            try { await account.deleteSession('current'); } catch (_) {}
-            show('Accès refusé : ce compte ne figure pas parmi les administrateurs autorisés.', 'error'); return;
-          }
-          show('Compte administrateur authentifié. Actualise la page pour initialiser les modules de la console.', 'success');
-          document.getElementById('screen-login')?.classList.add('hidden');
-          document.getElementById('screen-admin')?.classList.remove('hidden');
-        } catch (error) {
-          show('Échec de connexion Appwrite : ' + (error?.message || String(error)), 'error');
-        } finally { button.disabled = false; delete button.dataset.fallbackBusy; }
-      });
-    })();
-  </script>
+</style></head><body><div class="brand">NOVANOD</div><h1>'+safeTitle+'</h1><p class="meta">Rapport administratif · Généré le '+safeDate+'</p>'+renderReportHtml(value)+'<div class="footer">Document confidentiel — NOVANOD. Rapport établi à partir des données disponibles au moment de l’analyse.</div><script>window.onload=()=>setTimeout(()=>window.print(),350)<\/script>
 </body></html>');
       w.document.close();
     }
