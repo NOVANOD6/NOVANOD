@@ -1930,26 +1930,6 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         </div>`;
     }
 
-    async function refreshUsersLegacy() {
-      usersLoadedOnce = true;
-      setStatus(usersStatus, 'Chargement...', 'info');
-      try {
-        const result = await callNovaFunction({ action: 'list_users' });
-        if (result.error) throw new Error(result.error);
-        document.getElementById('stat-total').textContent = result.totalCount;
-        document.getElementById('stat-buyers').textContent = result.buyerCount;
-        document.getElementById('stat-visitors').textContent = result.visitorCount;
-        document.getElementById('buyers-list').innerHTML = result.buyers.length
-          ? result.buyers.map(u => renderUserRow(u, 'buyer')).join('')
-          : '<div class="hint">Aucun acheteur pour l\'instant.</div>';
-        document.getElementById('visitors-list').innerHTML = result.visitors.length
-          ? result.visitors.map(u => renderUserRow(u, 'visitor')).join('')
-          : '<div class="hint">Aucun visiteur pour l\'instant.</div>';
-        setStatus(usersStatus, '', 'info');
-      } catch (e) {
-        setStatus(usersStatus, 'Erreur : ' + e.message, 'error');
-      }
-    }
     document.getElementById('btn-refresh-users').addEventListener('click', refreshUsers);
 
     // ===================== APERÇU MULTI-ÉCRANS =====================
@@ -3199,7 +3179,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         generatedAt: new Date().toISOString(),
         page: location.href.split('?')[0].split('#')[0],
         appwrite: { endpoint: APPWRITE_ENDPOINT, projectId: APPWRITE_PROJECT_ID, functionId: NOVA_FUNCTION_ID },
-        admin: { userId: currentAdmin?.$id || currentAdmin?.id || null },
+        admin: { userId: currentAdminUserId || null },
         browser: { userAgent: navigator.userAgent, language: navigator.language, online: navigator.onLine, secureContext: window.isSecureContext },
         viewport: { width: innerWidth, height: innerHeight, pixelRatio: devicePixelRatio || 1 },
         preferences: (() => { try { return JSON.parse(localStorage.getItem('novanod_admin_preferences') || '{}'); } catch { return {}; } })(),
