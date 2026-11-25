@@ -1099,9 +1099,9 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     .analysis-action span{font-size:11px!important}
     .btn-3d{width:auto!important;min-width:0!important;min-height:38px!important;max-height:none!important;height:auto!important;padding:9px 12px!important;margin:0 5px 7px 0!important;border-radius:7px!important;box-shadow:none!important;font-size:11px!important}
     .admin-toolbar>.btn-3d,.workflow-actions>.btn-3d{flex:0 1 auto!important}
-    .nova-progress{height:5px;width:100%;margin:8px 0 14px;overflow:hidden;border-radius:99px;background:rgba(59,20,32,.12)}
-    .nova-progress span{display:block;width:35%;height:100%;border-radius:99px;background:#E64A38;animation:novaProgressSweep 1.25s ease-in-out infinite}
-    @keyframes novaProgressSweep{0%{transform:translateX(-110%)}100%{transform:translateX(310%)}}
+    .nova-progress{position:relative;height:10px;width:100%;margin:8px 0 18px;overflow:visible;border-radius:99px;background:rgba(59,20,32,.14)}
+    .nova-progress span{display:block;width:0;height:100%;border-radius:99px;background:linear-gradient(90deg,#E64A38,#3B1420);transition:width .35s ease}
+    .nova-progress small{position:absolute;right:0;top:13px;color:#3B1420;font-size:11px;font-weight:800;font-variant-numeric:tabular-nums}
     .nova-progress.hidden{display:none!important}
     @media(max-width:760px){.glass-card{padding:14px 12px!important}.dash-tabs{flex-wrap:nowrap!important;overflow-x:auto!important}.dash-tab{flex:0 0 auto!important;white-space:nowrap!important}.analysis-action{min-height:52px!important}.analysis-action svg{width:27px!important;height:27px!important}}
 
@@ -1195,7 +1195,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           <div class="hint">
             nova.ai n'apparaît plus sur le site public. Il analyse en arrière-plan le code du site et l'activité des utilisateurs, et dépose ici ses observations — jamais visibles des clients.
           </div>
-          <div id="reports-status" class="status-msg"></div>
+          <div id="reports-status" class="status-msg"></div><div id="reports-progress" class="nova-progress hidden" aria-live="polite"><span></span><small>0%</small></div>
           <button id="btn-run-analysis" class="btn-3d">⌕ Lancer une analyse maintenant</button>
         </div>
         <div class="glass-card">
@@ -1531,7 +1531,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
             <button id="btn-refresh-github-audit" class="btn-3d btn-secondary" type="button">Actualiser le statut</button>
             <button id="btn-analyze-github-audit" class="btn-3d btn-secondary" type="button">Analyser le dernier audit terminé</button>
           </div>
-          <div id="github-audit-status" class="status-msg" role="status" aria-live="polite">Prêt. Lance un audit GitHub pour obtenir des résultats actualisés.</div><div id="github-audit-progress" class="nova-progress hidden" aria-hidden="true"><span></span></div>
+          <div id="github-audit-status" class="status-msg" role="status" aria-live="polite">Prêt. Lance un audit GitHub pour obtenir des résultats actualisés.</div><div id="github-audit-progress" class="nova-progress hidden" role="progressbar" aria-label="Progression des tests et audits" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span><small>0%</small></div>
           <a id="github-audit-run-link" class="hidden" href="#" target="_blank" rel="noopener">Ouvrir l’exécution GitHub Actions</a>
           <h4>Résultat Gemini · audit automatisé</h4>
           <div id="github-audit-gemini" class="admin-output">En attente.</div>
@@ -1567,7 +1567,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
             <button class="btn-3d btn-secondary analysis-action" data-analysis="seo"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="17" cy="17" r="10"/><path d="m24 24 10 10M12 17h10M17 12v10"/></svg><span>Expert SEO</span></button>
             <button class="btn-3d btn-secondary analysis-action" data-analysis="devops"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M6 10h28v20H6zM12 17l5 3-5 3M20 23h8"/></svg><span>Expert DevOps</span></button>
           </div>
-          <div id="analysis-status" class="status-msg" role="status" aria-live="polite"></div><div id="analysis-progress" class="nova-progress hidden" aria-hidden="true"><span></span></div>
+          <div id="analysis-status" class="status-msg" role="status" aria-live="polite"></div><div id="analysis-progress" class="nova-progress hidden" role="progressbar" aria-label="Progression de l’analyse" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span><small>0%</small></div>
           <h4>Résultat Gemini</h4>
           <div id="analysis-gemini-output" class="admin-output">En attente du rapport Gemini.</div>
           <h4>Résultat Groq</h4>
@@ -1687,7 +1687,22 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     const screenPending = document.getElementById('screen-pending');
     const loginStatus = document.getElementById('login-status');
 
-    function setNovaProgress(id, active) { const bar=document.getElementById(id); if(bar) bar.classList.toggle('hidden',!active); }
+    const novaProgressTimers = new Map();
+    function setNovaProgress(id, active, value) {
+      const bar=document.getElementById(id); if(!bar) return;
+      const fill=bar.querySelector('span'), label=bar.querySelector('small');
+      const apply=(n)=>{const pct=Math.max(0,Math.min(100,Math.round(n)));if(fill)fill.style.width=pct+'%';if(label)label.textContent=pct+'%';bar.setAttribute('aria-valuenow',String(pct));};
+      clearInterval(novaProgressTimers.get(id));
+      if(active){
+        bar.classList.remove('hidden');apply(Number.isFinite(value)?value:0);
+        let pct=Number.isFinite(value)?value:0;
+        const timer=setInterval(()=>{pct=Math.min(92,pct+(pct<55?4:pct<78?2:0.7));apply(pct);},700);
+        novaProgressTimers.set(id,timer);
+      }else{
+        apply(100);
+        setTimeout(()=>{bar.classList.add('hidden');apply(0);},650);
+      }
+    }
     function setStatus(el, msg, type = 'info') {
       el.textContent = msg || '';
       el.className = 'status-msg' + (msg ? ' ' + type : '');
@@ -1904,6 +1919,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     document.getElementById('btn-run-analysis').addEventListener('click', async () => {
       const btn = document.getElementById('btn-run-analysis');
       btn.disabled = true;
+      setNovaProgress('reports-progress',true,0);
       setStatus(reportsStatus, 'Récupération du dernier audit GitHub puis analyse Gemini + Groq…', 'info');
       try {
         const result = await callNovaFunction({ action: 'analyze_github_audit', providerMode: 'both' });
@@ -1922,6 +1938,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       } catch (e) {
         setStatus(reportsStatus, 'Erreur : ' + e.message, 'error');
       } finally {
+        setNovaProgress('reports-progress',false);
         btn.disabled = false;
       }
     });
@@ -2929,6 +2946,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     }));
     async function analyzeLatestGithubAudit() {
       const status=document.getElementById('github-audit-status');
+      setNovaProgress('analysis-progress',true,0);
       setStatus(status,'Analyse du dernier audit terminé avec Gemini et Groq…','info');
       out('github-audit-combined','Analyse en cours…');
       try {
@@ -2948,6 +2966,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         setStatus(status,partial?'Rapport partiel : un fournisseur IA est indisponible.':'Audit analysé. Le rapport et les preuves sont enregistrés dans Appwrite.','success');
         return r;
       } catch(e) { setStatus(status,e.message,'error'); out('github-audit-combined','Erreur : '+e.message); throw e; }
+      finally { setNovaProgress('analysis-progress',false); }
     }
     document.getElementById('btn-analyze-github-audit')?.addEventListener('click',async()=>{
       const btn=document.getElementById('btn-analyze-github-audit');btn.disabled=true;
