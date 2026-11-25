@@ -3225,7 +3225,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         'NOVANOD — checklist de configuration (aucun secret à copier ici)',
         '1. Appwrite : vérifier la fonction nova.ai, son déploiement et ses journaux.',
         '2. Appwrite : vérifier les variables serveur requises sans afficher leurs valeurs.',
-        '3. GitHub : Settings > Secrets and variables > Actions : vérifier GITHUB_WORKFLOW_TOKEN ou le secret utilisé par le backend.',
+        '3. GitHub : Settings > Secrets and variables > Actions : définir NOVA_AUDIT_TOKEN (ou GITHUB_AUDIT_TOKEN) avec la même valeur que NOVA_AUDIT_TOKEN côté fonction Appwrite.',
         '4. GitHub : Actions : vérifier les permissions du workflow et le dernier résultat Playwright/Lighthouse.',
         '5. WebAuthn : vérifier WEBAUTHN_RP_ID, HTTPS et l’URL exacte du site.',
         '6. Resend : conserver RESEND_API_KEY uniquement dans les variables serveur Appwrite; expéditeur de production = domaine vérifié.',
