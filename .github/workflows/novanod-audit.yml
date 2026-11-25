@@ -75,7 +75,7 @@ jobs:
           APPWRITE_PROJECT_ID: ${{ secrets.APPWRITE_PROJECT_ID }}
           APPWRITE_FUNCTION_ID: ${{ secrets.APPWRITE_FUNCTION_ID }}
           APPWRITE_API_KEY: ${{ secrets.APPWRITE_API_KEY }}
-          NOVA_AUDIT_TOKEN: ${{ secrets.NOVA_AUDIT_TOKEN }}
+          NOVA_AUDIT_TOKEN: ${{ secrets.GITHUB_AUDIT_TOKEN }}
         run: node scripts/post-audit-artifacts.mjs
 
       - name: Envoyer le rapport à Appwrite
@@ -85,7 +85,7 @@ jobs:
           APPWRITE_PROJECT_ID: ${{ secrets.APPWRITE_PROJECT_ID }}
           APPWRITE_FUNCTION_ID: ${{ secrets.APPWRITE_FUNCTION_ID }}
           APPWRITE_API_KEY: ${{ secrets.APPWRITE_API_KEY }}
-          NOVA_AUDIT_TOKEN: ${{ secrets.NOVA_AUDIT_TOKEN }}
+          NOVA_AUDIT_TOKEN: ${{ secrets.GITHUB_AUDIT_TOKEN }}
         run: node scripts/post-audit.mjs
       - name: Construire l’archive de livraison NOVANOD 2.5.23
         if: always()
