@@ -1248,6 +1248,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       </div>
 
       <div class="admin-toolbar"><div class="admin-toolbar-title">Centre de contrôle NOVANOD</div><input id="admin-module-search" class="admin-search" type="search" placeholder="Rechercher un module…" aria-label="Rechercher un module"></div>
+      <section id="admin-task-progress" class="admin-task-progress" role="status" aria-live="polite"><div class="admin-task-progress-head"><span id="admin-task-label">Opération en cours</span><strong id="admin-task-percent">0 %</strong></div><div class="admin-task-progress-track"><div id="admin-task-fill" class="admin-task-progress-fill"></div></div><small id="admin-task-detail">Préparation…</small></section>
       <div class="dash-tabs">
         <button class="dash-tab active" data-pane="pane-reports"><svg class="nav-illustration" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d='M12 3a7 7 0 1 0 4.95 11.95L21 19l-2 2-4.05-4.05A7 7 0 0 0 12 3Z'/><path d='M9 10h6M9 13h4'/></svg><span class="dash-label">nova.ai</span></button>
         <button class="dash-tab" data-pane="pane-security"><svg class="nav-illustration" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d='M12 3 20 6v5c0 5-3.4 8.5-8 10-4.6-1.5-8-5-8-10V6z'/><path d='m9 12 2 2 4-4'/></svg><span class="dash-label">Sécurité</span></button>
@@ -2010,9 +2011,12 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     document.getElementById('btn-run-analysis').addEventListener('click', async () => {
       const btn = document.getElementById('btn-run-analysis');
       btn.disabled = true;
+      taskProgress.update('Analyse nova.ai',12,'Connexion à la fonction et récupération des données…');
       setStatus(reportsStatus, 'Récupération du dernier audit GitHub puis analyse Gemini + Groq…', 'info');
       try {
+        taskProgress.update('Analyse nova.ai',38,'Exécution Gemini et Groq…');
         const result = await callNovaFunction({ action: 'analyze_github_audit', providerMode: 'both' });
+        taskProgress.update('Analyse nova.ai',82,'Enregistrement et actualisation des rapports…');
         if (result.error) throw new Error(result.error);
         const providers = result.providers || {};
         const parts = [];
@@ -2025,7 +2029,9 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         setStatus(reportsStatus, 'Audit GitHub analysé. Rapports IA enregistrés dans TablesDB.', 'success');
         renderAnalysisCharts(result);
         await refreshReports();
+        taskProgress.done('Analyse nova.ai', 'Rapports actualisés.');
       } catch (e) {
+        taskProgress.fail('Analyse nova.ai échouée',e.message);
         setStatus(reportsStatus, 'Erreur : ' + e.message, 'error');
       } finally {
         btn.disabled = false;
@@ -2322,22 +2328,28 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     btnRegisterFingerprint.addEventListener('click', async () => {
       setStatus(fingerprintStatus, "Préparation de l'enregistrement sécurisé…", "info");
       btnRegisterFingerprint.disabled = true;
+      taskProgress.update('Enregistrement Passkey',10,'Vérification de la compatibilité de cet appareil…');
       try {
         if (!(await detectPlatformAuthenticator(true))) throw new Error('Aucun authentificateur de plateforme disponible. Vérifie le verrouillage sécurisé Android (biométrie ou code PIN).');
+        taskProgress.update('Enregistrement Passkey',28,'Récupération des options sécurisées…');
         const rawOptions = await callNovaFunction({ action: 'webauthn_register_options' });
         if (rawOptions?.error) throw new Error(String(rawOptions.error));
         const options = normalizeWebAuthnOptions(rawOptions, 'register');
+        taskProgress.update('Enregistrement Passkey',48,'Confirme avec le mécanisme de sécurité Android…');
         const credential = await startRegistration({ optionsJSON: options });
         if (!credential || typeof credential !== 'object' || !credential.id || !credential.response) {
           throw new Error("Android n'a pas renvoyé une Passkey valide. Vérifie le verrouillage sécurisé de l'appareil (biométrie ou code PIN), puis réessaie.");
         }
+        taskProgress.update('Enregistrement Passkey',82,'Validation de la clé publique sur Appwrite…');
         const result = await callNovaFunction({ action: 'webauthn_register_verify', credential });
         if (result.error) throw new Error(result.error);
+        taskProgress.done('Passkey enregistrée','Une seule Passkey est autorisée pour ce compte.');
         setStatus(fingerprintStatus, "Passkey enregistrée sur cet appareil.", "success");
       } catch (e) {
         const message = /not allowed|timed out|NotAllowedError/i.test(e.message)
           ? "Enregistrement annulé ou expiré. Vérifie qu'un verrouillage d'écran sécurisé (empreinte, visage ou code PIN) est configuré sur Android, puis réessaie."
           : e.message;
+        taskProgress.fail('Enregistrement Passkey échoué',message);
         setStatus(fingerprintStatus, message, "error");
       } finally {
         // Recharger le compteur après chaque tentative : une seule Passkey est autorisée.
@@ -2376,19 +2388,46 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       const el = document.getElementById(id);
       if (el) el.textContent = typeof value === 'string' ? value : JSON.stringify(value, null, 2);
     };
+    const taskProgress = (() => {
+      const panel=document.getElementById('admin-task-progress');
+      const label=document.getElementById('admin-task-label');
+      const percent=document.getElementById('admin-task-percent');
+      const fill=document.getElementById('admin-task-fill');
+      const detail=document.getElementById('admin-task-detail');
+      let hideHandle;
+      return {
+        update(title,value,message='') {
+          if(!panel)return;
+          clearTimeout(hideHandle);panel.classList.add('active');
+          const n=Math.max(0,Math.min(100,Number(value)||0));
+          label.textContent=title;percent.textContent=Math.round(n)+' %';
+          fill.style.width=n+'%';detail.textContent=message||'Traitement en cours…';
+        },
+        done(title='Opération terminée',message='Résultat reçu et affiché.') {
+          this.update(title,100,message);
+          hideHandle=setTimeout(()=>panel.classList.remove('active'),5000);
+        },
+        fail(title='Opération interrompue',message='Consulte le message d’erreur ci-dessous.') {
+          this.update(title,100,message);
+          fill.style.background='#b42318';
+        }
+      };
+    })();
     const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, c => ({
       '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
     }[c]));
 
     const toBase64Url = value => {
-      if (typeof value === 'string' && value.trim()) return value;
+      if (typeof value === 'string' && value.trim()) return value.trim().replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
       let bytes = null;
       if (value instanceof ArrayBuffer) bytes = new Uint8Array(value);
       else if (ArrayBuffer.isView(value)) bytes = new Uint8Array(value.buffer,value.byteOffset,value.byteLength);
       else if (value && typeof value === 'object' && Array.isArray(value.data)) bytes = new Uint8Array(value.data);
-      if (!bytes) return '';
+      if (!bytes || !bytes.length) return '';
       let binary=''; bytes.forEach(b=>binary+=String.fromCharCode(b));
-      return btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+      const encoded = window.btoa(binary);
+      if (typeof encoded !== 'string') return '';
+      return encoded.replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
     };
     function normalizeWebAuthnOptions(raw, mode) {
       const source = raw && (raw.optionsJSON || raw.options || raw.data || raw);
@@ -2414,10 +2453,16 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       if (mode === 'register') {
         const user = source.user && typeof source.user === 'object' ? source.user : null;
         if (!user) throw new Error('Le serveur n’a pas fourni les informations utilisateur pour créer la passkey.');
-        options.user = { ...user, id: binaryField(user.id, 'user.id') };
+        options.user = {
+          ...user,
+          id: binaryField(user.id, 'user.id'),
+          name: String(user.name || user.displayName || 'Administrateur NOVANOD'),
+          displayName: String(user.displayName || user.name || 'Administrateur NOVANOD')
+        };
         if (!source.rp || typeof source.rp.id !== 'string' || !source.rp.id.trim()) {
           throw new Error('Identifiant du site WebAuthn absent. Vérifie WEBAUTHN_RP_ID dans Appwrite.');
         }
+        options.rp = { ...source.rp, name: String(source.rp.name || 'NOVANOD') };
         options.excludeCredentials = normalizeCredentialList(source.excludeCredentials, 'excludeCredentials');
       } else if (mode === 'login') {
         options.allowCredentials = normalizeCredentialList(source.allowCredentials, 'allowCredentials');
@@ -2531,7 +2576,29 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       const w=window.open('','_blank');if(!w){setStatus(document.getElementById('analysis-status'),'Autorise les fenêtres contextuelles pour exporter le PDF.','error');return;}
       const safeTitle=escapeHtml(title),safeDate=escapeHtml(dateText||new Date().toLocaleString('fr-FR'));
       w.document.open();
-      w.document.write('<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>'+safeTitle+'</title><style>@page{size:A4;margin:18mm}body{font:11pt/1.65 Arial,sans-serif;color:#35131f}.brand{font-size:18pt;font-weight:800;color:#b9362a;border-bottom:3px solid #b9362a;padding-bottom:10px}.meta{font-size:9pt;color:#71545a}.report-document h2{font-size:14pt;color:#b9362a;margin:18px 0 6px;border-bottom:1px solid #ead9c8}.report-document table{width:100%;border-collapse:collapse;font-size:9pt}.report-document th{background:#3b1420;color:#fffbd0}.report-document th,.report-document td{border:1px solid #ddcfbd;padding:6px;text-align:left}.footer{border-top:1px solid #ddcfbd;margin-top:24px;padding-top:8px;font-size:8pt;color:#79545a}</style></head><body><div class="brand">NOVANOD</div><h1>'+safeTitle+'</h1><p class="meta">Rapport administratif · Généré le '+safeDate+'</p>'+renderReportHtml(value)+'<div class="footer">Document confidentiel — NOVANOD. Rapport établi à partir des données disponibles au moment de l’analyse.</div><script>window.onload=()=>setTimeout(()=>window.print(),350)<\/script></body></html>');
+      w.document.write('<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>'+safeTitle+'</title><style>@page{size:A4;margin:18mm}body{font:11pt/1.65 Arial,sans-serif;color:#35131f}.brand{font-size:18pt;font-weight:800;color:#b9362a;border-bottom:3px solid #b9362a;padding-bottom:10px}.meta{font-size:9pt;color:#71545a}.report-document h2{font-size:14pt;color:#b9362a;margin:18px 0 6px;border-bottom:1px solid #ead9c8}.report-document table{width:100%;border-collapse:collapse;font-size:9pt}.report-document th{background:#3b1420;color:#fffbd0}.report-document th,.report-document td{border:1px solid #ddcfbd;padding:6px;text-align:left}.footer{border-top:1px solid #ddcfbd;margin-top:24px;padding-top:8px;font-size:8pt;color:#79545a}
+/* NOVANOD 2026 — interface compacte et progression des tâches */
+:root{--admin-ruby:#e64a38;--admin-wine:#3b1420;--admin-paper:#fffbd0;--admin-line:rgba(59,20,32,.16)}
+.admin-task-progress{display:none;margin:0 0 14px;padding:12px 14px;background:#fffef8;border:1px solid var(--admin-line);border-radius:12px;box-shadow:0 3px 10px rgba(59,20,32,.06)}
+.admin-task-progress.active{display:block}.admin-task-progress-head{display:flex;justify-content:space-between;gap:12px;align-items:center;font:700 12px Tahoma,Arial,sans-serif;color:var(--admin-wine)}
+.admin-task-progress-track{height:8px;background:#f3e8cf;border-radius:20px;overflow:hidden;margin-top:9px}
+.admin-task-progress-fill{height:100%;width:0;background:linear-gradient(90deg,#e64a38,#b92e3e);border-radius:20px;transition:width .35s ease}
+.admin-task-progress small{display:block;margin-top:6px;color:#6b4b50;font:11px Tahoma,Arial,sans-serif}
+#screen-admin .glass-card{border:1px solid var(--admin-line);border-radius:14px;box-shadow:0 3px 12px rgba(59,20,32,.055);padding:16px;margin-bottom:12px;background:#fffef8}
+#screen-admin .card-title{font:700 16px Tahoma,Arial,sans-serif;color:var(--admin-wine);margin-bottom:8px}
+#screen-admin .btn-3d{width:auto;min-width:0;min-height:36px;height:auto;padding:8px 12px;margin:3px 5px 5px 0;border:1px solid var(--admin-ruby);border-radius:8px;background:var(--admin-ruby);color:#fff;box-shadow:none;font:700 12px Tahoma,Arial,sans-serif}
+#screen-admin .btn-3d.btn-dark{background:var(--admin-wine);border-color:var(--admin-wine)}
+#screen-admin .btn-3d.btn-secondary{background:#fff8dc;color:var(--admin-wine);border-color:var(--admin-line)}
+#screen-admin .dash-tab{border-radius:8px;padding:8px 11px;font-size:11px;min-height:36px}
+#screen-admin .dash-tab.active{box-shadow:none;border-color:var(--admin-ruby)}
+#screen-admin .admin-output{font:12px/1.7 Tahoma,Arial,sans-serif;background:#fffef8;border:1px solid var(--admin-line);border-radius:9px}
+#screen-admin .hint{font:11.5px/1.55 Tahoma,Arial,sans-serif}
+#screen-admin .admin-toolbar{margin:0 0 12px;padding:10px 12px;border:1px solid var(--admin-line);border-radius:12px;background:#fffef8}
+#screen-admin .admin-toolbar-title{font:700 14px Tahoma,Arial,sans-serif;color:var(--admin-wine)}
+#screen-admin .admin-table th{background:var(--admin-wine);color:var(--admin-paper)}
+#screen-admin .admin-table td{border-bottom:1px solid var(--admin-line)}
+@media(max-width:700px){#screen-admin .glass-card{padding:12px 11px;margin-bottom:9px}#screen-admin .admin-grid{grid-template-columns:minmax(0,1fr)}#screen-admin .btn-3d{font-size:11px;padding:8px 9px}#screen-admin .workflow-actions{display:flex;flex-wrap:wrap;gap:5px}#screen-admin .stats-row{flex-wrap:wrap}#screen-admin .stat-box{min-width:28%}}
+</style></head><body><div class="brand">NOVANOD</div><h1>'+safeTitle+'</h1><p class="meta">Rapport administratif · Généré le '+safeDate+'</p>'+renderReportHtml(value)+'<div class="footer">Document confidentiel — NOVANOD. Rapport établi à partir des données disponibles au moment de l’analyse.</div><script>window.onload=()=>setTimeout(()=>window.print(),350)<\/script></body></html>');
       w.document.close();
     }
     const securityEventsStatus = document.getElementById('security-events-status');
@@ -3142,10 +3209,13 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       const kind=btn.dataset.analysis, status=document.getElementById('analysis-status');
       const providerMode=document.getElementById('analysis-provider')?.value || 'both';
       btn.disabled=true;
+      taskProgress.update('Analyse '+kind,10,'Préparation de la requête…');
       setStatus(status,'Analyse « '+kind+' » en cours avec '+(providerMode==='both'?'Gemini et Groq':providerMode)+'…','info');
       out('analysis-output','Analyse en cours… Les deux modèles peuvent prendre un peu de temps.');
       try {
+        taskProgress.update('Analyse '+kind,35,'Gemini et Groq traitent les données…');
         const r=await adminCall('run_analysis',{analysisType:kind,providerMode});
+        taskProgress.update('Analyse '+kind,82,'Mise en forme et enregistrement du rapport…');
         const text=aiResultText(r);
         if (!text || text.startsWith('Le serveur n’a renvoyé')) throw new Error(text);
         renderProviderOutputs('analysis',r);
@@ -3154,7 +3224,8 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         setStatus(status,partial?'Rapport partiel enregistré : un fournisseur ou la synthèse est indisponible.':'Rapports Gemini, Groq et synthèse enregistrés.','success');
         const h=await adminCall('list_reports');
         renderReportHistory(h.reports || []);
-      } catch(e){setStatus(status,e.message,'error');out('analysis-output','Erreur : '+e.message);}
+        taskProgress.done('Analyse '+kind,'Rapport affiché et historique actualisé.');
+      } catch(e){taskProgress.fail('Analyse '+kind+' échouée',e.message);setStatus(status,e.message,'error');out('analysis-output','Erreur : '+e.message);}
       finally { btn.disabled=false; }
     }));
     async function analyzeLatestGithubAudit() {
@@ -3205,8 +3276,10 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       const button=document.getElementById('btn-run-github-audit');
       const refresh=document.getElementById('btn-refresh-github-audit');
       button.disabled=true;if(refresh)refresh.disabled=true;
+      taskProgress.update('Audit GitHub',8,'Déclenchement du workflow Playwright + Lighthouse…');
       try {
         const started=await adminCall('trigger_github_audit');
+        taskProgress.update('Audit GitHub',18,'Workflow lancé. Attente des tests et mesures…');
         activeGithubAuditStartedAt=started.startedAt||started.run?.createdAt||new Date().toISOString();
         setStatus(document.getElementById('github-audit-status'),started.alreadyRunning?'Un audit est déjà en cours. Suivi de son exécution…':'Demande envoyée à GitHub Actions. Attente des tests Playwright et Lighthouse…','info');
         const link=document.getElementById('github-audit-run-link');
@@ -3216,14 +3289,18 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           await new Promise(resolve=>setTimeout(resolve,8000));
           completed=await refreshGithubAuditStatus();
           if(completed?.status==='completed')break;
+          taskProgress.update('Audit GitHub',Math.min(88,20+attempt*2),'GitHub exécute les tests Playwright et Lighthouse…');
         }
         if(!completed || completed.status!=='completed'){
           setStatus(document.getElementById('github-audit-status'),'L’audit continue peut-être sur GitHub. Utilise « Actualiser le statut » pour suivre son avancement.','info');
           return;
         }
         if(completed.conclusion!=='success')throw new Error('Le workflow GitHub est terminé avec le statut '+(completed.conclusion||'inconnu')+'. Ouvre son exécution pour consulter les journaux.');
+        taskProgress.update('Audit GitHub',92,'Récupération du rapport et des preuves visuelles…');
         await analyzeLatestGithubAudit();
+        taskProgress.done('Audit GitHub terminé','Rapport, résultats IA et preuves chargés si disponibles.');
       } catch(e){
+        taskProgress.fail('Audit GitHub interrompu',String(e?.message||e));
         const message = String(e?.message || e);
         const hint = /GITHUB_WORKFLOW_TOKEN|token.*absent|token.*invalide/i.test(message)
           ? message + ' — Ajoute le secret GitHub côté serveur utilisé par nova.ai, avec les permissions Actions: write et Contents: read. Ne place jamais ce jeton dans admin.html.'
