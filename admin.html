@@ -15,7 +15,6 @@
 
   <style>
 
-
     :root {
       --red-primary: #E64A38;
       --red-hover: #D03D2B;
@@ -494,6 +493,12 @@
       filter:drop-shadow(0 2px 0 rgba(255,255,255,.7)) drop-shadow(0 5px 4px rgba(59,20,32,.24));
       transform:perspective(260px) rotateX(7deg) translateZ(3px);
     }
+    .fingerprint-mark {
+      width:36px;height:36px;fill:none;stroke:currentColor;stroke-width:2.1;
+      stroke-linecap:round;stroke-linejoin:round;
+      filter:drop-shadow(0 2px 0 rgba(255,255,255,.7)) drop-shadow(0 6px 5px rgba(59,20,32,.28));
+      transform:perspective(300px) rotateY(-12deg) translateZ(5px);
+    }
     .divider {height:1px;background:rgba(59,20,32,.14);margin:14px 0;}
     body.admin-compact .glass-card { padding:14px 16px; margin-bottom:10px; }
     body.admin-compact .admin-output { min-height:48px; padding:8px; }
@@ -900,6 +905,8 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     .analysis-action{display:flex;align-items:center;justify-content:flex-start;gap:12px;text-align:left;min-height:66px}
     .analysis-action svg{width:38px;height:38px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
     .analysis-action span{line-height:1.3}
+    .fingerprint-mark{width:25px;height:25px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vertical-align:middle;margin-right:8px}
+    .btn-3d:has(.fingerprint-mark){display:inline-flex;align-items:center;justify-content:center;gap:8px}
     .orientation-toggle[hidden]{display:none!important}
     button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid rgba(230,74,56,.45);outline-offset:2px}
     @media(max-width:620px){.device-tab{flex:1 1 100px;padding:9px 8px;gap:6px}.orientation-button{min-height:54px;padding:8px}.analysis-action{min-height:60px}}
@@ -956,6 +963,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     .analysis-action{min-height:104px!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:10px!important;border-radius:17px!important}
     .analysis-action svg{width:66px!important;height:66px!important;padding:13px!important;border:0!important;border-radius:19px!important;stroke:#fff7dc!important;stroke-width:2.2!important;background:radial-gradient(circle at 28% 18%,rgba(255,255,255,.55),transparent 38%),linear-gradient(145deg,#ff9b7c 0%,#E64A38 44%,#3B1420 100%)!important;box-shadow:inset 0 2px 3px rgba(255,255,255,.45),inset 0 -5px 8px rgba(59,20,32,.22),0 6px 0 rgba(59,20,32,.2),0 13px 20px rgba(59,20,32,.18)!important;filter:none!important;transform:perspective(600px) rotateX(9deg) rotateY(-7deg) translateZ(4px)!important}
     .analysis-action:hover svg{transform:perspective(600px) rotateX(0) rotateY(0) translateY(-4px) scale(1.04)!important}.analysis-action span{font-weight:850!important}
+    .fingerprint-mark{width:38px!important;height:38px!important;padding:5px!important;border-radius:12px!important;color:#fff8df!important;background:linear-gradient(145deg,#ff987b,#E64A38 50%,#3B1420)!important;filter:drop-shadow(0 4px 5px rgba(59,20,32,.2))!important}
     .stats-row{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:10px!important}.stat-box{border:1px solid rgba(59,20,32,.1)!important;border-radius:16px!important;background:linear-gradient(145deg,#fffef3,#fff5c7)!important;box-shadow:0 5px 14px rgba(59,20,32,.06)!important}.stat-box .num{font-size:clamp(20px,2.4vw,28px)!important}
     .admin-table-wrap{border:1px solid rgba(59,20,32,.12)!important;border-radius:15px!important;box-shadow:0 6px 16px rgba(59,20,32,.045)!important}.admin-table th{background:#3B1420!important;color:#FFFBD0!important}.admin-table tbody tr:nth-child(even){background:rgba(230,74,56,.035)}
     .input-field,select.input-field,textarea.input-field{border-radius:12px!important;min-height:44px}.btn-3d{border-radius:12px!important}.admin-note{background:rgba(59,20,32,.045)!important;border:1px solid rgba(59,20,32,.1)!important;border-radius:13px!important}.user-list{max-height:var(--admin-list-max-height,480px)!important}.nova-reduced-motion *,.nova-reduced-motion *::before,.nova-reduced-motion *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
@@ -1072,12 +1080,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       .input-field, select.input-field { height:48px; min-height:44px; }
     }
 
-  
-    .nova-progress{position:relative;width:100%;height:10px;margin:8px 0 18px;overflow:visible;border-radius:99px;background:rgba(59,20,32,.14)}
-    .nova-progress span{display:block;width:0;height:100%;border-radius:99px;background:linear-gradient(90deg,#E64A38,#3B1420);transition:width .35s ease}
-    .nova-progress small{position:absolute;right:0;top:13px;color:#3B1420;font-size:11px;font-weight:800;font-variant-numeric:tabular-nums}
-    .nova-progress.hidden{display:none!important}
-</style>
+  </style>
 </head>
 <body>
 
@@ -1104,7 +1107,8 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         <label class="form-label">Mot de passe</label>
         <input type="password" id="admin-password" class="input-field" placeholder="••••••••" autocomplete="current-password">
         
-        <button type="button" id="btn-login" class="btn-3d">Se connecter au Dashboard</button>
+        <button id="btn-login" class="btn-3d">Se connecter au Dashboard</button>
+        <button id="btn-login-fingerprint" class="btn-3d btn-secondary hidden"><svg class="fingerprint-mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 7c-9 0-16 7-16 16M24 13c-6 0-11 5-11 11 0 7-1 12-4 16M24 19c-3 0-5 2-5 5 0 9-1 14-4 18M24 25c0 9-1 15-3 19M30 9c6 2 10 8 10 14 0 8-1 14-4 19M30 16c3 2 5 5 5 9 0 5 0 9-2 13"/></svg><span>Déverrouiller avec l'empreinte du téléphone</span></button>
       </div>
 
       <div id="pane-signup" class="hidden">
@@ -1120,7 +1124,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         <label class="form-label">Confirmer le mot de passe</label>
         <input type="password" id="signup-password-confirm" class="input-field" placeholder="••••••••" autocomplete="new-password" minlength="8">
         
-        <button type="button" id="btn-signup" class="btn-3d">Générer mon compte Admin</button>
+        <button id="btn-signup" class="btn-3d">Générer mon compte Admin</button>
       </div>
     </div>
 
@@ -1167,7 +1171,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           <div class="hint">
             nova.ai n'apparaît plus sur le site public. Il analyse en arrière-plan le code du site et l'activité des utilisateurs, et dépose ici ses observations — jamais visibles des clients.
           </div>
-          <div id="reports-status" class="status-msg"></div><div id="reports-progress" class="nova-progress hidden" aria-live="polite"><span></span><small>0%</small></div>
+          <div id="reports-status" class="status-msg"></div>
           <button id="btn-run-analysis" class="btn-3d">⌕ Lancer une analyse maintenant</button>
         </div>
         <div class="glass-card">
@@ -1180,6 +1184,15 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
 
       <!-- ===== ONGLET : SÉCURITÉ ===== -->
       <div id="pane-security" class="dash-pane">
+        <div class="glass-card">
+          <h3 class="card-title" style="color:var(--dark-brown);">Sécurité biométrique</h3>
+          <div class="hint">Enregistre jusqu'à cinq passkeys sur ton téléphone. Android déclenchera l'authentification biométrique locale (empreinte si le capteur et le système la proposent, sinon le mécanisme sécurisé configuré sur l'appareil). NOVANOD ne reçoit et ne stocke jamais ton empreinte digitale.</div>
+          <div id="fingerprint-status" class="status-msg" role="status" aria-live="polite"></div>
+          <div id="passkey-count" class="hint">Chargement des passkeys…</div>
+          <div id="passkey-list" class="user-list" aria-live="polite"></div>
+          <button id="btn-register-fingerprint" class="btn-3d btn-dark hidden"><svg class="fingerprint-mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 7c-9 0-16 7-16 16M24 13c-6 0-11 5-11 11 0 7-1 12-4 16M24 19c-3 0-5 2-5 5 0 9-1 14-4 18M24 25c0 9-1 15-3 19M30 9c6 2 10 8 10 14 0 8-1 14-4 19M30 16c3 2 5 5 5 9 0 5 0 9-2 13"/></svg><span>Enregistrer l'empreinte de ce téléphone</span></button>
+          <button id="btn-refresh-passkeys" class="admin-action">Actualiser la liste</button>
+        </div>
         <div class="glass-card">
           <h3 class="card-title">Alertes de sécurité</h3>
           <div class="hint">Incidents reçus et enregistrés par le serveur. Les statuts indiquent si Appwrite a accepté le Push et l’e-mail ; ils ne garantissent pas la livraison sur l’appareil.</div>
@@ -1281,7 +1294,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           <div class="divider"></div>
           <h3 class="card-title">Notifications Appwrite</h3>
           <p class="hint">La console se connecte au broker Appwrite Push avec ton compte. Les messages reçus pendant que cette page reste ouverte s’affichent ci-dessous. Sur navigateur mobile, l’affichage système en arrière-plan n’est pas garanti ; un fournisseur FCM/PWA est nécessaire pour une vraie notification native persistante.</p>
-          <div id="admin-push-status" class="status-msg" role="status" aria-live="polite"></div><div id="push-test-progress" class="nova-progress hidden" role="progressbar" aria-label="Progression du test de notification" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span><small>0%</small></div>
+          <div id="admin-push-status" class="status-msg" role="status" aria-live="polite"></div>
           <div id="admin-push-inbox" class="user-list" aria-live="polite"><div class="hint">Les notifications reçues pendant que cette console est ouverte apparaîtront ici.</div></div>
           <button id="btn-test-admin-push" class="btn-3d btn-secondary" type="button">Envoyer une notification test à mon compte</button>
           <button class="btn-3d btn-dark" id="btn-logout" type="button">Se déconnecter de NOVANOD</button>
@@ -1503,7 +1516,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
             <button id="btn-refresh-github-audit" class="btn-3d btn-secondary" type="button">Actualiser le statut</button>
             <button id="btn-analyze-github-audit" class="btn-3d btn-secondary" type="button">Analyser le dernier audit terminé</button>
           </div>
-          <div id="github-audit-status" class="status-msg" role="status" aria-live="polite">Prêt. Lance un audit GitHub pour obtenir des résultats actualisés.</div><div id="github-audit-progress" class="nova-progress hidden" role="progressbar" aria-label="Progression des tests et audits" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span><small>0%</small></div>
+          <div id="github-audit-status" class="status-msg">Prêt. Lance un audit GitHub pour obtenir des résultats actualisés.</div>
           <a id="github-audit-run-link" class="hidden" href="#" target="_blank" rel="noopener">Ouvrir l’exécution GitHub Actions</a>
           <h4>Résultat Gemini · audit automatisé</h4>
           <div id="github-audit-gemini" class="admin-output">En attente.</div>
@@ -1539,7 +1552,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
             <button class="btn-3d btn-secondary analysis-action" data-analysis="seo"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="17" cy="17" r="10"/><path d="m24 24 10 10M12 17h10M17 12v10"/></svg><span>Expert SEO</span></button>
             <button class="btn-3d btn-secondary analysis-action" data-analysis="devops"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M6 10h28v20H6zM12 17l5 3-5 3M20 23h8"/></svg><span>Expert DevOps</span></button>
           </div>
-          <div id="analysis-status" class="status-msg" role="status" aria-live="polite"></div><div id="analysis-progress" class="nova-progress hidden" role="progressbar" aria-label="Progression de l’analyse" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span><small>0%</small></div>
+          <div id="analysis-status" class="status-msg"></div>
           <h4>Résultat Gemini</h4>
           <div id="analysis-gemini-output" class="admin-output">En attente du rapport Gemini.</div>
           <h4>Résultat Groq</h4>
@@ -1601,17 +1614,8 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
   <script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.1"></script>
 
   <script type="module">
-    // Utiliser directement le namespace UMD Appwrite, comme dans la version de référence.
-    // Ne pas bloquer tout le script sur un contrôle préalable trop strict.
-    if (!window.Appwrite || !window.Appwrite.Client || !window.Appwrite.Account) {
-      const status = document.getElementById('login-status');
-      if (status) {
-        status.textContent = "Le service de connexion Appwrite n'a pas pu être chargé. Actualise la page.";
-        status.className = "status-msg error";
-      }
-      throw new Error("SDK Appwrite indisponible");
-    }
-    const Appwrite = window.Appwrite;
+    import { startRegistration, startAuthentication } from 'https://cdn.jsdelivr.net/npm/@simplewebauthn/browser@9/+esm';
+    import { Client as AppwritePushClient, Push as AppwritePush } from 'https://cdn.jsdelivr.net/npm/appwrite@29.0.0/+esm';
 
     const APPWRITE_ENDPOINT = 'https://fra.cloud.appwrite.io/v1';
     const APPWRITE_PROJECT_ID = '6ad4bd7b0036d37d3561';
@@ -1627,7 +1631,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     const account = new Appwrite.Account(client);
     const functions = new Appwrite.Functions(client);
     const storage = new Appwrite.Storage(client);
-    let adminPushClient = null;
+    const adminPushClient = new AppwritePushClient().setEndpoint(APPWRITE_ENDPOINT).setProject(APPWRITE_PROJECT_ID);
     let adminPush = null;
     let adminPushStarting = false;
     const adminPushStatus = document.getElementById('admin-push-status');
@@ -1636,8 +1640,6 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       if (adminPush || adminPushStarting) return;
       adminPushStarting = true;
       try {
-        const { Client: AppwritePushClient, Push: AppwritePush } = await import('https://cdn.jsdelivr.net/npm/appwrite@29.0.0/+esm');
-        adminPushClient = new AppwritePushClient().setEndpoint(APPWRITE_ENDPOINT).setProject(APPWRITE_PROJECT_ID);
         let pushClientId = localStorage.getItem('novanod_push_client_id');
         if (!pushClientId) { pushClientId = crypto.randomUUID(); localStorage.setItem('novanod_push_client_id', pushClientId); }
         adminPushClient.setPushClientId(pushClientId);
@@ -1671,22 +1673,6 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     const screenPending = document.getElementById('screen-pending');
     const loginStatus = document.getElementById('login-status');
 
-    const novaProgressTimers = new Map();
-    function setNovaProgress(id, active, value) {
-      const bar=document.getElementById(id); if(!bar) return;
-      const fill=bar.querySelector('span'), label=bar.querySelector('small');
-      const apply=(n)=>{const pct=Math.max(0,Math.min(100,Math.round(n)));if(fill)fill.style.width=pct+'%';if(label)label.textContent=pct+'%';bar.setAttribute('aria-valuenow',String(pct));};
-      clearInterval(novaProgressTimers.get(id));
-      if(active){
-        bar.classList.remove('hidden');apply(Number.isFinite(value)?value:0);
-        let pct=Number.isFinite(value)?value:0;
-        const timer=setInterval(()=>{pct=Math.min(92,pct+(pct<55?4:pct<78?2:0.7));apply(pct);},700);
-        novaProgressTimers.set(id,timer);
-      }else{
-        apply(100);
-        setTimeout(()=>{bar.classList.add('hidden');apply(0);},650);
-      }
-    }
     function setStatus(el, msg, type = 'info') {
       el.textContent = msg || '';
       el.className = 'status-msg' + (msg ? ' ' + type : '');
@@ -1764,6 +1750,8 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           screenLogin.classList.add('hidden');
           screenAdmin.classList.remove('hidden');
           await startAdminPush();
+          // Charger les passkeys uniquement après authentification administrateur.
+          await refreshPasskeys();
         } else {
           setStatus(loginStatus, `Accès refusé. Ton ID (${user.$id}) n'est pas autorisé dans ADMIN_USER_IDS.`, "error");
           await account.deleteSession('current').catch(() => {});
@@ -1832,7 +1820,6 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         const evidence = r.chartData?.evidence || r.evidence || [];
         return '<article class="report-card" data-report-card="'+id+'"><div class="report-card-head"><span>Rapport '+(i+1)+' · '+title+'</span><span>'+date+'</span></div><div class="report-toolbar"><label class="report-format-label" for="report-format-'+id+'">Type de rapport</label><select id="report-format-'+id+'" class="input-field report-format-select" data-report-format="'+id+'" aria-label="Type de rapport"><option value="written" '+(reportViewMode==='written'?'selected':'')+'>Document texte</option><option value="table" '+(reportViewMode==='table'?'selected':'')+'>Tableau structuré</option></select><button type="button" data-report-pdf="'+id+'" data-report-title="'+title+'" data-report-date="'+date+'">Télécharger PDF</button><button type="button" class="admin-action danger" data-report-delete="'+id+'">Supprimer</button></div><div class="report-rendered-content">'+renderReportHtml(r.report||'',reportViewMode)+'</div><h4>Preuves visuelles</h4><div class="report-evidence">'+renderEvidenceHtml(evidence)+'</div></article>';
       }).join('');
-      loadPrivateEvidenceImages(reportsList);
       reportsList.querySelectorAll('[data-report-card]').forEach(card=>{
         const item=reports.find(r=>(r.$id||r.$rowId||r.id)===card.dataset.reportCard);
         card.dataset.rawReport=String(item?.report||'');
@@ -1862,7 +1849,6 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         const evidence = r.chartData?.evidence || r.evidence || [];
         return '<article class="report-card" data-report-card="'+id+'"><div class="report-card-head"><span>Rapport '+(i+1)+' · '+title+'</span><span>'+date+'</span></div><div class="report-toolbar"><label class="report-format-label" for="history-report-format-'+id+'">Type de rapport</label><select id="history-report-format-'+id+'" class="input-field report-format-select" data-report-format="'+id+'" aria-label="Type de rapport"><option value="written" '+(reportViewMode==='written'?'selected':'')+'>Document texte</option><option value="table" '+(reportViewMode==='table'?'selected':'')+'>Tableau structuré</option></select><button type="button" data-report-pdf="'+id+'" data-report-title="'+title+'" data-report-date="'+date+'">Télécharger PDF</button><button type="button" class="admin-action danger" data-report-delete="'+id+'">Supprimer</button></div><div class="report-rendered-content">'+renderReportHtml(r.report||'',reportViewMode)+'</div><h4>Preuves visuelles</h4><div class="report-evidence">'+renderEvidenceHtml(evidence)+'</div></article>';
       }).join('');
-      loadPrivateEvidenceImages(host);
       host.querySelectorAll('[data-report-card]').forEach(card=>{
         const item=lastReportHistory.find(r=>(r.$id||r.$rowId||r.id)===card.dataset.reportCard);
         card.dataset.rawReport=String(item?.report||'');
@@ -1903,7 +1889,6 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     document.getElementById('btn-run-analysis').addEventListener('click', async () => {
       const btn = document.getElementById('btn-run-analysis');
       btn.disabled = true;
-      setNovaProgress('reports-progress',true,0);
       setStatus(reportsStatus, 'Récupération du dernier audit GitHub puis analyse Gemini + Groq…', 'info');
       try {
         const result = await callNovaFunction({ action: 'analyze_github_audit', providerMode: 'both' });
@@ -1922,7 +1907,6 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       } catch (e) {
         setStatus(reportsStatus, 'Erreur : ' + e.message, 'error');
       } finally {
-        setNovaProgress('reports-progress',false);
         btn.disabled = false;
       }
     });
@@ -1944,6 +1928,26 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         </div>`;
     }
 
+    async function refreshUsersLegacy() {
+      usersLoadedOnce = true;
+      setStatus(usersStatus, 'Chargement...', 'info');
+      try {
+        const result = await callNovaFunction({ action: 'list_users' });
+        if (result.error) throw new Error(result.error);
+        document.getElementById('stat-total').textContent = result.totalCount;
+        document.getElementById('stat-buyers').textContent = result.buyerCount;
+        document.getElementById('stat-visitors').textContent = result.visitorCount;
+        document.getElementById('buyers-list').innerHTML = result.buyers.length
+          ? result.buyers.map(u => renderUserRow(u, 'buyer')).join('')
+          : '<div class="hint">Aucun acheteur pour l\'instant.</div>';
+        document.getElementById('visitors-list').innerHTML = result.visitors.length
+          ? result.visitors.map(u => renderUserRow(u, 'visitor')).join('')
+          : '<div class="hint">Aucun visiteur pour l\'instant.</div>';
+        setStatus(usersStatus, '', 'info');
+      } catch (e) {
+        setStatus(usersStatus, 'Erreur : ' + e.message, 'error');
+      }
+    }
     document.getElementById('btn-refresh-users').addEventListener('click', refreshUsers);
 
     // ===================== APERÇU MULTI-ÉCRANS =====================
@@ -2028,72 +2032,131 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       setStatus(document.getElementById('settings-status'), 'Préférences enregistrées sur cet appareil.', 'success');
     });
 
+    const fingerprintStatus = document.getElementById('fingerprint-status');
+    const btnRegisterFingerprint = document.getElementById('btn-register-fingerprint');
+    const btnLoginFingerprint = document.getElementById('btn-login-fingerprint');
+    let platformAuthenticatorAvailable = false;
+    async function detectPlatformAuthenticator(showFeedback = false) {
+      const supported = !!(window.isSecureContext && window.PublicKeyCredential && typeof PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable === 'function');
+      if (!supported) {
+        btnRegisterFingerprint.classList.add('hidden');
+        btnLoginFingerprint.classList.add('hidden');
+        if (showFeedback) setStatus(fingerprintStatus, 'La biométrie de plateforme n’est pas disponible dans ce navigateur ou ce contexte. Utilise le site en HTTPS et vérifie le verrouillage sécurisé Android.', 'info');
+        return false;
+      }
+      try {
+        platformAuthenticatorAvailable = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+        btnRegisterFingerprint.classList.toggle('hidden', !platformAuthenticatorAvailable);
+        btnLoginFingerprint.classList.toggle('hidden', !platformAuthenticatorAvailable);
+        if (!platformAuthenticatorAvailable && showFeedback) setStatus(fingerprintStatus, 'Aucun authentificateur de plateforme compatible détecté. Vérifie le verrouillage sécurisé Android.', 'info');
+        return platformAuthenticatorAvailable;
+      } catch (error) {
+        if (showFeedback) setStatus(fingerprintStatus, 'Vérification biométrique impossible : ' + (error.message || error), 'error');
+        return false;
+      }
+    }
+    // Détection silencieuse : aucun avertissement n'est affiché avant une action de l'utilisateur.
+    detectPlatformAuthenticator();
+
     async function callNovaFunction(payload) {
-      if (!NOVA_FUNCTION_ID || NOVA_FUNCTION_ID === 'COLLE_ICI_LE_FUNCTION_ID') {
-        throw new Error('Identifiant de fonction NOVANOD non configuré.');
-      }
-
-      // Toutes les actions de la console exigent une session d'un administrateur autorisé.
-      let user;
-      try {
-        user = await account.get();
-      } catch (error) {
-        throw new Error('Session Appwrite expirée ou absente. Déconnecte-toi puis reconnecte-toi avant de relancer cette action.');
-      }
-      if (!user || !ADMIN_USER_IDS.includes(user.$id)) {
-        throw new Error('Accès refusé : ce compte Appwrite ne figure pas dans la liste des deux administrateurs autorisés.');
-      }
-      let jwt = '';
-      try {
-        const token = await account.createJWT();
-        jwt = token && token.jwt;
-      } catch (error) {
-        throw new Error('Impossible de créer le jeton temporaire Appwrite. Reconnecte-toi puis réessaie.');
-      }
-      if (!jwt) throw new Error('Appwrite n’a pas fourni de jeton de session temporaire.');
-
-      const endpoint = (APPWRITE_ENDPOINT.endsWith('/') ? APPWRITE_ENDPOINT.slice(0, -1) : APPWRITE_ENDPOINT) +
-        '/functions/' + encodeURIComponent(NOVA_FUNCTION_ID) + '/executions';
-      let response;
-      try {
-        response = await fetch(endpoint, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Appwrite-Project': APPWRITE_PROJECT_ID,
-            ...(jwt ? { 'X-Appwrite-JWT': jwt } : {})
-          },
-          body: JSON.stringify({
-            body: JSON.stringify(payload),
-            async: false,
-            path: '/',
-            method: 'POST'
-          })
-        });
-      } catch (error) {
-        throw new Error('Impossible de joindre la fonction NOVANOD. Vérifie ta connexion Internet puis réessaie.');
-      }
-
-      let execution;
-      try { execution = await response.json(); }
-      catch { throw new Error('Appwrite a renvoyé une réponse illisible (HTTP ' + response.status + ').'); }
-
+      if (!NOVA_FUNCTION_ID || NOVA_FUNCTION_ID === 'COLLE_ICI_LE_FUNCTION_ID') throw new Error('Identifiant de fonction NOVANOD non configuré.');
+      const execution = await functions.createExecution(NOVA_FUNCTION_ID, JSON.stringify(payload), false);
       const body = execution.responseBody || '';
       let result;
       try { result = body ? JSON.parse(body) : {}; }
-      catch { throw new Error('La fonction NOVANOD a renvoyé une réponse non JSON (HTTP ' + (execution.responseStatusCode || response.status) + ').'); }
-
-      if (!response.ok || execution.status === 'failed' ||
-          (execution.responseStatusCode && execution.responseStatusCode >= 400)) {
-        throw new Error(result.error || result.message ||
-          execution.message || ('Échec de la fonction NOVANOD (HTTP ' +
-          (execution.responseStatusCode || response.status) + ').'));
+      catch { throw new Error('La fonction NOVANOD a renvoyé une réponse non JSON (HTTP ' + execution.responseStatusCode + ').'); }
+      if (execution.status === 'failed' || (execution.responseStatusCode && execution.responseStatusCode >= 400)) {
+        throw new Error(result.error || result.message || ('Échec de la fonction NOVANOD (HTTP ' + execution.responseStatusCode + ').'));
       }
-      if (!result || typeof result !== 'object' || Array.isArray(result)) {
-        throw new Error('Format de réponse inattendu de la fonction NOVANOD.');
-      }
+      if (!result || typeof result !== 'object' || Array.isArray(result)) throw new Error('Format de réponse inattendu de la fonction NOVANOD.');
       return result;
     }
+
+    async function refreshPasskeys() {
+      const list = document.getElementById('passkey-list');
+      const count = document.getElementById('passkey-count');
+      if (!list || !count) return;
+      try {
+        const result = await callNovaFunction({ action: 'webauthn_list_credentials' });
+        if (result.error) throw new Error(result.error);
+        if (!Array.isArray(result.credentials)) throw new Error('Réponse invalide du serveur : la liste des passkeys n’a pas été confirmée.');
+        const items = result.credentials;
+        count.textContent = items.length + ' / 5 passkey(s) enregistrée(s) pour ce compte administrateur.';
+        const safeText = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+        list.innerHTML = items.length ? items.map((item, index) =>
+          '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--border-color,#ddd)">' +
+          '<span><b>Passkey ' + (index + 1) + '</b><br><small>Ajoutée le ' + safeText(item.createdAt || 'Date inconnue') + '</small></span>' +
+          '<button class="admin-action danger" data-passkey-delete="' + safeText(item.id) + '">Supprimer</button></div>'
+        ).join('') : '<div class="hint">Aucune passkey enregistrée pour ce compte.</div>';
+        btnRegisterFingerprint.disabled = items.length >= 5;
+        btnRegisterFingerprint.querySelector('span').textContent = items.length >= 5 ? 'Limite de cinq passkeys atteinte' : 'Ajouter une passkey (' + items.length + '/5)';
+      } catch (e) {
+        count.textContent = 'Impossible de charger les passkeys.';
+        list.textContent = e.message;
+      }
+    }
+    document.getElementById('btn-refresh-passkeys')?.addEventListener('click', refreshPasskeys);
+    document.getElementById('passkey-list')?.addEventListener('click', async ev => {
+      const button = ev.target.closest('[data-passkey-delete]');
+      if (!button) return;
+      if (!confirm('Supprimer cette passkey de ce compte administrateur ?')) return;
+      button.disabled = true;
+      try {
+        const result = await callNovaFunction({ action: 'webauthn_delete_credential', credentialRecordId: button.dataset.passkeyDelete });
+        if (result.error) throw new Error(result.error);
+        setStatus(fingerprintStatus, 'Passkey supprimée.', 'success');
+        await refreshPasskeys();
+      } catch (e) {
+        button.disabled = false;
+        setStatus(fingerprintStatus, e.message, 'error');
+      }
+    });
+    btnRegisterFingerprint.addEventListener('click', async () => {
+      setStatus(fingerprintStatus, "Préparation de l'enregistrement sécurisé…", "info");
+      btnRegisterFingerprint.disabled = true;
+      try {
+        if (!(await detectPlatformAuthenticator(true))) throw new Error('Aucun authentificateur de plateforme disponible. Vérifie le verrouillage sécurisé Android.');
+        const rawOptions = await callNovaFunction({ action: 'webauthn_register_options' });
+        if (rawOptions?.error) throw new Error(String(rawOptions.error));
+        const options = normalizeWebAuthnOptions(rawOptions, 'register');
+        const credential = await startRegistration({ optionsJSON: options });
+        if (!credential || typeof credential !== 'object' || !credential.id || !credential.response) {
+          throw new Error("Android n'a pas renvoyé une passkey valide. Vérifie le verrouillage sécurisé de l'appareil puis réessaie.");
+        }
+        const result = await callNovaFunction({ action: 'webauthn_register_verify', credential });
+        if (result.error) throw new Error(result.error);
+        setStatus(fingerprintStatus, "Passkey enregistrée sur cet appareil.", "success");
+      } catch (e) {
+        const message = /not allowed|timed out|NotAllowedError/i.test(e.message)
+          ? "Enregistrement annulé ou expiré. Vérifie qu'un verrouillage d'écran et une empreinte/option biométrique sont configurés sur Android, puis réessaie."
+          : e.message;
+        setStatus(fingerprintStatus, message, "error");
+      } finally {
+        // Recalculer la limite même après un succès : ne pas réactiver la 6e passkey.
+        await refreshPasskeys();
+      }
+    });
+    btnLoginFingerprint.addEventListener('click', async () => {
+      setStatus(loginStatus, "Lecture biométrique...", "info");
+      try {
+        if (!(await detectPlatformAuthenticator())) throw new Error("L’authentificateur biométrique de ce téléphone n’est pas disponible.");
+        const rawOptions = await callNovaFunction({ action: 'webauthn_login_options' });
+        if (rawOptions?.noCredentials || rawOptions?.available === false) {
+          setStatus(loginStatus, rawOptions.message || 'Aucune passkey enregistrée. Connecte-toi avec ton mot de passe puis enregistre une passkey dans Sécurité.', 'info');
+          return;
+        }
+        if (rawOptions?.error) throw new Error(rawOptions.error);
+        const optionsJSON = normalizeWebAuthnOptions(rawOptions, 'login');
+        const credential = await startAuthentication({ optionsJSON: { ...optionsJSON, userVerification: 'required' } });
+        const result = await callNovaFunction({ action: 'webauthn_login_verify', credential });
+        if (result.error) throw new Error(result.error);
+        await account.createSession(result.userId, result.secret);
+        await checkAdminSession();
+      } catch (e) {
+        setStatus(loginStatus, e.message, "error");
+      }
+    });
+
 
     // ===================== MODULES ADMIN NOVANOD =====================
     const adminCall = async (action, extra = {}) => {
@@ -2109,6 +2172,42 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
     }[c]));
 
+    const toBase64Url = value => {
+      if (typeof value === 'string' && value.trim()) return value;
+      let bytes = null;
+      if (value instanceof ArrayBuffer) bytes = new Uint8Array(value);
+      else if (ArrayBuffer.isView(value)) bytes = new Uint8Array(value.buffer,value.byteOffset,value.byteLength);
+      else if (value && typeof value === 'object' && Array.isArray(value.data)) bytes = new Uint8Array(value.data);
+      if (!bytes) return '';
+      let binary=''; bytes.forEach(b=>binary+=String.fromCharCode(b));
+      return btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+    };
+    function normalizeWebAuthnOptions(raw, mode) {
+      const source=raw && (raw.optionsJSON || raw.options || raw.data || raw);
+      if(!source || typeof source!=='object') throw new Error('Options WebAuthn absentes.');
+      const options={...source,challenge:toBase64Url(source.challenge)};
+      if(!options.challenge) throw new Error('Le défi WebAuthn est absent ou invalide.');
+      const normalizeCredentialList = (items, label) => {
+        if (items == null) return [];
+        if (!Array.isArray(items)) throw new Error('La liste '+label+' WebAuthn est invalide.');
+        return items.map(item => {
+          if (!item || typeof item !== 'object' || !item.id) return null;
+          const id = toBase64Url(item.id);
+          return id ? { ...item, id } : null;
+        }).filter(Boolean);
+      };
+      if(mode==='register'){
+        const user = source.user && typeof source.user === 'object' ? source.user : {};
+        const userId = toBase64Url(user.id);
+        if(!userId) throw new Error('Identifiant WebAuthn utilisateur absent ou invalide. Recharge la page puis réessaie.');
+        options.user={...user,id:userId};
+        if(!source.rp || typeof source.rp.id !== 'string' || !source.rp.id.trim()) throw new Error('Identifiant du site WebAuthn absent. Vérifie WEBAUTHN_RP_ID.');
+        options.excludeCredentials=normalizeCredentialList(source.excludeCredentials,'excludeCredentials');
+      } else if (mode==='login') {
+        options.allowCredentials=normalizeCredentialList(source.allowCredentials,'allowCredentials');
+      }
+      return options;
+    }
     let reportViewMode = 'written';
     function renderReportHtml(value, mode = reportViewMode) {
       const lines=String(value||'').replace(/\x60{3}[a-z]*|\x60{3}/gi,'').split(/\r?\n/);
@@ -2160,104 +2259,19 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           const caption = [issueTitle, item.project || '', 'Référence de stockage incomplète'].filter(Boolean).join(' · ');
           return '<figure class="evidence-figure">'+badge+'<figcaption><strong>'+escapeHtml(caption)+'</strong>'+(issueDetails?'<span>'+escapeHtml(issueDetails)+'</span>':'')+'</figcaption></figure>';
         }
+        let src = '';
+        try { src = String(storage.getFileView(bucketId, fileId)); } catch {}
+        if (!src) return '<figure class="evidence-figure">'+badge+'<figcaption><strong>'+escapeHtml(issueTitle)+'</strong><span>Aperçu indisponible pour ce compte.</span></figcaption></figure>';
         const caption = [item.project || '', fileName, item.relativePath || ''].filter(Boolean).join(' · ');
-        return '<figure class="evidence-figure" data-evidence-file="'+escapeHtml(fileId)+'" data-evidence-bucket="'+escapeHtml(bucketId)+'"><div class="evidence-image-wrap">'+badge+'<a href="#" data-evidence-open="1" target="_blank" rel="noopener"><img loading="lazy" alt="'+escapeHtml('Preuve visuelle associée à : '+issueTitle)+'" data-evidence-image="1"></a></div><figcaption><strong>'+escapeHtml(issueTitle)+'</strong>'+(issueDetails?'<span>'+escapeHtml(issueDetails)+'</span>':'')+(caption?'<small>'+escapeHtml(caption)+'</small>':'')+'</figcaption></figure>';
+        return '<figure class="evidence-figure"><div class="evidence-image-wrap">'+badge+'<a href="'+escapeHtml(src)+'" target="_blank" rel="noopener"><img loading="lazy" src="'+escapeHtml(src)+'" alt="'+escapeHtml('Preuve visuelle associée à : '+issueTitle)+'" onerror="this.closest(\'figure\').classList.add(\'evidence-unavailable\');this.remove()"></a></div><figcaption><strong>'+escapeHtml(issueTitle)+'</strong>'+(issueDetails?'<span>'+escapeHtml(issueDetails)+'</span>':'')+(caption?'<small>'+escapeHtml(caption)+'</small>':'')+'</figcaption></figure>';
       }).join('');
-    }
-    async function loadPrivateEvidenceImages(root) {
-      if (!root) return;
-      const figures = [...root.querySelectorAll('[data-evidence-file][data-evidence-bucket]')];
-      if (!figures.length) return;
-      try {
-        const session = await account.createJWT();
-        if (!session?.jwt) throw new Error('Jeton administrateur indisponible.');
-        await Promise.all(figures.map(async figure => {
-          const bucket = figure.dataset.evidenceBucket;
-          const file = figure.dataset.evidenceFile;
-          const image = figure.querySelector('[data-evidence-image]');
-          const link = figure.querySelector('[data-evidence-open]');
-          if (!bucket || !file || !image || !link) return;
-          try {
-            const url = APPWRITE_ENDPOINT.replace(/\/$/, '') + '/storage/buckets/' +
-              encodeURIComponent(bucket) + '/files/' + encodeURIComponent(file) +
-              '/view?project=' + encodeURIComponent(APPWRITE_PROJECT_ID);
-            const response = await fetch(url, { headers: {
-              'X-Appwrite-Project': APPWRITE_PROJECT_ID,
-              'X-Appwrite-JWT': session.jwt
-            }});
-            if (!response.ok) throw new Error('HTTP ' + response.status);
-            const objectUrl = URL.createObjectURL(await response.blob());
-            image.src = objectUrl;
-            link.href = objectUrl;
-            link.removeAttribute('target');
-          } catch (error) {
-            const wrap = figure.querySelector('.evidence-image-wrap');
-            if (wrap) wrap.innerHTML = '<span class="hint">Image privée indisponible : vérifie les permissions Appwrite de ce fichier.</span>';
-          }
-        }));
-      } catch (error) {
-        figures.forEach(figure => {
-          const wrap = figure.querySelector('.evidence-image-wrap');
-          if (wrap) wrap.innerHTML = '<span class="hint">Connexion administrateur requise pour afficher cette capture.</span>';
-        });
-      }
     }
     function renderProfessionalReport(id,value){const el=document.getElementById(id);if(el){el.dataset.rawReport=String(value||'');el.innerHTML=renderReportHtml(value,reportViewMode);}}
     function exportReportPdf(title,value,dateText){
       const w=window.open('','_blank');if(!w){setStatus(document.getElementById('analysis-status'),'Autorise les fenêtres contextuelles pour exporter le PDF.','error');return;}
       const safeTitle=escapeHtml(title),safeDate=escapeHtml(dateText||new Date().toLocaleString('fr-FR'));
       w.document.open();
-      w.document.write('<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>'+safeTitle+'</title><style>@page{size:A4;margin:18mm}body{font:11pt/1.65 Arial,sans-serif;color:#35131f}.brand{font-size:18pt;font-weight:800;color:#b9362a;border-bottom:3px solid #b9362a;padding-bottom:10px}.meta{font-size:9pt;color:#71545a}.report-document h2{font-size:14pt;color:#b9362a;margin:18px 0 6px;border-bottom:1px solid #ead9c8}.report-document table{width:100%;border-collapse:collapse;font-size:9pt}.report-document th{background:#3b1420;color:#fffbd0}.report-document th,.report-document td{border:1px solid #ddcfbd;padding:6px;text-align:left}.footer{border-top:1px solid #ddcfbd;margin-top:24px;padding-top:8px;font-size:8pt;color:#79545a}
-    /* NOVANOD — retour à la bande d'en-tête historique */
-    .header-brand.admin-brand-header{
-      width:100%;min-height:72px;box-sizing:border-box;
-      display:flex;flex-direction:row;align-items:center;justify-content:flex-start;
-      gap:14px;text-align:left;margin:0 0 22px;padding:14px 18px;
-      background:rgba(59,20,32,.94)!important;
-      border:1px solid rgba(255,251,208,.18)!important;border-radius:18px!important;
-      box-shadow:0 8px 0 #260b13,0 14px 28px rgba(59,20,32,.18)!important;
-    }
-    .admin-brand-header .brand-logo{
-      display:block;flex:0 0 46px;width:46px!important;height:46px!important;
-      margin:0!important;border-radius:13px!important;object-fit:contain!important;
-      background:transparent!important;border:0!important;box-shadow:none!important;
-    }
-    .admin-brand-header .admin-title{
-      margin:0!important;color:#FFFBD0!important;font-size:clamp(16px,2.5vw,21px)!important;
-      font-weight:900!important;letter-spacing:1.2px!important;line-height:1.2!important;
-    }
-    .admin-brand-header .admin-brand-subtitle{
-      margin:4px 0 0!important;color:#FFE7D0!important;font-size:10px!important;
-      font-weight:800!important;letter-spacing:1.5px!important;
-    }
-    /* Onglets défilants : style compact d'origine, sans agrandir les boutons */
-    .dash-tabs{
-      display:flex!important;flex-wrap:nowrap!important;gap:6px!important;
-      margin:0 0 14px!important;padding:0 0 5px!important;
-      overflow-x:auto!important;overflow-y:hidden!important;
-      -webkit-overflow-scrolling:touch;scrollbar-width:thin;
-    }
-    .dash-tab{
-      flex:0 0 auto!important;min-height:40px!important;
-      padding:9px 14px!important;border:1.5px solid rgba(59,20,32,.12)!important;
-      border-radius:12px!important;background:rgba(59,20,32,.07)!important;
-      color:var(--dark-brown)!important;font-size:12px!important;font-weight:800!important;
-      opacity:.78!important;white-space:nowrap!important;box-shadow:none!important;
-    }
-    .dash-tab.active{
-      background:var(--red-primary)!important;color:#fff!important;
-      border-color:var(--dark-brown)!important;opacity:1!important;
-      box-shadow:0 2px 6px rgba(230,74,56,.32)!important;
-    }
-    @media(max-width:620px){
-      .header-brand.admin-brand-header{min-height:62px;padding:10px 12px!important;gap:10px!important;margin-bottom:15px!important}
-      .admin-brand-header .brand-logo{flex-basis:40px;width:40px!important;height:40px!important}
-      .admin-brand-header .admin-title{font-size:16px!important}
-      .admin-brand-header .admin-brand-subtitle{font-size:9px!important;letter-spacing:1px!important}
-      .dash-tab{padding:8px 12px!important;min-height:38px!important}
-    }
-
-  </style></head><body><div class="brand">NOVANOD</div><h1>'+safeTitle+'</h1><p class="meta">Rapport administratif · Généré le '+safeDate+'</p>'+renderReportHtml(value)+'<div class="footer">Document confidentiel — NOVANOD. Rapport établi à partir des données disponibles au moment de l’analyse.</div><script>window.onload=()=>setTimeout(()=>window.print(),350)<\/script></body></html>');
+      w.document.write('<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>'+safeTitle+'</title><style>@page{size:A4;margin:18mm}body{font:11pt/1.65 Arial,sans-serif;color:#35131f}.brand{font-size:18pt;font-weight:800;color:#b9362a;border-bottom:3px solid #b9362a;padding-bottom:10px}.meta{font-size:9pt;color:#71545a}.report-document h2{font-size:14pt;color:#b9362a;margin:18px 0 6px;border-bottom:1px solid #ead9c8}.report-document table{width:100%;border-collapse:collapse;font-size:9pt}.report-document th{background:#3b1420;color:#fffbd0}.report-document th,.report-document td{border:1px solid #ddcfbd;padding:6px;text-align:left}.footer{border-top:1px solid #ddcfbd;margin-top:24px;padding-top:8px;font-size:8pt;color:#79545a}</style></head><body><div class="brand">NOVANOD</div><h1>'+safeTitle+'</h1><p class="meta">Rapport administratif · Généré le '+safeDate+'</p>'+renderReportHtml(value)+'<div class="footer">Document confidentiel — NOVANOD. Rapport établi à partir des données disponibles au moment de l’analyse.</div><script>window.onload=()=>setTimeout(()=>window.print(),350)<\/script></body></html>');
       w.document.close();
     }
     const securityEventsStatus = document.getElementById('security-events-status');
@@ -2671,7 +2685,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       const button = document.getElementById('btn-test-admin-push');
       const status = document.getElementById('admin-push-status');
       if (!currentAdminUserId) return setStatus(status, 'Connecte-toi à ton compte administrateur avant le test.', 'error');
-      button.disabled = true; setNovaProgress('push-test-progress',true,0); setStatus(status, 'Envoi du test Push vers ton compte Appwrite…', 'info');
+      button.disabled = true; setStatus(status, 'Envoi du test Push vers ton compte Appwrite…', 'info');
       try {
         const result = await adminCall('message_send', { channel:'push', userId:currentAdminUserId, subject:'NOVANOD — Test de notification', content:'Test de notification NOVANOD. Si tu reçois ce message, la connexion Push est active sur cet appareil.' });
         setStatus(status, result.acceptedByAppwrite ? 'Appwrite a accepté le message (' + (result.messageId || 'ID non retourné') + '). Vérifie la réception sur un appareil connecté au Push.' : 'Le serveur n’a pas confirmé l’acceptation du message.', result.acceptedByAppwrite ? 'success' : 'error');
@@ -2868,7 +2882,6 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       const kind=btn.dataset.analysis, status=document.getElementById('analysis-status');
       const providerMode=document.getElementById('analysis-provider')?.value || 'both';
       btn.disabled=true;
-      setNovaProgress('analysis-progress',true);
       setStatus(status,'Analyse « '+kind+' » en cours avec '+(providerMode==='both'?'Gemini et Groq':providerMode)+'…','info');
       out('analysis-output','Analyse en cours… Les deux modèles peuvent prendre un peu de temps.');
       try {
@@ -2882,11 +2895,10 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         const h=await adminCall('list_reports');
         renderReportHistory(h.reports || []);
       } catch(e){setStatus(status,e.message,'error');out('analysis-output','Erreur : '+e.message);}
-      finally { btn.disabled=false; setNovaProgress('analysis-progress',false); }
+      finally { btn.disabled=false; }
     }));
     async function analyzeLatestGithubAudit() {
       const status=document.getElementById('github-audit-status');
-      setNovaProgress('analysis-progress',true,0);
       setStatus(status,'Analyse du dernier audit terminé avec Gemini et Groq…','info');
       out('github-audit-combined','Analyse en cours…');
       try {
@@ -2896,17 +2908,13 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         renderProfessionalReport('github-audit-groq',providers.groq || ('Groq temporairement indisponible. '+(providers.errors?.groq||'')));
         renderProfessionalReport('github-audit-combined',providers.combined || providers.groq || providers.gemini || r.report || 'Aucune synthèse retournée.');
         const evidenceHost=document.getElementById('github-audit-evidence');
-        if(evidenceHost) {
-          evidenceHost.innerHTML=renderEvidenceHtml(r.evidence||r.chartData?.evidence||[]);
-          await loadPrivateEvidenceImages(evidenceHost);
-        }
+        if(evidenceHost)evidenceHost.innerHTML=renderEvidenceHtml(r.evidence||r.chartData?.evidence||[]);
         renderAnalysisCharts(r);
         const history=await adminCall('list_reports');renderReportHistory(history.reports||[]);
         const partial=providers.errors && Object.keys(providers.errors).length;
         setStatus(status,partial?'Rapport partiel : un fournisseur IA est indisponible.':'Audit analysé. Le rapport et les preuves sont enregistrés dans Appwrite.','success');
         return r;
       } catch(e) { setStatus(status,e.message,'error'); out('github-audit-combined','Erreur : '+e.message); throw e; }
-      finally { setNovaProgress('analysis-progress',false); }
     }
     document.getElementById('btn-analyze-github-audit')?.addEventListener('click',async()=>{
       const btn=document.getElementById('btn-analyze-github-audit');btn.disabled=true;
@@ -2934,7 +2942,6 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       const button=document.getElementById('btn-run-github-audit');
       const refresh=document.getElementById('btn-refresh-github-audit');
       button.disabled=true;if(refresh)refresh.disabled=true;
-      setNovaProgress('github-audit-progress',true);
       try {
         const started=await adminCall('trigger_github_audit');
         activeGithubAuditStartedAt=started.startedAt||started.run?.createdAt||new Date().toISOString();
@@ -2960,7 +2967,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           : message;
         setStatus(document.getElementById('github-audit-status'),hint,'error');
       }
-      finally{button.disabled=false;if(refresh)refresh.disabled=false;setNovaProgress('github-audit-progress',false);}
+      finally{button.disabled=false;if(refresh)refresh.disabled=false;}
     });
     document.getElementById('btn-appwrite-health-check')?.addEventListener('click',async()=>{
       const button=document.getElementById('btn-appwrite-health-check');
@@ -3003,7 +3010,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         const result=await adminCall('system_diagnostics',{testProviders:true});
         const lines=[];
         for (const [name,item] of Object.entries(result.diagnostics||{})) {
-  
+          if(name==='webauthn') lines.push('WebAuthn : RP '+(item.rpId||'non défini')+' ; origine '+(item.origin||'non définie')+' ; tables '+(item.credentialsTableConfigured&&item.challengesTableConfigured?'configurées':'à vérifier'));
           else if(name==='gemini'||name==='groq') lines.push(name.toUpperCase()+' : '+(item.configured?'clé présente':'clé absente')+' ; modèle '+(item.model||'non défini'));
           else lines.push(name+' : '+(item.configured?'configuré':'configuration manquante'));
         }
@@ -3086,7 +3093,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         generatedAt: new Date().toISOString(),
         page: location.href.split('?')[0].split('#')[0],
         appwrite: { endpoint: APPWRITE_ENDPOINT, projectId: APPWRITE_PROJECT_ID, functionId: NOVA_FUNCTION_ID },
-        admin: { userId: currentAdminUserId || null },
+        admin: { userId: currentAdmin?.$id || currentAdmin?.id || null },
         browser: { userAgent: navigator.userAgent, language: navigator.language, online: navigator.onLine, secureContext: window.isSecureContext },
         viewport: { width: innerWidth, height: innerHeight, pixelRatio: devicePixelRatio || 1 },
         preferences: (() => { try { return JSON.parse(localStorage.getItem('novanod_admin_preferences') || '{}'); } catch { return {}; } })(),
@@ -3104,8 +3111,9 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         'NOVANOD — checklist de configuration (aucun secret à copier ici)',
         '1. Appwrite : vérifier la fonction nova.ai, son déploiement et ses journaux.',
         '2. Appwrite : vérifier les variables serveur requises sans afficher leurs valeurs.',
-        '3. GitHub : Settings > Secrets and variables > Actions : définir NOVA_AUDIT_TOKEN (ou GITHUB_AUDIT_TOKEN) avec la même valeur que NOVA_AUDIT_TOKEN côté fonction Appwrite.',
+        '3. GitHub : Settings > Secrets and variables > Actions : vérifier GITHUB_WORKFLOW_TOKEN ou le secret utilisé par le backend.',
         '4. GitHub : Actions : vérifier les permissions du workflow et le dernier résultat Playwright/Lighthouse.',
+        '5. WebAuthn : vérifier WEBAUTHN_RP_ID, HTTPS et l’URL exacte du site.',
         '6. Resend : conserver RESEND_API_KEY uniquement dans les variables serveur Appwrite; expéditeur de production = domaine vérifié.',
         '7. Ne jamais coller de clé API, mot de passe ou jeton dans admin.html.'
       ].join('\n');
@@ -3124,7 +3132,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         maintenanceOutput.textContent = results.map(item => (item.ok?'✓ ':'✕ ')+item.label+' — '+(item.status || item.error)).join('\n');
         const failures = results.filter(item => !item.ok).length;
         setStatus(maintenanceStatus, failures ? failures+' page(s) non accessibles. Vérifie leur publication GitHub Pages.' : 'Les trois pages publiques répondent correctement.', failures?'error':'success');
-      } finally { setNovaProgress('push-test-progress',false); button.disabled = false; }
+      } finally { button.disabled = false; }
     });
     document.getElementById('btn-admin-reset-prefs')?.addEventListener('click', () => {
       if (!confirm('Réinitialiser uniquement les préférences locales de cette console ?')) return;
