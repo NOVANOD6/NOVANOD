@@ -1905,7 +1905,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
 
     document.getElementById('btn-run-analysis').addEventListener('click', async () => {
       const btn = document.getElementById('btn-run-analysis');
-      btn.disabled = true;
+      btn.disabled = true;startNovaProgress('Analyse automatique des rapports');
       setStatus(reportsStatus, 'Récupération du dernier audit GitHub puis analyse Gemini + Groq…', 'info');
       try {
         const result = await callNovaFunction({ action: 'analyze_github_audit', providerMode: 'both' });
@@ -1924,7 +1924,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       } catch (e) {
         setStatus(reportsStatus, 'Erreur : ' + e.message, 'error');
       } finally {
-        btn.disabled = false;
+        btn.disabled = false;finishNovaProgress();
       }
     });
 
@@ -2790,10 +2790,10 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       return run;
     }
     document.getElementById('btn-refresh-github-audit')?.addEventListener('click',async()=>{
-      const button=document.getElementById('btn-refresh-github-audit');button.disabled=true;
+      const button=document.getElementById('btn-refresh-github-audit');button.disabled=true;startNovaProgress('Vérification du statut GitHub');
       try { const run=await refreshGithubAuditStatus(); if(run?.status==='completed' && run.conclusion==='success') await analyzeLatestGithubAudit(); }
       catch(e){setStatus(document.getElementById('github-audit-status'),e.message,'error');}
-      finally{button.disabled=false;}
+      finally{button.disabled=false;finishNovaProgress();}
     });
     document.getElementById('btn-run-github-audit')?.addEventListener('click',async()=>{
       const button=document.getElementById('btn-run-github-audit');
