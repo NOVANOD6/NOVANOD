@@ -2165,6 +2165,12 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     }[c]));
 
     let reportViewMode = 'written';
+    function formatReportInline(value){
+      return String(value??'').split(/(\\*\\*[^*]+\\*\\*)/g).map(part=>{
+        if(part.startsWith('**')&&part.endsWith('**'))return '<strong>'+escapeHtml(part.slice(2,-2))+'</strong>';
+        return escapeHtml(part);
+      }).join('');
+    }
     function renderReportHtml(value, mode = reportViewMode) {
       const lines=String(value||'').replace(/\x60{3}[a-z]*|\x60{3}/gi,'').split(/\r?\n/);
       if (mode === 'table') {
@@ -2183,7 +2189,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         return '<div class="report-document"><div class="report-table-scroll"><table class="report-structured-table"><thead><tr><th>Rubrique</th><th>Constat, analyse et recommandation</th></tr></thead><tbody>'+(body||'<tr><td colspan="2">Aucun contenu disponible.</td></tr>')+'</tbody></table></div></div>';
       }
       const parts=[]; let list=[], listTag='', table=[];
-      const flushList=()=>{if(list.length){parts.push('<'+listTag+'>'+list.map(x=>'<li>'+escapeHtml(x)+'</li>').join('')+'</'+listTag+'>');list=[];listTag='';}};
+      const flushList=()=>{if(list.length){parts.push('<'+listTag+'>'+list.map(x=>'<li>'+formatReportInline(x)+'</li>').join('')+'</'+listTag+'>');list=[];listTag='';}};
       const flushTable=()=>{if(table.length){parts.push('<div class="report-table-scroll"><table><tbody>'+table.map((r,i)=>'<tr>'+r.map(x=>i===0?'<th>'+escapeHtml(x)+'</th>':'<td>'+escapeHtml(x)+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>');table=[];}};
       for(const raw of lines){
         const line=raw.trim(); if(!line || /^[-_=═─]{3,}$/.test(line)){flushList();flushTable();continue;}
