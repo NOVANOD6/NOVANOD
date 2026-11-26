@@ -1021,6 +1021,18 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     .workflow-actions .btn-3d{flex:1 1 220px;margin:0}
     .appwrite-health-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:9px;margin-top:12px}
     .appwrite-health-item{padding:12px;border:1px solid rgba(59,20,32,.16);border-radius:12px;background:#fffef7}
+    .feature-test-summary{margin:12px 0;padding:11px 13px;border:1px solid rgba(59,20,32,.18);border-radius:11px;font-size:12px;font-weight:800;background:rgba(59,20,32,.06)}
+    .feature-test-results{display:grid;gap:9px;margin:12px 0}
+    .feature-test-item{padding:11px 12px;border:1px solid rgba(59,20,32,.16);border-radius:11px;background:#fffef7;min-width:0}
+    .feature-test-head{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px;font-weight:800}
+    .feature-test-state{font-size:17px;flex:none}
+    .feature-test-state.ok{color:#168342}.feature-test-state.fail{color:#c62828}.feature-test-state.run{color:#a45b00}
+    .feature-test-detail{font-size:11px;line-height:1.5;margin-top:6px;overflow-wrap:anywhere;color:#3B1420}
+    .feature-test-track{height:7px;background:rgba(59,20,32,.12);border-radius:99px;overflow:hidden;margin-top:9px}
+    .feature-test-fill{height:100%;width:0;background:#E64A38;border-radius:99px;transition:width .18s ease}
+    .feature-test-meta{display:flex;justify-content:flex-end;font-size:10px;font-weight:800;margin-top:4px}
+    .feature-test-item.ok .feature-test-fill{background:#168342}.feature-test-item.fail .feature-test-fill{background:#c62828}
+
     .appwrite-health-item strong{display:block;margin-bottom:4px}
     @media(max-width:600px){.report-structured-table{width:760px!important}.report-evidence{grid-template-columns:1fr}.report-view-control select{width:100%;max-width:none}}
 
@@ -1285,6 +1297,13 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           </div>
           <button id="btn-save-settings" class="btn-3d">Enregistrer les paramètres</button>
           <div id="settings-status" class="status-msg" role="status" aria-live="polite"></div>
+          <div class="divider"></div>
+          <h3 class="card-title">Test complet des fonctionnalités</h3>
+          <p class="hint">Lance un contrôle séquentiel des services, de l’IA, des analyses, des preuves visuelles, du stockage, de GitHub et des pages légales. Chaque contrôle affiche sa progression et son résultat réel.</p>
+          <button id="btn-test-all-features" class="btn-3d" type="button">Tester toutes les fonctionnalités</button>
+          <div id="feature-test-summary" class="feature-test-summary" role="status" aria-live="polite">Aucun test lancé.</div>
+          <div id="feature-test-results" class="feature-test-results"></div>
+          <div class="admin-note">Le test des preuves vérifie l’accès au stockage et la présence de preuves dans les rapports disponibles. Il ne crée pas de fausses captures. Le basculement entre modèles Gemini doit être exécuté par nova.ai côté serveur ; la console lui transmet la demande de reprise sur modèle alternatif.</div>
           <div class="divider"></div>
           <h3 class="card-title">Notifications Appwrite</h3>
           <p class="hint">La console se connecte au broker Appwrite Push avec ton compte. Les messages reçus pendant que cette page reste ouverte s’affichent ci-dessous. Sur navigateur mobile, l’affichage système en arrière-plan n’est pas garanti ; un fournisseur FCM/PWA est nécessaire pour une vraie notification native persistante.</p>
@@ -2064,8 +2083,18 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     }
 
     // ===================== MODULES ADMIN NOVANOD =====================
+    const GEMINI_FREE_MODEL_FALLBACK_POLICY = {
+      enabled: true,
+      strategy: 'sequential',
+      retryOn: ['model_not_found','model_unavailable','rate_limit','temporarily_unavailable','unsupported_model'],
+      models: 'server_configured_free_models'
+    };
     const adminCall = async (action, extra = {}) => {
-      const result = await callNovaFunction({ action, ...extra });
+      const aiAction = ['assistant','run_analysis','analyze_github_audit'].includes(action);
+      const payload = aiAction
+        ? { action, ...extra, geminiFallbackPolicy: GEMINI_FREE_MODEL_FALLBACK_POLICY }
+        : { action, ...extra };
+      const result = await callNovaFunction(payload);
       if (result?.error) throw new Error(result.error);
       return result;
     };
@@ -2960,6 +2989,67 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         setStatus(document.getElementById('assistant-status'),e.message,'error');
         out('assistant-output','Erreur : '+e.message);
       } finally { btn.disabled=false;finishNovaProgress(); }
+    });
+
+    // Testeur fonctionnel : contrôles séquentiels, progression par fonctionnalité et erreurs explicites.
+    const featureTestButton = document.getElementById('btn-test-all-features');
+    const featureTestResults = document.getElementById('feature-test-results');
+    const featureTestSummary = document.getElementById('feature-test-summary');
+    function createFeatureTestRow(id,label){
+      const row=document.createElement('section');
+      row.className='feature-test-item';row.id='feature-test-'+id;
+      row.innerHTML='<div class="feature-test-head"><span>'+escapeHtml(label)+'</span><span class="feature-test-state run">…</span></div><div class="feature-test-detail">En attente</div><div class="feature-test-track"><div class="feature-test-fill"></div></div><div class="feature-test-meta">0 %</div>';
+      featureTestResults.appendChild(row);return row;
+    }
+    function updateFeatureTestRow(row,percent,detail,state){
+      const value=Math.max(0,Math.min(100,Math.round(percent)));
+      row.querySelector('.feature-test-fill').style.width=value+'%';
+      row.querySelector('.feature-test-meta').textContent=value+' %';
+      row.querySelector('.feature-test-detail').textContent=detail;
+      const icon=row.querySelector('.feature-test-state');
+      row.classList.remove('ok','fail');
+      if(state==='ok'){row.classList.add('ok');icon.className='feature-test-state ok';icon.textContent='✓';}
+      else if(state==='fail'){row.classList.add('fail');icon.className='feature-test-state fail';icon.textContent='✕';}
+      else {icon.className='feature-test-state run';icon.textContent='…';}
+    }
+    async function runFeatureTest(label,fn){
+      const row=createFeatureTestRow(String(featureTestResults.children.length+1),label);
+      try{
+        updateFeatureTestRow(row,12,'Initialisation du contrôle…');
+        const result=await fn((p,msg)=>updateFeatureTestRow(row,p,msg||'Contrôle en cours…'));
+        updateFeatureTestRow(row,100,result?.message||'Fonction opérationnelle.', 'ok');
+        return {ok:true,label};
+      }catch(error){
+        updateFeatureTestRow(row,100,error?.message||String(error),'fail');
+        return {ok:false,label,error:error?.message||String(error)};
+      }
+    }
+    featureTestButton?.addEventListener('click',async()=>{
+      featureTestButton.disabled=true;featureTestResults.innerHTML='';
+      featureTestSummary.textContent='Tests en cours : 0 fonctionnalité terminée.';
+      const tests=[
+        ['Session administrateur',async progress=>{progress(45,'Vérification de la session Appwrite…');await account.get();progress(85,'Session Appwrite valide.');return {message:'Session administrateur Appwrite active.'};}],
+        ['Fonction nova.ai et diagnostic serveur',async progress=>{progress(25,'Interrogation de nova.ai…');const r=await adminCall('system_diagnostics',{testProviders:true});progress(80,'Lecture des diagnostics…');const checks=Object.entries(r.checks||{});const bad=checks.filter(([,v])=>!v?.ok);if(bad.length)throw new Error(bad.map(([k,v])=>k+': '+(v.error||'échec')).join(' ; '));return {message:'Fonction accessible. '+(checks.length?checks.length+' contrôle(s) serveur validé(s).':'Diagnostic reçu, aucun contrôle détaillé retourné.')};}],
+        ['Gemini et modèles de secours',async progress=>{progress(20,'Demande de test IA réel…');const r=await adminCall('assistant',{question:'Réponds exactement : TEST IA NOVANOD OK',providerMode:'gemini',geminiFallbackPolicy:{...GEMINI_FREE_MODEL_FALLBACK_POLICY,forceFallbackTest:true}});progress(85,'Vérification de la réponse Gemini…');const answer=aiResultText(r);if(!answer||/indisponible|erreur|échec/i.test(answer))throw new Error(answer||'Gemini n’a renvoyé aucun texte exploitable.');return {message:'Réponse Gemini reçue : '+answer.slice(0,180)};}],
+        ['Analyse automatique',async progress=>{progress(18,'Lancement d’une analyse de diagnostic…');const r=await adminCall('run_analysis',{analysisType:'problem',providerMode:document.getElementById('analysis-provider')?.value||'both'});progress(82,'Vérification du rapport…');const report=aiResultText(r);if(!report||report.startsWith('Le serveur n’a renvoyé'))throw new Error(report||'Aucun rapport exploitable retourné.');return {message:'Analyse exécutée et réponse exploitable reçue.'};}],
+        ['Photos et preuves visuelles',async progress=>{progress(20,'Vérification du bucket de preuves…');const [buckets,reports]=await Promise.all([adminCall('storage_buckets'),adminCall('list_reports')]);progress(70,'Recherche des preuves dans les rapports…');const bucketList=buckets.buckets||[];const list=reports.reports||[];const evidence=list.reduce((n,item)=>n+(Array.isArray(item.evidence)?item.evidence.length:0),0);if(!bucketList.length)throw new Error('Aucun bucket de stockage accessible. Vérifie NOVA_AUDIT_STORAGE_BUCKET_ID et les permissions du bucket privé.');if(!evidence)throw new Error('Stockage accessible, mais aucune preuve visuelle trouvée dans les rapports disponibles. Lance un audit Playwright/Lighthouse qui produit des captures.');return {message:evidence+' preuve(s) trouvée(s) et '+bucketList.length+' bucket(s) accessible(s).'};}],
+        ['Historique des rapports',async progress=>{progress(35,'Lecture de l’historique…');const r=await adminCall('list_reports');progress(85,'Historique reçu.');return {message:(r.reports||[]).length+' rapport(s) accessible(s).'};}],
+        ['Audit GitHub',async progress=>{progress(35,'Lecture du statut GitHub Actions…');const r=await adminCall('github_audit_status',{});progress(85,'Statut reçu.');if(!r||r.error)throw new Error(r?.error||'Aucun statut GitHub retourné.');return {message:r.run?'Workflow détecté : '+(r.run.status||'statut inconnu')+'.':'Service accessible ; aucun workflow récent retourné.'};}],
+        ['Alertes de sécurité',async progress=>{progress(35,'Lecture des événements…');const r=await adminCall('list_security_events');progress(85,'Événements reçus.');if(!Array.isArray(r.events))throw new Error('La fonction n’a pas retourné la liste des événements.');return {message:r.events.length+' événement(s) de sécurité accessible(s).'};}],
+        ['Pages Accueil, Privacy et Terms',async progress=>{const pages=[['Accueil','./'],['Privacy','./privacy.html'],['Terms','./terms.html']];const results=[];for(let i=0;i<pages.length;i++){const [name,path]=pages[i];progress(15+i*27,'Vérification de '+name+'…');const response=await fetch(path,{method:'HEAD',cache:'no-store'});results.push({name,status:response.status,ok:response.ok});}const failed=results.filter(x=>!x.ok);if(failed.length)throw new Error(failed.map(x=>x.name+' : HTTP '+x.status).join(' ; '));return {message:'Les trois pages répondent correctement (HTTP 2xx).'};}]
+      ];
+      const outcomes=[];
+      try{
+        for(let i=0;i<tests.length;i++){
+          const [label,fn]=tests[i];
+          featureTestSummary.textContent='Test '+(i+1)+'/'+tests.length+' : '+label;
+          outcomes.push(await runFeatureTest(label,fn));
+        }
+      }finally{
+        const passed=outcomes.filter(x=>x.ok).length,failed=outcomes.length-passed;
+        featureTestSummary.textContent='Terminé : '+passed+'/'+outcomes.length+' tests réussis · '+failed+' échec(s).'+(failed?' Consulte les messages rouges pour identifier les corrections.':' Toutes les fonctionnalités testées répondent.');
+        featureTestButton.disabled=false;
+      }
     });
 
     // Load richer reports and teams lazily when opening their workspace.
