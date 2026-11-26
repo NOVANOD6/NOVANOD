@@ -497,7 +497,6 @@
       filter:drop-shadow(0 2px 0 rgba(255,255,255,.7)) drop-shadow(0 5px 4px rgba(59,20,32,.24));
       transform:perspective(260px) rotateX(7deg) translateZ(3px);
     }
-    .fingerprint-mark {
       width:36px;height:36px;fill:none;stroke:currentColor;stroke-width:2.1;
       stroke-linecap:round;stroke-linejoin:round;
       filter:drop-shadow(0 2px 0 rgba(255,255,255,.7)) drop-shadow(0 6px 5px rgba(59,20,32,.28));
@@ -909,8 +908,6 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     .analysis-action{display:flex;align-items:center;justify-content:flex-start;gap:12px;text-align:left;min-height:66px}
     .analysis-action svg{width:38px;height:38px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
     .analysis-action span{line-height:1.3}
-    .fingerprint-mark{width:25px;height:25px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vertical-align:middle;margin-right:8px}
-    .btn-3d:has(.fingerprint-mark){display:inline-flex;align-items:center;justify-content:center;gap:8px}
     .orientation-toggle[hidden]{display:none!important}
     button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid rgba(230,74,56,.45);outline-offset:2px}
     @media(max-width:620px){.device-tab{flex:1 1 100px;padding:9px 8px;gap:6px}.orientation-button{min-height:54px;padding:8px}.analysis-action{min-height:60px}}
@@ -967,7 +964,6 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     .analysis-action{min-height:104px!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:10px!important;border-radius:17px!important}
     .analysis-action svg{width:66px!important;height:66px!important;padding:13px!important;border:0!important;border-radius:19px!important;stroke:#fff7dc!important;stroke-width:2.2!important;background:radial-gradient(circle at 28% 18%,rgba(255,255,255,.55),transparent 38%),linear-gradient(145deg,#ff9b7c 0%,#E64A38 44%,#3B1420 100%)!important;box-shadow:inset 0 2px 3px rgba(255,255,255,.45),inset 0 -5px 8px rgba(59,20,32,.22),0 6px 0 rgba(59,20,32,.2),0 13px 20px rgba(59,20,32,.18)!important;filter:none!important;transform:perspective(600px) rotateX(9deg) rotateY(-7deg) translateZ(4px)!important}
     .analysis-action:hover svg{transform:perspective(600px) rotateX(0) rotateY(0) translateY(-4px) scale(1.04)!important}.analysis-action span{font-weight:850!important}
-    .fingerprint-mark{width:38px!important;height:38px!important;padding:5px!important;border-radius:12px!important;color:#fff8df!important;background:linear-gradient(145deg,#ff987b,#E64A38 50%,#3B1420)!important;filter:drop-shadow(0 4px 5px rgba(59,20,32,.2))!important}
     .stats-row{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:10px!important}.stat-box{border:1px solid rgba(59,20,32,.1)!important;border-radius:16px!important;background:linear-gradient(145deg,#fffef3,#fff5c7)!important;box-shadow:0 5px 14px rgba(59,20,32,.06)!important}.stat-box .num{font-size:clamp(20px,2.4vw,28px)!important}
     .admin-table-wrap{border:1px solid rgba(59,20,32,.12)!important;border-radius:15px!important;box-shadow:0 6px 16px rgba(59,20,32,.045)!important}.admin-table th{background:#3B1420!important;color:#FFFBD0!important}.admin-table tbody tr:nth-child(even){background:rgba(230,74,56,.035)}
     .input-field,select.input-field,textarea.input-field{border-radius:12px!important;min-height:44px}.btn-3d{border-radius:12px!important}.admin-note{background:rgba(59,20,32,.045)!important;border:1px solid rgba(59,20,32,.1)!important;border-radius:13px!important}.user-list{max-height:var(--admin-list-max-height,480px)!important}.nova-reduced-motion *,.nova-reduced-motion *::before,.nova-reduced-motion *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
@@ -1113,7 +1109,6 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         <input type="password" id="admin-password" class="input-field" placeholder="••••••••" autocomplete="current-password">
         
         <button id="btn-login" class="btn-3d">Se connecter au Dashboard</button>
-        <button id="btn-login-fingerprint" class="btn-3d btn-secondary hidden"><svg class="fingerprint-mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 7c-9 0-16 7-16 16M24 13c-6 0-11 5-11 11 0 7-1 12-4 16M24 19c-3 0-5 2-5 5 0 9-1 14-4 18M24 25c0 9-1 15-3 19M30 9c6 2 10 8 10 14 0 8-1 14-4 19M30 16c3 2 5 5 5 9 0 5 0 9-2 13"/></svg><span>Déverrouiller avec l'empreinte du téléphone</span></button>
       </div>
 
       <div id="pane-signup" class="hidden">
@@ -1189,15 +1184,6 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
 
       <!-- ===== ONGLET : SÉCURITÉ ===== -->
       <div id="pane-security" class="dash-pane">
-        <div class="glass-card">
-          <h3 class="card-title" style="color:var(--dark-brown);">Sécurité biométrique</h3>
-          <div class="hint">Enregistre jusqu'à cinq passkeys sur ton téléphone. Android déclenchera l'authentification biométrique locale (empreinte si le capteur et le système la proposent, sinon le mécanisme sécurisé configuré sur l'appareil). NOVANOD ne reçoit et ne stocke jamais ton empreinte digitale.</div>
-          <div id="fingerprint-status" class="status-msg" role="status" aria-live="polite"></div>
-          <div id="passkey-count" class="hint">Chargement des passkeys…</div>
-          <div id="passkey-list" class="user-list" aria-live="polite"></div>
-          <button id="btn-register-fingerprint" class="btn-3d btn-dark hidden"><svg class="fingerprint-mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 7c-9 0-16 7-16 16M24 13c-6 0-11 5-11 11 0 7-1 12-4 16M24 19c-3 0-5 2-5 5 0 9-1 14-4 18M24 25c0 9-1 15-3 19M30 9c6 2 10 8 10 14 0 8-1 14-4 19M30 16c3 2 5 5 5 9 0 5 0 9-2 13"/></svg><span>Enregistrer l'empreinte de ce téléphone</span></button>
-          <button id="btn-refresh-passkeys" class="admin-action">Actualiser la liste</button>
-        </div>
         <div class="glass-card">
           <h3 class="card-title">Alertes de sécurité</h3>
           <div class="hint">Incidents reçus et enregistrés par le serveur. Les statuts indiquent si Appwrite a accepté le Push et l’e-mail ; ils ne garantissent pas la livraison sur l’appareil.</div>
@@ -1619,8 +1605,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
   <script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.1"></script>
 
   <script type="module">
-    import { startRegistration, startAuthentication } from 'https://cdn.jsdelivr.net/npm/@simplewebauthn/browser@9/+esm';
-    import { Client as AppwritePushClient, Push as AppwritePush } from 'https://cdn.jsdelivr.net/npm/appwrite@29.0.0/+esm';
+        import { Client as AppwritePushClient, Push as AppwritePush } from 'https://cdn.jsdelivr.net/npm/appwrite@29.0.0/+esm';
 
     const APPWRITE_ENDPOINT = 'https://fra.cloud.appwrite.io/v1';
     const APPWRITE_PROJECT_ID = '6ad4bd7b0036d37d3561';
@@ -1776,8 +1761,6 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           screenLogin.classList.add('hidden');
           screenAdmin.classList.remove('hidden');
           await startAdminPush();
-          // Charger les passkeys uniquement après authentification administrateur.
-          await refreshPasskeys();
         } else {
           setStatus(loginStatus, `Accès refusé. Ton ID (${user.$id}) n'est pas autorisé dans ADMIN_USER_IDS.`, "error");
           await account.deleteSession('current').catch(() => {});
@@ -2062,32 +2045,6 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       setStatus(document.getElementById('settings-status'), 'Préférences enregistrées sur cet appareil.', 'success');
     });
 
-    const fingerprintStatus = document.getElementById('fingerprint-status');
-    const btnRegisterFingerprint = document.getElementById('btn-register-fingerprint');
-    const btnLoginFingerprint = document.getElementById('btn-login-fingerprint');
-    let platformAuthenticatorAvailable = false;
-    async function detectPlatformAuthenticator(showFeedback = false) {
-      const supported = !!(window.isSecureContext && window.PublicKeyCredential && typeof PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable === 'function');
-      if (!supported) {
-        btnRegisterFingerprint.classList.add('hidden');
-        btnLoginFingerprint.classList.add('hidden');
-        if (showFeedback) setStatus(fingerprintStatus, 'La biométrie de plateforme n’est pas disponible dans ce navigateur ou ce contexte. Utilise le site en HTTPS et vérifie le verrouillage sécurisé Android.', 'info');
-        return false;
-      }
-      try {
-        platformAuthenticatorAvailable = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
-        btnRegisterFingerprint.classList.toggle('hidden', !platformAuthenticatorAvailable);
-        btnLoginFingerprint.classList.toggle('hidden', !platformAuthenticatorAvailable);
-        if (!platformAuthenticatorAvailable && showFeedback) setStatus(fingerprintStatus, 'Aucun authentificateur de plateforme compatible détecté. Vérifie le verrouillage sécurisé Android.', 'info');
-        return platformAuthenticatorAvailable;
-      } catch (error) {
-        if (showFeedback) setStatus(fingerprintStatus, 'Vérification biométrique impossible : ' + (error.message || error), 'error');
-        return false;
-      }
-    }
-    // Détection silencieuse : aucun avertissement n'est affiché avant une action de l'utilisateur.
-    detectPlatformAuthenticator();
-
     async function callNovaFunction(payload) {
       if (!NOVA_FUNCTION_ID || NOVA_FUNCTION_ID === 'COLLE_ICI_LE_FUNCTION_ID') throw new Error('Identifiant de fonction NOVANOD non configuré.');
       const execution = await functions.createExecution(NOVA_FUNCTION_ID, JSON.stringify(payload), false);
@@ -2101,92 +2058,6 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       if (!result || typeof result !== 'object' || Array.isArray(result)) throw new Error('Format de réponse inattendu de la fonction NOVANOD.');
       return result;
     }
-
-    async function refreshPasskeys() {
-      const list = document.getElementById('passkey-list');
-      const count = document.getElementById('passkey-count');
-      if (!list || !count) return;
-      try {
-        const result = await callNovaFunction({ action: 'webauthn_list_credentials' });
-        if (result.error) throw new Error(result.error);
-        if (!Array.isArray(result.credentials)) throw new Error('Réponse invalide du serveur : la liste des passkeys n’a pas été confirmée.');
-        const items = result.credentials;
-        count.textContent = items.length + ' / 5 passkey(s) enregistrée(s) pour ce compte administrateur.';
-        const safeText = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-        list.innerHTML = items.length ? items.map((item, index) =>
-          '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--border-color,#ddd)">' +
-          '<span><b>Passkey ' + (index + 1) + '</b><br><small>Ajoutée le ' + safeText(item.createdAt || 'Date inconnue') + '</small></span>' +
-          '<button class="admin-action danger" data-passkey-delete="' + safeText(item.id) + '">Supprimer</button></div>'
-        ).join('') : '<div class="hint">Aucune passkey enregistrée pour ce compte.</div>';
-        btnRegisterFingerprint.disabled = items.length >= 5;
-        btnRegisterFingerprint.querySelector('span').textContent = items.length >= 5 ? 'Limite de cinq passkeys atteinte' : 'Ajouter une passkey (' + items.length + '/5)';
-      } catch (e) {
-        count.textContent = 'Impossible de charger les passkeys.';
-        list.textContent = e.message;
-      }
-    }
-    document.getElementById('btn-refresh-passkeys')?.addEventListener('click', refreshPasskeys);
-    document.getElementById('passkey-list')?.addEventListener('click', async ev => {
-      const button = ev.target.closest('[data-passkey-delete]');
-      if (!button) return;
-      if (!confirm('Supprimer cette passkey de ce compte administrateur ?')) return;
-      button.disabled = true;
-      try {
-        const result = await callNovaFunction({ action: 'webauthn_delete_credential', credentialRecordId: button.dataset.passkeyDelete });
-        if (result.error) throw new Error(result.error);
-        setStatus(fingerprintStatus, 'Passkey supprimée.', 'success');
-        await refreshPasskeys();
-      } catch (e) {
-        button.disabled = false;
-        setStatus(fingerprintStatus, e.message, 'error');
-      }
-    });
-    btnRegisterFingerprint.addEventListener('click', async () => {
-      setStatus(fingerprintStatus, "Préparation de l'enregistrement sécurisé…", "info");
-      btnRegisterFingerprint.disabled = true;
-      try {
-        if (!(await detectPlatformAuthenticator(true))) throw new Error('Aucun authentificateur de plateforme disponible. Vérifie le verrouillage sécurisé Android.');
-        const rawOptions = await callNovaFunction({ action: 'webauthn_register_options' });
-        if (rawOptions?.error) throw new Error(String(rawOptions.error));
-        const options = normalizeWebAuthnOptions(rawOptions, 'register');
-        const credential = await startRegistration({ optionsJSON: options });
-        if (!credential || typeof credential !== 'object' || !credential.id || !credential.response) {
-          throw new Error("Android n'a pas renvoyé une passkey valide. Vérifie le verrouillage sécurisé de l'appareil puis réessaie.");
-        }
-        const result = await callNovaFunction({ action: 'webauthn_register_verify', credential });
-        if (result.error) throw new Error(result.error);
-        setStatus(fingerprintStatus, "Passkey enregistrée sur cet appareil.", "success");
-      } catch (e) {
-        const message = /not allowed|timed out|NotAllowedError/i.test(e.message)
-          ? "Enregistrement annulé ou expiré. Vérifie qu'un verrouillage d'écran et une empreinte/option biométrique sont configurés sur Android, puis réessaie."
-          : e.message;
-        setStatus(fingerprintStatus, message, "error");
-      } finally {
-        // Recalculer la limite même après un succès : ne pas réactiver la 6e passkey.
-        await refreshPasskeys();
-      }
-    });
-    btnLoginFingerprint.addEventListener('click', async () => {
-      setStatus(loginStatus, "Lecture biométrique...", "info");
-      try {
-        if (!(await detectPlatformAuthenticator())) throw new Error("L’authentificateur biométrique de ce téléphone n’est pas disponible.");
-        const rawOptions = await callNovaFunction({ action: 'webauthn_login_options' });
-        if (rawOptions?.noCredentials || rawOptions?.available === false) {
-          setStatus(loginStatus, rawOptions.message || 'Aucune passkey enregistrée. Connecte-toi avec ton mot de passe puis enregistre une passkey dans Sécurité.', 'info');
-          return;
-        }
-        if (rawOptions?.error) throw new Error(rawOptions.error);
-        const optionsJSON = normalizeWebAuthnOptions(rawOptions, 'login');
-        const credential = await startAuthentication({ optionsJSON: { ...optionsJSON, userVerification: 'required' } });
-        const result = await callNovaFunction({ action: 'webauthn_login_verify', credential });
-        if (result.error) throw new Error(result.error);
-        await account.createSession(result.userId, result.secret);
-        await checkAdminSession();
-      } catch (e) {
-        setStatus(loginStatus, e.message, "error");
-      }
-    });
-
 
     // ===================== MODULES ADMIN NOVANOD =====================
     const adminCall = async (action, extra = {}) => {
@@ -2202,42 +2073,6 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
     }[c]));
 
-    const toBase64Url = value => {
-      if (typeof value === 'string' && value.trim()) return value;
-      let bytes = null;
-      if (value instanceof ArrayBuffer) bytes = new Uint8Array(value);
-      else if (ArrayBuffer.isView(value)) bytes = new Uint8Array(value.buffer,value.byteOffset,value.byteLength);
-      else if (value && typeof value === 'object' && Array.isArray(value.data)) bytes = new Uint8Array(value.data);
-      if (!bytes) return '';
-      let binary=''; bytes.forEach(b=>binary+=String.fromCharCode(b));
-      return btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
-    };
-    function normalizeWebAuthnOptions(raw, mode) {
-      const source=raw && (raw.optionsJSON || raw.options || raw.data || raw);
-      if(!source || typeof source!=='object') throw new Error('Options WebAuthn absentes.');
-      const options={...source,challenge:toBase64Url(source.challenge)};
-      if(!options.challenge) throw new Error('Le défi WebAuthn est absent ou invalide.');
-      const normalizeCredentialList = (items, label) => {
-        if (items == null) return [];
-        if (!Array.isArray(items)) throw new Error('La liste '+label+' WebAuthn est invalide.');
-        return items.map(item => {
-          if (!item || typeof item !== 'object' || !item.id) return null;
-          const id = toBase64Url(item.id);
-          return id ? { ...item, id } : null;
-        }).filter(Boolean);
-      };
-      if(mode==='register'){
-        const user = source.user && typeof source.user === 'object' ? source.user : {};
-        const userId = toBase64Url(user.id);
-        if(!userId) throw new Error('Identifiant WebAuthn utilisateur absent ou invalide. Recharge la page puis réessaie.');
-        options.user={...user,id:userId};
-        if(!source.rp || typeof source.rp.id !== 'string' || !source.rp.id.trim()) throw new Error('Identifiant du site WebAuthn absent. Vérifie WEBAUTHN_RP_ID.');
-        options.excludeCredentials=normalizeCredentialList(source.excludeCredentials,'excludeCredentials');
-      } else if (mode==='login') {
-        options.allowCredentials=normalizeCredentialList(source.allowCredentials,'allowCredentials');
-      }
-      return options;
-    }
     let reportViewMode = 'written';
     function renderReportHtml(value, mode = reportViewMode) {
       const lines=String(value||'').replace(/\x60{3}[a-z]*|\x60{3}/gi,'').split(/\r?\n/);
