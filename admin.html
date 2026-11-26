@@ -278,6 +278,10 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
+    .auth-loading-track{height:3px;width:100%;margin:0 0 14px;border-radius:99px;overflow:hidden;background:rgba(59,20,32,.10);display:none}
+    .auth-loading-track.active{display:block}
+    .auth-loading-bar{height:100%;width:35%;border-radius:99px;background:var(--red-primary);animation:authLoadingMove 1.15s ease-in-out infinite}
+    @keyframes authLoadingMove{0%{transform:translateX(-110%)}100%{transform:translateX(310%)}}
     .status-msg:not(:empty) { display: block; }
     .status-msg.error { background: #ffe5e8; color: #B00020; border: 1.5px solid #ffb3bc; }
     .status-msg.success { background: #e2f7ea; color: #1A7A3D; border: 1.5px solid #a3e4bc; }
@@ -1099,6 +1103,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       </div>
 
       <div id="login-status" class="status-msg"></div>
+      <div id="auth-loading-track" class="auth-loading-track" role="progressbar" aria-label="Chargement en cours"><div class="auth-loading-bar"></div></div>
 
       <div id="pane-login">
         <label class="form-label">Adresse E-mail</label>
@@ -1678,6 +1683,23 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       el.className = 'status-msg' + (msg ? ' ' + type : '');
     }
 
+    function setAuthLoading(button, active, loadingText) {
+      const bar = document.getElementById('auth-loading-track');
+      if (active) {
+        button.dataset.originalText = button.textContent;
+        button.disabled = true;
+        if (loadingText) button.textContent = loadingText;
+        bar?.classList.add('active');
+        bar?.setAttribute('aria-valuetext', 'Chargement en cours');
+      } else {
+        button.disabled = false;
+        if (button.dataset.originalText) button.textContent = button.dataset.originalText;
+        delete button.dataset.originalText;
+        bar?.classList.remove('active');
+        bar?.removeAttribute('aria-valuetext');
+      }
+    }
+
     const tabLogin = document.getElementById('tab-login');
     const tabSignup = document.getElementById('tab-signup');
     const paneLogin = document.getElementById('pane-login');
@@ -1700,6 +1722,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     });
 
     document.getElementById('btn-signup').addEventListener('click', async () => {
+      const signupButton = document.getElementById('btn-signup');
       const email = document.getElementById('signup-email').value.trim();
       const password = document.getElementById('signup-password').value;
       const passwordConfirm = document.getElementById('signup-password-confirm').value;
@@ -1713,6 +1736,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         return;
       }
 
+      setAuthLoading(signupButton, true, "Création en cours...");
       setStatus(loginStatus, "Création du compte en cours...", "info");
       try {
         await account.deleteSession('current').catch(() => {});
@@ -1722,6 +1746,8 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         screenPending.classList.remove('hidden');
       } catch (e) {
         setStatus(loginStatus, "Erreur : " + (e.message || e), "error");
+      } finally {
+        setAuthLoading(signupButton, false);
       }
     });
 
@@ -1760,12 +1786,14 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     }
 
     document.getElementById('btn-login').addEventListener('click', async () => {
+      const loginButton = document.getElementById('btn-login');
       const email = document.getElementById('admin-email').value.trim();
       const password = document.getElementById('admin-password').value;
       if (!email || !password) {
         setStatus(loginStatus, "Veuillez saisir votre e-mail et mot de passe.", "error");
         return;
       }
+      setAuthLoading(loginButton, true, "Connexion en cours...");
       setStatus(loginStatus, "Vérification des accès...", "info");
       try {
         await account.deleteSession('current').catch(() => {});
@@ -1773,6 +1801,8 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         await checkAdminSession();
       } catch (e) {
         setStatus(loginStatus, "Identifiants incorrects ou compte inexistant.", "error");
+      } finally {
+        setAuthLoading(loginButton, false);
       }
     });
 
