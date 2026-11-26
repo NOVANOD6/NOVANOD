@@ -1064,6 +1064,28 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       .report-view-control select{width:100%;max-width:none}
     }
   
+
+    /* NOVANOD — lecture des rapports en pleine largeur et sélection multiple */
+    #reports-list.user-list{max-height:none!important;overflow:visible!important;width:100%;}
+    #pane-reports .glass-card,#pane-analytics .glass-card{width:100%;min-width:0;}
+    #analysis-history{width:100%;max-width:none;min-width:0;overflow:visible;white-space:normal;padding:12px;background:transparent;border:0;}
+    .report-card{width:100%;max-width:none;min-width:0;padding:clamp(12px,2vw,22px);}
+    .report-rendered-content,.report-document,.report-table-scroll{width:100%;max-width:none;min-width:0;}
+    .report-document{font-size:14px;line-height:1.78;padding:clamp(14px,2.2vw,26px);}
+    .report-document h2{font-size:clamp(16px,1.8vw,21px);font-weight:900;color:#b9362a;margin:22px 0 10px;}
+    .report-document strong{font-weight:900;color:#9f2d24;}
+    .report-document .report-section{border-left:4px solid #E64A38;padding:10px 14px;margin:14px 0;background:#fff8e9;border-radius:0 10px 10px 0;}
+    .report-selection-toolbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 12px;margin:10px 0;border:1px solid rgba(59,20,32,.16);border-radius:11px;background:#fffef7;font-size:12px;font-weight:800;}
+    .report-selection-toolbar label{display:flex;align-items:center;gap:8px;cursor:pointer;}
+    .report-selection-toolbar input{width:18px;height:18px;accent-color:#E64A38;}
+    .report-selection-toolbar [data-report-selected-count]{color:#8b3a2e;margin-right:auto;}
+    .report-card.is-selected{border:2px solid #E64A38;background:#fff9ec;}
+    .report-card-head{align-items:flex-start;}
+    .report-card-head .report-select-control{display:flex;align-items:center;gap:8px;margin-right:auto;}
+    .report-card-head .report-select-control input{width:18px;height:18px;accent-color:#E64A38;}
+    .report-ai-label{display:inline-flex;align-items:center;margin:6px 0 10px;padding:5px 10px;border-radius:7px;background:#3B1420;color:#FFFBD0;font-size:11px;font-weight:900;letter-spacing:.4px;}
+    .report-document .report-keyword{font-weight:900;color:#a52f25;}
+    @media(max-width:760px){#analysis-history{padding:4px 0}.report-document{font-size:13px}.report-card-head{display:grid;grid-template-columns:1fr;}}
     /* Correctifs mobile NOVANOD : contrôles compacts, sans champs géants */
     .input-field, select.input-field, input.input-field {
       display:block; width:100%; min-width:0; height:50px; min-height:46px;
@@ -1190,6 +1212,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         </div>
         <div class="glass-card">
           <h3 class="card-title">Derniers rapports</h3>
+          <div class="report-selection-toolbar"><label><input type="checkbox" data-report-select-all="reports-list"> Tout sélectionner</label><span data-report-selected-count="reports-list">0 sélectionné</span><button type="button" class="admin-action danger" data-report-bulk-delete="reports-list" disabled>Supprimer la sélection</button></div>
           <div id="reports-list" class="user-list">
             <div class="hint">Aucun rapport pour l'instant — lance une première analyse ci-dessus.</div>
           </div>
@@ -1582,7 +1605,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           </section>
         </div>
         <div class="glass-card">
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap"><h3 class="card-title">Historique des rapports</h3><button id="btn-delete-all-reports" class="admin-action danger" type="button">Supprimer tout l’historique</button></div><p class="hint">Choisis une présentation adaptée : tableau structuré ou rapport écrit. Les tableaux peuvent défiler horizontalement sur téléphone. Chaque rapport peut être exporté en PDF ou supprimé.</p><div class="report-view-control"><label for="report-view-mode" class="form-label">Présentation des rapports</label><select id="report-view-mode" class="input-field"><option value="written">Rapport écrit professionnel</option><option value="table">Tableau structuré</option></select></div><div id="analysis-history" class="admin-output">Les rapports seront enregistrés dans la table configurée.</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap"><h3 class="card-title">Historique des rapports</h3><button id="btn-delete-all-reports" class="admin-action danger" type="button">Supprimer tout l’historique</button></div><p class="hint">Choisis une présentation adaptée : tableau structuré ou rapport écrit. Les tableaux peuvent défiler horizontalement sur téléphone. Chaque rapport peut être exporté en PDF ou supprimé.</p><div class="report-view-control"><label for="report-view-mode" class="form-label">Présentation des rapports</label><select id="report-view-mode" class="input-field"><option value="written">Rapport écrit professionnel</option><option value="table">Tableau structuré</option></select></div><div class="report-selection-toolbar"><label><input type="checkbox" data-report-select-all="analysis-history"> Tout sélectionner</label><span data-report-selected-count="analysis-history">0 sélectionné</span><button type="button" class="admin-action danger" data-report-bulk-delete="analysis-history" disabled>Supprimer la sélection</button></div><div id="analysis-history" class="admin-output">Les rapports seront enregistrés dans la table configurée.</div>
         </div>
       </div>
 
@@ -1854,7 +1877,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         const id=escapeHtml(r.$id||r.$rowId||r.id||''), title=escapeHtml(r.analysisType||'Analyse');
         const date=escapeHtml(formatDate(r.createdAt||r.$createdAt));
         const evidence = r.chartData?.evidence || r.evidence || [];
-        return '<article class="report-card" data-report-card="'+id+'"><div class="report-card-head"><span>Rapport '+(i+1)+' · '+title+'</span><span>'+date+'</span></div><div class="report-toolbar"><label class="report-format-label" for="report-format-'+id+'">Type de rapport</label><select id="report-format-'+id+'" class="input-field report-format-select" data-report-format="'+id+'" aria-label="Type de rapport"><option value="written" '+(reportViewMode==='written'?'selected':'')+'>Document texte</option><option value="table" '+(reportViewMode==='table'?'selected':'')+'>Tableau structuré</option></select><button type="button" data-report-pdf="'+id+'" data-report-title="'+title+'" data-report-date="'+date+'">Télécharger PDF</button><button type="button" class="admin-action danger" data-report-delete="'+id+'">Supprimer</button></div><div class="report-rendered-content">'+renderReportHtml(r.report||'',reportViewMode)+'</div><h4>Preuves visuelles</h4><div class="report-evidence">'+renderEvidenceHtml(evidence)+'</div></article>';
+        return '<article class="report-card" data-report-card="'+id+'"><div class="report-card-head"><label class="report-select-control"><input type="checkbox" data-report-select="'+id+'" aria-label="Sélectionner ce rapport"><span>Rapport '+(i+1)+' · '+title+'</span></label><span>'+date+'</span></div><div class="report-ai-label">'+escapeHtml(r.provider||r.aiProvider||r.modelProvider||'IA non précisée')+'</div><div class="report-toolbar"><label class="report-format-label" for="report-format-'+id+'">Type de rapport</label><select id="report-format-'+id+'" class="input-field report-format-select" data-report-format="'+id+'" aria-label="Type de rapport"><option value="written" '+(reportViewMode==='written'?'selected':'')+'>Document texte</option><option value="table" '+(reportViewMode==='table'?'selected':'')+'>Tableau structuré</option></select><button type="button" data-report-pdf="'+id+'" data-report-title="'+title+'" data-report-date="'+date+'">Télécharger PDF</button><button type="button" class="admin-action danger" data-report-delete="'+id+'">Supprimer</button></div><div class="report-rendered-content">'+renderReportHtml(r.report||'',reportViewMode)+'</div><h4>Preuves visuelles</h4><div class="report-evidence">'+renderEvidenceHtml(evidence)+'</div></article>';
       }).join('');
       reportsList.querySelectorAll('[data-report-card]').forEach(card=>{
         const item=reports.find(r=>(r.$id||r.$rowId||r.id)===card.dataset.reportCard);
@@ -1883,7 +1906,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       host.innerHTML=lastReportHistory.map((r,i)=>{
         const id=escapeHtml(r.$id||r.$rowId||r.id||''),title=escapeHtml(r.analysisType||'Analyse'),date=escapeHtml(formatDate(r.createdAt||r.$createdAt));
         const evidence = r.chartData?.evidence || r.evidence || [];
-        return '<article class="report-card" data-report-card="'+id+'"><div class="report-card-head"><span>Rapport '+(i+1)+' · '+title+'</span><span>'+date+'</span></div><div class="report-toolbar"><label class="report-format-label" for="history-report-format-'+id+'">Type de rapport</label><select id="history-report-format-'+id+'" class="input-field report-format-select" data-report-format="'+id+'" aria-label="Type de rapport"><option value="written" '+(reportViewMode==='written'?'selected':'')+'>Document texte</option><option value="table" '+(reportViewMode==='table'?'selected':'')+'>Tableau structuré</option></select><button type="button" data-report-pdf="'+id+'" data-report-title="'+title+'" data-report-date="'+date+'">Télécharger PDF</button><button type="button" class="admin-action danger" data-report-delete="'+id+'">Supprimer</button></div><div class="report-rendered-content">'+renderReportHtml(r.report||'',reportViewMode)+'</div><h4>Preuves visuelles</h4><div class="report-evidence">'+renderEvidenceHtml(evidence)+'</div></article>';
+        return '<article class="report-card" data-report-card="'+id+'"><div class="report-card-head"><label class="report-select-control"><input type="checkbox" data-report-select="'+id+'" aria-label="Sélectionner ce rapport"><span>Rapport '+(i+1)+' · '+title+'</span></label><span>'+date+'</span></div><div class="report-ai-label">'+escapeHtml(r.provider||r.aiProvider||r.modelProvider||'IA non précisée')+'</div><div class="report-toolbar"><label class="report-format-label" for="history-report-format-'+id+'">Type de rapport</label><select id="history-report-format-'+id+'" class="input-field report-format-select" data-report-format="'+id+'" aria-label="Type de rapport"><option value="written" '+(reportViewMode==='written'?'selected':'')+'>Document texte</option><option value="table" '+(reportViewMode==='table'?'selected':'')+'>Tableau structuré</option></select><button type="button" data-report-pdf="'+id+'" data-report-title="'+title+'" data-report-date="'+date+'">Télécharger PDF</button><button type="button" class="admin-action danger" data-report-delete="'+id+'">Supprimer</button></div><div class="report-rendered-content">'+renderReportHtml(r.report||'',reportViewMode)+'</div><h4>Preuves visuelles</h4><div class="report-evidence">'+renderEvidenceHtml(evidence)+'</div></article>';
       }).join('');
       host.querySelectorAll('[data-report-card]').forEach(card=>{
         const item=lastReportHistory.find(r=>(r.$id||r.$rowId||r.id)===card.dataset.reportCard);
@@ -1909,6 +1932,41 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         report.innerHTML=renderReportHtml(card.dataset.rawReport||'',original);
       }
     });
+    function updateReportSelection(rootId){
+      const root=document.getElementById(rootId);if(!root)return;
+      const checks=[...root.querySelectorAll('[data-report-select]')];
+      const selected=checks.filter(input=>input.checked);
+      const count=document.querySelector('[data-report-selected-count="'+rootId+'"]');
+      const button=document.querySelector('[data-report-bulk-delete="'+rootId+'"]');
+      const all=document.querySelector('[data-report-select-all="'+rootId+'"]');
+      if(count)count.textContent=selected.length+' sélectionné(s)';
+      if(button)button.disabled=!selected.length;
+      if(all){all.checked=checks.length>0&&selected.length===checks.length;all.indeterminate=selected.length>0&&selected.length<checks.length;}
+      root.querySelectorAll('[data-report-card]').forEach(card=>card.classList.toggle('is-selected',!!card.querySelector('[data-report-select]:checked')));
+    }
+    document.addEventListener('change',event=>{
+      const selectAll=event.target.closest('[data-report-select-all]');
+      if(selectAll){const root=document.getElementById(selectAll.dataset.reportSelectAll);root?.querySelectorAll('[data-report-select]').forEach(input=>input.checked=selectAll.checked);updateReportSelection(selectAll.dataset.reportSelectAll);return;}
+      const select=event.target.closest('[data-report-select]');
+      if(select){const root=select.closest('#reports-list,#analysis-history');if(root)updateReportSelection(root.id);}
+    });
+    document.addEventListener('click',async event=>{
+      const bulk=event.target.closest('[data-report-bulk-delete]');if(!bulk)return;
+      const rootId=bulk.dataset.reportBulkDelete,root=document.getElementById(rootId);
+      const ids=[...root.querySelectorAll('[data-report-select]:checked')].map(input=>input.dataset.reportSelect).filter(Boolean);
+      if(!ids.length)return;
+      if(!confirm('Supprimer définitivement les '+ids.length+' rapport(s) sélectionné(s) ? Cette action est irréversible.'))return;
+      bulk.disabled=true;bulk.textContent='Suppression…';
+      try{
+        let deleted=0;const failures=[];
+        for(const reportId of ids){try{await adminCall('delete_report',{reportId});deleted++;}catch(error){failures.push(reportId+': '+error.message);}}
+        await refreshReports();await reloadReportHistory();
+        const message=deleted+' rapport(s) supprimé(s).'+(failures.length?' Échecs : '+failures.join(' | '):'');
+        setStatus(document.getElementById('analysis-status'),message,failures.length?'error':'success');
+      }catch(error){setStatus(document.getElementById('analysis-status'),error.message,'error');}
+      finally{bulk.disabled=false;bulk.textContent='Supprimer la sélection';updateReportSelection(rootId);}
+    });
+
     document.addEventListener('click',async ev=>{
       const pdf=ev.target.closest('[data-report-pdf]');
       if(pdf){const card=pdf.closest('.report-card');const content=card?.querySelector('.report-document')?.innerText||'';exportReportPdf('Rapport NOVANOD — '+(pdf.dataset.reportTitle||'Analyse'),content,pdf.dataset.reportDate||'');return;}
