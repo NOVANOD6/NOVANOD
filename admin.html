@@ -1081,7 +1081,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     }
 
   
-.nova-game-progress{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(22,8,14,.72);backdrop-filter:blur(7px)}.nova-game-progress.active{display:flex}.nova-game-panel{width:min(520px,100%);padding:24px;border:1px solid rgba(255,255,255,.18);border-radius:20px;background:linear-gradient(145deg,#3B1420,#210b13);color:#fffbd0;box-shadow:0 24px 70px rgba(0,0,0,.4)}.nova-game-kicker{font-size:11px;letter-spacing:.18em;text-transform:uppercase;opacity:.72}.nova-game-heading{font-size:clamp(18px,4vw,23px);font-weight:850;margin:8px 0 5px}.nova-game-stage{font-size:13px;opacity:.82;min-height:20px}.nova-game-track{height:13px;margin:20px 0 10px;padding:2px;border-radius:20px;background:rgba(255,255,255,.16);overflow:hidden}.nova-game-fill{height:100%;width:0;border-radius:20px;background:linear-gradient(90deg,#E64A38,#ffc17b);box-shadow:0 0 16px rgba(230,74,56,.55);transition:width .35s ease}.nova-game-meta{display:flex;justify-content:space-between;font-variant-numeric:tabular-nums;font-size:13px;font-weight:800}.security-overview{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:14px 0}.security-metric{padding:12px;border:1px solid rgba(59,20,32,.12);border-radius:13px;background:rgba(230,74,56,.045)}.security-metric strong{display:block;font-size:22px;color:var(--dark-brown)}.security-metric span{font-size:11px;line-height:1.3;color:var(--text-muted,#765e60)}.security-tools{display:grid;grid-template-columns:minmax(0,1fr) minmax(150px,.45fr);gap:9px;margin:12px 0}@media(max-width:560px){.security-overview{grid-template-columns:repeat(2,minmax(0,1fr))}.security-tools{grid-template-columns:1fr}}
+.nova-progress-inline{display:block;width:100%;margin:-2px 0 12px;padding:10px 12px;border:1px solid rgba(230,74,56,.28);border-radius:11px;background:rgba(230,74,56,.07);color:#3B1420;animation:novaProgressReveal .18s ease-out}.nova-progress-heading{font-size:11px;font-weight:800;margin-bottom:4px;color:#3B1420}.nova-progress-stage{font-size:10px;opacity:.78;margin-bottom:7px}.nova-progress-track{height:5px;width:100%;border-radius:20px;background:rgba(59,20,32,.13);overflow:hidden}.nova-progress-fill{height:100%;width:0;border-radius:20px;background:linear-gradient(90deg,#E64A38,#ffc17b);transition:width .35s ease}.nova-progress-meta{display:flex;justify-content:space-between;margin-top:5px;font-size:10px;font-weight:800;font-variant-numeric:tabular-nums}.nova-progress-inline.is-complete{border-color:rgba(59,20,32,.2)}@keyframes novaProgressReveal{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}.security-overview{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:14px 0}.security-metric{padding:12px;border:1px solid rgba(59,20,32,.12);border-radius:13px;background:rgba(230,74,56,.045)}.security-metric strong{display:block;font-size:22px;color:var(--dark-brown)}.security-metric span{font-size:11px;line-height:1.3;color:var(--text-muted,#765e60)}.security-tools{display:grid;grid-template-columns:minmax(0,1fr) minmax(150px,.45fr);gap:9px;margin:12px 0}@media(max-width:560px){.security-overview{grid-template-columns:repeat(2,minmax(0,1fr))}.security-tools{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -1605,7 +1605,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     </div>
   </div>
 
-  <div id="nova-game-progress" class="nova-game-progress" role="status" aria-live="polite" aria-hidden="true"><div class="nova-game-panel"><div class="nova-game-kicker">NOVANOD · Opération en cours</div><div id="nova-game-title" class="nova-game-heading">Analyse en cours</div><div id="nova-game-stage" class="nova-game-stage">Préparation…</div><div class="nova-game-track"><div id="nova-game-fill" class="nova-game-fill"></div></div><div class="nova-game-meta"><span id="nova-game-percent">0 %</span><span>Veuillez patienter</span></div></div></div>
+  
 <script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.1"></script>
 
   <script type="module">
@@ -2562,9 +2562,60 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       } catch(e){setStatus(document.getElementById('messaging-status'),e.message,'error');}
     });
 
-    let novaProgressTimer=null,novaProgressValue=0,novaProgressDepth=0;
-    function startNovaProgress(title){const overlay=document.getElementById('nova-game-progress');if(!overlay)return;novaProgressDepth++;if(novaProgressTimer)clearInterval(novaProgressTimer);novaProgressValue=0;document.getElementById('nova-game-title').textContent=title||'Opération en cours';document.getElementById('nova-game-stage').textContent='Initialisation des contrôles…';document.getElementById('nova-game-percent').textContent='0 %';document.getElementById('nova-game-fill').style.width='0%';overlay.classList.add('active');overlay.setAttribute('aria-hidden','false');novaProgressTimer=setInterval(()=>{if(novaProgressValue<92)novaProgressValue=Math.min(92,novaProgressValue+(novaProgressValue<35?3.2:novaProgressValue<70?1.35:.35));document.getElementById('nova-game-stage').textContent=novaProgressValue<18?'Préparation des données…':novaProgressValue<42?'Exécution des vérifications…':novaProgressValue<68?'Analyse des résultats…':novaProgressValue<88?'Consolidation des résultats…':'Finalisation côté serveur…';document.getElementById('nova-game-percent').textContent=Math.floor(novaProgressValue)+' %';document.getElementById('nova-game-fill').style.width=novaProgressValue+'%';},420);}
-    function finishNovaProgress(){if(novaProgressDepth>0)novaProgressDepth--;if(novaProgressDepth>0)return;if(novaProgressTimer){clearInterval(novaProgressTimer);novaProgressTimer=null;}const overlay=document.getElementById('nova-game-progress');if(!overlay)return;novaProgressValue=100;document.getElementById('nova-game-stage').textContent='Opération terminée.';document.getElementById('nova-game-percent').textContent='100 %';document.getElementById('nova-game-fill').style.width='100%';setTimeout(()=>{overlay.classList.remove('active');overlay.setAttribute('aria-hidden','true');},650);}
+    let novaProgressTimer=null,novaProgressValue=0,novaProgressDepth=0,novaProgressPanel=null,novaProgressHideTimer=null;
+    function startNovaProgress(title){
+      novaProgressDepth++;
+      if(novaProgressHideTimer){clearTimeout(novaProgressHideTimer);novaProgressHideTimer=null;}
+      if(novaProgressTimer){clearInterval(novaProgressTimer);novaProgressTimer=null;}
+      const button=document.activeElement && document.activeElement.tagName==='BUTTON' ? document.activeElement : null;
+      if(!novaProgressPanel || !novaProgressPanel.isConnected){
+        novaProgressPanel=document.createElement('div');
+        novaProgressPanel.className='nova-progress-inline';
+        novaProgressPanel.setAttribute('role','status');
+        novaProgressPanel.setAttribute('aria-live','polite');
+        novaProgressPanel.innerHTML='<div class="nova-progress-heading"></div><div class="nova-progress-stage">Initialisation…</div><div class="nova-progress-track"><div class="nova-progress-fill"></div></div><div class="nova-progress-meta"><span class="nova-progress-percent">0 %</span><span>Veuillez patienter</span></div>';
+      }
+      if(button && button.parentNode){
+        if(novaProgressPanel.previousElementSibling!==button) button.insertAdjacentElement('afterend',novaProgressPanel);
+      } else if(!novaProgressPanel.isConnected) {
+        const fallback=document.querySelector('#screen-admin .glass-card.active, #screen-admin .glass-card');
+        if(fallback) fallback.appendChild(novaProgressPanel);
+      }
+      novaProgressPanel.querySelector('.nova-progress-heading').textContent=title||'Opération en cours';
+      novaProgressPanel.querySelector('.nova-progress-stage').textContent='Initialisation des contrôles…';
+      novaProgressPanel.querySelector('.nova-progress-percent').textContent='0 %';
+      novaProgressPanel.querySelector('.nova-progress-fill').style.width='0%';
+      novaProgressPanel.classList.remove('is-complete');
+      novaProgressValue=0;
+      novaProgressTimer=setInterval(()=>{
+        if(novaProgressValue<92) novaProgressValue=Math.min(92,novaProgressValue+(novaProgressValue<35?3.2:novaProgressValue<70?1.35:.35));
+        const stage=novaProgressPanel?.querySelector('.nova-progress-stage');
+        const percent=novaProgressPanel?.querySelector('.nova-progress-percent');
+        const fill=novaProgressPanel?.querySelector('.nova-progress-fill');
+        if(stage) stage.textContent=novaProgressValue<18?'Préparation des données…':novaProgressValue<42?'Exécution des vérifications…':novaProgressValue<68?'Analyse des résultats…':novaProgressValue<88?'Consolidation des résultats…':'Finalisation côté serveur…';
+        if(percent) percent.textContent=Math.floor(novaProgressValue)+' %';
+        if(fill) fill.style.width=novaProgressValue+'%';
+      },420);
+    }
+    function finishNovaProgress(){
+      if(novaProgressDepth>0) novaProgressDepth--;
+      if(novaProgressDepth>0) return;
+      if(novaProgressTimer){clearInterval(novaProgressTimer);novaProgressTimer=null;}
+      if(!novaProgressPanel) return;
+      novaProgressValue=100;
+      const stage=novaProgressPanel.querySelector('.nova-progress-stage');
+      const percent=novaProgressPanel.querySelector('.nova-progress-percent');
+      const fill=novaProgressPanel.querySelector('.nova-progress-fill');
+      if(stage) stage.textContent='Opération terminée.';
+      if(percent) percent.textContent='100 %';
+      if(fill) fill.style.width='100%';
+      novaProgressPanel.classList.add('is-complete');
+      novaProgressHideTimer=setTimeout(()=>{
+        novaProgressPanel?.remove();
+        novaProgressPanel=null;
+        novaProgressHideTimer=null;
+      },650);
+    }
     // AI role-based audits and assistant: show plain-text provider reports,
     // never stringify an empty wrapper object as "{}".
     const aiResultText = r => {
