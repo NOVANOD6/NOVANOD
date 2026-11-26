@@ -1080,7 +1080,9 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       .input-field, select.input-field { height:48px; min-height:44px; }
     }
 
-  </style>
+  
+.nova-game-progress{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(22,8,14,.72);backdrop-filter:blur(7px)}.nova-game-progress.active{display:flex}.nova-game-panel{width:min(520px,100%);padding:24px;border:1px solid rgba(255,255,255,.18);border-radius:20px;background:linear-gradient(145deg,#3B1420,#210b13);color:#fffbd0;box-shadow:0 24px 70px rgba(0,0,0,.4)}.nova-game-kicker{font-size:11px;letter-spacing:.18em;text-transform:uppercase;opacity:.72}.nova-game-heading{font-size:clamp(18px,4vw,23px);font-weight:850;margin:8px 0 5px}.nova-game-stage{font-size:13px;opacity:.82;min-height:20px}.nova-game-track{height:13px;margin:20px 0 10px;padding:2px;border-radius:20px;background:rgba(255,255,255,.16);overflow:hidden}.nova-game-fill{height:100%;width:0;border-radius:20px;background:linear-gradient(90deg,#E64A38,#ffc17b);box-shadow:0 0 16px rgba(230,74,56,.55);transition:width .35s ease}.nova-game-meta{display:flex;justify-content:space-between;font-variant-numeric:tabular-nums;font-size:13px;font-weight:800}.security-overview{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:14px 0}.security-metric{padding:12px;border:1px solid rgba(59,20,32,.12);border-radius:13px;background:rgba(230,74,56,.045)}.security-metric strong{display:block;font-size:22px;color:var(--dark-brown)}.security-metric span{font-size:11px;line-height:1.3;color:var(--text-muted,#765e60)}.security-tools{display:grid;grid-template-columns:minmax(0,1fr) minmax(150px,.45fr);gap:9px;margin:12px 0}@media(max-width:560px){.security-overview{grid-template-columns:repeat(2,minmax(0,1fr))}.security-tools{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
 
@@ -1184,11 +1186,12 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
 
       <!-- ===== ONGLET : SÉCURITÉ ===== -->
       <div id="pane-security" class="dash-pane">
+        <div class="glass-card"><h3 class="card-title">Vue d’ensemble de la sécurité</h3><div class="hint">Indicateurs calculés à partir des événements réellement enregistrés dans Appwrite.</div><div class="security-overview" aria-live="polite"><div class="security-metric"><strong id="security-total">—</strong><span>Alertes enregistrées</span></div><div class="security-metric"><strong id="security-critical">—</strong><span>Critiques / élevées</span></div><div class="security-metric"><strong id="security-recent">—</strong><span>Dernières 24 h</span></div><div class="security-metric"><strong id="security-notified">—</strong><span>Push et e-mail acceptés</span></div></div></div>
         <div class="glass-card">
           <h3 class="card-title">Alertes de sécurité</h3>
           <div class="hint">Incidents reçus et enregistrés par le serveur. Les statuts indiquent si Appwrite a accepté le Push et l’e-mail ; ils ne garantissent pas la livraison sur l’appareil.</div>
           <div id="security-events-status" class="status-msg" role="status" aria-live="polite"></div>
-          <button id="btn-refresh-security-events" class="admin-action">Actualiser les alertes</button>
+          <button id="btn-refresh-security-events" class="admin-action">Actualiser les alertes</button><div class="security-tools"><input id="security-event-search" class="input-field" type="search" placeholder="Rechercher un événement…" aria-label="Rechercher dans les alertes"><select id="security-event-filter" class="input-field" aria-label="Filtrer les alertes"><option value="all">Toutes les alertes</option><option value="critical">Critiques et élevées</option><option value="medium">Modérées</option><option value="low">Faibles</option></select></div>
           <div id="security-events-list" class="user-list" aria-live="polite"><div class="hint">Chargement des alertes…</div></div>
         </div>
       </div>
@@ -1602,7 +1605,8 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.1"></script>
+  <div id="nova-game-progress" class="nova-game-progress" role="status" aria-live="polite" aria-hidden="true"><div class="nova-game-panel"><div class="nova-game-kicker">NOVANOD · Opération en cours</div><div id="nova-game-title" class="nova-game-heading">Analyse en cours</div><div id="nova-game-stage" class="nova-game-stage">Préparation…</div><div class="nova-game-track"><div id="nova-game-fill" class="nova-game-fill"></div></div><div class="nova-game-meta"><span id="nova-game-percent">0 %</span><span>Veuillez patienter</span></div></div></div>
+<script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.1"></script>
 
   <script type="module">
         import { Client as AppwritePushClient, Push as AppwritePush } from 'https://cdn.jsdelivr.net/npm/appwrite@29.0.0/+esm';
@@ -2139,39 +2143,24 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       w.document.write('<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>'+safeTitle+'</title><style>@page{size:A4;margin:18mm}body{font:11pt/1.65 Arial,sans-serif;color:#35131f}.brand{font-size:18pt;font-weight:800;color:#b9362a;border-bottom:3px solid #b9362a;padding-bottom:10px}.meta{font-size:9pt;color:#71545a}.report-document h2{font-size:14pt;color:#b9362a;margin:18px 0 6px;border-bottom:1px solid #ead9c8}.report-document table{width:100%;border-collapse:collapse;font-size:9pt}.report-document th{background:#3b1420;color:#fffbd0}.report-document th,.report-document td{border:1px solid #ddcfbd;padding:6px;text-align:left}.footer{border-top:1px solid #ddcfbd;margin-top:24px;padding-top:8px;font-size:8pt;color:#79545a}</style></head><body><div class="brand">NOVANOD</div><h1>'+safeTitle+'</h1><p class="meta">Rapport administratif · Généré le '+safeDate+'</p>'+renderReportHtml(value)+'<div class="footer">Document confidentiel — NOVANOD. Rapport établi à partir des données disponibles au moment de l’analyse.</div><script>window.onload=()=>setTimeout(()=>window.print(),350)<\/script></body></html>');
       w.document.close();
     }
-    const securityEventsStatus = document.getElementById('security-events-status');
-    const securityEventsList = document.getElementById('security-events-list');
-    async function refreshSecurityEvents() {
-      if (!securityEventsList) return;
-      setStatus(securityEventsStatus, 'Chargement des alertes de sécurité…', 'info');
-      try {
-        const result = await adminCall('list_security_events');
-        const events = Array.isArray(result.events) ? result.events : [];
-        if (!events.length) {
-          securityEventsList.innerHTML = '<div class="hint">Aucune alerte enregistrée pour le moment.</div>';
-        } else {
-          securityEventsList.innerHTML = events.map(item => {
-            const event = item.event || {};
-            const channels = item.notifications || {};
-            const push = channels.push?.acceptedByAppwrite ? 'Push accepté' : 'Push non accepté';
-            const email = channels.email?.acceptedByAppwrite ? 'E-mail accepté' : 'E-mail non accepté';
-            const severity = event.severityLabel || event.severity || 'Inconnue';
-            return '<div class="user-row">' +
-              '<div class="u-name">' + escapeHtml(severity) + ' · ' + escapeHtml(event.event || 'Incident') + '</div>' +
-              '<div style="white-space:pre-wrap;margin-top:4px">' + escapeHtml(event.summary || '') + '</div>' +
-              '<div class="hint" style="margin-top:6px">' + escapeHtml(event.source || 'NOVANOD') + ' · ' + escapeHtml(formatDate(event.occurredAt || item.receivedAt || item.$createdAt)) + '</div>' +
-              '<div class="hint">' + escapeHtml(push) + ' · ' + escapeHtml(email) + '</div>' +
-              (event.details ? '<details><summary>Détails techniques</summary><div style="white-space:pre-wrap;margin-top:6px">' + escapeHtml(event.details) + '</div></details>' : '') +
-            '</div>';
-          }).join('');
-        }
-        setStatus(securityEventsStatus, events.length + ' alerte(s) chargée(s).', 'success');
-      } catch (e) {
-        setStatus(securityEventsStatus, e.message, 'error');
-        securityEventsList.textContent = 'Impossible de charger les alertes.';
-      }
+    const securityEventsStatus=document.getElementById('security-events-status'),securityEventsList=document.getElementById('security-events-list');
+    let cachedSecurityEvents=[];
+    function renderSecurityEvents(){
+      const events=cachedSecurityEvents,query=(document.getElementById('security-event-search')?.value||'').trim().toLowerCase(),filter=document.getElementById('security-event-filter')?.value||'all';
+      const sevOf=item=>String(item.event?.severityLabel||item.event?.severity||'').toLowerCase();
+      const critical=events.filter(item=>/crit|high|élev|haut/.test(sevOf(item))).length;
+      const recent=events.filter(item=>{const d=Date.parse(item.event?.occurredAt||item.receivedAt||item.$createdAt||'');return Number.isFinite(d)&&d>=Date.now()-86400000;}).length;
+      const notified=events.filter(item=>item.notifications?.push?.acceptedByAppwrite&&item.notifications?.email?.acceptedByAppwrite).length;
+      document.getElementById('security-total').textContent=events.length;document.getElementById('security-critical').textContent=critical;document.getElementById('security-recent').textContent=recent;document.getElementById('security-notified').textContent=notified;
+      const visible=events.filter(item=>{const sev=sevOf(item),c=/crit|high|élev|haut/.test(sev),m=/medium|moyen|modér/.test(sev),l=/low|faible|bas/.test(sev);if(filter==='critical'&&!c||filter==='medium'&&!m||filter==='low'&&!l)return false;const e=item.event||{};return !query||[e.event,e.summary,e.details,e.source,sev].join(' ').toLowerCase().includes(query);});
+      if(!events.length){securityEventsList.innerHTML='<div class="hint">Aucune alerte enregistrée pour le moment.</div>';return;}
+      if(!visible.length){securityEventsList.innerHTML='<div class="hint">Aucune alerte ne correspond à ce filtre.</div>';return;}
+      securityEventsList.innerHTML=visible.map(item=>{const e=item.event||{},n=item.notifications||{},sev=e.severityLabel||e.severity||'Inconnue';return '<div class="user-row"><div class="u-name">'+escapeHtml(sev)+' · '+escapeHtml(e.event||'Incident')+'</div><div style="white-space:pre-wrap;margin-top:4px">'+escapeHtml(e.summary||'')+'</div><div class="hint" style="margin-top:6px">'+escapeHtml(e.source||'NOVANOD')+' · '+escapeHtml(formatDate(e.occurredAt||item.receivedAt||item.$createdAt))+'</div><div class="hint">'+(n.push?.acceptedByAppwrite?'Push accepté':'Push non accepté')+' · '+(n.email?.acceptedByAppwrite?'E-mail accepté':'E-mail non accepté')+'</div>'+(e.details?'<details><summary>Détails techniques</summary><div style="white-space:pre-wrap;margin-top:6px">'+escapeHtml(e.details)+'</div></details>':'')+'</div>';}).join('');
     }
-    document.getElementById('btn-refresh-security-events')?.addEventListener('click', refreshSecurityEvents);
+    async function refreshSecurityEvents(){if(!securityEventsList)return;setStatus(securityEventsStatus,'Chargement des alertes de sécurité…','info');try{const result=await adminCall('list_security_events');cachedSecurityEvents=Array.isArray(result.events)?result.events:[];renderSecurityEvents();setStatus(securityEventsStatus,cachedSecurityEvents.length+' alerte(s) chargée(s).','success');}catch(e){setStatus(securityEventsStatus,e.message,'error');securityEventsList.textContent='Impossible de charger les alertes.';}}
+    document.getElementById('btn-refresh-security-events')?.addEventListener('click',refreshSecurityEvents);
+    document.getElementById('security-event-search')?.addEventListener('input',renderSecurityEvents);
+    document.getElementById('security-event-filter')?.addEventListener('change',renderSecurityEvents);
     let cachedUsers = [];
 
     function normalizeUserRecord(user) {
@@ -2573,6 +2562,9 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       } catch(e){setStatus(document.getElementById('messaging-status'),e.message,'error');}
     });
 
+    let novaProgressTimer=null,novaProgressValue=0,novaProgressDepth=0;
+    function startNovaProgress(title){const overlay=document.getElementById('nova-game-progress');if(!overlay)return;novaProgressDepth++;if(novaProgressTimer)clearInterval(novaProgressTimer);novaProgressValue=0;document.getElementById('nova-game-title').textContent=title||'Opération en cours';document.getElementById('nova-game-stage').textContent='Initialisation des contrôles…';document.getElementById('nova-game-percent').textContent='0 %';document.getElementById('nova-game-fill').style.width='0%';overlay.classList.add('active');overlay.setAttribute('aria-hidden','false');novaProgressTimer=setInterval(()=>{if(novaProgressValue<92)novaProgressValue=Math.min(92,novaProgressValue+(novaProgressValue<35?3.2:novaProgressValue<70?1.35:.35));document.getElementById('nova-game-stage').textContent=novaProgressValue<18?'Préparation des données…':novaProgressValue<42?'Exécution des vérifications…':novaProgressValue<68?'Analyse des résultats…':novaProgressValue<88?'Consolidation des résultats…':'Finalisation côté serveur…';document.getElementById('nova-game-percent').textContent=Math.floor(novaProgressValue)+' %';document.getElementById('nova-game-fill').style.width=novaProgressValue+'%';},420);}
+    function finishNovaProgress(){if(novaProgressDepth>0)novaProgressDepth--;if(novaProgressDepth>0)return;if(novaProgressTimer){clearInterval(novaProgressTimer);novaProgressTimer=null;}const overlay=document.getElementById('nova-game-progress');if(!overlay)return;novaProgressValue=100;document.getElementById('nova-game-stage').textContent='Opération terminée.';document.getElementById('nova-game-percent').textContent='100 %';document.getElementById('nova-game-fill').style.width='100%';setTimeout(()=>{overlay.classList.remove('active');overlay.setAttribute('aria-hidden','true');},650);}
     // AI role-based audits and assistant: show plain-text provider reports,
     // never stringify an empty wrapper object as "{}".
     const aiResultText = r => {
@@ -2746,7 +2738,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     document.querySelectorAll('[data-analysis]').forEach(btn=>btn.addEventListener('click',async()=>{
       const kind=btn.dataset.analysis, status=document.getElementById('analysis-status');
       const providerMode=document.getElementById('analysis-provider')?.value || 'both';
-      btn.disabled=true;
+      btn.disabled=true;startNovaProgress('Analyse NOVANOD · '+kind);
       setStatus(status,'Analyse « '+kind+' » en cours avec '+(providerMode==='both'?'Gemini et Groq':providerMode)+'…','info');
       out('analysis-output','Analyse en cours… Les deux modèles peuvent prendre un peu de temps.');
       try {
@@ -2760,7 +2752,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         const h=await adminCall('list_reports');
         renderReportHistory(h.reports || []);
       } catch(e){setStatus(status,e.message,'error');out('analysis-output','Erreur : '+e.message);}
-      finally { btn.disabled=false; }
+      finally { btn.disabled=false;finishNovaProgress(); }
     }));
     async function analyzeLatestGithubAudit() {
       const status=document.getElementById('github-audit-status');
@@ -2782,8 +2774,8 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       } catch(e) { setStatus(status,e.message,'error'); out('github-audit-combined','Erreur : '+e.message); throw e; }
     }
     document.getElementById('btn-analyze-github-audit')?.addEventListener('click',async()=>{
-      const btn=document.getElementById('btn-analyze-github-audit');btn.disabled=true;
-      try { await analyzeLatestGithubAudit(); } catch {} finally { btn.disabled=false; }
+      const btn=document.getElementById('btn-analyze-github-audit');btn.disabled=true;startNovaProgress('Analyse du dernier audit GitHub');
+      try { await analyzeLatestGithubAudit(); } catch {} finally { btn.disabled=false;finishNovaProgress(); }
     });
     let activeGithubAuditStartedAt = '';
     async function refreshGithubAuditStatus() {
@@ -2806,7 +2798,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     document.getElementById('btn-run-github-audit')?.addEventListener('click',async()=>{
       const button=document.getElementById('btn-run-github-audit');
       const refresh=document.getElementById('btn-refresh-github-audit');
-      button.disabled=true;if(refresh)refresh.disabled=true;
+      button.disabled=true;if(refresh)refresh.disabled=true;startNovaProgress('Tests GitHub · Playwright et Lighthouse');
       try {
         const started=await adminCall('trigger_github_audit');
         activeGithubAuditStartedAt=started.startedAt||started.run?.createdAt||new Date().toISOString();
@@ -2832,7 +2824,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           : message;
         setStatus(document.getElementById('github-audit-status'),hint,'error');
       }
-      finally{button.disabled=false;if(refresh)refresh.disabled=false;}
+      finally{button.disabled=false;if(refresh)refresh.disabled=false;finishNovaProgress();}
     });
     document.getElementById('btn-appwrite-health-check')?.addEventListener('click',async()=>{
       const button=document.getElementById('btn-appwrite-health-check');
@@ -2846,7 +2838,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         ['Fonctions','functions_list'],
         ['Alertes de sécurité','list_security_events']
       ];
-      button.disabled=true;setStatus(status,'Diagnostic des services Appwrite en cours…','info');
+      button.disabled=true;startNovaProgress('Diagnostic des services Appwrite');setStatus(status,'Diagnostic des services Appwrite en cours…','info');
       try{
         const results=await Promise.all(checks.map(async([label,action])=>{
           try{const data=await adminCall(action);let count=null;
@@ -2863,13 +2855,13 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         const failures=results.filter(item=>!item.ok).length;
         setStatus(status,failures?failures+' service(s) n’ont pas pu être vérifiés. Consulte les détails.':'Tous les services testés répondent correctement.','success');
       }catch(error){setStatus(status,error.message,'error');}
-      finally{button.disabled=false;}
+      finally{button.disabled=false;finishNovaProgress();}
     });
 
     document.getElementById('btn-system-diagnostics')?.addEventListener('click', async () => {
       const button=document.getElementById('btn-system-diagnostics');
       const target=document.getElementById('system-diagnostics-output');
-      button.disabled=true;
+      button.disabled=true;startNovaProgress('Tests de configuration · Gemini et Groq');
       target.textContent='Tests réels en cours : configuration serveur, Gemini et Groq…';
       try {
         const result=await adminCall('system_diagnostics',{testProviders:true});
@@ -2883,7 +2875,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         target.textContent=lines.join('\n') || 'Aucun résultat de diagnostic retourné.';
       } catch(error) {
         target.textContent='Échec du diagnostic : '+error.message;
-      } finally { button.disabled=false; }
+      } finally { button.disabled=false;finishNovaProgress(); }
     });
 
     const NOVANOD_AI_ROLE_PROMPTS = {
@@ -2902,7 +2894,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       const roleLabel=document.getElementById('assistant-role')?.selectedOptions?.[0]?.textContent || 'Assistant général';
       if(!question) return setStatus(document.getElementById('assistant-status'),'Écris une demande.','error');
       const btn=document.getElementById('btn-assistant-ask');
-      btn.disabled=true;
+      btn.disabled=true;startNovaProgress('Assistant NOVANOD · '+roleLabel);
       setStatus(document.getElementById('assistant-status'),'Profil '+roleLabel+' : Gemini et Groq préparent leurs réponses…','info');
       out('assistant-output','Réponse en cours…');
       try {
@@ -2916,7 +2908,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       } catch(e){
         setStatus(document.getElementById('assistant-status'),e.message,'error');
         out('assistant-output','Erreur : '+e.message);
-      } finally { btn.disabled=false; }
+      } finally { btn.disabled=false;finishNovaProgress(); }
     });
 
     // Load richer reports and teams lazily when opening their workspace.
