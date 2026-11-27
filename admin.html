@@ -1703,8 +1703,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
   
 <script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.1"></script>
 
-  <script type="module">
-        import { Client as AppwritePushClient, Push as AppwritePush } from 'https://cdn.jsdelivr.net/npm/appwrite@29.0.0/+esm';
+  <script>
 
     const APPWRITE_ENDPOINT = 'https://fra.cloud.appwrite.io/v1';
     const APPWRITE_PROJECT_ID = '6ad4bd7b0036d37d3561';
@@ -1720,7 +1719,9 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     const account = new Appwrite.Account(client);
     const functions = new Appwrite.Functions(client);
     const storage = new Appwrite.Storage(client);
-    const adminPushClient = new AppwritePushClient().setEndpoint(APPWRITE_ENDPOINT).setProject(APPWRITE_PROJECT_ID);
+    let AppwritePushClient = null;
+    let AppwritePush = null;
+    let adminPushClient = null;
     let adminPush = null;
     let adminPushStarting = false;
     const adminPushStatus = document.getElementById('admin-push-status');
@@ -1729,6 +1730,11 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       if (adminPush || adminPushStarting) return;
       adminPushStarting = true;
       try {
+        // Le module Push est chargé à la demande : son indisponibilité ne bloque jamais l'authentification.
+        const pushSdk = await import('https://cdn.jsdelivr.net/npm/appwrite@29.0.0/+esm');
+        AppwritePushClient = pushSdk.Client;
+        AppwritePush = pushSdk.Push;
+        adminPushClient = new AppwritePushClient().setEndpoint(APPWRITE_ENDPOINT).setProject(APPWRITE_PROJECT_ID);
         let pushClientId = localStorage.getItem('novanod_push_client_id');
         if (!pushClientId) { pushClientId = crypto.randomUUID(); localStorage.setItem('novanod_push_client_id', pushClientId); }
         adminPushClient.setPushClientId(pushClientId);
@@ -1884,7 +1890,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         await account.createEmailPasswordSession(email, password);
         await checkAdminSession();
       } catch (e) {
-        setStatus(loginStatus, "Identifiants incorrects ou compte inexistant.", "error");
+        setStatus(loginStatus, "Connexion impossible : " + (e?.message || e?.type || 'vérifie les identifiants et la configuration Appwrite.'), "error");
       } finally {
         setAuthLoading(loginButton, false);
       }
