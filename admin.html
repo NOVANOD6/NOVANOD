@@ -1542,8 +1542,14 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
             <span id="message-selected-count" class="hint" style="margin:0">0 destinataire sélectionné</span>
           </div>
           <div id="message-users-list" class="user-list" style="max-height:260px"><div class="hint">Connecte-toi puis charge la liste des utilisateurs.</div></div>
-          <button id="btn-register-admin-email-target" class="admin-action" type="button">Enregistrer la cible e-mail de l’administrateur</button>
-          <div class="admin-note">La cible e-mail de l’administrateur est enregistrée côté serveur. Les cibles des autres destinataires sont vérifiées et créées automatiquement avant l’envoi si nécessaire.</div>
+          <div class="admin-form-grid">
+            <div><label class="form-label" for="message-admin-user-id">User (administrateur connecté)</label><input id="message-admin-user-id" class="input-field" type="text" readonly placeholder="Chargement de l’utilisateur…"></div>
+            <div><label class="form-label" for="message-admin-target-id">Target (cible e-mail)</label><input id="message-admin-target-id" class="input-field" type="text" readonly placeholder="Chargement de la cible…"></div>
+          </div>
+          <label class="form-label" for="message-admin-email">Adresse e-mail de l’administrateur</label>
+          <input id="message-admin-email" class="input-field" type="email" readonly placeholder="Chargement de l’adresse e-mail…">
+          <button id="btn-register-admin-email-target" class="admin-action" type="button">Actualiser / enregistrer ma cible e-mail</button>
+          <div class="admin-note">Les champs User, Target et E-mail sont remplis automatiquement à partir du compte administrateur actuellement connecté.</div>
           <div id="message-target-status" class="status-msg"></div>
           <label class="form-label" for="message-topic-id">Topic ID (facultatif)</label>
           <input id="message-topic-id" class="input-field" placeholder="Laisser vide pour un envoi direct à l’administrateur">
@@ -1852,6 +1858,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         if (ADMIN_USER_IDS.includes(user.$id)) {
           currentAdminUserId = user.$id;
           document.getElementById('admin-welcome').textContent = user.name || user.email;
+          populateAdminEmailTarget(user);
           screenLogin.classList.add('hidden');
           screenAdmin.classList.remove('hidden');
           await refreshMessageUsers();
@@ -2753,17 +2760,31 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       });
       renderMessageUsers();
     });
+    async function populateAdminEmailTarget(sessionUser) {
+      const userField = document.getElementById('message-admin-user-id');
+      const emailField = document.getElementById('message-admin-email');
+      const targetField = document.getElementById('message-admin-target-id');
+      if (userField) userField.value = sessionUser?.$id || currentAdminUserId || '';
+      if (emailField) emailField.value = sessionUser?.email || '';
+      if (targetField) targetField.value = 'Récupération…';
+      try {
+        const result = await adminCall('message_email_target_create', {});
+        if (userField) userField.value = result.userId || sessionUser?.$id || currentAdminUserId || '';
+        if (emailField) emailField.value = result.email || sessionUser?.email || '';
+        if (targetField) targetField.value = result.targetId || '';
+        setStatus(document.getElementById('message-target-status'), result.created ? 'Cible e-mail créée automatiquement pour cet administrateur.' : 'Cible e-mail existante récupérée pour cet administrateur.', 'success');
+        return result;
+      } catch (error) {
+        if (targetField) targetField.value = '';
+        setStatus(document.getElementById('message-target-status'), 'Impossible de charger la cible e-mail : '+error.message, 'error');
+        return null;
+      }
+    }
     document.getElementById('btn-register-admin-email-target')?.addEventListener('click', async event => {
       const button = event.currentTarget;
       button.disabled = true;
-      setStatus(document.getElementById('message-target-status'), 'Enregistrement de la cible e-mail du compte administrateur…', 'info');
-      try {
-        const result = await adminCall('message_email_target_create', {});
-        setStatus(document.getElementById('message-target-status'), result.created ? 'Cible e-mail administrateur créée.' : 'La cible e-mail administrateur existe déjà.', 'success');
-        out('messaging-output', {userId:result.userId,email:result.email,targetId:result.targetId,created:result.created});
-      } catch (error) {
-        setStatus(document.getElementById('message-target-status'), 'Échec de l’enregistrement de la cible : '+error.message, 'error');
-      } finally { button.disabled = false; }
+      try { await populateAdminEmailTarget(await account.get()); }
+      finally { button.disabled = false; }
     });
     document.getElementById('btn-send-message')?.addEventListener('click',async()=>{
       try {
