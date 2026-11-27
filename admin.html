@@ -1537,13 +1537,13 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
             <input id="message-user-search" class="input-field" placeholder="Rechercher un utilisateur par nom, e-mail ou ID">
             <button id="btn-refresh-message-users" class="btn-3d btn-secondary" type="button">Actualiser la liste</button>
           </div>
-          <div class="admin-toolbar" style="margin-bottom:8px">
-            <button id="btn-select-all-message-users" class="admin-action" type="button">Tout sélectionner</button>
-            <button id="btn-clear-message-users" class="admin-action" type="button">Tout désélectionner</button>
+          <div class="admin-toolbar" style="margin-bottom:8px;justify-content:space-between">
+            <label style="display:flex;align-items:center;gap:8px;font-weight:800"><input id="message-select-all" type="checkbox"> Tout sélectionner</label>
             <span id="message-selected-count" class="hint" style="margin:0">0 destinataire sélectionné</span>
           </div>
           <div id="message-users-list" class="user-list" style="max-height:260px"><div class="hint">Connecte-toi puis charge la liste des utilisateurs.</div></div>
-          <div class="admin-note">Pour les e-mails, la cible Appwrite sera créée automatiquement pour chaque utilisateur sélectionné avant l’envoi.</div>
+          <button id="btn-register-admin-email-target" class="admin-action" type="button">Enregistrer la cible e-mail de l’administrateur</button>
+          <div class="admin-note">La cible e-mail de l’administrateur est enregistrée côté serveur. Les cibles des autres destinataires sont vérifiées et créées automatiquement avant l’envoi si nécessaire.</div>
           <div id="message-target-status" class="status-msg"></div>
           <label class="form-label" for="message-topic-id">Topic ID (facultatif)</label>
           <input id="message-topic-id" class="input-field" placeholder="Laisser vide pour un envoi direct à l’administrateur">
@@ -2713,6 +2713,13 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         return '<label class="user-row" style="display:flex;gap:10px;align-items:flex-start;cursor:pointer"><input type="checkbox" data-message-user-id="'+escapeHtml(id)+'" '+(checked?'checked':'')+' '+(!id?'disabled':'')+' style="margin-top:3px"><span style="min-width:0;flex:1"><span class="u-name">'+escapeHtml(user.name || '(sans nom)')+'</span><div class="u-email">'+escapeHtml(user.email || 'Aucune adresse e-mail')+'</div><small>'+escapeHtml(id)+'</small></span></label>';
       }).join('');
       document.getElementById('message-selected-count').textContent = selectedMessageUserIds.size+' destinataire(s) sélectionné(s)';
+      const master = document.getElementById('message-select-all');
+      if (master) {
+        const visibleIds = users.map(user => String(user.$id || user.id || user.userId || '')).filter(Boolean);
+        const selectedVisible = visibleIds.filter(id => selectedMessageUserIds.has(id)).length;
+        master.checked = visibleIds.length > 0 && selectedVisible === visibleIds.length;
+        master.indeterminate = selectedVisible > 0 && selectedVisible < visibleIds.length;
+      }
     }
     async function refreshMessageUsers() {
       const host = document.getElementById('message-users-list');
@@ -2735,11 +2742,29 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     });
     document.getElementById('message-user-search')?.addEventListener('input', renderMessageUsers);
     document.getElementById('btn-refresh-message-users')?.addEventListener('click', refreshMessageUsers);
-    document.getElementById('btn-select-all-message-users')?.addEventListener('click', () => {
-      cachedUsers.forEach(user => { const id=String(user.$id||user.id||user.userId||''); if(id) selectedMessageUserIds.add(id); });
+    document.getElementById('message-select-all')?.addEventListener('change', event => {
+      const query = (document.getElementById('message-user-search')?.value || '').trim().toLocaleLowerCase('fr');
+      const visibleUsers = cachedUsers.filter(user => [user.name,user.email,user.$id,user.id,user.userId].join(' ').toLocaleLowerCase('fr').includes(query));
+      visibleUsers.forEach(user => {
+        const id = String(user.$id || user.id || user.userId || '');
+        if (!id) return;
+        if (event.target.checked) selectedMessageUserIds.add(id);
+        else selectedMessageUserIds.delete(id);
+      });
       renderMessageUsers();
     });
-    document.getElementById('btn-clear-message-users')?.addEventListener('click', () => { selectedMessageUserIds.clear(); renderMessageUsers(); });
+    document.getElementById('btn-register-admin-email-target')?.addEventListener('click', async event => {
+      const button = event.currentTarget;
+      button.disabled = true;
+      setStatus(document.getElementById('message-target-status'), 'Enregistrement de la cible e-mail du compte administrateur…', 'info');
+      try {
+        const result = await adminCall('message_email_target_create', {});
+        setStatus(document.getElementById('message-target-status'), result.created ? 'Cible e-mail administrateur créée.' : 'La cible e-mail administrateur existe déjà.', 'success');
+        out('messaging-output', {userId:result.userId,email:result.email,targetId:result.targetId,created:result.created});
+      } catch (error) {
+        setStatus(document.getElementById('message-target-status'), 'Échec de l’enregistrement de la cible : '+error.message, 'error');
+      } finally { button.disabled = false; }
+    });
     document.getElementById('btn-send-message')?.addEventListener('click',async()=>{
       try {
         const channel=document.getElementById('message-channel').value;
