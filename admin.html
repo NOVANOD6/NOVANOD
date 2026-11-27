@@ -2740,17 +2740,6 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       renderMessageUsers();
     });
     document.getElementById('btn-clear-message-users')?.addEventListener('click', () => { selectedMessageUserIds.clear(); renderMessageUsers(); });
-    async function ensureMessageEmailTarget(user) {
-      const id = String(user.$id || user.id || user.userId || '');
-      if (!id || !user.email) throw new Error('Adresse e-mail ou identifiant manquant pour '+(user.name||id||'un utilisateur'));
-      const messaging = new Appwrite.Messaging(client);
-      const targetId = ('novanod-email-' + id).slice(0, 36);
-      try { return await messaging.createEmailTarget(id, targetId, user.email); }
-      catch(error) {
-        if (/already exists|duplicate|target.*exists|409/i.test(error?.message||String(error))) return { alreadyExists:true, targetId };
-        throw error;
-      }
-    }
     document.getElementById('btn-send-message')?.addEventListener('click',async()=>{
       try {
         const channel=document.getElementById('message-channel').value;
@@ -2774,7 +2763,6 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
             const user=selectedUsers[index];
             const userId=String(user.$id||user.id||user.userId);
             setStatus(document.getElementById('messaging-status'),'Envoi '+(index+1)+'/'+selectedUsers.length+' : '+(user.name||user.email||userId),'info');
-            if(channel==='email') await ensureMessageEmailTarget(user);
             const result=await adminCall('message_send',{channel,userId,topicId,subject,content,html});
             results.push({userId,name:user.name||'',email:user.email||'',acceptedByAppwrite:!!result.acceptedByAppwrite,messageId:result.messageId||result.message?.$id||null,deliveredTotal:Number(result.message?.deliveredTotal||result.deliveredTotal||0),deliveredAt:result.message?.deliveredAt||result.deliveredAt||null,deliveryErrors:result.message?.deliveryErrors||[]});
           }
