@@ -79,7 +79,7 @@ test('admin : contrôles visuels et panneaux Appwrite/IA sont présents', async 
     const match = getComputedStyle(el).backgroundImage.match(/url\(["']?(data:image\/webp;base64,[A-Za-z0-9+/=]+)["']?\)/);
     if (!match) return resolve(false);
     const image = new Image();
-    image.onload = () => resolve(image.naturalWidth === 648 && image.naturalHeight === 864);
+    image.onload = () => resolve(image.naturalWidth === 216 && image.naturalHeight === 288);
     image.onerror = () => resolve(false);
     image.src = match[1];
   }));
