@@ -70,8 +70,11 @@ test('admin : contrôles visuels et panneaux Appwrite/IA sont présents', async 
   await expect(page.locator('.device-tab[data-device="desktop"] svg')).toHaveCount(1);
   await expect(page.locator('#btn-orient-portrait svg')).toHaveCount(1);
   await expect(page.locator('#btn-orient-landscape svg')).toHaveCount(1);
-  await expect(page.locator('.analysis-action svg').first()).toHaveCount(1);
-  await expect(page.locator('#btn-register-fingerprint .fingerprint-mark')).toHaveCount(1);
+  await expect(page.locator('.analysis-action .analysis-icon').first()).toHaveCount(1);
+  await expect(page.locator('.analysis-action')).toHaveCount(12);
+  await expect(page.locator('#analysis-extra-type')).toHaveCount(1);
+  const iconStyle = await page.locator('.analysis-action .analysis-icon').first().evaluate(el => getComputedStyle(el).backgroundImage);
+  expect(iconStyle).toContain('data:image/webp;base64,');
   const revealPane = async paneId => page.evaluate(id => {
     document.getElementById('screen-login')?.classList.add('hidden');
     document.getElementById('screen-admin')?.classList.remove('hidden');
