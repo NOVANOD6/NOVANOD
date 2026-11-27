@@ -92,7 +92,7 @@ jobs:
         run: |
           mkdir -p artifacts
           tar -czf artifacts/NOVANOD-site-audit-bundle.tar.gz --exclude='./.git' --exclude='./node_modules' --exclude='./artifacts' --exclude='./playwright-report' --exclude='./test-results' .
-          test -s artifacts/NOVANOD-2.5.23-admin-five-instructions.tar.gz
+          test -s artifacts/NOVANOD-site-audit-bundle.tar.gz
       - name: Publier les rapports, captures et archive de livraison
         if: always()
         uses: actions/upload-artifact@v4
