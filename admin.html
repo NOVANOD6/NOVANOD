@@ -1848,6 +1848,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           document.getElementById('admin-welcome').textContent = user.name || user.email;
           screenLogin.classList.add('hidden');
           screenAdmin.classList.remove('hidden');
+          await syncMessagingAdminRecipient();
           await startAdminPush();
         } else {
           setStatus(loginStatus, `Accès refusé. Ton ID (${user.$id}) n'est pas autorisé dans ADMIN_USER_IDS.`, "error");
