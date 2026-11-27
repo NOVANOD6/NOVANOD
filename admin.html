@@ -1532,19 +1532,24 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           <select id="message-channel" class="input-field">
             <option value="email">E-mail</option><option value="sms">SMS</option><option value="push">Notification Push</option>
           </select>
-          <div class="admin-note">Sélectionne un ou plusieurs comptes dans la liste des utilisateurs NOVANOD. L’envoi sera effectué uniquement aux comptes cochés.</div>
+          <div class="admin-note">Les informations de l’administrateur connecté restent visibles ci-dessous. Tu peux ensuite sélectionner un ou plusieurs utilisateurs NOVANOD comme destinataires.</div>
+          <label class="form-label" for="message-user-id">User ID administrateur</label>
+          <input id="message-user-id" class="input-field" readonly autocomplete="off" placeholder="Identifiant administrateur connecté">
+          <label class="form-label" for="message-email-target">Target e-mail administrateur</label>
+          <input id="message-email-target" type="email" class="input-field" readonly autocomplete="email" placeholder="Adresse e-mail administrateur">
+          <div id="message-target-status" class="status-msg"></div>
+          <div class="admin-note">Sélection des destinataires : coche les comptes qui doivent recevoir le message.</div>
           <div class="admin-toolbar" style="margin-bottom:8px">
             <input id="message-user-search" class="input-field" placeholder="Rechercher un utilisateur par nom, e-mail ou ID">
             <button id="btn-refresh-message-users" class="btn-3d btn-secondary" type="button">Actualiser la liste</button>
           </div>
           <div class="admin-toolbar" style="margin-bottom:8px">
-            <button id="btn-select-all-message-users" class="admin-action" type="button">Tout sélectionner</button>
-            <button id="btn-clear-message-users" class="admin-action" type="button">Tout désélectionner</button>
+            <button id="btn-select-all-message-users" class="message-select-btn" type="button">Tout sélectionner</button>
+            <button id="btn-clear-message-users" class="message-select-btn" type="button">Tout désélectionner</button>
             <span id="message-selected-count" class="hint" style="margin:0">0 destinataire sélectionné</span>
           </div>
           <div id="message-users-list" class="user-list" style="max-height:260px"><div class="hint">Connecte-toi puis charge la liste des utilisateurs.</div></div>
-          <div class="admin-note">Pour les e-mails, la cible Appwrite sera créée automatiquement pour chaque utilisateur sélectionné avant l’envoi.</div>
-          <div id="message-target-status" class="status-msg"></div>
+          
           <label class="form-label" for="message-topic-id">Topic ID (facultatif)</label>
           <input id="message-topic-id" class="input-field" placeholder="Laisser vide pour un envoi direct à l’administrateur">
           <div class="admin-form-grid">
@@ -1559,7 +1564,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           <button id="btn-send-message" class="btn-3d">Envoyer via Appwrite Messaging</button>
           <div id="messaging-status" class="status-msg"></div>
           <div id="messaging-output" class="admin-output">Les réponses du service de messagerie apparaîtront ici.</div>
-          <div class="admin-note">Procédure e-mail : 1) vérifie le compte administrateur connecté ; 2) clique sur « Enregistrer la cible e-mail de l’administrateur » ; 3) laisse Topic, CC et BCC vides pour un envoi direct ; 4) laisse le mode HTML désactivé pour un texte simple ; 5) saisis l’objet et le contenu puis envoie. L’identifiant et l’adresse de l’administrateur sont récupérés automatiquement. Un message accepté n’est pas une preuve de livraison : contrôle deliveredAt, deliveredTotal et deliveryErrors dans le résultat. Pour PUSH, configure un fournisseur Appwrite et un abonnement sur l’appareil.</div>
+          <div class="admin-note">Les comptes e-mail/password et les comptes avec adresse e-mail vérifiée disposent normalement déjà d’une cible e-mail Appwrite. L’envoi utilise directement les utilisateurs sélectionnés ; aucune cible n’est recréée depuis le navigateur. Un message accepté n’est pas une preuve de livraison : contrôle deliveredAt, deliveredTotal et deliveryErrors dans le résultat.</div>
         </div>
       </div>
 
@@ -1854,6 +1859,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           document.getElementById('admin-welcome').textContent = user.name || user.email;
           screenLogin.classList.add('hidden');
           screenAdmin.classList.remove('hidden');
+          await syncMessagingAdminRecipient();
           await refreshMessageUsers();
           await startAdminPush();
         } else {
@@ -2289,7 +2295,13 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       const w=window.open('','_blank');if(!w){setStatus(document.getElementById('analysis-status'),'Autorise les fenêtres contextuelles pour exporter le PDF.','error');return;}
       const safeTitle=escapeHtml(title),safeDate=escapeHtml(dateText||new Date().toLocaleString('fr-FR'));
       w.document.open();
-      w.document.write('<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>'+safeTitle+'</title><style>@page{size:A4;margin:18mm}body{font:11pt/1.65 Arial,sans-serif;color:#35131f}.brand{font-size:18pt;font-weight:800;color:#b9362a;border-bottom:3px solid #b9362a;padding-bottom:10px}.meta{font-size:9pt;color:#71545a}.report-document h2{font-size:14pt;color:#b9362a;margin:18px 0 6px;border-bottom:1px solid #ead9c8}.report-document table{width:100%;border-collapse:collapse;font-size:9pt}.report-document th{background:#3b1420;color:#fffbd0}.report-document th,.report-document td{border:1px solid #ddcfbd;padding:6px;text-align:left}.footer{border-top:1px solid #ddcfbd;margin-top:24px;padding-top:8px;font-size:8pt;color:#79545a}</style></head><body><div class="brand">NOVANOD</div><h1>'+safeTitle+'</h1><p class="meta">Rapport administratif · Généré le '+safeDate+'</p>'+renderReportHtml(value)+'<div class="footer">Document confidentiel — NOVANOD. Rapport établi à partir des données disponibles au moment de l’analyse.</div><script>window.onload=()=>setTimeout(()=>window.print(),350)<\/script></body></html>');
+      w.document.write('<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>'+safeTitle+'</title><style>@page{size:A4;margin:18mm}body{font:11pt/1.65 Arial,sans-serif;color:#35131f}.brand{font-size:18pt;font-weight:800;color:#b9362a;border-bottom:3px solid #b9362a;padding-bottom:10px}.meta{font-size:9pt;color:#71545a}.report-document h2{font-size:14pt;color:#b9362a;margin:18px 0 6px;border-bottom:1px solid #ead9c8}.report-document table{width:100%;border-collapse:collapse;font-size:9pt}.report-document th{background:#3b1420;color:#fffbd0}.report-document th,.report-document td{border:1px solid #ddcfbd;padding:6px;text-align:left}.footer{border-top:1px solid #ddcfbd;margin-top:24px;padding-top:8px;font-size:8pt;color:#79545a}
+    /* Messagerie : actions de sélection compactes, sans gros boutons */
+    .message-select-btn{display:inline-flex;align-items:center;justify-content:center;width:auto;min-width:0;flex:0 0 auto;padding:6px 10px;margin:0;border:1px solid rgba(59,20,32,.22);border-radius:8px;background:#fff8ef;color:#3B1420;font-size:11px;font-weight:700;line-height:1.2;box-shadow:none;cursor:pointer}
+    .message-select-btn:hover{background:#f4e8dc}
+    #message-selected-count{font-size:11px}
+    #message-users-list .user-row{padding:9px 10px;margin:5px 0;border-radius:9px}
+</style></head><body><div class="brand">NOVANOD</div><h1>'+safeTitle+'</h1><p class="meta">Rapport administratif · Généré le '+safeDate+'</p>'+renderReportHtml(value)+'<div class="footer">Document confidentiel — NOVANOD. Rapport établi à partir des données disponibles au moment de l’analyse.</div><script>window.onload=()=>setTimeout(()=>window.print(),350)<\/script></body></html>');
       w.document.close();
     }
     const securityEventsStatus=document.getElementById('security-events-status'),securityEventsList=document.getElementById('security-events-list');
@@ -2697,7 +2709,23 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       finally { button.disabled = false; }
     });
 
-    // Sélection multi-destinataires depuis la liste Appwrite déjà utilisée par le module Utilisateurs.
+    // Destinataire administrateur visible + sélection multi-utilisateurs.
+    let currentAdminEmail = '';
+    async function syncMessagingAdminRecipient() {
+      const userField=document.getElementById('message-user-id');
+      const emailField=document.getElementById('message-email-target');
+      if(!currentAdminUserId) return;
+      userField.value=currentAdminUserId;
+      try {
+        const user=await account.get();
+        if(user.$id!==currentAdminUserId || !ADMIN_USER_IDS.includes(user.$id)) throw new Error('Session administrateur non valide.');
+        currentAdminEmail=user.email||'';
+        emailField.value=currentAdminEmail;
+        if(!currentAdminEmail) setStatus(document.getElementById('message-target-status'),'Aucune adresse e-mail disponible pour cet administrateur.','error');
+      } catch(error) {
+        setStatus(document.getElementById('message-target-status'),'Impossible de charger le compte administrateur : '+error.message,'error');
+      }
+    }
     const selectedMessageUserIds = new Set();
     function getSelectedMessageUsers() {
       return cachedUsers.filter(user => selectedMessageUserIds.has(String(user.$id || user.id || user.userId || '')));
@@ -2740,17 +2768,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       renderMessageUsers();
     });
     document.getElementById('btn-clear-message-users')?.addEventListener('click', () => { selectedMessageUserIds.clear(); renderMessageUsers(); });
-    async function ensureMessageEmailTarget(user) {
-      const id = String(user.$id || user.id || user.userId || '');
-      if (!id || !user.email) throw new Error('Adresse e-mail ou identifiant manquant pour '+(user.name||id||'un utilisateur'));
-      const messaging = new Appwrite.Messaging(client);
-      const targetId = ('novanod-email-' + id).slice(0, 36);
-      try { return await messaging.createEmailTarget(id, targetId, user.email); }
-      catch(error) {
-        if (/already exists|duplicate|target.*exists|409/i.test(error?.message||String(error))) return { alreadyExists:true, targetId };
-        throw error;
-      }
-    }
+
     document.getElementById('btn-send-message')?.addEventListener('click',async()=>{
       try {
         const channel=document.getElementById('message-channel').value;
@@ -2774,7 +2792,6 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
             const user=selectedUsers[index];
             const userId=String(user.$id||user.id||user.userId);
             setStatus(document.getElementById('messaging-status'),'Envoi '+(index+1)+'/'+selectedUsers.length+' : '+(user.name||user.email||userId),'info');
-            if(channel==='email') await ensureMessageEmailTarget(user);
             const result=await adminCall('message_send',{channel,userId,topicId,subject,content,html});
             results.push({userId,name:user.name||'',email:user.email||'',acceptedByAppwrite:!!result.acceptedByAppwrite,messageId:result.messageId||result.message?.$id||null,deliveredTotal:Number(result.message?.deliveredTotal||result.deliveredTotal||0),deliveredAt:result.message?.deliveredAt||result.deliveredAt||null,deliveryErrors:result.message?.deliveryErrors||[]});
           }
