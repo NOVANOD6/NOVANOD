@@ -74,16 +74,16 @@ test('admin : contrôles visuels et panneaux Appwrite/IA sont présents', async 
   await expect(page.locator('.analysis-action')).toHaveCount(12);
   await expect(page.locator('#analysis-extra-type')).toHaveCount(1);
   const iconStyle = await page.locator('.analysis-action .analysis-icon').first().evaluate(el => getComputedStyle(el).backgroundImage);
-  expect(iconStyle).toContain('data:image/webp;base64,');
+  expect(iconStyle).toContain('data:image/svg+xml,');
   const spriteLoaded = await page.locator('.analysis-action .analysis-icon').first().evaluate(el => new Promise(resolve => {
-    const match = getComputedStyle(el).backgroundImage.match(/url\(["']?(data:image\/webp;base64,[A-Za-z0-9+/=]+)["']?\)/);
+    const match = getComputedStyle(el).backgroundImage.match(/url\(["']?(data:image\/svg\+xml,[^"')]+)["']?\)/);
     if (!match) return resolve(false);
     const image = new Image();
-    image.onload = () => resolve(image.naturalWidth === 216 && image.naturalHeight === 288);
+    image.onload = () => resolve(image.naturalWidth === 648 && image.naturalHeight === 864);
     image.onerror = () => resolve(false);
     image.src = match[1];
   }));
-  expect(spriteLoaded, 'Le sprite WebP des 12 icônes doit être décodable').toBe(true);
+  expect(spriteLoaded, 'Le sprite SVG des 12 icônes doit être décodable').toBe(true);
   const revealPane = async paneId => page.evaluate(id => {
     document.getElementById('screen-login')?.classList.add('hidden');
     document.getElementById('screen-admin')?.classList.remove('hidden');
