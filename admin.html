@@ -1551,8 +1551,13 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           <button id="btn-register-admin-email-target" class="admin-action" type="button">Actualiser / enregistrer ma cible e-mail</button>
           <div class="admin-note">User affiche uniquement l’administrateur connecté. Target affiche les deux cibles e-mail des administrateurs NOVANOD.</div>
           <div id="message-target-status" class="status-msg"></div>
-          <label class="form-label" for="message-topic-id">Topic ID (facultatif)</label>
-          <input id="message-topic-id" class="input-field" placeholder="Laisser vide pour un envoi direct à l’administrateur">
+          <label class="form-label" for="message-topic-id">Topic Appwrite</label>
+          <select id="message-topic-id" class="input-field" required>
+            <option value="nova_admin" selected>nova_admin — Notifications administratives</option>
+            <option value="nova_security">nova_security — Alertes de sécurité</option>
+            <option value="nova_clients">nova_clients — Notifications clients</option>
+          </select>
+          <div class="admin-note">Les messages sont envoyés au Topic sélectionné. Les abonnés de ce Topic reçoivent la notification selon leurs abonnements et les canaux configurés dans Appwrite Messaging.</div>
           <div class="admin-form-grid">
             <div><label class="form-label" for="message-cc-targets">CC Targets (facultatif)</label><input id="message-cc-targets" class="input-field" placeholder="Laisser vide"></div>
             <div><label class="form-label" for="message-bcc-targets">BCC Targets (facultatif)</label><input id="message-bcc-targets" class="input-field" placeholder="Laisser vide"></div>
@@ -1565,7 +1570,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           <button id="btn-send-message" class="btn-3d">Envoyer via Appwrite Messaging</button>
           <div id="messaging-status" class="status-msg"></div>
           <div id="messaging-output" class="admin-output">Les réponses du service de messagerie apparaîtront ici.</div>
-          <div class="admin-note">E-mail : User correspond à l’administrateur connecté ; Targets contient les deux cibles e-mail des administrateurs NOVANOD. L’envoi e-mail utilise ces deux cibles automatiquement. Les autres canaux conservent la sélection des utilisateurs. Un message accepté n’est pas une preuve de livraison : contrôle deliveredAt, deliveredTotal et deliveryErrors dans le résultat. Pour PUSH, configure un fournisseur Appwrite et un abonnement sur l’appareil.</div>
+          <div class="admin-note">Tous les canaux utilisent le Topic Appwrite sélectionné : nova_admin, nova_security ou nova_clients. Un message accepté n’est pas une preuve de livraison : contrôle deliveredAt, deliveredTotal et deliveryErrors dans le résultat. La réception dépend des abonnements actifs et des fournisseurs configurés dans Appwrite Messaging.</div>
         </div>
       </div>
 
@@ -2790,46 +2795,25 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       const button=document.getElementById('btn-send-message');
       try {
         const channel=document.getElementById('message-channel').value;
-        const selectedUsers=getSelectedMessageUsers();
-        const topicId=document.getElementById('message-topic-id').value.trim();
+        const topicId=document.getElementById('message-topic-id').value;
         const subject=document.getElementById('message-subject').value.trim();
         const content=document.getElementById('message-content').value.trim();
         const html=document.getElementById('message-html-mode').checked;
+        const topicLabels={nova_admin:'administrateurs',nova_security:'sécurité',nova_clients:'clients'};
         if(!currentAdminUserId) throw new Error('Connecte-toi avec un compte administrateur.');
+        if(!topicId || !topicLabels[topicId]) throw new Error('Sélectionne un Topic NOVANOD valide.');
         if(!content) throw new Error('Le contenu du message est obligatoire.');
-
-        if(channel==='email') {
-          if(!subject) throw new Error('L’objet de l’e-mail est obligatoire.');
-          if(!confirm('Confirmer l’envoi e-mail avec User = administrateur connecté et Targets = les deux administrateurs NOVANOD ?')) return;
-          button.disabled=true;
-          setStatus(document.getElementById('messaging-status'),'Préparation des deux cibles e-mail administrateur…','info');
-          try {
-            const result=await adminCall('message_send',{channel,userId:currentAdminUserId,topicId,subject,content,html});
-            const message=result.message||{};
-            const row={userId:currentAdminUserId,acceptedByAppwrite:!!result.acceptedByAppwrite,messageId:result.messageId||message.$id||null,deliveredTotal:Number(message.deliveredTotal||result.deliveredTotal||0),deliveredAt:message.deliveredAt||result.deliveredAt||null,deliveryErrors:message.deliveryErrors||result.deliveryErrors||[],targets:result.targets||[]};
-            out('messaging-output',{total:1,accepted:row.acceptedByAppwrite?1:0,results:[row],user:currentAdminUserId,targetMode:'Deux administrateurs NOVANOD'});
-            setStatus(document.getElementById('messaging-status'),row.acceptedByAppwrite?'E-mail accepté par Appwrite pour les deux cibles administrateur. Vérifie ensuite la livraison.':'Appwrite n’a pas confirmé l’acceptation de l’e-mail.',''+(row.acceptedByAppwrite?'success':'error'));
-          } finally { button.disabled=false; }
-          return;
-        }
-
-        if(!selectedUsers.length) throw new Error('Sélectionne au moins un destinataire dans la liste.');
-        if(!confirm('Confirmer l’envoi via '+channel.toUpperCase()+' à '+selectedUsers.length+' utilisateur(s) sélectionné(s) ?')) return;
+        if(channel==='email' && !subject) throw new Error('L’objet de l’e-mail est obligatoire.');
+        if(!confirm('Confirmer l’envoi '+channel.toUpperCase()+' au Topic '+topicId+' ('+topicLabels[topicId]+') ?')) return;
         button.disabled=true;
-        const results=[];
+        setStatus(document.getElementById('messaging-status'),'Envoi au Topic Appwrite '+topicId+'…','info');
         try {
-          for(let index=0;index<selectedUsers.length;index++) {
-            const user=selectedUsers[index];
-            const userId=String(user.$id||user.id||user.userId);
-            setStatus(document.getElementById('messaging-status'),'Envoi '+(index+1)+'/'+selectedUsers.length+' : '+(user.name||user.email||userId),'info');
-            const result=await adminCall('message_send',{channel,userId,topicId,subject,content,html});
-            results.push({userId,name:user.name||'',email:user.email||'',acceptedByAppwrite:!!result.acceptedByAppwrite,messageId:result.messageId||result.message?.$id||null,deliveredTotal:Number(result.message?.deliveredTotal||result.deliveredTotal||0),deliveredAt:result.message?.deliveredAt||result.deliveredAt||null,deliveryErrors:result.message?.deliveryErrors||[]});
-          }
+          const result=await adminCall('message_send',{channel,userId:currentAdminUserId,topicId,subject,content,html});
+          const message=result.message||{};
+          const row={topicId,acceptedByAppwrite:!!result.acceptedByAppwrite,messageId:result.messageId||message.$id||null,deliveredTotal:Number(message.deliveredTotal||result.deliveredTotal||0),deliveredAt:message.deliveredAt||result.deliveredAt||null,deliveryErrors:message.deliveryErrors||result.deliveryErrors||[]};
+          out('messaging-output',{total:1,accepted:row.acceptedByAppwrite?1:0,results:[row],targetMode:'Topic Appwrite',topicId});
+          setStatus(document.getElementById('messaging-status'),row.acceptedByAppwrite?'Message accepté par Appwrite pour le Topic '+topicId+'. Vérifie ensuite la livraison des abonnés.':'Appwrite n’a pas confirmé l’acceptation du message.',row.acceptedByAppwrite?'success':'error');
         } finally { button.disabled=false; }
-        out('messaging-output',{total:selectedUsers.length,accepted:results.filter(item=>item.acceptedByAppwrite).length,results});
-        const accepted=results.filter(item=>item.acceptedByAppwrite).length;
-        const delivered=results.filter(item=>item.deliveredTotal>0||item.deliveredAt).length;
-        setStatus(document.getElementById('messaging-status'),accepted+'/'+results.length+' message(s) accepté(s) par Appwrite · '+delivered+' livraison(s) confirmée(s). Consulte les erreurs par destinataire dans le résultat.',accepted===results.length?'success':'error');
       } catch(e){setStatus(document.getElementById('messaging-status'),e.message,'error');}
     });
     document.getElementById('message-channel')?.addEventListener('change', () => {
