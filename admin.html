@@ -1532,14 +1532,28 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           <select id="message-channel" class="input-field">
             <option value="email">E-mail</option><option value="sms">SMS</option><option value="push">Notification Push</option>
           </select>
-          <input id="message-user-id" class="input-field" placeholder="ID utilisateur (ou laisser vide pour plusieurs destinataires)">
-          <input id="message-topic-id" class="input-field" placeholder="ID du topic Appwrite (facultatif)">
+          <div class="admin-note">Destinataire administrateur : les champs ci-dessous sont automatiquement renseignés depuis la session Appwrite active.</div>
+          <label class="form-label" for="message-user-id">User ID administrateur</label>
+          <input id="message-user-id" class="input-field" readonly autocomplete="off" placeholder="Identifiant administrateur connecté">
+          <label class="form-label" for="message-email-target">Target e-mail / adresse de livraison</label>
+          <input id="message-email-target" type="email" class="input-field" readonly autocomplete="email" placeholder="Adresse e-mail du compte administrateur">
+          <button id="btn-create-email-target" class="btn-3d btn-secondary" type="button">Enregistrer la cible e-mail de l’administrateur</button>
+          <div id="message-target-status" class="status-msg"></div>
+          <label class="form-label" for="message-topic-id">Topic ID (facultatif)</label>
+          <input id="message-topic-id" class="input-field" placeholder="Laisser vide pour un envoi direct à l’administrateur">
+          <div class="admin-form-grid">
+            <div><label class="form-label" for="message-cc-targets">CC Targets (facultatif)</label><input id="message-cc-targets" class="input-field" placeholder="Laisser vide"></div>
+            <div><label class="form-label" for="message-bcc-targets">BCC Targets (facultatif)</label><input id="message-bcc-targets" class="input-field" placeholder="Laisser vide"></div>
+          </div>
+          <label class="form-label" for="message-subject">Objet / titre</label>
           <input id="message-subject" class="input-field" placeholder="Objet / titre">
+          <label class="form-label" for="message-content">Contenu du message</label>
           <textarea id="message-content" class="input-field" placeholder="Contenu du message"></textarea>
+          <label class="hint" style="display:flex;align-items:center;gap:8px"><input id="message-html-mode" type="checkbox"> Mode HTML (à activer uniquement si le contenu contient des balises HTML)</label>
           <button id="btn-send-message" class="btn-3d">Envoyer via Appwrite Messaging</button>
           <div id="messaging-status" class="status-msg"></div>
           <div id="messaging-output" class="admin-output">Les réponses du service de messagerie apparaîtront ici.</div>
-          <div class="admin-note">Pour PUSH : configure un fournisseur Appwrite Push dans Appwrite → Messaging → Providers et active l'abonnement Push dans le site public. Un message accepté par l'API n'est pas une preuve de livraison. Pour e-mail/SMS, configure un fournisseur adapté et vérifie que le compte destinataire possède une cible e-mail/téléphone valide. Les topics doivent avoir des abonnés autorisés.</div>
+          <div class="admin-note">Procédure e-mail : 1) vérifie le compte administrateur connecté ; 2) clique sur « Enregistrer la cible e-mail de l’administrateur » ; 3) laisse Topic, CC et BCC vides pour un envoi direct ; 4) laisse le mode HTML désactivé pour un texte simple ; 5) saisis l’objet et le contenu puis envoie. L’identifiant et l’adresse de l’administrateur sont récupérés automatiquement. Un message accepté n’est pas une preuve de livraison : contrôle deliveredAt, deliveredTotal et deliveryErrors dans le résultat. Pour PUSH, configure un fournisseur Appwrite et un abonnement sur l’appareil.</div>
         </div>
       </div>
 
@@ -2676,19 +2690,72 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       finally { button.disabled = false; }
     });
 
+    // Préremplissage du destinataire depuis la session Appwrite administrateur.
+    let currentAdminEmail = '';
+    async function syncMessagingAdminRecipient() {
+      const userField = document.getElementById('message-user-id');
+      const emailField = document.getElementById('message-email-target');
+      if (!currentAdminUserId) return;
+      userField.value = currentAdminUserId;
+      try {
+        const user = await account.get();
+        if (user.$id !== currentAdminUserId) throw new Error('La session administrateur a changé. Reconnecte-toi.');
+        currentAdminEmail = user.email || '';
+        emailField.value = currentAdminEmail;
+        if (!currentAdminEmail) setStatus(document.getElementById('message-target-status'), 'Aucune adresse e-mail disponible dans la session Appwrite.', 'error');
+      } catch (error) {
+        setStatus(document.getElementById('message-target-status'), 'Impossible de récupérer le compte administrateur : ' + error.message, 'error');
+      }
+    }
+    document.getElementById('btn-create-email-target')?.addEventListener('click', async () => {
+      const button = document.getElementById('btn-create-email-target');
+      const status = document.getElementById('message-target-status');
+      if (!currentAdminUserId) return setStatus(status, 'Connecte-toi avec un compte administrateur.', 'error');
+      button.disabled = true;
+      setStatus(status, 'Vérification du compte et création de la cible e-mail…', 'info');
+      try {
+        const user = await account.get();
+        if (user.$id !== currentAdminUserId || !ADMIN_USER_IDS.includes(user.$id)) throw new Error('Compte actif non autorisé.');
+        if (!user.email) throw new Error('Le compte administrateur ne possède pas d’adresse e-mail.');
+        const messaging = new Appwrite.Messaging(client);
+        const targetId = ('admin-email-' + user.$id).slice(0, 36);
+        const result = await messaging.createEmailTarget(user.$id, targetId, user.email);
+        currentAdminEmail = user.email;
+        document.getElementById('message-email-target').value = user.email;
+        setStatus(status, 'Cible e-mail administrateur enregistrée. Tu peux maintenant envoyer un e-mail de test.', 'success');
+        out('messaging-output', result);
+      } catch (error) {
+        const detail = error?.message || String(error);
+        const alreadyExists = /already exists|duplicate|target.*exists|409/i.test(detail);
+        setStatus(status, alreadyExists ? 'Une cible e-mail portant cet identifiant existe déjà. Tu peux passer directement à l’envoi.' : 'Création de la cible impossible : ' + detail, alreadyExists ? 'success' : 'error');
+      } finally { button.disabled = false; }
+    });
     document.getElementById('btn-send-message')?.addEventListener('click',async()=>{
       try {
         const channel=document.getElementById('message-channel').value;
-        const userId=document.getElementById('message-user-id').value.trim();
+        const userId=currentAdminUserId;
         const topicId=document.getElementById('message-topic-id').value.trim();
         const subject=document.getElementById('message-subject').value.trim();
         const content=document.getElementById('message-content').value.trim();
-        if(!content || (!userId && !topicId)) throw new Error('Contenu et destinataire (ID utilisateur ou topic) requis.');
-        if(!confirm('Confirmer l’envoi de ce message ?')) return;
-        const r=await adminCall('message_send',{channel,userId,topicId,subject,content});
-        out('messaging-output',r); setStatus(document.getElementById('messaging-status'),r.acceptedByAppwrite ? 'Message accepté par Appwrite. ID : '+(r.messageId || 'inconnu')+' — la livraison dépend du fournisseur et du destinataire.' : 'Réponse reçue du service de messagerie.','success');
+        const html=document.getElementById('message-html-mode').checked;
+        if(!currentAdminUserId) throw new Error('Connecte-toi avec un compte administrateur.');
+        if(!content) throw new Error('Le contenu du message est obligatoire.');
+        if(channel==='email' && !currentAdminEmail) await syncMessagingAdminRecipient();
+        if(channel==='email' && !currentAdminEmail) throw new Error('Adresse e-mail administrateur introuvable.');
+        if(!confirm('Confirmer l’envoi de ce message vers le compte administrateur connecté ?')) return;
+        const r=await adminCall('message_send',{channel,userId,topicId,subject,content,html});
+        out('messaging-output',r);
+        const accepted=!!r.acceptedByAppwrite;
+        const delivered=Number(r.message?.deliveredTotal||r.deliveredTotal||0)>0 || !!(r.message?.deliveredAt||r.deliveredAt);
+        setStatus(document.getElementById('messaging-status'),accepted ? (delivered ? 'Message livré selon le statut Appwrite. ID : '+(r.messageId||r.message?.$id||'inconnu') : 'Message accepté par Appwrite, livraison non confirmée. Vérifie le statut et les erreurs de livraison ci-dessous.') : 'Appwrite n’a pas confirmé l’acceptation du message.',accepted?'success':'error');
       } catch(e){setStatus(document.getElementById('messaging-status'),e.message,'error');}
     });
+    document.getElementById('message-channel')?.addEventListener('change', () => {
+      const emailMode = document.getElementById('message-channel').value === 'email';
+      document.getElementById('message-html-mode').disabled = !emailMode;
+      document.getElementById('btn-create-email-target').disabled = !emailMode;
+    });
+
 
     let novaProgressTimer=null,novaProgressValue=0,novaProgressDepth=0,novaProgressPanel=null,novaProgressHideTimer=null;
     function startNovaProgress(title){
