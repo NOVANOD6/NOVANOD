@@ -278,6 +278,10 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
+    .auth-loading-track{height:3px;width:100%;margin:0 0 14px;border-radius:99px;overflow:hidden;background:rgba(59,20,32,.10);display:none}
+    .auth-loading-track.active{display:block}
+    .auth-loading-bar{height:100%;width:35%;border-radius:99px;background:var(--red-primary);animation:authLoadingMove 1.15s ease-in-out infinite}
+    @keyframes authLoadingMove{0%{transform:translateX(-110%)}100%{transform:translateX(310%)}}
     .status-msg:not(:empty) { display: block; }
     .status-msg.error { background: #ffe5e8; color: #B00020; border: 1.5px solid #ffb3bc; }
     .status-msg.success { background: #e2f7ea; color: #1A7A3D; border: 1.5px solid #a3e4bc; }
@@ -493,7 +497,6 @@
       filter:drop-shadow(0 2px 0 rgba(255,255,255,.7)) drop-shadow(0 5px 4px rgba(59,20,32,.24));
       transform:perspective(260px) rotateX(7deg) translateZ(3px);
     }
-    .fingerprint-mark {
       width:36px;height:36px;fill:none;stroke:currentColor;stroke-width:2.1;
       stroke-linecap:round;stroke-linejoin:round;
       filter:drop-shadow(0 2px 0 rgba(255,255,255,.7)) drop-shadow(0 6px 5px rgba(59,20,32,.28));
@@ -905,8 +908,6 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     .analysis-action{display:flex;align-items:center;justify-content:flex-start;gap:12px;text-align:left;min-height:66px}
     .analysis-action svg{width:38px;height:38px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
     .analysis-action span{line-height:1.3}
-    .fingerprint-mark{width:25px;height:25px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vertical-align:middle;margin-right:8px}
-    .btn-3d:has(.fingerprint-mark){display:inline-flex;align-items:center;justify-content:center;gap:8px}
     .orientation-toggle[hidden]{display:none!important}
     button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid rgba(230,74,56,.45);outline-offset:2px}
     @media(max-width:620px){.device-tab{flex:1 1 100px;padding:9px 8px;gap:6px}.orientation-button{min-height:54px;padding:8px}.analysis-action{min-height:60px}}
@@ -963,7 +964,6 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     .analysis-action{min-height:104px!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:10px!important;border-radius:17px!important}
     .analysis-action svg{width:66px!important;height:66px!important;padding:13px!important;border:0!important;border-radius:19px!important;stroke:#fff7dc!important;stroke-width:2.2!important;background:radial-gradient(circle at 28% 18%,rgba(255,255,255,.55),transparent 38%),linear-gradient(145deg,#ff9b7c 0%,#E64A38 44%,#3B1420 100%)!important;box-shadow:inset 0 2px 3px rgba(255,255,255,.45),inset 0 -5px 8px rgba(59,20,32,.22),0 6px 0 rgba(59,20,32,.2),0 13px 20px rgba(59,20,32,.18)!important;filter:none!important;transform:perspective(600px) rotateX(9deg) rotateY(-7deg) translateZ(4px)!important}
     .analysis-action:hover svg{transform:perspective(600px) rotateX(0) rotateY(0) translateY(-4px) scale(1.04)!important}.analysis-action span{font-weight:850!important}
-    .fingerprint-mark{width:38px!important;height:38px!important;padding:5px!important;border-radius:12px!important;color:#fff8df!important;background:linear-gradient(145deg,#ff987b,#E64A38 50%,#3B1420)!important;filter:drop-shadow(0 4px 5px rgba(59,20,32,.2))!important}
     .stats-row{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:10px!important}.stat-box{border:1px solid rgba(59,20,32,.1)!important;border-radius:16px!important;background:linear-gradient(145deg,#fffef3,#fff5c7)!important;box-shadow:0 5px 14px rgba(59,20,32,.06)!important}.stat-box .num{font-size:clamp(20px,2.4vw,28px)!important}
     .admin-table-wrap{border:1px solid rgba(59,20,32,.12)!important;border-radius:15px!important;box-shadow:0 6px 16px rgba(59,20,32,.045)!important}.admin-table th{background:#3B1420!important;color:#FFFBD0!important}.admin-table tbody tr:nth-child(even){background:rgba(230,74,56,.035)}
     .input-field,select.input-field,textarea.input-field{border-radius:12px!important;min-height:44px}.btn-3d{border-radius:12px!important}.admin-note{background:rgba(59,20,32,.045)!important;border:1px solid rgba(59,20,32,.1)!important;border-radius:13px!important}.user-list{max-height:var(--admin-list-max-height,480px)!important}.nova-reduced-motion *,.nova-reduced-motion *::before,.nova-reduced-motion *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
@@ -1021,6 +1021,18 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     .workflow-actions .btn-3d{flex:1 1 220px;margin:0}
     .appwrite-health-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:9px;margin-top:12px}
     .appwrite-health-item{padding:12px;border:1px solid rgba(59,20,32,.16);border-radius:12px;background:#fffef7}
+    .feature-test-summary{margin:12px 0;padding:11px 13px;border:1px solid rgba(59,20,32,.18);border-radius:11px;font-size:12px;font-weight:800;background:rgba(59,20,32,.06)}
+    .feature-test-results{display:grid;gap:9px;margin:12px 0}
+    .feature-test-item{padding:11px 12px;border:1px solid rgba(59,20,32,.16);border-radius:11px;background:#fffef7;min-width:0}
+    .feature-test-head{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px;font-weight:800}
+    .feature-test-state{font-size:17px;flex:none}
+    .feature-test-state.ok{color:#168342}.feature-test-state.fail{color:#c62828}.feature-test-state.run{color:#a45b00}
+    .feature-test-detail{font-size:11px;line-height:1.5;margin-top:6px;overflow-wrap:anywhere;color:#3B1420}
+    .feature-test-track{height:7px;background:rgba(59,20,32,.12);border-radius:99px;overflow:hidden;margin-top:9px}
+    .feature-test-fill{height:100%;width:0;background:#E64A38;border-radius:99px;transition:width .18s ease}
+    .feature-test-meta{display:flex;justify-content:flex-end;font-size:10px;font-weight:800;margin-top:4px}
+    .feature-test-item.ok .feature-test-fill{background:#168342}.feature-test-item.fail .feature-test-fill{background:#c62828}
+
     .appwrite-health-item strong{display:block;margin-bottom:4px}
     @media(max-width:600px){.report-structured-table{width:760px!important}.report-evidence{grid-template-columns:1fr}.report-view-control select{width:100%;max-width:none}}
 
@@ -1052,6 +1064,28 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       .report-view-control select{width:100%;max-width:none}
     }
   
+
+    /* NOVANOD — lecture des rapports en pleine largeur et sélection multiple */
+    #reports-list.user-list{max-height:none!important;overflow:visible!important;width:100%;}
+    #pane-reports .glass-card,#pane-analytics .glass-card{width:100%;min-width:0;}
+    #analysis-history{width:100%;max-width:none;min-width:0;overflow:visible;white-space:normal;padding:12px;background:transparent;border:0;}
+    .report-card{width:100%;max-width:none;min-width:0;padding:clamp(12px,2vw,22px);}
+    .report-rendered-content,.report-document,.report-table-scroll{width:100%;max-width:none;min-width:0;}
+    .report-document{font-size:14px;line-height:1.78;padding:clamp(14px,2.2vw,26px);}
+    .report-document h2{font-size:clamp(16px,1.8vw,21px);font-weight:900;color:#b9362a;margin:22px 0 10px;}
+    .report-document strong{font-weight:900;color:#9f2d24;}
+    .report-document .report-section{border-left:4px solid #E64A38;padding:10px 14px;margin:14px 0;background:#fff8e9;border-radius:0 10px 10px 0;}
+    .report-selection-toolbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 12px;margin:10px 0;border:1px solid rgba(59,20,32,.16);border-radius:11px;background:#fffef7;font-size:12px;font-weight:800;}
+    .report-selection-toolbar label{display:flex;align-items:center;gap:8px;cursor:pointer;}
+    .report-selection-toolbar input{width:18px;height:18px;accent-color:#E64A38;}
+    .report-selection-toolbar [data-report-selected-count]{color:#8b3a2e;margin-right:auto;}
+    .report-card.is-selected{border:2px solid #E64A38;background:#fff9ec;}
+    .report-card-head{align-items:flex-start;}
+    .report-card-head .report-select-control{display:flex;align-items:center;gap:8px;margin-right:auto;}
+    .report-card-head .report-select-control input{width:18px;height:18px;accent-color:#E64A38;}
+    .report-ai-label{display:inline-flex;align-items:center;margin:6px 0 10px;padding:5px 10px;border-radius:7px;background:#3B1420;color:#FFFBD0;font-size:11px;font-weight:900;letter-spacing:.4px;}
+    .report-document .report-keyword{font-weight:900;color:#a52f25;}
+    @media(max-width:760px){#analysis-history{padding:4px 0}.report-document{font-size:13px}.report-card-head{display:grid;grid-template-columns:1fr;}}
     /* Correctifs mobile NOVANOD : contrôles compacts, sans champs géants */
     .input-field, select.input-field, input.input-field {
       display:block; width:100%; min-width:0; height:50px; min-height:46px;
@@ -1080,6 +1114,37 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       .input-field, select.input-field { height:48px; min-height:44px; }
     }
 
+  
+.nova-progress-inline{display:block;width:100%;margin:-2px 0 12px;padding:10px 12px;border:1px solid rgba(230,74,56,.28);border-radius:11px;background:rgba(230,74,56,.07);color:#3B1420;animation:novaProgressReveal .18s ease-out}.nova-progress-heading{font-size:11px;font-weight:800;margin-bottom:4px;color:#3B1420}.nova-progress-stage{font-size:10px;opacity:.78;margin-bottom:7px}.nova-progress-track{height:5px;width:100%;border-radius:20px;background:rgba(59,20,32,.13);overflow:hidden}.nova-progress-fill{height:100%;width:0;border-radius:20px;background:linear-gradient(90deg,#E64A38,#ffc17b);transition:width .35s ease}.nova-progress-meta{display:flex;justify-content:space-between;margin-top:5px;font-size:10px;font-weight:800;font-variant-numeric:tabular-nums}.nova-progress-inline.is-complete{border-color:rgba(59,20,32,.2)}@keyframes novaProgressReveal{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}.security-overview{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:14px 0}.security-metric{padding:12px;border:1px solid rgba(59,20,32,.12);border-radius:13px;background:rgba(230,74,56,.045)}.security-metric strong{display:block;font-size:22px;color:var(--dark-brown)}.security-metric span{font-size:11px;line-height:1.3;color:var(--text-muted,#765e60)}.security-tools{display:grid;grid-template-columns:minmax(0,1fr) minmax(150px,.45fr);gap:9px;margin:12px 0}@media(max-width:560px){.security-overview{grid-template-columns:repeat(2,minmax(0,1fr))}.security-tools{grid-template-columns:1fr}}
+
+    /* NOVANOD — 12 boutons originaux fournis par l’administrateur, sprite homogène */
+    .analysis-actions-grid{display:flex;flex-wrap:nowrap;gap:14px;margin:14px 0 18px;overflow-x:auto;overflow-y:hidden;padding:4px 4px 14px;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+    .analysis-action{flex:0 0 104px;width:104px;min-width:104px;height:78px;min-height:78px!important;max-height:78px;padding:8px 6px!important;margin:0!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:5px!important;border:1px solid rgba(59,20,32,.15)!important;border-radius:13px!important;background:linear-gradient(145deg,#fffef8,#fffbd0)!important;color:#3B1420!important;box-shadow:0 4px 0 rgba(59,20,32,.13),0 7px 14px rgba(59,20,32,.07)!important;text-align:center!important;scroll-snap-align:start}
+    .analysis-action:hover{transform:translateY(-2px);box-shadow:0 6px 0 rgba(59,20,32,.13),0 13px 20px rgba(59,20,32,.1)!important}
+    .analysis-icon{display:block;flex:none;width:112px;height:112px;max-width:100%;border-radius:24px;background-image:url("data:image/webp;base64,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");background-size:300% 400%;background-repeat:no-repeat;filter:drop-shadow(0 4px 5px rgba(59,20,32,.16))}
+    .analysis-icon-1{background-position:0% 0%}.analysis-icon-2{background-position:50% 0%}.analysis-icon-3{background-position:100% 0%}
+    .analysis-icon-4{background-position:0% 33.333%}.analysis-icon-5{background-position:50% 33.333%}.analysis-icon-6{background-position:100% 33.333%}
+    .analysis-icon-7{background-position:0% 66.667%}.analysis-icon-8{background-position:50% 66.667%}.analysis-icon-9{background-position:100% 66.667%}
+    .analysis-icon-10{background-position:0% 100%}.analysis-icon-11{background-position:50% 100%}.analysis-icon-12{background-position:100% 100%}
+    .analysis-label{display:block;max-width:100%;font-size:13px;font-weight:850;line-height:1.3;overflow-wrap:anywhere}
+    .analysis-extra-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:end;margin:8px 0 16px;padding:12px;border:1px solid rgba(59,20,32,.12);border-radius:12px;background:rgba(230,74,56,.045)}
+    .analysis-extra-row label{grid-column:1/-1;font-size:11px;font-weight:800;color:#3B1420}
+    .analysis-extra-row .input-field{margin:0}
+    .analysis-output-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:14px 0 7px}
+    .analysis-output-heading h4{margin:0}
+    .analysis-output-heading label{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:800;color:#3B1420}
+    .analysis-output-mode{width:auto;min-width:150px;height:36px;min-height:36px;margin:0;padding:6px 9px;border:1px solid rgba(59,20,32,.18);border-radius:9px;background:#fffef5;color:#3B1420;font:700 11px Tahoma,Arial,sans-serif}
+    @media(max-width:760px){.analysis-action{flex-basis:104px;width:104px;min-width:104px;height:78px;min-height:78px!important;max-height:78px;padding:8px 6px!important}.analysis-icon{width:28px;height:28px}.analysis-label{font-size:10px}}
+    @media(max-width:380px){.analysis-actions-grid{gap:8px}.analysis-action{flex-basis:104px;width:104px;min-width:104px;height:78px;min-height:78px!important;max-height:78px;padding:7px 5px!important}.analysis-icon{width:28px;height:28px}.analysis-label{font-size:10px}}
+
+  
+    /* Preuves visuelles : vignettes uniformes, classement en grille responsive */
+    .report-evidence{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;align-items:stretch}
+    .report-evidence .evidence-figure{display:flex;flex-direction:column;min-width:0;height:100%}
+    .report-evidence .evidence-image-wrap{width:100%;aspect-ratio:16/9;overflow:hidden;border-radius:12px;background:#fff8e9;display:flex;align-items:center;justify-content:center}
+    .report-evidence .evidence-image-wrap img{display:block;width:100%;height:100%;object-fit:contain}
+    .report-evidence .evidence-figure figcaption{flex:1;min-width:0;overflow-wrap:anywhere}
+
   </style>
 </head>
 <body>
@@ -1099,6 +1164,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       </div>
 
       <div id="login-status" class="status-msg"></div>
+      <div id="auth-loading-track" class="auth-loading-track" role="progressbar" aria-label="Chargement en cours"><div class="auth-loading-bar"></div></div>
 
       <div id="pane-login">
         <label class="form-label">Adresse E-mail</label>
@@ -1108,7 +1174,6 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         <input type="password" id="admin-password" class="input-field" placeholder="••••••••" autocomplete="current-password">
         
         <button id="btn-login" class="btn-3d">Se connecter au Dashboard</button>
-        <button id="btn-login-fingerprint" class="btn-3d btn-secondary hidden"><svg class="fingerprint-mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 7c-9 0-16 7-16 16M24 13c-6 0-11 5-11 11 0 7-1 12-4 16M24 19c-3 0-5 2-5 5 0 9-1 14-4 18M24 25c0 9-1 15-3 19M30 9c6 2 10 8 10 14 0 8-1 14-4 19M30 16c3 2 5 5 5 9 0 5 0 9-2 13"/></svg><span>Déverrouiller avec l'empreinte du téléphone</span></button>
       </div>
 
       <div id="pane-signup" class="hidden">
@@ -1176,6 +1241,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         </div>
         <div class="glass-card">
           <h3 class="card-title">Derniers rapports</h3>
+          <div class="report-selection-toolbar"><label><input type="checkbox" data-report-select-all="reports-list"> Tout sélectionner</label><span data-report-selected-count="reports-list">0 sélectionné</span><button type="button" class="admin-action danger" data-report-bulk-delete="reports-list" disabled>Supprimer la sélection</button></div>
           <div id="reports-list" class="user-list">
             <div class="hint">Aucun rapport pour l'instant — lance une première analyse ci-dessus.</div>
           </div>
@@ -1184,20 +1250,12 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
 
       <!-- ===== ONGLET : SÉCURITÉ ===== -->
       <div id="pane-security" class="dash-pane">
-        <div class="glass-card">
-          <h3 class="card-title" style="color:var(--dark-brown);">Sécurité biométrique</h3>
-          <div class="hint">Enregistre jusqu'à cinq passkeys sur ton téléphone. Android déclenchera l'authentification biométrique locale (empreinte si le capteur et le système la proposent, sinon le mécanisme sécurisé configuré sur l'appareil). NOVANOD ne reçoit et ne stocke jamais ton empreinte digitale.</div>
-          <div id="fingerprint-status" class="status-msg" role="status" aria-live="polite"></div>
-          <div id="passkey-count" class="hint">Chargement des passkeys…</div>
-          <div id="passkey-list" class="user-list" aria-live="polite"></div>
-          <button id="btn-register-fingerprint" class="btn-3d btn-dark hidden"><svg class="fingerprint-mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 7c-9 0-16 7-16 16M24 13c-6 0-11 5-11 11 0 7-1 12-4 16M24 19c-3 0-5 2-5 5 0 9-1 14-4 18M24 25c0 9-1 15-3 19M30 9c6 2 10 8 10 14 0 8-1 14-4 19M30 16c3 2 5 5 5 9 0 5 0 9-2 13"/></svg><span>Enregistrer l'empreinte de ce téléphone</span></button>
-          <button id="btn-refresh-passkeys" class="admin-action">Actualiser la liste</button>
-        </div>
+        <div class="glass-card"><h3 class="card-title">Vue d’ensemble de la sécurité</h3><div class="hint">Indicateurs calculés à partir des événements réellement enregistrés dans Appwrite.</div><div class="security-overview" aria-live="polite"><div class="security-metric"><strong id="security-total">—</strong><span>Alertes enregistrées</span></div><div class="security-metric"><strong id="security-critical">—</strong><span>Critiques / élevées</span></div><div class="security-metric"><strong id="security-recent">—</strong><span>Dernières 24 h</span></div><div class="security-metric"><strong id="security-notified">—</strong><span>Push et e-mail acceptés</span></div></div></div>
         <div class="glass-card">
           <h3 class="card-title">Alertes de sécurité</h3>
           <div class="hint">Incidents reçus et enregistrés par le serveur. Les statuts indiquent si Appwrite a accepté le Push et l’e-mail ; ils ne garantissent pas la livraison sur l’appareil.</div>
           <div id="security-events-status" class="status-msg" role="status" aria-live="polite"></div>
-          <button id="btn-refresh-security-events" class="admin-action">Actualiser les alertes</button>
+          <button id="btn-refresh-security-events" class="admin-action">Actualiser les alertes</button><div class="security-tools"><input id="security-event-search" class="input-field" type="search" placeholder="Rechercher un événement…" aria-label="Rechercher dans les alertes"><select id="security-event-filter" class="input-field" aria-label="Filtrer les alertes"><option value="all">Toutes les alertes</option><option value="critical">Critiques et élevées</option><option value="medium">Modérées</option><option value="low">Faibles</option></select></div>
           <div id="security-events-list" class="user-list" aria-live="polite"><div class="hint">Chargement des alertes…</div></div>
         </div>
       </div>
@@ -1291,6 +1349,13 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           </div>
           <button id="btn-save-settings" class="btn-3d">Enregistrer les paramètres</button>
           <div id="settings-status" class="status-msg" role="status" aria-live="polite"></div>
+          <div class="divider"></div>
+          <h3 class="card-title">Test complet des fonctionnalités</h3>
+          <p class="hint">Lance un contrôle séquentiel des services, de l’IA, des analyses, des preuves visuelles, du stockage, de GitHub et des pages légales. Chaque contrôle affiche sa progression et son résultat réel.</p>
+          <button id="btn-test-all-features" class="btn-3d" type="button">Tester toutes les fonctionnalités</button>
+          <div id="feature-test-summary" class="feature-test-summary" role="status" aria-live="polite">Aucun test lancé.</div>
+          <div id="feature-test-results" class="feature-test-results"></div>
+          <div class="admin-note">Le test des preuves vérifie l’accès au stockage et la présence de preuves dans les rapports disponibles. Il ne crée pas de fausses captures. Le basculement entre modèles Gemini doit être exécuté par nova.ai côté serveur ; la console lui transmet la demande de reprise sur modèle alternatif.</div>
           <div class="divider"></div>
           <h3 class="card-title">Notifications Appwrite</h3>
           <p class="hint">La console se connecte au broker Appwrite Push avec ton compte. Les messages reçus pendant que cette page reste ouverte s’affichent ci-dessous. Sur navigateur mobile, l’affichage système en arrière-plan n’est pas garanti ; un fournisseur FCM/PWA est nécessaire pour une vraie notification native persistante.</p>
@@ -1467,14 +1532,34 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           <select id="message-channel" class="input-field">
             <option value="email">E-mail</option><option value="sms">SMS</option><option value="push">Notification Push</option>
           </select>
-          <input id="message-user-id" class="input-field" placeholder="ID utilisateur (ou laisser vide pour plusieurs destinataires)">
-          <input id="message-topic-id" class="input-field" placeholder="ID du topic Appwrite (facultatif)">
+          <div class="admin-note">Sélectionne un ou plusieurs comptes dans la liste des utilisateurs NOVANOD. L’envoi sera effectué uniquement aux comptes cochés.</div>
+          <div class="admin-toolbar" style="margin-bottom:8px">
+            <input id="message-user-search" class="input-field" placeholder="Rechercher un utilisateur par nom, e-mail ou ID">
+            <button id="btn-refresh-message-users" class="btn-3d btn-secondary" type="button">Actualiser la liste</button>
+          </div>
+          <div class="admin-toolbar" style="margin-bottom:8px">
+            <button id="btn-select-all-message-users" class="admin-action" type="button">Tout sélectionner</button>
+            <button id="btn-clear-message-users" class="admin-action" type="button">Tout désélectionner</button>
+            <span id="message-selected-count" class="hint" style="margin:0">0 destinataire sélectionné</span>
+          </div>
+          <div id="message-users-list" class="user-list" style="max-height:260px"><div class="hint">Connecte-toi puis charge la liste des utilisateurs.</div></div>
+          <div class="admin-note">Pour les e-mails, la cible Appwrite sera créée automatiquement pour chaque utilisateur sélectionné avant l’envoi.</div>
+          <div id="message-target-status" class="status-msg"></div>
+          <label class="form-label" for="message-topic-id">Topic ID (facultatif)</label>
+          <input id="message-topic-id" class="input-field" placeholder="Laisser vide pour un envoi direct à l’administrateur">
+          <div class="admin-form-grid">
+            <div><label class="form-label" for="message-cc-targets">CC Targets (facultatif)</label><input id="message-cc-targets" class="input-field" placeholder="Laisser vide"></div>
+            <div><label class="form-label" for="message-bcc-targets">BCC Targets (facultatif)</label><input id="message-bcc-targets" class="input-field" placeholder="Laisser vide"></div>
+          </div>
+          <label class="form-label" for="message-subject">Objet / titre</label>
           <input id="message-subject" class="input-field" placeholder="Objet / titre">
+          <label class="form-label" for="message-content">Contenu du message</label>
           <textarea id="message-content" class="input-field" placeholder="Contenu du message"></textarea>
+          <label class="hint" style="display:flex;align-items:center;gap:8px"><input id="message-html-mode" type="checkbox"> Mode HTML (à activer uniquement si le contenu contient des balises HTML)</label>
           <button id="btn-send-message" class="btn-3d">Envoyer via Appwrite Messaging</button>
           <div id="messaging-status" class="status-msg"></div>
           <div id="messaging-output" class="admin-output">Les réponses du service de messagerie apparaîtront ici.</div>
-          <div class="admin-note">Pour PUSH : configure un fournisseur Appwrite Push dans Appwrite → Messaging → Providers et active l'abonnement Push dans le site public. Un message accepté par l'API n'est pas une preuve de livraison. Pour e-mail/SMS, configure un fournisseur adapté et vérifie que le compte destinataire possède une cible e-mail/téléphone valide. Les topics doivent avoir des abonnés autorisés.</div>
+          <div class="admin-note">Procédure e-mail : 1) vérifie le compte administrateur connecté ; 2) clique sur « Enregistrer la cible e-mail de l’administrateur » ; 3) laisse Topic, CC et BCC vides pour un envoi direct ; 4) laisse le mode HTML désactivé pour un texte simple ; 5) saisis l’objet et le contenu puis envoie. L’identifiant et l’adresse de l’administrateur sont récupérés automatiquement. Un message accepté n’est pas une preuve de livraison : contrôle deliveredAt, deliveredTotal et deliveryErrors dans le résultat. Pour PUSH, configure un fournisseur Appwrite et un abonnement sur l’appareil.</div>
         </div>
       </div>
 
@@ -1536,29 +1621,28 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
             <option value="gemini">Gemini uniquement</option>
             <option value="groq">Groq uniquement</option>
           </select>
-          <div class="admin-form-grid">
-            <button class="btn-3d analysis-action" data-analysis="problem"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M7 7h26v26H7zM12 14h16M12 20h10M12 26h7"/><circle cx="29" cy="27" r="5"/><path d="m32.5 30.5 4 4"/></svg><span>Analyse problème</span></button>
-            <button class="btn-3d analysis-action" data-analysis="client"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="15" cy="13" r="6"/><path d="M4 34c0-7 5-12 11-12s11 5 11 12M29 10h7M32.5 6.5v7M29 23h7"/></svg><span>Analyse client</span></button>
-            <button class="btn-3d analysis-action" data-analysis="security"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="m20 4 13 5v9c0 9-5 14-13 18C12 32 7 27 7 18V9z"/><path d="m13 20 5 5 10-11"/></svg><span>Analyse sécurité</span></button>
-            <button class="btn-3d analysis-action" data-analysis="statistics"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M5 34V6M5 34h31M11 28V19h6v9M21 28V11h6v17M31 28V5h5v23"/></svg><span>Analyse statistique</span></button>
-            <button class="btn-3d btn-secondary analysis-action" data-analysis="business"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="5" y="12" width="30" height="22" rx="2"/><path d="M14 12V7h12v5M5 20h30M17 20v4h6v-4"/></svg><span>Analyse business</span></button>
-            <button class="btn-3d btn-secondary analysis-action" data-analysis="merchandising"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M5 7h30v27H5zM5 15h30M13 7v8M27 7v8M12 22h16M12 27h10"/></svg><span>Analyse merchandising</span></button>
-            <button class="btn-3d btn-secondary analysis-action" data-analysis="support"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M5 20a15 15 0 0 1 30 0M5 20v7h7v-9H5M35 20v7h-7v-9h7M28 31c-2 3-5 4-9 4"/></svg><span>Analyse service client</span></button>
-            <button class="btn-3d btn-secondary analysis-action" data-analysis="marketing"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M5 18h8l18-9v22l-18-9H5zM13 22l4 11h7l-5-8M31 15l5-4M31 25l5 4"/></svg><span>Analyse marketing</span></button>
-            <button class="btn-3d btn-secondary analysis-action" data-analysis="maintenance"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M8 30 25 13M22 8l5-5 10 10-5 5M6 34l7-2-5-5zM19 19l-7-7 4-4 7 7"/></svg><span>Maintenance proactive</span></button>
-            <button class="btn-3d btn-secondary analysis-action" data-analysis="appwrite"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="6" y="7" width="28" height="26" rx="3"/><path d="M6 15h28M15 15v18M24 15v18"/></svg><span>Expert Appwrite</span></button>
-            <button class="btn-3d btn-secondary analysis-action" data-analysis="performance"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M5 32h30M8 28l7-9 6 4 11-15"/><path d="M25 8h7v7"/></svg><span>Expert performance</span></button>
-            <button class="btn-3d btn-secondary analysis-action" data-analysis="accessibility"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="7" r="4"/><path d="M7 14h26M20 14v21M20 20 10 31M20 20l10 11"/></svg><span>Expert accessibilité</span></button>
-            <button class="btn-3d btn-secondary analysis-action" data-analysis="seo"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="17" cy="17" r="10"/><path d="m24 24 10 10M12 17h10M17 12v10"/></svg><span>Expert SEO</span></button>
-            <button class="btn-3d btn-secondary analysis-action" data-analysis="devops"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M6 10h28v20H6zM12 17l5 3-5 3M20 23h8"/></svg><span>Expert DevOps</span></button>
+          <div class="analysis-actions-grid">
+            <button class="analysis-action" type="button" data-analysis="problem"><span class="analysis-icon analysis-icon-1" aria-hidden="true"></span><span class="analysis-label">Analyse problème</span></button>
+            <button class="analysis-action" type="button" data-analysis="client"><span class="analysis-icon analysis-icon-2" aria-hidden="true"></span><span class="analysis-label">Analyse client</span></button>
+            <button class="analysis-action" type="button" data-analysis="security"><span class="analysis-icon analysis-icon-3" aria-hidden="true"></span><span class="analysis-label">Analyse sécurité</span></button>
+            <button class="analysis-action" type="button" data-analysis="statistics"><span class="analysis-icon analysis-icon-4" aria-hidden="true"></span><span class="analysis-label">Analyse statistique</span></button>
+            <button class="analysis-action" type="button" data-analysis="business"><span class="analysis-icon analysis-icon-5" aria-hidden="true"></span><span class="analysis-label">Analyse business</span></button>
+            <button class="analysis-action" type="button" data-analysis="support"><span class="analysis-icon analysis-icon-6" aria-hidden="true"></span><span class="analysis-label">Analyse service client</span></button>
+            <button class="analysis-action" type="button" data-analysis="maintenance"><span class="analysis-icon analysis-icon-7" aria-hidden="true"></span><span class="analysis-label">Maintenance proactive</span></button>
+            <button class="analysis-action" type="button" data-analysis="appwrite"><span class="analysis-icon analysis-icon-8" aria-hidden="true"></span><span class="analysis-label">Expert Appwrite</span></button>
+            <button class="analysis-action" type="button" data-analysis="performance"><span class="analysis-icon analysis-icon-9" aria-hidden="true"></span><span class="analysis-label">Expert performance</span></button>
+            <button class="analysis-action" type="button" data-analysis="accessibility"><span class="analysis-icon analysis-icon-10" aria-hidden="true"></span><span class="analysis-label">Expert accessibilité</span></button>
+            <button class="analysis-action" type="button" data-analysis="seo"><span class="analysis-icon analysis-icon-11" aria-hidden="true"></span><span class="analysis-label">Expert SEO</span></button>
+            <button class="analysis-action" type="button" data-analysis="devops"><span class="analysis-icon analysis-icon-12" aria-hidden="true"></span><span class="analysis-label">Expert DevOps</span></button>
           </div>
+          <div class="analysis-extra-row"><label for="analysis-extra-type">Autres analyses disponibles</label><select id="analysis-extra-type" class="input-field"><option value="merchandising">Analyse merchandising</option><option value="marketing">Analyse marketing</option></select><button id="btn-analysis-extra" class="admin-action" type="button">Lancer cette analyse</button></div>
           <div id="analysis-status" class="status-msg"></div>
-          <h4>Résultat Gemini</h4>
-          <div id="analysis-gemini-output" class="admin-output">En attente du rapport Gemini.</div>
-          <h4>Résultat Groq</h4>
-          <div id="analysis-groq-output" class="admin-output">En attente du rapport Groq.</div>
-          <h4>Synthèse commune des deux IA</h4>
-          <div id="analysis-output" class="admin-output">Choisis un audit pour générer les rapports détaillés et la synthèse.</div>
+          <div class="analysis-output-heading"><h4>Résultat Gemini</h4><label>Affichage <select class="analysis-output-mode" data-report-output-view="analysis-gemini-output" aria-label="Mode d’affichage Gemini"><option value="written">Rapport écrit</option><option value="table">Tableau structuré</option></select></label></div>
+           <div id="analysis-gemini-output" class="admin-output">En attente du rapport Gemini.</div>
+          <div class="analysis-output-heading"><h4>Résultat Groq</h4><label>Affichage <select class="analysis-output-mode" data-report-output-view="analysis-groq-output" aria-label="Mode d’affichage Groq"><option value="written">Rapport écrit</option><option value="table">Tableau structuré</option></select></label></div>
+           <div id="analysis-groq-output" class="admin-output">En attente du rapport Groq.</div>
+          <div class="analysis-output-heading"><h4>Synthèse commune des deux IA</h4><label>Affichage <select class="analysis-output-mode" data-report-output-view="analysis-output" aria-label="Mode d’affichage Synthèse commune"><option value="written">Rapport écrit</option><option value="table">Tableau structuré</option></select></label></div>
+           <div id="analysis-output" class="admin-output">Choisis un audit pour générer les rapports détaillés et la synthèse.</div>
           <section id="analysis-charts" class="analysis-chart-grid" aria-live="polite">
             <article class="analysis-chart-card"><h5>Courbe statistique X/Y</h5><p>En attente de coordonnées numériques structurées renvoyées par l'analyse.</p></article>
             <article class="analysis-chart-card"><h5>Indicateurs</h5><p>En attente de mesures numériques réelles renvoyées par l'analyse.</p></article>
@@ -1569,7 +1653,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           </section>
         </div>
         <div class="glass-card">
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap"><h3 class="card-title">Historique des rapports</h3><button id="btn-delete-all-reports" class="admin-action danger" type="button">Supprimer tout l’historique</button></div><p class="hint">Choisis une présentation adaptée : tableau structuré ou rapport écrit. Les tableaux peuvent défiler horizontalement sur téléphone. Chaque rapport peut être exporté en PDF ou supprimé.</p><div class="report-view-control"><label for="report-view-mode" class="form-label">Présentation des rapports</label><select id="report-view-mode" class="input-field"><option value="written">Rapport écrit professionnel</option><option value="table">Tableau structuré</option></select></div><div id="analysis-history" class="admin-output">Les rapports seront enregistrés dans la table configurée.</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap"><h3 class="card-title">Historique des rapports</h3><button id="btn-delete-all-reports" class="admin-action danger" type="button">Supprimer tout l’historique</button></div><p class="hint">Choisis une présentation adaptée : tableau structuré ou rapport écrit. Les tableaux peuvent défiler horizontalement sur téléphone. Chaque rapport peut être exporté en PDF ou supprimé.</p><div class="report-view-control"><label for="report-view-mode" class="form-label">Présentation des rapports</label><select id="report-view-mode" class="input-field"><option value="written">Rapport écrit professionnel</option><option value="table">Tableau structuré</option></select></div><div class="report-selection-toolbar"><label><input type="checkbox" data-report-select-all="analysis-history"> Tout sélectionner</label><span data-report-selected-count="analysis-history">0 sélectionné</span><button type="button" class="admin-action danger" data-report-bulk-delete="analysis-history" disabled>Supprimer la sélection</button></div><div id="analysis-history" class="admin-output">Les rapports seront enregistrés dans la table configurée.</div>
         </div>
       </div>
 
@@ -1611,11 +1695,11 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.1"></script>
+  
+<script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.1"></script>
 
   <script type="module">
-    import { startRegistration, startAuthentication } from 'https://cdn.jsdelivr.net/npm/@simplewebauthn/browser@9/+esm';
-    import { Client as AppwritePushClient, Push as AppwritePush } from 'https://cdn.jsdelivr.net/npm/appwrite@29.0.0/+esm';
+        import { Client as AppwritePushClient, Push as AppwritePush } from 'https://cdn.jsdelivr.net/npm/appwrite@29.0.0/+esm';
 
     const APPWRITE_ENDPOINT = 'https://fra.cloud.appwrite.io/v1';
     const APPWRITE_PROJECT_ID = '6ad4bd7b0036d37d3561';
@@ -1678,6 +1762,23 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       el.className = 'status-msg' + (msg ? ' ' + type : '');
     }
 
+    function setAuthLoading(button, active, loadingText) {
+      const bar = document.getElementById('auth-loading-track');
+      if (active) {
+        button.dataset.originalText = button.textContent;
+        button.disabled = true;
+        if (loadingText) button.textContent = loadingText;
+        bar?.classList.add('active');
+        bar?.setAttribute('aria-valuetext', 'Chargement en cours');
+      } else {
+        button.disabled = false;
+        if (button.dataset.originalText) button.textContent = button.dataset.originalText;
+        delete button.dataset.originalText;
+        bar?.classList.remove('active');
+        bar?.removeAttribute('aria-valuetext');
+      }
+    }
+
     const tabLogin = document.getElementById('tab-login');
     const tabSignup = document.getElementById('tab-signup');
     const paneLogin = document.getElementById('pane-login');
@@ -1700,6 +1801,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     });
 
     document.getElementById('btn-signup').addEventListener('click', async () => {
+      const signupButton = document.getElementById('btn-signup');
       const email = document.getElementById('signup-email').value.trim();
       const password = document.getElementById('signup-password').value;
       const passwordConfirm = document.getElementById('signup-password-confirm').value;
@@ -1713,6 +1815,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         return;
       }
 
+      setAuthLoading(signupButton, true, "Création en cours...");
       setStatus(loginStatus, "Création du compte en cours...", "info");
       try {
         await account.deleteSession('current').catch(() => {});
@@ -1722,6 +1825,8 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         screenPending.classList.remove('hidden');
       } catch (e) {
         setStatus(loginStatus, "Erreur : " + (e.message || e), "error");
+      } finally {
+        setAuthLoading(signupButton, false);
       }
     });
 
@@ -1749,9 +1854,8 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           document.getElementById('admin-welcome').textContent = user.name || user.email;
           screenLogin.classList.add('hidden');
           screenAdmin.classList.remove('hidden');
+          await refreshMessageUsers();
           await startAdminPush();
-          // Charger les passkeys uniquement après authentification administrateur.
-          await refreshPasskeys();
         } else {
           setStatus(loginStatus, `Accès refusé. Ton ID (${user.$id}) n'est pas autorisé dans ADMIN_USER_IDS.`, "error");
           await account.deleteSession('current').catch(() => {});
@@ -1760,12 +1864,14 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     }
 
     document.getElementById('btn-login').addEventListener('click', async () => {
+      const loginButton = document.getElementById('btn-login');
       const email = document.getElementById('admin-email').value.trim();
       const password = document.getElementById('admin-password').value;
       if (!email || !password) {
         setStatus(loginStatus, "Veuillez saisir votre e-mail et mot de passe.", "error");
         return;
       }
+      setAuthLoading(loginButton, true, "Connexion en cours...");
       setStatus(loginStatus, "Vérification des accès...", "info");
       try {
         await account.deleteSession('current').catch(() => {});
@@ -1773,6 +1879,8 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         await checkAdminSession();
       } catch (e) {
         setStatus(loginStatus, "Identifiants incorrects ou compte inexistant.", "error");
+      } finally {
+        setAuthLoading(loginButton, false);
       }
     });
 
@@ -1818,7 +1926,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         const id=escapeHtml(r.$id||r.$rowId||r.id||''), title=escapeHtml(r.analysisType||'Analyse');
         const date=escapeHtml(formatDate(r.createdAt||r.$createdAt));
         const evidence = r.chartData?.evidence || r.evidence || [];
-        return '<article class="report-card" data-report-card="'+id+'"><div class="report-card-head"><span>Rapport '+(i+1)+' · '+title+'</span><span>'+date+'</span></div><div class="report-toolbar"><label class="report-format-label" for="report-format-'+id+'">Type de rapport</label><select id="report-format-'+id+'" class="input-field report-format-select" data-report-format="'+id+'" aria-label="Type de rapport"><option value="written" '+(reportViewMode==='written'?'selected':'')+'>Document texte</option><option value="table" '+(reportViewMode==='table'?'selected':'')+'>Tableau structuré</option></select><button type="button" data-report-pdf="'+id+'" data-report-title="'+title+'" data-report-date="'+date+'">Télécharger PDF</button><button type="button" class="admin-action danger" data-report-delete="'+id+'">Supprimer</button></div><div class="report-rendered-content">'+renderReportHtml(r.report||'',reportViewMode)+'</div><h4>Preuves visuelles</h4><div class="report-evidence">'+renderEvidenceHtml(evidence)+'</div></article>';
+        return '<article class="report-card" data-report-card="'+id+'"><div class="report-card-head"><label class="report-select-control"><input type="checkbox" data-report-select="'+id+'" aria-label="Sélectionner ce rapport"><span>Rapport '+(i+1)+' · '+title+'</span></label><span>'+date+'</span></div><div class="report-ai-label">'+escapeHtml(r.provider||r.aiProvider||r.modelProvider||'IA non précisée')+'</div><div class="report-toolbar"><label class="report-format-label" for="report-format-'+id+'">Type de rapport</label><select id="report-format-'+id+'" class="input-field report-format-select" data-report-format="'+id+'" aria-label="Type de rapport"><option value="written" '+(reportViewMode==='written'?'selected':'')+'>Document texte</option><option value="table" '+(reportViewMode==='table'?'selected':'')+'>Tableau structuré</option></select><button type="button" data-report-pdf="'+id+'" data-report-title="'+title+'" data-report-date="'+date+'">Télécharger PDF</button><button type="button" class="admin-action danger" data-report-delete="'+id+'">Supprimer</button></div><div class="report-rendered-content">'+renderReportHtml(r.report||'',reportViewMode)+'</div><h4>Preuves visuelles</h4><div class="report-evidence">'+renderEvidenceHtml(evidence)+'</div></article>';
       }).join('');
       reportsList.querySelectorAll('[data-report-card]').forEach(card=>{
         const item=reports.find(r=>(r.$id||r.$rowId||r.id)===card.dataset.reportCard);
@@ -1847,7 +1955,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       host.innerHTML=lastReportHistory.map((r,i)=>{
         const id=escapeHtml(r.$id||r.$rowId||r.id||''),title=escapeHtml(r.analysisType||'Analyse'),date=escapeHtml(formatDate(r.createdAt||r.$createdAt));
         const evidence = r.chartData?.evidence || r.evidence || [];
-        return '<article class="report-card" data-report-card="'+id+'"><div class="report-card-head"><span>Rapport '+(i+1)+' · '+title+'</span><span>'+date+'</span></div><div class="report-toolbar"><label class="report-format-label" for="history-report-format-'+id+'">Type de rapport</label><select id="history-report-format-'+id+'" class="input-field report-format-select" data-report-format="'+id+'" aria-label="Type de rapport"><option value="written" '+(reportViewMode==='written'?'selected':'')+'>Document texte</option><option value="table" '+(reportViewMode==='table'?'selected':'')+'>Tableau structuré</option></select><button type="button" data-report-pdf="'+id+'" data-report-title="'+title+'" data-report-date="'+date+'">Télécharger PDF</button><button type="button" class="admin-action danger" data-report-delete="'+id+'">Supprimer</button></div><div class="report-rendered-content">'+renderReportHtml(r.report||'',reportViewMode)+'</div><h4>Preuves visuelles</h4><div class="report-evidence">'+renderEvidenceHtml(evidence)+'</div></article>';
+        return '<article class="report-card" data-report-card="'+id+'"><div class="report-card-head"><label class="report-select-control"><input type="checkbox" data-report-select="'+id+'" aria-label="Sélectionner ce rapport"><span>Rapport '+(i+1)+' · '+title+'</span></label><span>'+date+'</span></div><div class="report-ai-label">'+escapeHtml(r.provider||r.aiProvider||r.modelProvider||'IA non précisée')+'</div><div class="report-toolbar"><label class="report-format-label" for="history-report-format-'+id+'">Type de rapport</label><select id="history-report-format-'+id+'" class="input-field report-format-select" data-report-format="'+id+'" aria-label="Type de rapport"><option value="written" '+(reportViewMode==='written'?'selected':'')+'>Document texte</option><option value="table" '+(reportViewMode==='table'?'selected':'')+'>Tableau structuré</option></select><button type="button" data-report-pdf="'+id+'" data-report-title="'+title+'" data-report-date="'+date+'">Télécharger PDF</button><button type="button" class="admin-action danger" data-report-delete="'+id+'">Supprimer</button></div><div class="report-rendered-content">'+renderReportHtml(r.report||'',reportViewMode)+'</div><h4>Preuves visuelles</h4><div class="report-evidence">'+renderEvidenceHtml(evidence)+'</div></article>';
       }).join('');
       host.querySelectorAll('[data-report-card]').forEach(card=>{
         const item=lastReportHistory.find(r=>(r.$id||r.$rowId||r.id)===card.dataset.reportCard);
@@ -1873,6 +1981,41 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         report.innerHTML=renderReportHtml(card.dataset.rawReport||'',original);
       }
     });
+    function updateReportSelection(rootId){
+      const root=document.getElementById(rootId);if(!root)return;
+      const checks=[...root.querySelectorAll('[data-report-select]')];
+      const selected=checks.filter(input=>input.checked);
+      const count=document.querySelector('[data-report-selected-count="'+rootId+'"]');
+      const button=document.querySelector('[data-report-bulk-delete="'+rootId+'"]');
+      const all=document.querySelector('[data-report-select-all="'+rootId+'"]');
+      if(count)count.textContent=selected.length+' sélectionné(s)';
+      if(button)button.disabled=!selected.length;
+      if(all){all.checked=checks.length>0&&selected.length===checks.length;all.indeterminate=selected.length>0&&selected.length<checks.length;}
+      root.querySelectorAll('[data-report-card]').forEach(card=>card.classList.toggle('is-selected',!!card.querySelector('[data-report-select]:checked')));
+    }
+    document.addEventListener('change',event=>{
+      const selectAll=event.target.closest('[data-report-select-all]');
+      if(selectAll){const root=document.getElementById(selectAll.dataset.reportSelectAll);root?.querySelectorAll('[data-report-select]').forEach(input=>input.checked=selectAll.checked);updateReportSelection(selectAll.dataset.reportSelectAll);return;}
+      const select=event.target.closest('[data-report-select]');
+      if(select){const root=select.closest('#reports-list,#analysis-history');if(root)updateReportSelection(root.id);}
+    });
+    document.addEventListener('click',async event=>{
+      const bulk=event.target.closest('[data-report-bulk-delete]');if(!bulk)return;
+      const rootId=bulk.dataset.reportBulkDelete,root=document.getElementById(rootId);
+      const ids=[...root.querySelectorAll('[data-report-select]:checked')].map(input=>input.dataset.reportSelect).filter(Boolean);
+      if(!ids.length)return;
+      if(!confirm('Supprimer définitivement les '+ids.length+' rapport(s) sélectionné(s) ? Cette action est irréversible.'))return;
+      bulk.disabled=true;bulk.textContent='Suppression…';
+      try{
+        let deleted=0;const failures=[];
+        for(const reportId of ids){try{await adminCall('delete_report',{reportId});deleted++;}catch(error){failures.push(reportId+': '+error.message);}}
+        await refreshReports();await reloadReportHistory();
+        const message=deleted+' rapport(s) supprimé(s).'+(failures.length?' Échecs : '+failures.join(' | '):'');
+        setStatus(document.getElementById('analysis-status'),message,failures.length?'error':'success');
+      }catch(error){setStatus(document.getElementById('analysis-status'),error.message,'error');}
+      finally{bulk.disabled=false;bulk.textContent='Supprimer la sélection';updateReportSelection(rootId);}
+    });
+
     document.addEventListener('click',async ev=>{
       const pdf=ev.target.closest('[data-report-pdf]');
       if(pdf){const card=pdf.closest('.report-card');const content=card?.querySelector('.report-document')?.innerText||'';exportReportPdf('Rapport NOVANOD — '+(pdf.dataset.reportTitle||'Analyse'),content,pdf.dataset.reportDate||'');return;}
@@ -1888,7 +2031,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
 
     document.getElementById('btn-run-analysis').addEventListener('click', async () => {
       const btn = document.getElementById('btn-run-analysis');
-      btn.disabled = true;
+      btn.disabled = true;startNovaProgress('Analyse automatique des rapports');
       setStatus(reportsStatus, 'Récupération du dernier audit GitHub puis analyse Gemini + Groq…', 'info');
       try {
         const result = await callNovaFunction({ action: 'analyze_github_audit', providerMode: 'both' });
@@ -1907,7 +2050,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       } catch (e) {
         setStatus(reportsStatus, 'Erreur : ' + e.message, 'error');
       } finally {
-        btn.disabled = false;
+        btn.disabled = false;finishNovaProgress();
       }
     });
 
@@ -2032,32 +2175,6 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       setStatus(document.getElementById('settings-status'), 'Préférences enregistrées sur cet appareil.', 'success');
     });
 
-    const fingerprintStatus = document.getElementById('fingerprint-status');
-    const btnRegisterFingerprint = document.getElementById('btn-register-fingerprint');
-    const btnLoginFingerprint = document.getElementById('btn-login-fingerprint');
-    let platformAuthenticatorAvailable = false;
-    async function detectPlatformAuthenticator(showFeedback = false) {
-      const supported = !!(window.isSecureContext && window.PublicKeyCredential && typeof PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable === 'function');
-      if (!supported) {
-        btnRegisterFingerprint.classList.add('hidden');
-        btnLoginFingerprint.classList.add('hidden');
-        if (showFeedback) setStatus(fingerprintStatus, 'La biométrie de plateforme n’est pas disponible dans ce navigateur ou ce contexte. Utilise le site en HTTPS et vérifie le verrouillage sécurisé Android.', 'info');
-        return false;
-      }
-      try {
-        platformAuthenticatorAvailable = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
-        btnRegisterFingerprint.classList.toggle('hidden', !platformAuthenticatorAvailable);
-        btnLoginFingerprint.classList.toggle('hidden', !platformAuthenticatorAvailable);
-        if (!platformAuthenticatorAvailable && showFeedback) setStatus(fingerprintStatus, 'Aucun authentificateur de plateforme compatible détecté. Vérifie le verrouillage sécurisé Android.', 'info');
-        return platformAuthenticatorAvailable;
-      } catch (error) {
-        if (showFeedback) setStatus(fingerprintStatus, 'Vérification biométrique impossible : ' + (error.message || error), 'error');
-        return false;
-      }
-    }
-    // Détection silencieuse : aucun avertissement n'est affiché avant une action de l'utilisateur.
-    detectPlatformAuthenticator();
-
     async function callNovaFunction(payload) {
       if (!NOVA_FUNCTION_ID || NOVA_FUNCTION_ID === 'COLLE_ICI_LE_FUNCTION_ID') throw new Error('Identifiant de fonction NOVANOD non configuré.');
       const execution = await functions.createExecution(NOVA_FUNCTION_ID, JSON.stringify(payload), false);
@@ -2072,95 +2189,19 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       return result;
     }
 
-    async function refreshPasskeys() {
-      const list = document.getElementById('passkey-list');
-      const count = document.getElementById('passkey-count');
-      if (!list || !count) return;
-      try {
-        const result = await callNovaFunction({ action: 'webauthn_list_credentials' });
-        if (result.error) throw new Error(result.error);
-        if (!Array.isArray(result.credentials)) throw new Error('Réponse invalide du serveur : la liste des passkeys n’a pas été confirmée.');
-        const items = result.credentials;
-        count.textContent = items.length + ' / 5 passkey(s) enregistrée(s) pour ce compte administrateur.';
-        const safeText = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-        list.innerHTML = items.length ? items.map((item, index) =>
-          '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--border-color,#ddd)">' +
-          '<span><b>Passkey ' + (index + 1) + '</b><br><small>Ajoutée le ' + safeText(item.createdAt || 'Date inconnue') + '</small></span>' +
-          '<button class="admin-action danger" data-passkey-delete="' + safeText(item.id) + '">Supprimer</button></div>'
-        ).join('') : '<div class="hint">Aucune passkey enregistrée pour ce compte.</div>';
-        btnRegisterFingerprint.disabled = items.length >= 5;
-        btnRegisterFingerprint.querySelector('span').textContent = items.length >= 5 ? 'Limite de cinq passkeys atteinte' : 'Ajouter une passkey (' + items.length + '/5)';
-      } catch (e) {
-        count.textContent = 'Impossible de charger les passkeys.';
-        list.textContent = e.message;
-      }
-    }
-    document.getElementById('btn-refresh-passkeys')?.addEventListener('click', refreshPasskeys);
-    document.getElementById('passkey-list')?.addEventListener('click', async ev => {
-      const button = ev.target.closest('[data-passkey-delete]');
-      if (!button) return;
-      if (!confirm('Supprimer cette passkey de ce compte administrateur ?')) return;
-      button.disabled = true;
-      try {
-        const result = await callNovaFunction({ action: 'webauthn_delete_credential', credentialRecordId: button.dataset.passkeyDelete });
-        if (result.error) throw new Error(result.error);
-        setStatus(fingerprintStatus, 'Passkey supprimée.', 'success');
-        await refreshPasskeys();
-      } catch (e) {
-        button.disabled = false;
-        setStatus(fingerprintStatus, e.message, 'error');
-      }
-    });
-    btnRegisterFingerprint.addEventListener('click', async () => {
-      setStatus(fingerprintStatus, "Préparation de l'enregistrement sécurisé…", "info");
-      btnRegisterFingerprint.disabled = true;
-      try {
-        if (!(await detectPlatformAuthenticator(true))) throw new Error('Aucun authentificateur de plateforme disponible. Vérifie le verrouillage sécurisé Android.');
-        const rawOptions = await callNovaFunction({ action: 'webauthn_register_options' });
-        if (rawOptions?.error) throw new Error(String(rawOptions.error));
-        const options = normalizeWebAuthnOptions(rawOptions, 'register');
-        const credential = await startRegistration({ optionsJSON: options });
-        if (!credential || typeof credential !== 'object' || !credential.id || !credential.response) {
-          throw new Error("Android n'a pas renvoyé une passkey valide. Vérifie le verrouillage sécurisé de l'appareil puis réessaie.");
-        }
-        const result = await callNovaFunction({ action: 'webauthn_register_verify', credential });
-        if (result.error) throw new Error(result.error);
-        setStatus(fingerprintStatus, "Passkey enregistrée sur cet appareil.", "success");
-      } catch (e) {
-        const message = /not allowed|timed out|NotAllowedError/i.test(e.message)
-          ? "Enregistrement annulé ou expiré. Vérifie qu'un verrouillage d'écran et une empreinte/option biométrique sont configurés sur Android, puis réessaie."
-          : e.message;
-        setStatus(fingerprintStatus, message, "error");
-      } finally {
-        // Recalculer la limite même après un succès : ne pas réactiver la 6e passkey.
-        await refreshPasskeys();
-      }
-    });
-    btnLoginFingerprint.addEventListener('click', async () => {
-      setStatus(loginStatus, "Lecture biométrique...", "info");
-      try {
-        if (!(await detectPlatformAuthenticator())) throw new Error("L’authentificateur biométrique de ce téléphone n’est pas disponible.");
-        const rawOptions = await callNovaFunction({ action: 'webauthn_login_options' });
-        if (rawOptions?.noCredentials || rawOptions?.available === false) {
-          setStatus(loginStatus, rawOptions.message || 'Aucune passkey enregistrée. Connecte-toi avec ton mot de passe puis enregistre une passkey dans Sécurité.', 'info');
-          return;
-        }
-        if (rawOptions?.error) throw new Error(rawOptions.error);
-        const optionsJSON = normalizeWebAuthnOptions(rawOptions, 'login');
-        const credential = await startAuthentication({ optionsJSON: { ...optionsJSON, userVerification: 'required' } });
-        const result = await callNovaFunction({ action: 'webauthn_login_verify', credential });
-        if (result.error) throw new Error(result.error);
-        await account.createSession(result.userId, result.secret);
-        await checkAdminSession();
-      } catch (e) {
-        setStatus(loginStatus, e.message, "error");
-      }
-    });
-
-
     // ===================== MODULES ADMIN NOVANOD =====================
+    const GEMINI_FREE_MODEL_FALLBACK_POLICY = {
+      enabled: true,
+      strategy: 'sequential',
+      retryOn: ['model_not_found','model_unavailable','rate_limit','temporarily_unavailable','unsupported_model'],
+      models: 'server_configured_free_models'
+    };
     const adminCall = async (action, extra = {}) => {
-      const result = await callNovaFunction({ action, ...extra });
+      const aiAction = ['assistant','run_analysis','analyze_github_audit'].includes(action);
+      const payload = aiAction
+        ? { action, ...extra, geminiFallbackPolicy: GEMINI_FREE_MODEL_FALLBACK_POLICY }
+        : { action, ...extra };
+      const result = await callNovaFunction(payload);
       if (result?.error) throw new Error(result.error);
       return result;
     };
@@ -2172,51 +2213,26 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
     }[c]));
 
-    const toBase64Url = value => {
-      if (typeof value === 'string' && value.trim()) return value;
-      let bytes = null;
-      if (value instanceof ArrayBuffer) bytes = new Uint8Array(value);
-      else if (ArrayBuffer.isView(value)) bytes = new Uint8Array(value.buffer,value.byteOffset,value.byteLength);
-      else if (value && typeof value === 'object' && Array.isArray(value.data)) bytes = new Uint8Array(value.data);
-      if (!bytes) return '';
-      let binary=''; bytes.forEach(b=>binary+=String.fromCharCode(b));
-      return btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
-    };
-    function normalizeWebAuthnOptions(raw, mode) {
-      const source=raw && (raw.optionsJSON || raw.options || raw.data || raw);
-      if(!source || typeof source!=='object') throw new Error('Options WebAuthn absentes.');
-      const options={...source,challenge:toBase64Url(source.challenge)};
-      if(!options.challenge) throw new Error('Le défi WebAuthn est absent ou invalide.');
-      const normalizeCredentialList = (items, label) => {
-        if (items == null) return [];
-        if (!Array.isArray(items)) throw new Error('La liste '+label+' WebAuthn est invalide.');
-        return items.map(item => {
-          if (!item || typeof item !== 'object' || !item.id) return null;
-          const id = toBase64Url(item.id);
-          return id ? { ...item, id } : null;
-        }).filter(Boolean);
-      };
-      if(mode==='register'){
-        const user = source.user && typeof source.user === 'object' ? source.user : {};
-        const userId = toBase64Url(user.id);
-        if(!userId) throw new Error('Identifiant WebAuthn utilisateur absent ou invalide. Recharge la page puis réessaie.');
-        options.user={...user,id:userId};
-        if(!source.rp || typeof source.rp.id !== 'string' || !source.rp.id.trim()) throw new Error('Identifiant du site WebAuthn absent. Vérifie WEBAUTHN_RP_ID.');
-        options.excludeCredentials=normalizeCredentialList(source.excludeCredentials,'excludeCredentials');
-      } else if (mode==='login') {
-        options.allowCredentials=normalizeCredentialList(source.allowCredentials,'allowCredentials');
-      }
-      return options;
-    }
     let reportViewMode = 'written';
+    function formatReportInline(value){
+      return String(value??'').split(/(\\*\\*[^*]+\\*\\*)/g).map(part=>{
+        if(part.startsWith('**')&&part.endsWith('**'))return '<strong>'+escapeHtml(part.slice(2,-2))+'</strong>';
+        return escapeHtml(part);
+      }).join('');
+    }
     function renderReportHtml(value, mode = reportViewMode) {
       const lines=String(value||'').replace(/\x60{3}[a-z]*|\x60{3}/gi,'').split(/\r?\n/);
       if (mode === 'table') {
         let section = 'Synthèse';
-        const rows = [];
+        const rows = [], sourceTables = [];
         for (const raw of lines) {
           const line = raw.trim();
           if (!line || /^[-_=═─]{3,}$/.test(line)) continue;
+          if (line.includes('|') && line.split('|').length > 2) {
+            const cells=line.replace(/^\||\|$/g,'').split('|').map(cell=>cell.trim().replace(/^\*\*|\*\*$/g,''));
+            if (!cells.every(cell=>/^:?-{2,}:?$/.test(cell))) sourceTables.push(cells);
+            continue;
+          }
           const heading = line.match(/^#{1,3}\s*(.+)$/) || line.match(/^\*\*(.{3,100})\*\*$/);
           if (heading) { section = heading[1].replace(/\*\*/g,'').trim(); continue; }
           const bullet = line.match(/^(?:[-*•▪]|\d+[.)])\s+(.+)$/);
@@ -2224,10 +2240,12 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           if (content) rows.push({ section, content });
         }
         const body = rows.map(row => '<tr><th>'+escapeHtml(row.section)+'</th><td>'+escapeHtml(row.content)+'</td></tr>').join('');
-        return '<div class="report-document"><div class="report-table-scroll"><table class="report-structured-table"><thead><tr><th>Rubrique</th><th>Constat, analyse et recommandation</th></tr></thead><tbody>'+(body||'<tr><td colspan="2">Aucun contenu disponible.</td></tr>')+'</tbody></table></div></div>';
+        const summaryTable='<div class="report-table-scroll"><table class="report-structured-table"><thead><tr><th>Rubrique</th><th>Constat, analyse et recommandation</th></tr></thead><tbody>'+(body||'<tr><td colspan="2">Aucun contenu textuel disponible.</td></tr>')+'</tbody></table></div>';
+        const dataTable=sourceTables.length?'<div class="report-table-scroll"><table class="report-structured-table"><thead><tr>'+sourceTables[0].map(cell=>'<th>'+escapeHtml(cell)+'</th>').join('')+'</tr></thead><tbody>'+sourceTables.slice(1).map(row=>'<tr>'+row.map(cell=>'<td>'+escapeHtml(cell)+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>':'';
+        return '<div class="report-document">'+summaryTable+dataTable+'</div>';
       }
       const parts=[]; let list=[], listTag='', table=[];
-      const flushList=()=>{if(list.length){parts.push('<'+listTag+'>'+list.map(x=>'<li>'+escapeHtml(x)+'</li>').join('')+'</'+listTag+'>');list=[];listTag='';}};
+      const flushList=()=>{if(list.length){parts.push('<'+listTag+'>'+list.map(x=>'<li>'+formatReportInline(x)+'</li>').join('')+'</'+listTag+'>');list=[];listTag='';}};
       const flushTable=()=>{if(table.length){parts.push('<div class="report-table-scroll"><table><tbody>'+table.map((r,i)=>'<tr>'+r.map(x=>i===0?'<th>'+escapeHtml(x)+'</th>':'<td>'+escapeHtml(x)+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>');table=[];}};
       for(const raw of lines){
         const line=raw.trim(); if(!line || /^[-_=═─]{3,}$/.test(line)){flushList();flushTable();continue;}
@@ -2266,7 +2284,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         return '<figure class="evidence-figure"><div class="evidence-image-wrap">'+badge+'<a href="'+escapeHtml(src)+'" target="_blank" rel="noopener"><img loading="lazy" src="'+escapeHtml(src)+'" alt="'+escapeHtml('Preuve visuelle associée à : '+issueTitle)+'" onerror="this.closest(\'figure\').classList.add(\'evidence-unavailable\');this.remove()"></a></div><figcaption><strong>'+escapeHtml(issueTitle)+'</strong>'+(issueDetails?'<span>'+escapeHtml(issueDetails)+'</span>':'')+(caption?'<small>'+escapeHtml(caption)+'</small>':'')+'</figcaption></figure>';
       }).join('');
     }
-    function renderProfessionalReport(id,value){const el=document.getElementById(id);if(el){el.dataset.rawReport=String(value||'');el.innerHTML=renderReportHtml(value,reportViewMode);}}
+    function renderProfessionalReport(id,value,mode=reportViewMode){const el=document.getElementById(id);if(el){el.dataset.rawReport=String(value||'');el.innerHTML=renderReportHtml(value,mode);}}
     function exportReportPdf(title,value,dateText){
       const w=window.open('','_blank');if(!w){setStatus(document.getElementById('analysis-status'),'Autorise les fenêtres contextuelles pour exporter le PDF.','error');return;}
       const safeTitle=escapeHtml(title),safeDate=escapeHtml(dateText||new Date().toLocaleString('fr-FR'));
@@ -2274,39 +2292,24 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       w.document.write('<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>'+safeTitle+'</title><style>@page{size:A4;margin:18mm}body{font:11pt/1.65 Arial,sans-serif;color:#35131f}.brand{font-size:18pt;font-weight:800;color:#b9362a;border-bottom:3px solid #b9362a;padding-bottom:10px}.meta{font-size:9pt;color:#71545a}.report-document h2{font-size:14pt;color:#b9362a;margin:18px 0 6px;border-bottom:1px solid #ead9c8}.report-document table{width:100%;border-collapse:collapse;font-size:9pt}.report-document th{background:#3b1420;color:#fffbd0}.report-document th,.report-document td{border:1px solid #ddcfbd;padding:6px;text-align:left}.footer{border-top:1px solid #ddcfbd;margin-top:24px;padding-top:8px;font-size:8pt;color:#79545a}</style></head><body><div class="brand">NOVANOD</div><h1>'+safeTitle+'</h1><p class="meta">Rapport administratif · Généré le '+safeDate+'</p>'+renderReportHtml(value)+'<div class="footer">Document confidentiel — NOVANOD. Rapport établi à partir des données disponibles au moment de l’analyse.</div><script>window.onload=()=>setTimeout(()=>window.print(),350)<\/script></body></html>');
       w.document.close();
     }
-    const securityEventsStatus = document.getElementById('security-events-status');
-    const securityEventsList = document.getElementById('security-events-list');
-    async function refreshSecurityEvents() {
-      if (!securityEventsList) return;
-      setStatus(securityEventsStatus, 'Chargement des alertes de sécurité…', 'info');
-      try {
-        const result = await adminCall('list_security_events');
-        const events = Array.isArray(result.events) ? result.events : [];
-        if (!events.length) {
-          securityEventsList.innerHTML = '<div class="hint">Aucune alerte enregistrée pour le moment.</div>';
-        } else {
-          securityEventsList.innerHTML = events.map(item => {
-            const event = item.event || {};
-            const channels = item.notifications || {};
-            const push = channels.push?.acceptedByAppwrite ? 'Push accepté' : 'Push non accepté';
-            const email = channels.email?.acceptedByAppwrite ? 'E-mail accepté' : 'E-mail non accepté';
-            const severity = event.severityLabel || event.severity || 'Inconnue';
-            return '<div class="user-row">' +
-              '<div class="u-name">' + escapeHtml(severity) + ' · ' + escapeHtml(event.event || 'Incident') + '</div>' +
-              '<div style="white-space:pre-wrap;margin-top:4px">' + escapeHtml(event.summary || '') + '</div>' +
-              '<div class="hint" style="margin-top:6px">' + escapeHtml(event.source || 'NOVANOD') + ' · ' + escapeHtml(formatDate(event.occurredAt || item.receivedAt || item.$createdAt)) + '</div>' +
-              '<div class="hint">' + escapeHtml(push) + ' · ' + escapeHtml(email) + '</div>' +
-              (event.details ? '<details><summary>Détails techniques</summary><div style="white-space:pre-wrap;margin-top:6px">' + escapeHtml(event.details) + '</div></details>' : '') +
-            '</div>';
-          }).join('');
-        }
-        setStatus(securityEventsStatus, events.length + ' alerte(s) chargée(s).', 'success');
-      } catch (e) {
-        setStatus(securityEventsStatus, e.message, 'error');
-        securityEventsList.textContent = 'Impossible de charger les alertes.';
-      }
+    const securityEventsStatus=document.getElementById('security-events-status'),securityEventsList=document.getElementById('security-events-list');
+    let cachedSecurityEvents=[];
+    function renderSecurityEvents(){
+      const events=cachedSecurityEvents,query=(document.getElementById('security-event-search')?.value||'').trim().toLowerCase(),filter=document.getElementById('security-event-filter')?.value||'all';
+      const sevOf=item=>String(item.event?.severityLabel||item.event?.severity||'').toLowerCase();
+      const critical=events.filter(item=>/crit|high|élev|haut/.test(sevOf(item))).length;
+      const recent=events.filter(item=>{const d=Date.parse(item.event?.occurredAt||item.receivedAt||item.$createdAt||'');return Number.isFinite(d)&&d>=Date.now()-86400000;}).length;
+      const notified=events.filter(item=>item.notifications?.push?.acceptedByAppwrite&&item.notifications?.email?.acceptedByAppwrite).length;
+      document.getElementById('security-total').textContent=events.length;document.getElementById('security-critical').textContent=critical;document.getElementById('security-recent').textContent=recent;document.getElementById('security-notified').textContent=notified;
+      const visible=events.filter(item=>{const sev=sevOf(item),c=/crit|high|élev|haut/.test(sev),m=/medium|moyen|modér/.test(sev),l=/low|faible|bas/.test(sev);if(filter==='critical'&&!c||filter==='medium'&&!m||filter==='low'&&!l)return false;const e=item.event||{};return !query||[e.event,e.summary,e.details,e.source,sev].join(' ').toLowerCase().includes(query);});
+      if(!events.length){securityEventsList.innerHTML='<div class="hint">Aucune alerte enregistrée pour le moment.</div>';return;}
+      if(!visible.length){securityEventsList.innerHTML='<div class="hint">Aucune alerte ne correspond à ce filtre.</div>';return;}
+      securityEventsList.innerHTML=visible.map(item=>{const e=item.event||{},n=item.notifications||{},sev=e.severityLabel||e.severity||'Inconnue';return '<div class="user-row"><div class="u-name">'+escapeHtml(sev)+' · '+escapeHtml(e.event||'Incident')+'</div><div style="white-space:pre-wrap;margin-top:4px">'+escapeHtml(e.summary||'')+'</div><div class="hint" style="margin-top:6px">'+escapeHtml(e.source||'NOVANOD')+' · '+escapeHtml(formatDate(e.occurredAt||item.receivedAt||item.$createdAt))+'</div><div class="hint">'+(n.push?.acceptedByAppwrite?'Push accepté':'Push non accepté')+' · '+(n.email?.acceptedByAppwrite?'E-mail accepté':'E-mail non accepté')+'</div>'+(e.details?'<details><summary>Détails techniques</summary><div style="white-space:pre-wrap;margin-top:6px">'+escapeHtml(e.details)+'</div></details>':'')+'</div>';}).join('');
     }
-    document.getElementById('btn-refresh-security-events')?.addEventListener('click', refreshSecurityEvents);
+    async function refreshSecurityEvents(){if(!securityEventsList)return;setStatus(securityEventsStatus,'Chargement des alertes de sécurité…','info');try{const result=await adminCall('list_security_events');cachedSecurityEvents=Array.isArray(result.events)?result.events:[];renderSecurityEvents();setStatus(securityEventsStatus,cachedSecurityEvents.length+' alerte(s) chargée(s).','success');}catch(e){setStatus(securityEventsStatus,e.message,'error');securityEventsList.textContent='Impossible de charger les alertes.';}}
+    document.getElementById('btn-refresh-security-events')?.addEventListener('click',refreshSecurityEvents);
+    document.getElementById('security-event-search')?.addEventListener('input',renderSecurityEvents);
+    document.getElementById('security-event-filter')?.addEventListener('change',renderSecurityEvents);
     let cachedUsers = [];
 
     function normalizeUserRecord(user) {
@@ -2694,20 +2697,154 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       finally { button.disabled = false; }
     });
 
+    // Sélection multi-destinataires depuis la liste Appwrite déjà utilisée par le module Utilisateurs.
+    const selectedMessageUserIds = new Set();
+    function getSelectedMessageUsers() {
+      return cachedUsers.filter(user => selectedMessageUserIds.has(String(user.$id || user.id || user.userId || '')));
+    }
+    function renderMessageUsers() {
+      const host = document.getElementById('message-users-list');
+      const query = (document.getElementById('message-user-search')?.value || '').trim().toLocaleLowerCase('fr');
+      const users = cachedUsers.filter(user => [user.name,user.email,user.$id,user.id,user.userId].join(' ').toLocaleLowerCase('fr').includes(query));
+      if (!users.length) host.innerHTML = '<div class="hint">Aucun utilisateur correspondant. Actualise la liste si nécessaire.</div>';
+      else host.innerHTML = users.map(user => {
+        const id = String(user.$id || user.id || user.userId || '');
+        const checked = id && selectedMessageUserIds.has(id);
+        return '<label class="user-row" style="display:flex;gap:10px;align-items:flex-start;cursor:pointer"><input type="checkbox" data-message-user-id="'+escapeHtml(id)+'" '+(checked?'checked':'')+' '+(!id?'disabled':'')+' style="margin-top:3px"><span style="min-width:0;flex:1"><span class="u-name">'+escapeHtml(user.name || '(sans nom)')+'</span><div class="u-email">'+escapeHtml(user.email || 'Aucune adresse e-mail')+'</div><small>'+escapeHtml(id)+'</small></span></label>';
+      }).join('');
+      document.getElementById('message-selected-count').textContent = selectedMessageUserIds.size+' destinataire(s) sélectionné(s)';
+    }
+    async function refreshMessageUsers() {
+      const host = document.getElementById('message-users-list');
+      if (!currentAdminUserId) { host.textContent = 'Connecte-toi avec un compte administrateur.'; return; }
+      setStatus(document.getElementById('message-target-status'), 'Chargement des utilisateurs Appwrite…', 'info');
+      try {
+        await refreshUsers();
+        renderMessageUsers();
+        setStatus(document.getElementById('message-target-status'), cachedUsers.length+' utilisateur(s) chargé(s).', 'success');
+      } catch(error) {
+        setStatus(document.getElementById('message-target-status'), 'Impossible de charger les utilisateurs : '+error.message, 'error');
+      }
+    }
+    document.getElementById('message-users-list')?.addEventListener('change', event => {
+      const checkbox = event.target.closest('[data-message-user-id]');
+      if (!checkbox) return;
+      const id = checkbox.dataset.messageUserId;
+      if (checkbox.checked) selectedMessageUserIds.add(id); else selectedMessageUserIds.delete(id);
+      renderMessageUsers();
+    });
+    document.getElementById('message-user-search')?.addEventListener('input', renderMessageUsers);
+    document.getElementById('btn-refresh-message-users')?.addEventListener('click', refreshMessageUsers);
+    document.getElementById('btn-select-all-message-users')?.addEventListener('click', () => {
+      cachedUsers.forEach(user => { const id=String(user.$id||user.id||user.userId||''); if(id) selectedMessageUserIds.add(id); });
+      renderMessageUsers();
+    });
+    document.getElementById('btn-clear-message-users')?.addEventListener('click', () => { selectedMessageUserIds.clear(); renderMessageUsers(); });
+    async function ensureMessageEmailTarget(user) {
+      const id = String(user.$id || user.id || user.userId || '');
+      if (!id || !user.email) throw new Error('Adresse e-mail ou identifiant manquant pour '+(user.name||id||'un utilisateur'));
+      const messaging = new Appwrite.Messaging(client);
+      const targetId = ('novanod-email-' + id).slice(0, 36);
+      try { return await messaging.createEmailTarget(id, targetId, user.email); }
+      catch(error) {
+        if (/already exists|duplicate|target.*exists|409/i.test(error?.message||String(error))) return { alreadyExists:true, targetId };
+        throw error;
+      }
+    }
     document.getElementById('btn-send-message')?.addEventListener('click',async()=>{
       try {
         const channel=document.getElementById('message-channel').value;
-        const userId=document.getElementById('message-user-id').value.trim();
+        const selectedUsers=getSelectedMessageUsers();
         const topicId=document.getElementById('message-topic-id').value.trim();
         const subject=document.getElementById('message-subject').value.trim();
         const content=document.getElementById('message-content').value.trim();
-        if(!content || (!userId && !topicId)) throw new Error('Contenu et destinataire (ID utilisateur ou topic) requis.');
-        if(!confirm('Confirmer l’envoi de ce message ?')) return;
-        const r=await adminCall('message_send',{channel,userId,topicId,subject,content});
-        out('messaging-output',r); setStatus(document.getElementById('messaging-status'),r.acceptedByAppwrite ? 'Message accepté par Appwrite. ID : '+(r.messageId || 'inconnu')+' — la livraison dépend du fournisseur et du destinataire.' : 'Réponse reçue du service de messagerie.','success');
+        const html=document.getElementById('message-html-mode').checked;
+        if(!currentAdminUserId) throw new Error('Connecte-toi avec un compte administrateur.');
+        if(!content) throw new Error('Le contenu du message est obligatoire.');
+        if(!selectedUsers.length) throw new Error('Sélectionne au moins un destinataire dans la liste.');
+        if(channel==='email') {
+          const missing=selectedUsers.filter(user=>!user.email);
+          if(missing.length) throw new Error(missing.length+' utilisateur(s) sélectionné(s) sans adresse e-mail. Retire-les de la sélection ou vérifie leurs comptes.');
+        }
+        if(!confirm('Confirmer l’envoi via '+channel.toUpperCase()+' à '+selectedUsers.length+' utilisateur(s) sélectionné(s) ?')) return;
+        const button=document.getElementById('btn-send-message'); button.disabled=true;
+        const results=[];
+        try {
+          for(let index=0;index<selectedUsers.length;index++) {
+            const user=selectedUsers[index];
+            const userId=String(user.$id||user.id||user.userId);
+            setStatus(document.getElementById('messaging-status'),'Envoi '+(index+1)+'/'+selectedUsers.length+' : '+(user.name||user.email||userId),'info');
+            if(channel==='email') await ensureMessageEmailTarget(user);
+            const result=await adminCall('message_send',{channel,userId,topicId,subject,content,html});
+            results.push({userId,name:user.name||'',email:user.email||'',acceptedByAppwrite:!!result.acceptedByAppwrite,messageId:result.messageId||result.message?.$id||null,deliveredTotal:Number(result.message?.deliveredTotal||result.deliveredTotal||0),deliveredAt:result.message?.deliveredAt||result.deliveredAt||null,deliveryErrors:result.message?.deliveryErrors||[]});
+          }
+        } finally { button.disabled=false; }
+        out('messaging-output',{total:selectedUsers.length,accepted:results.filter(item=>item.acceptedByAppwrite).length,results});
+        const accepted=results.filter(item=>item.acceptedByAppwrite).length;
+        const delivered=results.filter(item=>item.deliveredTotal>0||item.deliveredAt).length;
+        setStatus(document.getElementById('messaging-status'),accepted+'/'+results.length+' message(s) accepté(s) par Appwrite · '+delivered+' livraison(s) confirmée(s). Consulte les erreurs par destinataire dans le résultat.',accepted===results.length?'success':'error');
       } catch(e){setStatus(document.getElementById('messaging-status'),e.message,'error');}
     });
+    document.getElementById('message-channel')?.addEventListener('change', () => {
+      const emailMode = document.getElementById('message-channel').value === 'email';
+      document.getElementById('message-html-mode').disabled = !emailMode;
+    });
 
+
+    let novaProgressTimer=null,novaProgressValue=0,novaProgressDepth=0,novaProgressPanel=null,novaProgressHideTimer=null;
+    function startNovaProgress(title){
+      novaProgressDepth++;
+      if(novaProgressHideTimer){clearTimeout(novaProgressHideTimer);novaProgressHideTimer=null;}
+      if(novaProgressTimer){clearInterval(novaProgressTimer);novaProgressTimer=null;}
+      const button=document.activeElement && document.activeElement.tagName==='BUTTON' ? document.activeElement : null;
+      if(!novaProgressPanel || !novaProgressPanel.isConnected){
+        novaProgressPanel=document.createElement('div');
+        novaProgressPanel.className='nova-progress-inline';
+        novaProgressPanel.setAttribute('role','status');
+        novaProgressPanel.setAttribute('aria-live','polite');
+        novaProgressPanel.innerHTML='<div class="nova-progress-heading"></div><div class="nova-progress-stage">Initialisation…</div><div class="nova-progress-track"><div class="nova-progress-fill"></div></div><div class="nova-progress-meta"><span class="nova-progress-percent">0 %</span><span>Veuillez patienter</span></div>';
+      }
+      if(button && button.parentNode){
+        if(novaProgressPanel.previousElementSibling!==button) button.insertAdjacentElement('afterend',novaProgressPanel);
+      } else if(!novaProgressPanel.isConnected) {
+        const fallback=document.querySelector('#screen-admin .glass-card.active, #screen-admin .glass-card');
+        if(fallback) fallback.appendChild(novaProgressPanel);
+      }
+      novaProgressPanel.querySelector('.nova-progress-heading').textContent=title||'Opération en cours';
+      novaProgressPanel.querySelector('.nova-progress-stage').textContent='Initialisation des contrôles…';
+      novaProgressPanel.querySelector('.nova-progress-percent').textContent='0 %';
+      novaProgressPanel.querySelector('.nova-progress-fill').style.width='0%';
+      novaProgressPanel.classList.remove('is-complete');
+      novaProgressValue=0;
+      novaProgressTimer=setInterval(()=>{
+        if(novaProgressValue<92) novaProgressValue=Math.min(92,novaProgressValue+(novaProgressValue<35?3.2:novaProgressValue<70?1.35:.35));
+        const stage=novaProgressPanel?.querySelector('.nova-progress-stage');
+        const percent=novaProgressPanel?.querySelector('.nova-progress-percent');
+        const fill=novaProgressPanel?.querySelector('.nova-progress-fill');
+        if(stage) stage.textContent=novaProgressValue<18?'Préparation des données…':novaProgressValue<42?'Exécution des vérifications…':novaProgressValue<68?'Analyse des résultats…':novaProgressValue<88?'Consolidation des résultats…':'Finalisation côté serveur…';
+        if(percent) percent.textContent=Math.floor(novaProgressValue)+' %';
+        if(fill) fill.style.width=novaProgressValue+'%';
+      },420);
+    }
+    function finishNovaProgress(){
+      if(novaProgressDepth>0) novaProgressDepth--;
+      if(novaProgressDepth>0) return;
+      if(novaProgressTimer){clearInterval(novaProgressTimer);novaProgressTimer=null;}
+      if(!novaProgressPanel) return;
+      novaProgressValue=100;
+      const stage=novaProgressPanel.querySelector('.nova-progress-stage');
+      const percent=novaProgressPanel.querySelector('.nova-progress-percent');
+      const fill=novaProgressPanel.querySelector('.nova-progress-fill');
+      if(stage) stage.textContent='Opération terminée.';
+      if(percent) percent.textContent='100 %';
+      if(fill) fill.style.width='100%';
+      novaProgressPanel.classList.add('is-complete');
+      novaProgressHideTimer=setTimeout(()=>{
+        novaProgressPanel?.remove();
+        novaProgressPanel=null;
+        novaProgressHideTimer=null;
+      },650);
+    }
     // AI role-based audits and assistant: show plain-text provider reports,
     // never stringify an empty wrapper object as "{}".
     const aiResultText = r => {
@@ -2729,9 +2866,13 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     };
     const renderProviderOutputs = (prefix, r) => {
       const p = r?.providers || {};
-      renderProfessionalReport(prefix+'-gemini-output', p.gemini || (p.errors?.gemini ? 'Gemini temporairement indisponible. '+p.errors.gemini : 'Aucun rapport Gemini disponible.'));
-      renderProfessionalReport(prefix+'-groq-output', p.groq || (p.errors?.groq ? 'Groq temporairement indisponible. '+p.errors.groq : 'Aucun rapport Groq disponible.'));
-      renderProfessionalReport(prefix==='analysis'?'analysis-output':'assistant-output', p.combined || p.groq || p.gemini || r?.report || r?.answer || 'Aucune synthèse disponible.');
+      const renderOutput=(id,value)=>{
+        const mode=document.querySelector('[data-report-output-view="'+id+'"]')?.value || reportViewMode;
+        renderProfessionalReport(id,value,mode);
+      };
+      renderOutput(prefix+'-gemini-output',p.gemini || (p.errors?.gemini ? 'Gemini temporairement indisponible. '+p.errors.gemini : 'Aucun rapport Gemini disponible.'));
+      renderOutput(prefix+'-groq-output',p.groq || (p.errors?.groq ? 'Groq temporairement indisponible. '+p.errors.groq : 'Aucun rapport Groq disponible.'));
+      renderOutput(prefix==='analysis'?'analysis-output':'assistant-output',p.combined || p.groq || p.gemini || r?.report || r?.answer || 'Aucune synthèse disponible.');
     };
 
     // Charts use only structured numeric data returned by the trusted backend.
@@ -2878,25 +3019,37 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       document.getElementById('analysis-provider').value = savedAdminPrefs.provider;
       document.getElementById('assistant-provider').value = savedAdminPrefs.provider;
     }
-    document.querySelectorAll('[data-analysis]').forEach(btn=>btn.addEventListener('click',async()=>{
-      const kind=btn.dataset.analysis, status=document.getElementById('analysis-status');
+    async function runSelectedAnalysis(kind,btn){
+      const status=document.getElementById('analysis-status');
       const providerMode=document.getElementById('analysis-provider')?.value || 'both';
-      btn.disabled=true;
+      if(btn) btn.disabled=true;
+      startNovaProgress('Analyse NOVANOD · '+kind);
       setStatus(status,'Analyse « '+kind+' » en cours avec '+(providerMode==='both'?'Gemini et Groq':providerMode)+'…','info');
       out('analysis-output','Analyse en cours… Les deux modèles peuvent prendre un peu de temps.');
       try {
         const r=await adminCall('run_analysis',{analysisType:kind,providerMode});
-        const text=aiResultText(r);
-        if (!text || text.startsWith('Le serveur n’a renvoyé')) throw new Error(text);
+        const report=aiResultText(r);
+        if (!report || report.startsWith('Le serveur n’a renvoyé')) throw new Error(report);
         renderProviderOutputs('analysis',r);
         renderAnalysisCharts(r);
-        const partial = r.providers?.errors && Object.keys(r.providers.errors).length;
-        setStatus(status,partial?'Rapport partiel enregistré : un fournisseur ou la synthèse est indisponible.':'Rapports Gemini, Groq et synthèse enregistrés.','success');
+        const partial=r.providers?.errors && Object.keys(r.providers.errors).length;
+        setStatus(status,partial?'Rapport partiel : un fournisseur ou la synthèse est indisponible.':'Rapports Gemini, Groq et synthèse enregistrés.','success');
         const h=await adminCall('list_reports');
         renderReportHistory(h.reports || []);
       } catch(e){setStatus(status,e.message,'error');out('analysis-output','Erreur : '+e.message);}
-      finally { btn.disabled=false; }
-    }));
+      finally {if(btn)btn.disabled=false;finishNovaProgress();}
+    }
+    document.querySelectorAll('[data-analysis]').forEach(btn=>btn.addEventListener('click',()=>runSelectedAnalysis(btn.dataset.analysis,btn)));
+    document.getElementById('btn-analysis-extra')?.addEventListener('click',()=>{
+      const kind=document.getElementById('analysis-extra-type')?.value;
+      if(kind) runSelectedAnalysis(kind,document.getElementById('btn-analysis-extra'));
+    });
+    document.querySelectorAll('[data-report-output-view]').forEach(control=>{
+      control.addEventListener('change',()=>{
+        const target=document.getElementById(control.dataset.reportOutputView);
+        if(target && target.dataset.rawReport) renderProfessionalReport(target.id,target.dataset.rawReport,control.value);
+      });
+    });
     async function analyzeLatestGithubAudit() {
       const status=document.getElementById('github-audit-status');
       setStatus(status,'Analyse du dernier audit terminé avec Gemini et Groq…','info');
@@ -2917,8 +3070,8 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       } catch(e) { setStatus(status,e.message,'error'); out('github-audit-combined','Erreur : '+e.message); throw e; }
     }
     document.getElementById('btn-analyze-github-audit')?.addEventListener('click',async()=>{
-      const btn=document.getElementById('btn-analyze-github-audit');btn.disabled=true;
-      try { await analyzeLatestGithubAudit(); } catch {} finally { btn.disabled=false; }
+      const btn=document.getElementById('btn-analyze-github-audit');btn.disabled=true;startNovaProgress('Analyse du dernier audit GitHub');
+      try { await analyzeLatestGithubAudit(); } catch {} finally { btn.disabled=false;finishNovaProgress(); }
     });
     let activeGithubAuditStartedAt = '';
     async function refreshGithubAuditStatus() {
@@ -2933,15 +3086,15 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       return run;
     }
     document.getElementById('btn-refresh-github-audit')?.addEventListener('click',async()=>{
-      const button=document.getElementById('btn-refresh-github-audit');button.disabled=true;
+      const button=document.getElementById('btn-refresh-github-audit');button.disabled=true;startNovaProgress('Vérification du statut GitHub');
       try { const run=await refreshGithubAuditStatus(); if(run?.status==='completed' && run.conclusion==='success') await analyzeLatestGithubAudit(); }
       catch(e){setStatus(document.getElementById('github-audit-status'),e.message,'error');}
-      finally{button.disabled=false;}
+      finally{button.disabled=false;finishNovaProgress();}
     });
     document.getElementById('btn-run-github-audit')?.addEventListener('click',async()=>{
       const button=document.getElementById('btn-run-github-audit');
       const refresh=document.getElementById('btn-refresh-github-audit');
-      button.disabled=true;if(refresh)refresh.disabled=true;
+      button.disabled=true;if(refresh)refresh.disabled=true;startNovaProgress('Tests GitHub · Playwright et Lighthouse');
       try {
         const started=await adminCall('trigger_github_audit');
         activeGithubAuditStartedAt=started.startedAt||started.run?.createdAt||new Date().toISOString();
@@ -2967,7 +3120,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           : message;
         setStatus(document.getElementById('github-audit-status'),hint,'error');
       }
-      finally{button.disabled=false;if(refresh)refresh.disabled=false;}
+      finally{button.disabled=false;if(refresh)refresh.disabled=false;finishNovaProgress();}
     });
     document.getElementById('btn-appwrite-health-check')?.addEventListener('click',async()=>{
       const button=document.getElementById('btn-appwrite-health-check');
@@ -2981,7 +3134,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         ['Fonctions','functions_list'],
         ['Alertes de sécurité','list_security_events']
       ];
-      button.disabled=true;setStatus(status,'Diagnostic des services Appwrite en cours…','info');
+      button.disabled=true;startNovaProgress('Diagnostic des services Appwrite');setStatus(status,'Diagnostic des services Appwrite en cours…','info');
       try{
         const results=await Promise.all(checks.map(async([label,action])=>{
           try{const data=await adminCall(action);let count=null;
@@ -2998,13 +3151,13 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         const failures=results.filter(item=>!item.ok).length;
         setStatus(status,failures?failures+' service(s) n’ont pas pu être vérifiés. Consulte les détails.':'Tous les services testés répondent correctement.','success');
       }catch(error){setStatus(status,error.message,'error');}
-      finally{button.disabled=false;}
+      finally{button.disabled=false;finishNovaProgress();}
     });
 
     document.getElementById('btn-system-diagnostics')?.addEventListener('click', async () => {
       const button=document.getElementById('btn-system-diagnostics');
       const target=document.getElementById('system-diagnostics-output');
-      button.disabled=true;
+      button.disabled=true;startNovaProgress('Tests de configuration · Gemini et Groq');
       target.textContent='Tests réels en cours : configuration serveur, Gemini et Groq…';
       try {
         const result=await adminCall('system_diagnostics',{testProviders:true});
@@ -3018,7 +3171,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
         target.textContent=lines.join('\n') || 'Aucun résultat de diagnostic retourné.';
       } catch(error) {
         target.textContent='Échec du diagnostic : '+error.message;
-      } finally { button.disabled=false; }
+      } finally { button.disabled=false;finishNovaProgress(); }
     });
 
     const NOVANOD_AI_ROLE_PROMPTS = {
@@ -3037,7 +3190,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       const roleLabel=document.getElementById('assistant-role')?.selectedOptions?.[0]?.textContent || 'Assistant général';
       if(!question) return setStatus(document.getElementById('assistant-status'),'Écris une demande.','error');
       const btn=document.getElementById('btn-assistant-ask');
-      btn.disabled=true;
+      btn.disabled=true;startNovaProgress('Assistant NOVANOD · '+roleLabel);
       setStatus(document.getElementById('assistant-status'),'Profil '+roleLabel+' : Gemini et Groq préparent leurs réponses…','info');
       out('assistant-output','Réponse en cours…');
       try {
@@ -3051,7 +3204,69 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       } catch(e){
         setStatus(document.getElementById('assistant-status'),e.message,'error');
         out('assistant-output','Erreur : '+e.message);
-      } finally { btn.disabled=false; }
+      } finally { btn.disabled=false;finishNovaProgress(); }
+    });
+
+    // Testeur fonctionnel : contrôles séquentiels, progression par fonctionnalité et erreurs explicites.
+    const featureTestButton = document.getElementById('btn-test-all-features');
+    const featureTestResults = document.getElementById('feature-test-results');
+    const featureTestSummary = document.getElementById('feature-test-summary');
+    function createFeatureTestRow(id,label){
+      const row=document.createElement('section');
+      row.className='feature-test-item';row.id='feature-test-'+id;
+      row.innerHTML='<div class="feature-test-head"><span>'+escapeHtml(label)+'</span><span class="feature-test-state run">…</span></div><div class="feature-test-detail">En attente</div><div class="feature-test-track"><div class="feature-test-fill"></div></div><div class="feature-test-meta">0 %</div>';
+      featureTestResults.appendChild(row);return row;
+    }
+    function updateFeatureTestRow(row,percent,detail,state){
+      const value=Math.max(0,Math.min(100,Math.round(percent)));
+      row.querySelector('.feature-test-fill').style.width=value+'%';
+      row.querySelector('.feature-test-meta').textContent=value+' %';
+      row.querySelector('.feature-test-detail').textContent=detail;
+      const icon=row.querySelector('.feature-test-state');
+      row.classList.remove('ok','fail');
+      if(state==='ok'){row.classList.add('ok');icon.className='feature-test-state ok';icon.textContent='✓';}
+      else if(state==='fail'){row.classList.add('fail');icon.className='feature-test-state fail';icon.textContent='✕';}
+      else {icon.className='feature-test-state run';icon.textContent='…';}
+    }
+    async function runFeatureTest(label,fn){
+      const row=createFeatureTestRow(String(featureTestResults.children.length+1),label);
+      try{
+        updateFeatureTestRow(row,12,'Initialisation du contrôle…');
+        const result=await fn((p,msg)=>updateFeatureTestRow(row,p,msg||'Contrôle en cours…'));
+        updateFeatureTestRow(row,100,result?.message||'Fonction opérationnelle.', 'ok');
+        return {ok:true,label};
+      }catch(error){
+        updateFeatureTestRow(row,100,error?.message||String(error),'fail');
+        return {ok:false,label,error:error?.message||String(error)};
+      }
+    }
+    featureTestButton?.addEventListener('click',async()=>{
+      featureTestButton.disabled=true;featureTestResults.innerHTML='';
+      featureTestSummary.textContent='Tests en cours : 0 fonctionnalité terminée.';
+      const tests=[
+        ['Session administrateur',async progress=>{progress(45,'Vérification de la session Appwrite…');await account.get();progress(85,'Session Appwrite valide.');return {message:'Session administrateur Appwrite active.'};}],
+        ['Fonction nova.ai et diagnostic serveur',async progress=>{progress(25,'Interrogation de nova.ai…');const r=await adminCall('system_diagnostics',{testProviders:true});progress(80,'Lecture des diagnostics…');const checks=Object.entries(r.checks||{});const bad=checks.filter(([,v])=>!v?.ok);if(bad.length)throw new Error(bad.map(([k,v])=>k+': '+(v.error||'échec')).join(' ; '));return {message:'Fonction accessible. '+(checks.length?checks.length+' contrôle(s) serveur validé(s).':'Diagnostic reçu, aucun contrôle détaillé retourné.')};}],
+        ['Gemini et modèles de secours',async progress=>{progress(20,'Demande de test IA réel…');const r=await adminCall('assistant',{question:'Réponds exactement : TEST IA NOVANOD OK',providerMode:'gemini',geminiFallbackPolicy:{...GEMINI_FREE_MODEL_FALLBACK_POLICY,forceFallbackTest:true}});progress(85,'Vérification de la réponse Gemini…');const answer=aiResultText(r);if(!answer||/indisponible|erreur|échec/i.test(answer))throw new Error(answer||'Gemini n’a renvoyé aucun texte exploitable.');return {message:'Réponse Gemini reçue : '+answer.slice(0,180)};}],
+        ['Groq',async progress=>{progress(20,'Demande de test IA Groq réel…');const r=await adminCall('assistant',{question:'Réponds exactement : TEST GROQ NOVANOD OK',providerMode:'groq'});progress(85,'Vérification de la réponse Groq…');const answer=aiResultText(r);if(!answer||/indisponible|erreur|échec/i.test(answer))throw new Error(answer||'Groq n’a renvoyé aucun texte exploitable.');return {message:'Réponse Groq reçue : '+answer.slice(0,180)};}],
+        ['Analyse automatique',async progress=>{progress(18,'Lancement d’une analyse de diagnostic…');const r=await adminCall('run_analysis',{analysisType:'problem',providerMode:document.getElementById('analysis-provider')?.value||'both'});progress(82,'Vérification du rapport…');const report=aiResultText(r);if(!report||report.startsWith('Le serveur n’a renvoyé'))throw new Error(report||'Aucun rapport exploitable retourné.');return {message:'Analyse exécutée et réponse exploitable reçue.'};}],
+        ['Photos et preuves visuelles',async progress=>{progress(20,'Vérification du bucket de preuves…');const [buckets,reports]=await Promise.all([adminCall('storage_buckets'),adminCall('list_reports')]);progress(70,'Recherche des preuves dans les rapports…');const bucketList=buckets.buckets||[];const list=reports.reports||[];const evidence=list.reduce((n,item)=>{const refs=item.chartData?.evidence||item.evidence;return n+(Array.isArray(refs)?refs.length:0);},0);if(!bucketList.length)throw new Error('Aucun bucket de stockage accessible. Vérifie NOVA_AUDIT_STORAGE_BUCKET_ID et les permissions du bucket privé.');if(!evidence)throw new Error('Stockage accessible, mais aucune preuve visuelle trouvée dans les rapports disponibles. Lance un audit Playwright/Lighthouse qui produit des captures.');return {message:evidence+' preuve(s) trouvée(s) et '+bucketList.length+' bucket(s) accessible(s).'};}],
+        ['Historique des rapports',async progress=>{progress(35,'Lecture de l’historique…');const r=await adminCall('list_reports');progress(85,'Historique reçu.');return {message:(r.reports||[]).length+' rapport(s) accessible(s).'};}],
+        ['Audit GitHub',async progress=>{progress(35,'Lecture du statut GitHub Actions…');const r=await adminCall('github_audit_status',{});progress(85,'Statut reçu.');if(!r||r.error)throw new Error(r?.error||'Aucun statut GitHub retourné.');return {message:r.run?'Workflow détecté : '+(r.run.status||'statut inconnu')+'.':'Service accessible ; aucun workflow récent retourné.'};}],
+        ['Alertes de sécurité',async progress=>{progress(35,'Lecture des événements…');const r=await adminCall('list_security_events');progress(85,'Événements reçus.');if(!Array.isArray(r.events))throw new Error('La fonction n’a pas retourné la liste des événements.');return {message:r.events.length+' événement(s) de sécurité accessible(s).'};}],
+        ['Pages Accueil, Privacy et Terms',async progress=>{const pages=[['Accueil','./'],['Privacy','./privacy.html'],['Terms','./terms.html']];const results=[];for(let i=0;i<pages.length;i++){const [name,path]=pages[i];progress(15+i*27,'Vérification de '+name+'…');const response=await fetch(path,{method:'HEAD',cache:'no-store'});results.push({name,status:response.status,ok:response.ok});}const failed=results.filter(x=>!x.ok);if(failed.length)throw new Error(failed.map(x=>x.name+' : HTTP '+x.status).join(' ; '));return {message:'Les trois pages répondent correctement (HTTP 2xx).'};}]
+      ];
+      const outcomes=[];
+      try{
+        for(let i=0;i<tests.length;i++){
+          const [label,fn]=tests[i];
+          featureTestSummary.textContent='Test '+(i+1)+'/'+tests.length+' : '+label;
+          outcomes.push(await runFeatureTest(label,fn));
+        }
+      }finally{
+        const passed=outcomes.filter(x=>x.ok).length,failed=outcomes.length-passed;
+        featureTestSummary.textContent='Terminé : '+passed+'/'+outcomes.length+' tests réussis · '+failed+' échec(s).'+(failed?' Consulte les messages rouges pour identifier les corrections.':' Toutes les fonctionnalités testées répondent.');
+        featureTestButton.disabled=false;
+      }
     });
 
     // Load richer reports and teams lazily when opening their workspace.
