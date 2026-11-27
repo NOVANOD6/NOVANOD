@@ -2750,9 +2750,13 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
     };
     const renderProviderOutputs = (prefix, r) => {
       const p = r?.providers || {};
-      renderProfessionalReport(prefix+'-gemini-output', p.gemini || (p.errors?.gemini ? 'Gemini temporairement indisponible. '+p.errors.gemini : 'Aucun rapport Gemini disponible.'));
-      renderProfessionalReport(prefix+'-groq-output', p.groq || (p.errors?.groq ? 'Groq temporairement indisponible. '+p.errors.groq : 'Aucun rapport Groq disponible.'));
-      renderProfessionalReport(prefix==='analysis'?'analysis-output':'assistant-output', p.combined || p.groq || p.gemini || r?.report || r?.answer || 'Aucune synthèse disponible.');
+      const renderOutput=(id,value)=>{
+        const mode=document.querySelector('[data-report-output-view="'+id+'"]')?.value || reportViewMode;
+        renderProfessionalReport(id,value,mode);
+      };
+      renderOutput(prefix+'-gemini-output',p.gemini || (p.errors?.gemini ? 'Gemini temporairement indisponible. '+p.errors.gemini : 'Aucun rapport Gemini disponible.'));
+      renderOutput(prefix+'-groq-output',p.groq || (p.errors?.groq ? 'Groq temporairement indisponible. '+p.errors.groq : 'Aucun rapport Groq disponible.'));
+      renderOutput(prefix==='analysis'?'analysis-output':'assistant-output',p.combined || p.groq || p.gemini || r?.report || r?.answer || 'Aucune synthèse disponible.');
     };
 
     // Charts use only structured numeric data returned by the trusted backend.
