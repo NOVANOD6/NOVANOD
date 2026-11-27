@@ -1532,12 +1532,18 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           <select id="message-channel" class="input-field">
             <option value="email">E-mail</option><option value="sms">SMS</option><option value="push">Notification Push</option>
           </select>
-          <div class="admin-note">Destinataire administrateur : les champs ci-dessous sont automatiquement renseignés depuis la session Appwrite active.</div>
-          <label class="form-label" for="message-user-id">User ID administrateur</label>
-          <input id="message-user-id" class="input-field" readonly autocomplete="off" placeholder="Identifiant administrateur connecté">
-          <label class="form-label" for="message-email-target">Target e-mail / adresse de livraison</label>
-          <input id="message-email-target" type="email" class="input-field" readonly autocomplete="email" placeholder="Adresse e-mail du compte administrateur">
-          <button id="btn-create-email-target" class="btn-3d btn-secondary" type="button">Enregistrer la cible e-mail de l’administrateur</button>
+          <div class="admin-note">Sélectionne un ou plusieurs comptes dans la liste des utilisateurs NOVANOD. L’envoi sera effectué uniquement aux comptes cochés.</div>
+          <div class="admin-toolbar" style="margin-bottom:8px">
+            <input id="message-user-search" class="input-field" placeholder="Rechercher un utilisateur par nom, e-mail ou ID">
+            <button id="btn-refresh-message-users" class="btn-3d btn-secondary" type="button">Actualiser la liste</button>
+          </div>
+          <div class="admin-toolbar" style="margin-bottom:8px">
+            <button id="btn-select-all-message-users" class="admin-action" type="button">Tout sélectionner</button>
+            <button id="btn-clear-message-users" class="admin-action" type="button">Tout désélectionner</button>
+            <span id="message-selected-count" class="hint" style="margin:0">0 destinataire sélectionné</span>
+          </div>
+          <div id="message-users-list" class="user-list" style="max-height:260px"><div class="hint">Connecte-toi puis charge la liste des utilisateurs.</div></div>
+          <div class="admin-note">Pour les e-mails, la cible Appwrite sera créée automatiquement pour chaque utilisateur sélectionné avant l’envoi.</div>
           <div id="message-target-status" class="status-msg"></div>
           <label class="form-label" for="message-topic-id">Topic ID (facultatif)</label>
           <input id="message-topic-id" class="input-field" placeholder="Laisser vide pour un envoi direct à l’administrateur">
@@ -1848,7 +1854,7 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
           document.getElementById('admin-welcome').textContent = user.name || user.email;
           screenLogin.classList.add('hidden');
           screenAdmin.classList.remove('hidden');
-          await syncMessagingAdminRecipient();
+          await refreshMessageUsers();
           await startAdminPush();
         } else {
           setStatus(loginStatus, `Accès refusé. Ton ID (${user.$id}) n'est pas autorisé dans ADMIN_USER_IDS.`, "error");
@@ -2691,70 +2697,97 @@ body{background:radial-gradient(ellipse at 14% 0%,#fff8b5 0%,#FFFBD0 55%,#f6e9b1
       finally { button.disabled = false; }
     });
 
-    // Préremplissage du destinataire depuis la session Appwrite administrateur.
-    let currentAdminEmail = '';
-    async function syncMessagingAdminRecipient() {
-      const userField = document.getElementById('message-user-id');
-      const emailField = document.getElementById('message-email-target');
-      if (!currentAdminUserId) return;
-      userField.value = currentAdminUserId;
+    // Sélection multi-destinataires depuis la liste Appwrite déjà utilisée par le module Utilisateurs.
+    const selectedMessageUserIds = new Set();
+    function getSelectedMessageUsers() {
+      return cachedUsers.filter(user => selectedMessageUserIds.has(String(user.$id || user.id || user.userId || '')));
+    }
+    function renderMessageUsers() {
+      const host = document.getElementById('message-users-list');
+      const query = (document.getElementById('message-user-search')?.value || '').trim().toLocaleLowerCase('fr');
+      const users = cachedUsers.filter(user => [user.name,user.email,user.$id,user.id,user.userId].join(' ').toLocaleLowerCase('fr').includes(query));
+      if (!users.length) host.innerHTML = '<div class="hint">Aucun utilisateur correspondant. Actualise la liste si nécessaire.</div>';
+      else host.innerHTML = users.map(user => {
+        const id = String(user.$id || user.id || user.userId || '');
+        const checked = id && selectedMessageUserIds.has(id);
+        return '<label class="user-row" style="display:flex;gap:10px;align-items:flex-start;cursor:pointer"><input type="checkbox" data-message-user-id="'+escapeHtml(id)+'" '+(checked?'checked':'')+' '+(!id?'disabled':'')+' style="margin-top:3px"><span style="min-width:0;flex:1"><span class="u-name">'+escapeHtml(user.name || '(sans nom)')+'</span><div class="u-email">'+escapeHtml(user.email || 'Aucune adresse e-mail')+'</div><small>'+escapeHtml(id)+'</small></span></label>';
+      }).join('');
+      document.getElementById('message-selected-count').textContent = selectedMessageUserIds.size+' destinataire(s) sélectionné(s)';
+    }
+    async function refreshMessageUsers() {
+      const host = document.getElementById('message-users-list');
+      if (!currentAdminUserId) { host.textContent = 'Connecte-toi avec un compte administrateur.'; return; }
+      setStatus(document.getElementById('message-target-status'), 'Chargement des utilisateurs Appwrite…', 'info');
       try {
-        const user = await account.get();
-        if (user.$id !== currentAdminUserId) throw new Error('La session administrateur a changé. Reconnecte-toi.');
-        currentAdminEmail = user.email || '';
-        emailField.value = currentAdminEmail;
-        if (!currentAdminEmail) setStatus(document.getElementById('message-target-status'), 'Aucune adresse e-mail disponible dans la session Appwrite.', 'error');
-      } catch (error) {
-        setStatus(document.getElementById('message-target-status'), 'Impossible de récupérer le compte administrateur : ' + error.message, 'error');
+        await refreshUsers();
+        renderMessageUsers();
+        setStatus(document.getElementById('message-target-status'), cachedUsers.length+' utilisateur(s) chargé(s).', 'success');
+      } catch(error) {
+        setStatus(document.getElementById('message-target-status'), 'Impossible de charger les utilisateurs : '+error.message, 'error');
       }
     }
-    document.getElementById('btn-create-email-target')?.addEventListener('click', async () => {
-      const button = document.getElementById('btn-create-email-target');
-      const status = document.getElementById('message-target-status');
-      if (!currentAdminUserId) return setStatus(status, 'Connecte-toi avec un compte administrateur.', 'error');
-      button.disabled = true;
-      setStatus(status, 'Vérification du compte et création de la cible e-mail…', 'info');
-      try {
-        const user = await account.get();
-        if (user.$id !== currentAdminUserId || !ADMIN_USER_IDS.includes(user.$id)) throw new Error('Compte actif non autorisé.');
-        if (!user.email) throw new Error('Le compte administrateur ne possède pas d’adresse e-mail.');
-        const messaging = new Appwrite.Messaging(client);
-        const targetId = ('admin-email-' + user.$id).slice(0, 36);
-        const result = await messaging.createEmailTarget(user.$id, targetId, user.email);
-        currentAdminEmail = user.email;
-        document.getElementById('message-email-target').value = user.email;
-        setStatus(status, 'Cible e-mail administrateur enregistrée. Tu peux maintenant envoyer un e-mail de test.', 'success');
-        out('messaging-output', result);
-      } catch (error) {
-        const detail = error?.message || String(error);
-        const alreadyExists = /already exists|duplicate|target.*exists|409/i.test(detail);
-        setStatus(status, alreadyExists ? 'Une cible e-mail portant cet identifiant existe déjà. Tu peux passer directement à l’envoi.' : 'Création de la cible impossible : ' + detail, alreadyExists ? 'success' : 'error');
-      } finally { button.disabled = false; }
+    document.getElementById('message-users-list')?.addEventListener('change', event => {
+      const checkbox = event.target.closest('[data-message-user-id]');
+      if (!checkbox) return;
+      const id = checkbox.dataset.messageUserId;
+      if (checkbox.checked) selectedMessageUserIds.add(id); else selectedMessageUserIds.delete(id);
+      renderMessageUsers();
     });
+    document.getElementById('message-user-search')?.addEventListener('input', renderMessageUsers);
+    document.getElementById('btn-refresh-message-users')?.addEventListener('click', refreshMessageUsers);
+    document.getElementById('btn-select-all-message-users')?.addEventListener('click', () => {
+      cachedUsers.forEach(user => { const id=String(user.$id||user.id||user.userId||''); if(id) selectedMessageUserIds.add(id); });
+      renderMessageUsers();
+    });
+    document.getElementById('btn-clear-message-users')?.addEventListener('click', () => { selectedMessageUserIds.clear(); renderMessageUsers(); });
+    async function ensureMessageEmailTarget(user) {
+      const id = String(user.$id || user.id || user.userId || '');
+      if (!id || !user.email) throw new Error('Adresse e-mail ou identifiant manquant pour '+(user.name||id||'un utilisateur'));
+      const messaging = new Appwrite.Messaging(client);
+      const targetId = ('novanod-email-' + id).slice(0, 36);
+      try { return await messaging.createEmailTarget(id, targetId, user.email); }
+      catch(error) {
+        if (/already exists|duplicate|target.*exists|409/i.test(error?.message||String(error))) return { alreadyExists:true, targetId };
+        throw error;
+      }
+    }
     document.getElementById('btn-send-message')?.addEventListener('click',async()=>{
       try {
         const channel=document.getElementById('message-channel').value;
-        const userId=currentAdminUserId;
+        const selectedUsers=getSelectedMessageUsers();
         const topicId=document.getElementById('message-topic-id').value.trim();
         const subject=document.getElementById('message-subject').value.trim();
         const content=document.getElementById('message-content').value.trim();
         const html=document.getElementById('message-html-mode').checked;
         if(!currentAdminUserId) throw new Error('Connecte-toi avec un compte administrateur.');
         if(!content) throw new Error('Le contenu du message est obligatoire.');
-        if(channel==='email' && !currentAdminEmail) await syncMessagingAdminRecipient();
-        if(channel==='email' && !currentAdminEmail) throw new Error('Adresse e-mail administrateur introuvable.');
-        if(!confirm('Confirmer l’envoi de ce message vers le compte administrateur connecté ?')) return;
-        const r=await adminCall('message_send',{channel,userId,topicId,subject,content,html});
-        out('messaging-output',r);
-        const accepted=!!r.acceptedByAppwrite;
-        const delivered=Number(r.message?.deliveredTotal||r.deliveredTotal||0)>0 || !!(r.message?.deliveredAt||r.deliveredAt);
-        setStatus(document.getElementById('messaging-status'),accepted ? (delivered ? 'Message livré selon le statut Appwrite. ID : '+(r.messageId||r.message?.$id||'inconnu') : 'Message accepté par Appwrite, livraison non confirmée. Vérifie le statut et les erreurs de livraison ci-dessous.') : 'Appwrite n’a pas confirmé l’acceptation du message.',accepted?'success':'error');
+        if(!selectedUsers.length) throw new Error('Sélectionne au moins un destinataire dans la liste.');
+        if(channel==='email') {
+          const missing=selectedUsers.filter(user=>!user.email);
+          if(missing.length) throw new Error(missing.length+' utilisateur(s) sélectionné(s) sans adresse e-mail. Retire-les de la sélection ou vérifie leurs comptes.');
+        }
+        if(!confirm('Confirmer l’envoi via '+channel.toUpperCase()+' à '+selectedUsers.length+' utilisateur(s) sélectionné(s) ?')) return;
+        const button=document.getElementById('btn-send-message'); button.disabled=true;
+        const results=[];
+        try {
+          for(let index=0;index<selectedUsers.length;index++) {
+            const user=selectedUsers[index];
+            const userId=String(user.$id||user.id||user.userId);
+            setStatus(document.getElementById('messaging-status'),'Envoi '+(index+1)+'/'+selectedUsers.length+' : '+(user.name||user.email||userId),'info');
+            if(channel==='email') await ensureMessageEmailTarget(user);
+            const result=await adminCall('message_send',{channel,userId,topicId,subject,content,html});
+            results.push({userId,name:user.name||'',email:user.email||'',acceptedByAppwrite:!!result.acceptedByAppwrite,messageId:result.messageId||result.message?.$id||null,deliveredTotal:Number(result.message?.deliveredTotal||result.deliveredTotal||0),deliveredAt:result.message?.deliveredAt||result.deliveredAt||null,deliveryErrors:result.message?.deliveryErrors||[]});
+          }
+        } finally { button.disabled=false; }
+        out('messaging-output',{total:selectedUsers.length,accepted:results.filter(item=>item.acceptedByAppwrite).length,results});
+        const accepted=results.filter(item=>item.acceptedByAppwrite).length;
+        const delivered=results.filter(item=>item.deliveredTotal>0||item.deliveredAt).length;
+        setStatus(document.getElementById('messaging-status'),accepted+'/'+results.length+' message(s) accepté(s) par Appwrite · '+delivered+' livraison(s) confirmée(s). Consulte les erreurs par destinataire dans le résultat.',accepted===results.length?'success':'error');
       } catch(e){setStatus(document.getElementById('messaging-status'),e.message,'error');}
     });
     document.getElementById('message-channel')?.addEventListener('change', () => {
       const emailMode = document.getElementById('message-channel').value === 'email';
       document.getElementById('message-html-mode').disabled = !emailMode;
-      document.getElementById('btn-create-email-target').disabled = !emailMode;
     });
 
 
